@@ -57,7 +57,7 @@ Analytic limit of the closed form as `m → ∞` at `θ = π/2`:
 I_∞(π/2) = −8/9 = −0.888888...
 ```
 
-Aitken Δ²-extrapolation of the raw numerical sequence at m=5,6,7 gives `−0.8888850`, a difference of `3.9×10⁻⁶` from the exact value — consistent with finite-level truncation.
+Aitken Δ²-extrapolation of the raw numerical sequence at m=5,6,7 gives `−0.8888855`, a difference of `3.3×10⁻⁶` from the exact value — consistent with finite-level truncation.
 
 ## Full test run
 
