@@ -82,6 +82,7 @@ Full statement and tables: **[THEOREM.md](THEOREM.md)** · **[VERIFICATION.md](V
 ---
 
 ## Repository map
+```
 Evgeny-Theorem/
 ├── THEOREM.md exact statement + 6-criterion protocol
 ├── VERIFICATION.md full numerical tables, held-out set, gauge check
@@ -94,6 +95,8 @@ Evgeny-Theorem/
 ├── data/ raw + computed reference spectra
 ├── figures/ convergence plot
 └── reproducibility/ environment, requirements, regeneration scripts
+
+```
 
 ## Reproduce it yourself
 
