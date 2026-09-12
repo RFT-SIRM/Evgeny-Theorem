@@ -8,6 +8,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-yellow?style=for-the-badge)](LICENSE)
 [![Formula](https://img.shields.io/badge/H⁴_Invariant-Verified_to_1e--13-5aa9ff?style=for-the-badge)](VERIFICATION.md)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-informational?style=for-the-badge)](reproducibility/requirements.txt)
+[![Visualization](https://img.shields.io/badge/Visualization-Live%20Demo-c6ff5c?style=for-the-badge)](https://rft-sirm.github.io/Evgeny-Theorem/)
 
 </div>
 
