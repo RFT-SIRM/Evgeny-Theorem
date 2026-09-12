@@ -29,8 +29,6 @@ Normalizing by `dim(H) = 3^(m+1) + 3` gives the intensive invariant `I_m(θ)`, w
 
 $$\lim_{m\to\infty} I_m\!\left(\tfrac{\pi}{2}\right) \;=\; -\frac{8}{9}$$
 
-with geometric convergence rate `1/3` — the SG *vertex*-growth factor, not the SG *spectral* decimation factor (`1/5`).
-
 ---
 
 ## Verification at a glance
@@ -77,7 +75,7 @@ with geometric convergence rate `1/3` — the SG *vertex*-growth factor, not the
 | v | Not reducible to dim / edges / faces / flux-density | ✅ |
 | vi | Vanishes in the commuting limit | ✅ |
 
-Full tables, held-out methodology, and the rejected sixth-moment conjecture: **[VERIFICATION.md](VERIFICATION.md)** · **[DERIVATION.md](DERIVATION.md)**.
+Full statement and tables: **[THEOREM.md](THEOREM.md)** · **[VERIFICATION.md](VERIFICATION.md)**.
 
 <p align="center"><img src="figures/convergence_I4.png" width="560" alt="Convergence of I_m to -8/9"></p>
 
@@ -86,9 +84,7 @@ Full tables, held-out methodology, and the rejected sixth-moment conjecture: **[
 ## Repository map
 Evgeny-Theorem/
 ├── THEOREM.md exact statement + 6-criterion protocol
-├── DERIVATION.md path-class argument (H⁴) + rejected H⁶ conjecture
 ├── VERIFICATION.md full numerical tables, held-out set, gauge check
-├── CONTEXT.md mathematical fields this connects to; explicit scope
 ├── src/
 │ ├── graph/ SG graph construction (3-connected, tree-of-triangles)
 │ ├── su2/ SU(2) rotation utilities
@@ -112,10 +108,6 @@ pytest tests/ -m slow -v            # level-7 convergence, ~1-4 minutes
 ```
 
 Expected: all green, residual `~1e-13`–`1e-12` at level 7.
-
-## What field this sits in — and what is not claimed
-
-Spectral graph theory on fractals (Kigami, Strichartz) meets gauge theory on graphs (Kenyon's vector-bundle Laplacian; Chen & Guo's U(1)-magnetic SG). This appears to be the first explicit closed-form spectral-moment identity for a genuinely non-commuting connection on the Sierpiński gasket specifically. No physical, financial, or engineering application is established or claimed — see **[CONTEXT.md](CONTEXT.md)** for the full, honest account.
 
 ## License
 

@@ -69,8 +69,7 @@ def evgeny_theorem_H4(level: int, theta: float) -> float:
 
         Delta_m(H^4, theta) = -16 * (3^(m-1) + 1) * sin^2(theta/2)
 
-    See THEOREM.md and DERIVATION.md for the statement and its supporting
-    path-class argument, and tests/test_theta.py /
+    See THEOREM.md for the statement, and tests/test_theta.py /
     tests/test_heldout.py for independent numerical verification.
     """
     return -16.0 * (3 ** (level - 1) + 1) * np.sin(theta / 2) ** 2

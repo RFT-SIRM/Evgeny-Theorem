@@ -49,9 +49,3 @@ The quantity `I_m` was accepted as a genuine structural invariant only after che
 ## Computational scope of the closed form
 
 The closed form permits evaluating `Δ_m(H⁴, θ)` for any `m` and `θ` in O(1) arithmetic operations, without constructing the underlying `2n(m)`-dimensional operator. This applies strictly to the single quantity defined above. It is not a statement about the computational complexity of the operator's full spectrum, its spectral gap, or any moment other than the fourth — those still require constructing and diagonalizing (or multiplying out) the operator directly, as done throughout `tests/` and `reproducibility/`.
-
-## What is explicitly out of scope
-
-- **Sixth-order moment.** A conjectured factorized form for `Δ_m(H⁶, θ)` was tested and rejected — see `DERIVATION.md`. No closed form for the sixth moment is claimed anywhere in this repository.
-- **Physical interpretation.** None is claimed. This theorem is a statement about a specific discrete operator, not about any physical system.
-- **Connection to prior "SRFT" material.** This SU(2) construction was introduced independently during this research program's own exploratory work. It was not extracted from, and has no demonstrated relationship to, any earlier source document's axioms.
