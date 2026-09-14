@@ -24,7 +24,7 @@ exactly, for every tested `(m, θ)` pair, to numerical precision better than `1e
 Normalizing by `dim(H) = 2n(m) = 3^(m+1) + 3` gives the intensive invariant:
 
 ```
-I_m(θ) = Δ_m(H⁴, θ) / dim(H) = −8 · (3^(m−1) + 1) · sin²(θ/2) / (3^(m+1) + 3)
+I_m(θ) = Δ_m(H⁴,θ) / dim(H) = −16 · (3^(m−1)+1) · sin²(θ/2) / (3^(m+1) + 3)
 ```
 
 At `θ = π/2`:
