@@ -33,6 +33,23 @@ At `θ = π/2`:
 lim_{m→∞} I_m(π/2) = −8/9
 ```
 
+## Higher-moment numerical verification
+
+The fourth-moment identity above is the repository's analytic closed-form result. Higher moments have also been computed directly under the same non-commuting configuration `C` and commuting control `C′`.
+
+For `Δ_m(H^p, θ) = Tr(H_C^p) − Tr(H_C′^p)`, the following reference values are reproduced at `θ = π/2`:
+
+| m | Δ_m(H⁶, π/2) | Δ_m(H⁸, π/2) | Δ_m(H¹⁰, π/2) |
+|---:|---:|---:|---:|
+| 1 | −3180.000000000000 | −246909.026268397924 | −14013358.982483163476 |
+| 2 | −6956.588745030516 | −595053.284942481667 | −37686518.369789719582 |
+| 3 | −18274.354980121832 | −1632052.331668503582 | −107772338.487565994263 |
+| 4 | −52227.653685396537 | −4743049.471846580505 | −318029798.840893745422 |
+
+These are **numerical regression references**, not claimed closed-form formulas or machine-checked theorems for H⁶, H⁸, or H¹⁰. They are locked into [`tests/test_higher_moments.py`](tests/test_higher_moments.py).
+
+Higher moments are evaluated by constructing the finite-dimensional operators and multiplying the matrices directly. No O(1) analytic formula is claimed for H⁶, H⁸, or H¹⁰.
+
 ## Acceptance protocol
 
 The quantity `I_m` was accepted as a genuine structural invariant only after checking all six of the following, not fewer:
@@ -48,4 +65,6 @@ The quantity `I_m` was accepted as a genuine structural invariant only after che
 
 ## Computational scope of the closed form
 
-The closed form permits evaluating `Δ_m(H⁴, θ)` for any `m` and `θ` in O(1) arithmetic operations, without constructing the underlying `2n(m)`-dimensional operator. This applies strictly to the single quantity defined above. It is not a statement about the computational complexity of the operator's full spectrum, its spectral gap, or any moment other than the fourth — those still require constructing and diagonalizing (or multiplying out) the operator directly, as done throughout `tests/` and `reproducibility/`.
+The closed form permits evaluating `Δ_m(H⁴, θ)` for any `m` and `θ` in O(1) arithmetic operations, without constructing the underlying `2n(m)`-dimensional operator. This closed-form statement applies strictly to the fourth-moment invariant defined above.
+
+Higher moments have also been evaluated directly. In particular, `Δ_m(H⁶, θ)`, `Δ_m(H⁸, θ)`, and `Δ_m(H¹⁰, θ)` are covered by reproducible numerical regression tests for `m = 1, 2, 3, 4` at `θ = π/2` (`tests/test_higher_moments.py`). These are numerical reference results, not claimed closed-form theorems. No analytic formula for H⁶, H⁸, or H¹⁰ is asserted here.
