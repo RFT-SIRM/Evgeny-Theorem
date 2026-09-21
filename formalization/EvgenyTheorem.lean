@@ -1,13 +1,15 @@
+import EvgenyTheorem.Graph.Sierpinski
+import EvgenyTheorem.SU2
 import Mathlib
 
 namespace EvgenyTheorem
 
 /-- Raw fourth-moment trace defect from the project statement. -/
-def delta (m : ℕ) (θ : ℝ) : ℝ :=
+noncomputable def delta (m : ℕ) (θ : ℝ) : ℝ :=
   -16 * ((3 : ℝ) ^ (m - 1) + 1) * Real.sin (θ / 2) ^ 2
 
 /-- Normalized invariant. -/
-def I (m : ℕ) (θ : ℝ) : ℝ :=
+noncomputable def I (m : ℕ) (θ : ℝ) : ℝ :=
   delta m θ / ((3 : ℝ) ^ (m + 1) + 3)
 
 theorem delta_eq (m : ℕ) (θ : ℝ) :
@@ -21,11 +23,15 @@ theorem I_eq (m : ℕ) (θ : ℝ) :
         ((3 : ℝ) ^ (m + 1) + 3) := by
   rfl
 
-/-- Example at m = 1, θ = π/2. -16 * (3^0+1) * sin^2(pi/4) = -16*2*(1/2) = -16. -/
+/-- Example at m = 1, θ = π/2. -/
 theorem delta_one_pi_div_two :
     delta 1 (Real.pi / 2) = -16 := by
   rw [delta]
-  rw [Real.sin_pi_div_four]
+  have h : Real.pi / 2 / 2 = Real.pi / 4 := by ring
+  rw [h, Real.sin_pi_div_four]
+  have hsqrt : (Real.sqrt 2) ^ 2 = (2 : ℝ) := by
+    norm_num
+  rw [div_pow, hsqrt]
   norm_num
 
 /--
@@ -39,7 +45,7 @@ this identity for every m and θ.
 def TraceDefectIdentity (traceDefect : ℕ → ℝ → ℝ) : Prop :=
   ∀ m θ, traceDefect m θ = delta m θ
 
-/-- Closed form follows immediately once the concrete trace identity is proved. -/
+/-- Closed form follows once the concrete trace identity is proved. -/
 theorem evgeny_theorem
     (traceDefect : ℕ → ℝ → ℝ)
     (h : TraceDefectIdentity traceDefect)

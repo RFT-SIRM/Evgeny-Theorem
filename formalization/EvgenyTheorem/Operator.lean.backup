@@ -1,0 +1,73 @@
+import EvgenyTheorem.Graph.Faces
+import EvgenyTheorem.SU2
+import Mathlib
+
+namespace EvgenyTheorem
+
+open Complex Matrix
+
+abbrev HilbertIndex (m : ℕ) := Vertex m × C2
+
+def axisPauli : Axis → Matrix C2 C2 ℂ
+  | 0 => pauliX
+  | 1 => pauliY
+  | 2 => pauliZ
+
+noncomputable def axisRotation (a : Axis) (θ : ℝ) : Matrix C2 C2 ℂ :=
+  su2Rotation (axisPauli a) θ
+
+noncomputable def fluxIndex (m : ℕ) (e : Point × Point) : ℕ :=
+  (fluxEdges m).findIdx (fun f => f = e)
+
+noncomputable def edgeAxis (m : ℕ) (e : Point × Point) : Axis :=
+  faceAxis (fluxIndex m e)
+
+noncomputable def edgeUnitary
+    (m : ℕ) (θ : ℝ) (e : Point × Point) :
+    Matrix C2 C2 ℂ :=
+  if e ∈ fluxEdges m then
+    axisRotation (edgeAxis m e) θ
+  else
+    (1 : Matrix C2 C2 ℂ)
+
+noncomputable def degree (m : ℕ) (u : Vertex m) : ℕ := by
+  classical
+  letI : Finite (Vertex m) :=
+    Finite.of_injective Subtype.val Subtype.val_injective
+  letI : Fintype (Vertex m) := Fintype.ofFinite (Vertex m)
+  exact Finset.univ.sum (fun v : Vertex m => if Adj u v then 1 else 0)
+
+noncomputable def connectionOperator
+    (m : ℕ) (θ : ℝ) :
+    Matrix (HilbertIndex m) (HilbertIndex m) ℂ := by
+  classical
+  letI : Finite (Vertex m) :=
+    Finite.of_injective Subtype.val Subtype.val_injective
+  letI : Fintype (Vertex m) := Fintype.ofFinite (Vertex m)
+  exact fun u v =>
+    if u.1 = v.1 then
+      if u.2 = v.2 then
+        Complex.ofReal (degree m u.1)
+      else
+        0
+    else if Adj u.1 v.1 then
+      let pu : Point := (u.1.1.1, u.1.1.2)
+      let pv : Point := (v.1.1.1, v.1.1.2)
+      let e : Point × Point := if pu ≤ pv then (pu, pv) else (pv, pu)
+      let U := edgeUnitary m θ e
+      if pu ≤ pv then
+        -U u.2 v.2
+      else
+        -Uᴴ u.2 v.2
+    else
+      0
+
+theorem connectionOperator_diagonal
+    (m : ℕ) (θ : ℝ) (u : HilbertIndex m) :
+    connectionOperator m θ u u =
+      Complex.ofReal (degree m u.1) := by
+  classical
+  simp [connectionOperator]
+
+end EvgenyTheorem
+

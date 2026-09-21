@@ -1,0 +1,92 @@
+import Mathlib
+
+namespace EvgenyTheorem
+
+/--
+Coordinates of a level-m vertex.
+
+We use integer coordinates `(x,y)` with
+`x + y ≤ 2^m`.
+-/
+structure Vertex (m : ℕ) where
+  x : Fin (2 ^ m + 1)
+  y : Fin (2 ^ m + 1)
+  admissible : (x : ℕ) + (y : ℕ) ≤ 2 ^ m
+
+instance (m : ℕ) : DecidableEq (Vertex m) := by
+  exact Classical.decEq (Vertex m)
+
+/-- The finite ambient coordinate set. -/
+def ambient (m : ℕ) : Finset (Fin (2 ^ m + 1) × Fin (2 ^ m + 1)) :=
+  Finset.univ
+
+/-- The finite set of admissible gasket vertices. -/
+def vertexFinset (m : ℕ) : Finset (Vertex m) :=
+  (ambient m).filterMap fun p =>
+    if h : (p.1 : ℕ) + (p.2 : ℕ) ≤ 2 ^ m then
+      some ⟨p.1, p.2, h⟩
+    else
+      none
+
+instance (m : ℕ) : Fintype (Vertex m) :=
+  Fintype.ofFinset (vertexFinset m) (by
+    intro v
+    simp only [vertexFinset, ambient, Finset.mem_filterMap]
+    constructor
+    · intro h
+      exact ⟨⟨v.x, v.y⟩, by simp, by simp [v.admissible]⟩
+    · intro h
+      rcases h with ⟨p, _, hp⟩
+      split at hp
+      · cases hp
+        exact ⟨⟨v.x, v.y⟩, by simp, by simp [v.admissible]⟩
+      · contradiction)
+
+/-- The lower-left corner `(0,0)`. -/
+def corner₀ (m : ℕ) : Vertex m :=
+  ⟨0, 0, by simp⟩
+
+/-- The lower-right corner `(2^m,0)`. -/
+def corner₁ (m : ℕ) : Vertex m :=
+  ⟨⟨2 ^ m, by omega⟩, 0, by simp⟩
+
+/-- The upper-left corner `(0,2^m)`. -/
+def corner₂ (m : ℕ) : Vertex m :=
+  ⟨0, ⟨2 ^ m, by omega⟩, by simp⟩
+
+theorem levelZero_distinct :
+    corner₀ 0 ≠ corner₁ 0 ∧
+    corner₁ 0 ≠ corner₂ 0 ∧
+    corner₀ 0 ≠ corner₂ 0 := by
+  constructor
+  · intro h
+    have hx := congrArg Vertex.x h
+    simp [corner₀, corner₁] at hx
+  constructor
+  · intro h
+    have hx := congrArg Vertex.x h
+    simp [corner₁, corner₂] at hx
+  · intro h
+    have hy := congrArg Vertex.y h
+    simp [corner₀, corner₂] at hy
+
+structure Edge (m : ℕ) where
+  a : Vertex m
+  b : Vertex m
+  ne : a ≠ b
+
+instance (m : ℕ) : DecidableEq (Edge m) :=
+  Classical.decEq (Edge m)
+
+structure Face (m : ℕ) where
+  a : Vertex m
+  b : Vertex m
+  c : Vertex m
+  hab : a ≠ b
+  hbc : b ≠ c
+  hca : c ≠ a
+
+instance (m : ℕ) : DecidableEq (Face m) :=
+  Classical.decEq (Face m)
+
+end EvgenyTheorem
