@@ -26,21 +26,27 @@ for every triangle -- exactly two decoupled U(1) magnetic Laplacians.
 
 The fourth spectral-moment defect
 
-    Delta_m(H^4, theta) = Tr(H_C^4) - Tr(H_C'^4)
+$$
+\Delta_m(H^4, \theta) = \operatorname{Tr}(H_C^4) - \operatorname{Tr}(H_{C'}^4)
+$$
 
 satisfies the **exact closed form**
 
-    Delta_m(H^4, theta) = -16 * (3^(m-1) + 1) * sin^2(theta/2)
+$$
+\Delta_m(H^4, \theta) = -16 \left(3^{m-1} + 1\right) \sin^2\!\left(\frac{\theta}{2}\right)
+$$
 
-for every `m >= 1` and every `theta`, verified numerically to better than
-`1e-9` at every tested parameter pair, and to `1e-13` at `m = 7`
+for every $m \ge 1$ and every $\theta$, verified numerically to better than
+$10^{-9}$ at every tested parameter pair, and to $10^{-13}$ at $m = 7$
 (matrix dimension 6564).
 
-Normalizing by `dim(H) = 3^(m+1) + 3` gives the intensive invariant
+Normalizing by $\dim(H) = 3^{m+1} + 3$ gives the intensive invariant
 
-    I_m(theta) = Delta_m(H^4, theta) / (3^(m+1) + 3)  -->  -8/9
+$$
+I_m(\theta) = \frac{\Delta_m(H^4, \theta)}{3^{m+1} + 3} \longrightarrow -\frac{8}{9}
+$$
 
-at `theta = pi/2`, with geometric convergence confirmed through `m = 7`.
+at $\theta = \pi/2$, with geometric convergence confirmed through $m = 7$.
 
 ---
 
@@ -53,10 +59,12 @@ at `theta = pi/2`, with geometric convergence confirmed through `m = 7`.
 | **Gauge invariance** | Spectral deviation < 8e-15 under random SU(2) gauge |
 | **Vanishes at p = 1, 2, 3** | Exact -- first nonzero at p = 4 |
 | **H6 growth law** alpha(theta)*3^m + beta(theta) | Established numerically to machine precision |
-| **H6 recurrence** Delta_m = 3*Delta_{m-1} + C(theta) | Established, C(pi) = 5280 exactly |
+| **H6 recurrence** $\Delta_m = 3\Delta_{m-1} + C(\theta)$ | Established numerically; $C(\pi) = 5280$ to within $0.1$ |
 | **H6 path-class zero theorem** | Single- and two-triangle classes contribute zero |
 | **H6/H8/H10 reference values** | Numerical regression, locked by tests |
 | **Closed form for H6, H8, H10** | Open -- no claim made |
+| **Lean 4: graph infrastructure** ($SG(m)$, `Vertex`, `Adj`, `degree`) | Computable, decidable, machine-checked (`lake build`) |
+| **Lean 4: operator-level `TraceDefectIdentity`** | Open -- stated as a proposition, not yet proved for the concrete `traceDefect` |
 
 ---
 
@@ -100,6 +108,25 @@ versus exact **-8/9 = -0.8888889** (difference 3.3e-6).
 
 Full statement: [THEOREM.md](THEOREM.md) -- Full tables: [VERIFICATION.md](VERIFICATION.md)
 
+### Lean 4 formalization
+
+The graph-level construction -- the Sierpinski-gasket graph $SG(m)$, the
+vertex type, the adjacency relation, and vertex degree -- is formalized in
+[`formalization/`](formalization/) and is fully computable: `Vertex.fintype`
+and `Adj.decidable` let Lean's kernel decide graph facts directly
+(`Fintype.card (Vertex 1) = 6`, individual vertex degrees, etc.), checked
+by `lake build` against Mathlib.
+
+What this does *not* yet cover: the operator-level identity connecting
+$\operatorname{Tr}(H_C^4) - \operatorname{Tr}(H_{C'}^4)$ to the closed
+form above is stated in `EvgenyTheorem.lean` as `TraceDefectIdentity`, a
+proposition, together with one proved instance (`delta_one_pi_div_two`,
+the $m=1$, $\theta=\pi/2$ case) and the unconditional lemma
+`traceDefect_zero` ($\theta = 0$ gives zero for every $m$). The general
+identity for all $m$ and $\theta$ -- the actual content of the closed
+form above -- is not yet proved in Lean; this numerical verification
+(section above) remains the primary evidence for it.
+
 ---
 
 ## Higher moments: an open research program
@@ -108,21 +135,29 @@ Full statement: [THEOREM.md](THEOREM.md) -- Full tables: [VERIFICATION.md](VERIF
 
 **Growth law** (machine-precision verification):
 
-    Delta_m(H^6, theta) = alpha(theta)*3^m + beta(theta)
+$$
+\Delta_m(H^6, \theta) = \alpha(\theta) \cdot 3^m + \beta(\theta)
+$$
 
-Fit from m = 4, 5 predicts m = 3 with error below 1e-8.
-No quadratic 3^(2m) term (coefficient ratio < 1e-15).
+Fit from $m = 4, 5$ predicts $m = 3$ with error below $10^{-8}$.
+No quadratic $3^{2m}$ term (coefficient ratio $< 10^{-15}$).
 
-**Exact recurrence** (for m >= 2):
+**Recurrence** (for $m \ge 2$, established numerically):
 
-    Delta_m(H^6, theta) = 3 * Delta_{m-1}(H^6, theta) + C(theta)
+$$
+\Delta_m(H^6, \theta) = 3\, \Delta_{m-1}(H^6, \theta) + C(\theta)
+$$
 
-At theta = pi:
+At $\theta = \pi$, numerically:
 
-    C(pi) = 5280  =  2^5 * 3 * 5 * 11   (exact integer)
+$$
+C(\pi) \approx 5280 = 2^5 \cdot 3 \cdot 5 \cdot 11 \quad (\text{within } 0.1)
+$$
 
-At theta = pi, the growth law yields exact fractions:
-alpha(pi) = -4112/3, beta(pi) = -2640.
+At $\theta = \pi$, the growth law numerically matches the fractions
+$\alpha(\pi) = -4112/3$, $\beta(\pi) = -2640$. These are reproducible
+computational results (see `tests/test_path_class_h6.py`), not
+machine-checked closed-form theorems.
 
 **Path-class zero theorem**: on SG(1), only closed walks visiting
 all three triangles contribute to Delta(H^6). Single-triangle and
@@ -147,26 +182,38 @@ Regression references only. See [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md)
 ---
 
 ## Repository map
+
+```text
 Evgeny-Theorem/
 ├── THEOREM.md
 ├── VERIFICATION.md
 ├── docs/
-│ └── HIGHER_MOMENTS.md
+│   └── HIGHER_MOMENTS.md
+├── formalization/              Lean 4 formalization (graph-level infrastructure)
+│   ├── EvgenyTheorem.lean      delta, I, TraceDefectIdentity (scaffold), delta_one_pi_div_two
+│   └── EvgenyTheorem/
+│       ├── Graph/
+│       │   ├── Sierpinski.lean SG(m) graph, computable Vertex/Adj instances
+│       │   └── Faces.lean      triangular faces, flux edges, axis assignment
+│       ├── SU2.lean            Pauli matrices, SU(2) rotations
+│       ├── Operator.lean       HC, HC', traceDefect, traceDefect_zero
+│       └── SanityChecks.lean   decidable graph-level checks (degrees, vertex counts)
 ├── src/
-│ ├── graph/
-│ ├── su2/
-│ ├── operators/
-│ └── moments/
+│   ├── graph/
+│   ├── su2/
+│   ├── operators/
+│   └── moments/
 ├── tests/
-│ ├── test_levels.py
-│ ├── test_theta.py
-│ ├── test_heldout.py
-│ ├── test_gauge_invariance.py
-│ ├── test_higher_moments.py
-│ └── test_path_class_h6.py
+│   ├── test_levels.py
+│   ├── test_theta.py
+│   ├── test_heldout.py
+│   ├── test_gauge_invariance.py
+│   ├── test_higher_moments.py
+│   └── test_path_class_h6.py
 ├── data/
 ├── figures/
 └── reproducibility/
+```
 
 ---
 

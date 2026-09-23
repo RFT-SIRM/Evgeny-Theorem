@@ -28,6 +28,15 @@ instance inSGDecidable (m x y : ℕ) : Decidable (InSG m x y) := by
 def Vertex (m : ℕ) :=
   {p : Fin (2 ^ m + 1) × Fin (2 ^ m + 1) // InSG m p.1 p.2}
 
+/-- `Vertex m` is a `Fintype` because `InSG` is decidable (`inSGDecidable`)
+and it is a subtype of the finite type `Fin (2^m+1) × Fin (2^m+1)`.
+Fully computable: no `Fintype.ofFinite`, no `classical`. -/
+instance Vertex.fintype (m : ℕ) : Fintype (Vertex m) :=
+  Subtype.fintype _
+
+instance Vertex.decidableEq (m : ℕ) : DecidableEq (Vertex m) :=
+  Subtype.instDecidableEq
+
 private def stepEdge (p q : ℕ × ℕ) : Prop :=
   (p.1 + 1 = q.1 ∧ p.2 = q.2) ∨
   (p.1 = q.1 ∧ p.2 + 1 = q.2) ∨
@@ -57,6 +66,13 @@ def Adj {m : ℕ} (u v : Vertex m) : Prop :=
   EdgeB m
     (u.1.1 : ℕ) (u.1.2 : ℕ)
     (v.1.1 : ℕ) (v.1.2 : ℕ) = true
+
+/-- `Adj u v` unfolds (definitionally) to a `Bool` equality, which is
+always decidable; `inferInstanceAs` sees through the `def` where plain
+typeclass search would not. -/
+instance Adj.decidable {m : ℕ} (u v : Vertex m) : Decidable (Adj u v) :=
+  inferInstanceAs
+    (Decidable (EdgeB m (u.1.1 : ℕ) (u.1.2 : ℕ) (v.1.1 : ℕ) (v.1.2 : ℕ) = true))
 
 
  

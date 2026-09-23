@@ -1,4 +1,5 @@
 import EvgenyTheorem.Graph.Sierpinski
+import EvgenyTheorem.SanityChecks
 import EvgenyTheorem.SU2
 import Mathlib
 

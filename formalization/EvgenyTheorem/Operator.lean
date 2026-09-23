@@ -30,12 +30,10 @@ noncomputable def edgeUnitary
   else
     (1 : Matrix C2 C2 ℂ)
 
-noncomputable def degree (m : ℕ) (u : Vertex m) : ℕ := by
-  classical
-  letI : Finite (Vertex m) :=
-    Finite.of_injective Subtype.val Subtype.val_injective
-  letI : Fintype (Vertex m) := Fintype.ofFinite (Vertex m)
-  exact Finset.univ.sum (fun v : Vertex m => if Adj u v then 1 else 0)
+/-- Computable now that `Vertex.fintype` and `Adj.decidable` exist:
+no more `classical`, no `Fintype.ofFinite`. -/
+def degree (m : ℕ) (u : Vertex m) : ℕ :=
+  Finset.univ.sum (fun v : Vertex m => if Adj u v then 1 else 0)
 
 noncomputable def connectionOperator
     (m : ℕ) (θ : ℝ) :
@@ -147,4 +145,3 @@ theorem traceDefect_zero (m : ℕ) :
   ring
 
 end EvgenyTheorem
-
