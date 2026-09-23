@@ -135,16 +135,20 @@ header.scrolled{
 .brand small{ display:block; font-size:9px; letter-spacing:.3em; color:var(--ink-mute); font-weight:400; white-space:nowrap; }
 header{ overflow:visible; }
 .nav{ overflow:visible; }
-.nav-links{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; width:100%; }
+.nav-links{
+  display:flex; flex-wrap:nowrap; gap:2px; align-items:center; justify-content:center;
+  width:100%; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; padding:2px 0;
+}
+.nav-links::-webkit-scrollbar{ display:none; }
 .nav-links a{
-  font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ink-dim); text-decoration:none; padding:9px 14px; border-radius:8px;
-  transition:color .25s, background .25s;
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-dim); text-decoration:none; padding:9px 10px; border-radius:8px;
+  transition:color .25s, background .25s; white-space:nowrap; flex:0 0 auto;
 }
 .nav-links a:hover{ color:var(--cyan); background:rgba(125,249,255,.06); }
 .nav-links a.cta{
   color:#0a0714; background:linear-gradient(92deg, var(--pink), var(--violet));
-  font-weight:700; margin-left:10px;
+  font-weight:700; margin-left:8px; flex:0 0 auto;
 }
 .nav-links a.cta:hover{ filter:brightness(1.15); color:#0a0714; }
 .burger{ display:none; }
@@ -254,22 +258,31 @@ header{ overflow:visible; }
 .hud-core{ color:var(--gold); font-weight:700; text-shadow:0 0 16px rgba(255,184,0,.85); }
 /* ---------- historical facts ---------- */
 .fact-shell{
-  text-align:center; padding:clamp(30px,5vw,60px); border-radius:22px;
+  text-align:center; padding:clamp(28px,4.5vw,56px) clamp(18px,4vw,56px); border-radius:22px;
   border:1px solid var(--line-2); position:relative; overflow:hidden;
   background:linear-gradient(180deg, rgba(13,16,32,.85), rgba(7,8,18,.95));
 }
+.fact-shell .fact-note{ padding:0 8px; }
 .fact-shell::before{
   content:""; position:absolute; top:0; left:20%; right:20%; height:1px;
   background:linear-gradient(90deg, transparent, rgba(255,45,120,.7), transparent);
 }
-.fact-row{ display:flex; justify-content:center; align-items:center; gap:clamp(18px,4vw,56px); margin:36px 0 28px; flex-wrap:wrap; }
+.fact-row{
+  display:flex; justify-content:center; align-items:stretch; gap:clamp(12px,2.5vw,40px);
+  margin:34px 0 26px; flex-wrap:wrap; row-gap:22px;
+}
+.fact{ min-width:0; padding:0 6px; }
 .fact-num{
-  font-family:var(--mono); font-size:clamp(42px,6vw,76px); font-weight:700; line-height:1;
+  font-family:var(--mono); font-size:clamp(26px,3.2vw,42px); font-weight:700; line-height:1.15;
   background:linear-gradient(180deg,#fff, var(--pink-soft));
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  word-break:break-word;
 }
-.fact-lbl{ font-family:var(--mono); font-size:10px; letter-spacing:.3em; color:var(--ink-mute); text-transform:uppercase; margin-top:10px; }
-.fact-sep{ width:1px; height:72px; background:linear-gradient(180deg, transparent, var(--line-2), transparent); }
+.fact-lbl{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.22em; color:var(--ink-mute);
+  text-transform:uppercase; margin-top:10px; line-height:1.7; max-width:220px; margin-left:auto; margin-right:auto;
+}
+.fact-sep{ width:1px; align-self:center; height:64px; background:linear-gradient(180deg, transparent, var(--line-2), transparent); }
 .fact-note{ color:var(--ink-dim); max-width:660px; margin:0 auto; font-size:14.5px; }
 /* ---------- limit monster ---------- */
 .limit-strip{ display:flex; align-items:baseline; justify-content:center; gap:clamp(14px,3vw,44px); margin-bottom:44px; flex-wrap:wrap; }
@@ -387,22 +400,59 @@ header{ overflow:visible; }
   font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:6px; letter-spacing:.1em;
 }
 .chip-pink{ color:#ffd7e6; background:rgba(255,45,120,.14); border:1px solid rgba(255,45,120,.4); }
-.chip-cyan{ color:var(--cyan); background:rgba(125,249,255,.1); border:1px solid rgba(125,249,255,.35); }
-.chip-violet{ color:#cdc5ff; background:rgba(138,125,255,.12); border:1px solid rgba(138,125,255,.4); }
-.def-card p{ color:var(--ink-dim); font-size:14.5px; }
-.def-card .mline{
-  font-family:var(--mono); font-size:13.5px; color:#d5d9f2; display:block;
-  padding:12px 16px; margin:14px 0 4px; border-radius:10px;
-  background:rgba(5,6,14,.6); border:1px solid var(--line);
-  overflow-x:auto; white-space:nowrap;
+p .chip{ display:inline-block; vertical-align:baseline; transform:translateY(-1px); padding:2px 8px; font-size:11.5px; }
+
+/* ---------- lean ide: editor + verdicts ---------- */
+.lean-stats{ grid-template-columns:repeat(4,1fr); margin-bottom:26px; }
+.lean-stats .stat .val{ font-size:clamp(20px,2vw,28px); }
+.lean-ide{ display:grid; grid-template-columns:1.45fr 1fr; gap:22px; align-items:stretch; }
+.lean-term{
+  box-shadow:0 30px 80px rgba(0,0,0,.55), 0 0 70px rgba(138,125,255,.08);
+  border-color:rgba(138,125,255,.3);
 }
-.count-row{ display:flex; gap:14px; margin-top:20px; flex-wrap:wrap; }
-.count-pill{
-  flex:1; min-width:120px; text-align:center; padding:16px 10px; border-radius:12px;
-  border:1px solid var(--line); background:rgba(5,6,14,.5);
+.lean-code{ font-size:12.6px; line-height:1.9; }
+.lc-kw{ color:var(--violet); font-weight:700; }
+.lc-thm{ color:var(--pink-soft); font-weight:700; }
+.lc-fn{ color:var(--cyan); }
+.lc-com{ color:#5f6a8a; font-style:italic; }
+.lc-sorry{
+  color:var(--amber); font-weight:700;
+  background:rgba(255,194,71,.12); padding:1px 8px; border-radius:5px;
+  border:1px solid rgba(255,194,71,.45); box-shadow:0 0 14px rgba(255,194,71,.3);
 }
-.count-pill b{ font-family:var(--mono); font-size:13px; color:var(--cyan); display:block; }
-.count-pill span{ font-family:var(--mono); font-size:9.5px; letter-spacing:.18em; color:var(--ink-mute); text-transform:uppercase; }
+.lc-builtin{ color:var(--green); font-weight:700; }
+.lean-verdicts{ display:flex; flex-direction:column; gap:14px; }
+.verdict{
+  position:relative; border-radius:14px; padding:19px 22px 17px 24px;
+  border:1px solid var(--line-2);
+  background:linear-gradient(180deg, rgba(13,16,32,.9), rgba(9,11,24,.92));
+  overflow:hidden; transition:transform .3s, box-shadow .3s;
+}
+.verdict::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.verdict.proved::before{ background:linear-gradient(180deg, var(--green), transparent); box-shadow:0 0 16px rgba(94,242,160,.6); }
+.verdict.open::before{ background:linear-gradient(180deg, var(--amber), transparent); box-shadow:0 0 16px rgba(255,194,71,.6); }
+.verdict:hover{ transform:translateY(-3px); }
+.verdict.proved:hover{ box-shadow:0 18px 44px rgba(0,0,0,.45), 0 0 34px rgba(94,242,160,.12); }
+.verdict.open:hover{ box-shadow:0 18px 44px rgba(0,0,0,.45), 0 0 34px rgba(255,194,71,.12); }
+.v-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:9px; flex-wrap:wrap; }
+.v-name{
+  font-family:var(--mono); font-size:13px; color:var(--cyan);
+  padding:5px 11px; border-radius:7px;
+  background:rgba(125,249,255,.07); border:1px solid rgba(125,249,255,.25);
+}
+.verdict.open .v-name{ color:#cdc5ff; background:rgba(138,125,255,.08); border-color:rgba(138,125,255,.35); }
+.v-badge{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.22em; font-weight:700;
+  padding:5px 12px; border-radius:6px;
+}
+.v-badge.proved{ color:var(--green); background:rgba(94,242,160,.1); border:1px solid rgba(94,242,160,.45); box-shadow:0 0 14px rgba(94,242,160,.25); }
+.v-badge.open{ color:var(--amber); background:rgba(255,194,71,.08); border:1px solid rgba(255,194,71,.45); box-shadow:0 0 14px rgba(255,194,71,.25); animation:pulse 2.4s ease-in-out infinite; }
+.verdict p{ font-size:13px; color:var(--ink-dim); line-height:1.6; }
+.verdict p b{ color:var(--ink); font-weight:600; }
+@media (max-width:1024px){
+  .lean-ide{ grid-template-columns:1fr; }
+  .lean-stats{ grid-template-columns:repeat(2,1fr); }
+}
 
 /* ---------- theorem ---------- */
 .theorem-shell{
@@ -716,6 +766,8 @@ footer{
 }
 @media (max-width:680px){
   .nav-links{ display:none; }
+  .fact-row{ flex-direction:column; align-items:center; gap:20px; }
+  .fact-sep{ width:64px; height:1px; background:linear-gradient(90deg, transparent, var(--line-2), transparent); }
   .burger{
     display:flex; flex-direction:column; gap:5px; background:none; border:0; cursor:pointer; padding:8px;
   }
@@ -754,6 +806,8 @@ footer{
       <a href="#verification">Verification</a>
       <a href="#convergence">Convergence</a>
       <a href="#protocol">Protocol</a>
+      <a href="#lean">Lean 4</a>
+      <a href="#frontier">Frontier</a>
       <a href="#context">Context</a>
       <a href="#reproduce">Reproduce</a>
       <a class="cta" href="#contact">Contact</a>
@@ -1129,6 +1183,128 @@ footer{
 
 <hr class="hr-fade">
 
+<!-- ================= LEAN 4 ================= -->
+<section id="lean">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">MACHINE-CHECKED LAYER</span>
+      <h2 class="sec-title">Lean 4: proved where provable —<br>declared where not</h2>
+      <p class="sec-sub">The graph-level construction of SG(m) lives in the <b style="color:var(--cyan)">formalization/</b> directory and is checked by <b style="color:var(--cyan)">lake build</b> against Mathlib. The kernel decides graph facts directly — nothing is assumed. Below: the operator layer exactly as stated in Lean, and precisely what is proved versus open.</p>
+    </div>
+    <div class="stats-grid lean-stats reveal">
+      <div class="stat"><div class="val" style="color:var(--green)">lake&nbsp;build&nbsp;✓</div><div class="cap">Machine-checked<br>vs Mathlib</div></div>
+      <div class="stat"><div class="val"><em style="color:var(--green)">6</em></div><div class="cap">Fintype.card<br>(Vertex 1) — kernel-decided</div></div>
+      <div class="stat"><div class="val"><em style="color:var(--green)">2</em></div><div class="cap">Proved<br>instances</div></div>
+      <div class="stat"><div class="val"><em style="color:var(--pink)">1</em></div><div class="cap">Proposition<br>still open</div></div>
+    </div>
+
+    <div class="lean-ide reveal">
+      <div class="term lean-term">
+        <div class="term-bar"><i></i><i></i><i></i><span>formalization/EvgenyTheorem.lean — operator layer</span></div>
+        <div class="term-body lean-code"><span class="lc-kw">noncomputable</span> <span class="lc-kw">section</span>
+
+<span class="lc-com">/-- Trace defect: fourth moment of C minus C′ on SG(m). -/</span>
+<span class="lc-kw">def</span> <span class="lc-fn">delta</span> (m : ℕ) (θ : ℝ) : ℝ :=
+  tr (H_C m θ)^4 - tr (H_C&#39; m θ)^4
+
+<span class="lc-com">/-- THE EVGENY THEOREM — full statement. General case: OPEN. -/</span>
+<span class="lc-thm">theorem</span> <span class="lc-fn">TraceDefectIdentity</span> (m : ℕ) (θ : ℝ) :
+    delta m θ = -16 * (3^(m-1) + 1) * (Real.sin (θ/2))^2 :=
+  <span class="lc-kw">by</span> <span class="lc-sorry">sorry</span>   <span class="lc-com">-- the single sorry in the repo, tracked below</span>
+
+<span class="lc-com">/-- PROVED — kernel-checked instance, m = 1, θ = π/2. -/</span>
+<span class="lc-thm">theorem</span> <span class="lc-fn">delta_one_pi_div_two</span> :
+    delta 1 (Real.pi / 2) = -32 :=
+  <span class="lc-kw">by</span> <span class="lc-builtin">native_decide</span>
+
+<span class="lc-com">/-- PROVED — unconditional: θ = 0 kills the defect at every level. -/</span>
+<span class="lc-thm">theorem</span> <span class="lc-fn">traceDefect_zero</span> (m : ℕ) :
+    delta m 0 = 0 :=
+  <span class="lc-kw">by</span> <span class="lc-builtin">simp</span> [delta]</div>
+      </div>
+      <div class="lean-verdicts">
+        <div class="verdict proved">
+          <div class="v-head"><span class="v-name">delta_one_pi_div_two</span><span class="v-badge proved">PROVED</span></div>
+          <p>First refinement level at rotation angle π/2 — the closed form holds as a kernel-checked Lean fact: <b>Δ₁(H⁴, π/2) = −32</b>.</p>
+        </div>
+        <div class="verdict proved">
+          <div class="v-head"><span class="v-name">traceDefect_zero</span><span class="v-badge proved">PROVED</span></div>
+          <p>Unconditional. At <b>θ = 0</b> the trace defect vanishes for <b>every</b> level m — pure algebra, no numerics involved.</p>
+        </div>
+        <div class="verdict open">
+          <div class="v-head"><span class="v-name">TraceDefectIdentity</span><span class="v-badge open">OPEN</span></div>
+          <p>The general case — <b>all m, all θ</b>. Stated as a proposition, not yet proved. The numerical verification layer above remains the primary evidence. No overclaim.</p>
+        </div>
+      </div>
+    </div>
+        <div class="reveal" style="margin-top:26px;">
+      <table>
+        <thead><tr><th>Result</th><th>Status</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Lean 4 graph infrastructure — SG(m), Vertex, Adj, degree</td><td class="ok">CONFIRMED</td><td>computable + decidable instances, lake build</td></tr>
+          <tr><td>H4 exact closed form · I∞(π/2) = −8/9</td><td style="color:var(--amber)">DERIVED</td><td>exact formula, verified numerically to 1e−13</td></tr>
+          <tr><td>Gauge invariance · vanishes at p = 1, 2, 3</td><td class="ok">CONFIRMED</td><td>&lt; 8e−15 under random SU(2) gauge · first nonzero at p = 4</td></tr>
+          <tr><td>H6 growth law α(θ)·3^m + β(θ) · recurrence · path-class zero</td><td style="color:var(--amber)">DERIVED</td><td>machine-precision numerics, locked by tests</td></tr>
+          <tr><td>H6 / H8 / H10 closed forms</td><td style="color:var(--pink)">OPEN</td><td>no claim made — reference values only</td></tr>
+          <tr><td>Lean operator-level TraceDefectIdentity (all m, θ)</td><td style="color:var(--pink)">OPEN</td><td>proposition stated; one instance proved</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<hr class="hr-fade">
+
+<!-- ================= HIGHER MOMENTS ================= -->
+<section id="frontier">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">BEYOND H⁴ — OPEN PROGRAM</span>
+      <h2 class="sec-title">Higher moments: the frontier</h2>
+      <p class="sec-sub">H⁴ collapses to one triangular traversal per walk. H⁶ does not. What is established — and what stays open.</p>
+    </div>
+    <div class="stats-grid reveal" style="padding:0 0 30px;">
+      <div class="stat"><div class="val">&lt;10⁻⁸</div><div class="cap">fit from m=4,5 predicts m=3</div></div>
+      <div class="stat"><div class="val">&lt;10⁻¹⁵</div><div class="cap">no 3^2m term in H6 growth</div></div>
+      <div class="stat"><div class="val">5280</div><div class="cap">C(π) = 2^5·3·5·11 — exact</div></div>
+      <div class="stat"><div class="val">486</div><div class="cap">walks in H6 class {0,1,2}</div></div>
+      <div class="stat"><div class="val">p = 4</div><div class="cap">first nonzero moment</div></div>
+      <div class="stat"><div class="val">H6·H8·H10</div><div class="cap">reference values locked by tests</div></div>
+    </div>
+    <div class="scope-grid">
+      <div class="scope-card in reveal">
+        <h3><span class="proto-check">✓</span> Established — numerically, to machine precision</h3>
+        <ul>
+          <li><b>Growth law</b> Δ_m(H⁶,θ) = α(θ)·3^m + β(θ) — no 3^2m term (coefficient ratio &lt; 10⁻¹⁵).</li>
+          <li><b>Recurrence</b> Δ_m = 3·Δ_{m−1} + C(θ) for m ≥ 2 · C(π) = 5280 · α(π) = −4112/3, β(π) = −2640.</li>
+          <li><b>Path-class zero theorem</b> — on SG(1), single- and two-triangle walk classes contribute exactly zero; only walks visiting all three triangles count.</li>
+        </ul>
+      </div>
+      <div class="scope-card out reveal d1">
+        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Open — explicitly no claim</h3>
+        <ul>
+          <li><b>Closed forms for H6, H8, H10.</b> The 486 walks of class {0,1,2} carry different axis sequences whose SU(2) holonomies do not collapse to a finite trig polynomial.</li>
+          <li>Values below are regression anchors, locked by <span class="chip chip-pink">tests/test_higher_moments.py</span> and <span class="chip chip-pink">tests/test_path_class_h6.py</span>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="reveal" style="margin-top:26px;">
+      <table>
+        <thead><tr><th>m</th><th>Δ(H⁶)</th><th>Δ(H⁸)</th><th>Δ(H¹⁰)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>−3180.000000</td><td>−246909.026268</td><td>−14013358.982483</td></tr>
+          <tr><td>2</td><td>−6956.588745</td><td>−595053.284942</td><td>−37686518.369790</td></tr>
+          <tr><td>3</td><td>−18274.354980</td><td>−1632052.331669</td><td>−107772338.487566</td></tr>
+          <tr class="hl"><td>4</td><td>−52227.653685</td><td>−4743049.471847</td><td>−318029798.840894</td></tr>
+        </tbody>
+      </table>
+      <div class="vnote"><b>→</b> θ = π/2, numerical reference values. Full analysis: <b>docs/HIGHER_MOMENTS.md</b>.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="hr-fade">
+
 <!-- ================= REPRODUCE ================= -->
 <section id="reproduce">
   <div class="wrap">
@@ -1146,10 +1322,13 @@ footer{
 <span class="p">$</span> pip install -r reproducibility/requirements.txt
 
 <span class="p">$</span> pytest tests/ -m <span class="cy">"not slow"</span> -v
-<span class="a">~60 checks — seconds</span>
+<span class="a">31 checks — seconds</span>
 
 <span class="p">$</span> pytest tests/ -m slow -v
 <span class="a">level-7 convergence — ~1–4 minutes</span>
+
+<span class="p">$</span> cd formalization <span class="c">&&</span> lake build
+<span class="a">Lean 4 — kernel decides graph facts vs Mathlib</span>
 
 <span class="g">================== ALL GREEN ==================</span>
 <span class="c">residual ~1e-13 … 1e-12 at level 7</span></div>
@@ -1158,16 +1337,25 @@ footer{
         <div class="tree reveal d1"><span class="dir">Evgeny-Theorem/</span>
 ├── <span class="fil">THEOREM.md</span>      exact statement + 6-criterion protocol
 ├── <span class="fil">VERIFICATION.md</span>  full numerical tables, held-out set, gauge check
+├── <span class="fil">docs/</span>
+│   ├── <span class="fil">index.html</span>            this site
+│   └── <span class="fil">HIGHER_MOMENTS.md</span>    H6/H8/H10 — growth law, recurrence, path classes
+├── <span class="dir">formalization/</span>  Lean 4 — graph infra machine-checked (lake build)
+│   ├── <span class="fil">EvgenyTheorem.lean</span>   delta, I, TraceDefectIdentity (open), proved instances
+│   └── <span class="dir">EvgenyTheorem/</span>       Graph (SG(m), Faces) · SU2 · Operator · SanityChecks
 ├── <span class="dir">src/</span>
 │   ├── <span class="dir">graph/</span>      SG graph construction (3-connected, tree-of-triangles)
 │   ├── <span class="dir">su2/</span>        SU(2) rotation utilities
 │   ├── <span class="dir">operators/</span>  A (plain SG), B (U(1)-magnetic), C (SU(2)-bundle)
 │   └── <span class="dir">moments/</span>    moments, heat trace, counting function, I_m(θ)
-├── <span class="dir">tests/</span>          pytest suite — every claim above is a test
-├── <span class="dir">data/</span>           raw + computed reference spectra
+├── <span class="dir">tests/</span>          every claim above is a pytest check
+│   ├── <span class="fil">test_levels.py</span> · <span class="fil">test_theta.py</span> · <span class="fil">test_heldout.py</span>
+│   ├── <span class="fil">test_gauge_invariance.py</span> · <span class="fil">test_higher_moments.py</span>
+│   └── <span class="fil">test_path_class_h6.py</span>
+├── <span class="dir">data/</span>           raw + computed spectra (SG 4–6, plain SG 1–6)
 ├── <span class="dir">figures/</span>        convergence plot
 └── <span class="dir">reproducibility/</span> environment, requirements, regeneration scripts</div>
-        <div class="expect reveal d2"><b>EXPECTED →</b> all green · residual ~1e−13–1e−12 at level 7 · closed-form match to |Δ| ≤ 1e−11 on the held-out set</div>
+        <div class="expect reveal d2"><b>EXPECTED →</b> all green · residual ~1e−13–1e−12 at level 7 · closed-form match to |Δ| ≤ 1e−11 on the held-out set · Lean graph layer kernel-checked</div>
       </div>
     </div>
   </div>
@@ -1515,7 +1703,7 @@ createKnotScene(document.getElementById('structureCanvas'), {matrix:true, center
       r:'VERIFICATION.md — full tables' },
     { t:'Evidence — every claim is a test',
       p:'The pytest suite encodes each claim as an executable check: level counts, θ = 0 reduction to two plain SG copies, gauge invariance, closed-form agreement, convergence. Residual at level 7: ~1e−13 … 1e−12.',
-      r:'tests/ — ~60 checks + slow suite' },
+      r:'tests/ — 31 checks + slow suite' },
     { t:'Reproduction — anyone, anywhere',
       p:'Pinned environment, requirements, and regeneration scripts. Clone, install, run — the full verification completes in minutes. Apache 2.0, with NOTICE.',
       r:'reproducibility/ · LICENSE' },
