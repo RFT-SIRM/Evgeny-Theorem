@@ -27,7 +27,7 @@ for every triangle -- exactly two decoupled U(1) magnetic Laplacians.
 The fourth spectral-moment defect
 
 $$
-\Delta_m(H^4, \theta) = \operatorname{Tr}(H_C^4) - \operatorname{Tr}(H_{C'}^4)
+\Delta_m(H^4, \theta) = \mathrm{Tr}(H_C^4) - \mathrm{Tr}(H_{C'}^4)
 $$
 
 satisfies the **exact closed form**
@@ -118,7 +118,7 @@ and `Adj.decidable` let Lean's kernel decide graph facts directly
 by `lake build` against Mathlib.
 
 What this does *not* yet cover: the operator-level identity connecting
-$\operatorname{Tr}(H_C^4) - \operatorname{Tr}(H_{C'}^4)$ to the closed
+$\mathrm{Tr}(H_C^4) - \mathrm{Tr}(H_{C'}^4)$ to the closed
 form above is stated in `EvgenyTheorem.lean` as `TraceDefectIdentity`, a
 proposition, together with one proved instance (`delta_one_pi_div_two`,
 the $m=1$, $\theta=\pi/2$ case) and the unconditional lemma
