@@ -165,3 +165,44 @@ checked fact rather than a guess — but the correction has not been carried
 through the `(H^4)_{vv}` sum, and doing so, recursively, is what §4.2
 still asks for. Left here so the next attempt starts from a specific edge,
 not from scratch.
+
+
+## 6. Hypotheses tested and ruled out
+
+Logged here so the next attempt at §4.2 does not re-spend time on these.
+All four were checked directly against exact per-vertex data (not assumed):
+
+1. **"The local `T1,T2,T3` picture alone determines the outcome."** False.
+   `v=1` (level 3, FF type, generic `-8sin²(θ/2)`) and `v=11` (level 3, FF
+   type, bad `0`) have an *identical* `T1,T2,T3` structure: same
+   flux/identity assignment on every edge of all three triangles, and in
+   both cases the cross-adjacent edge (§5) is the third triangle's flux
+   edge. Since the outcomes differ anyway, whatever drives the split is
+   not visible at the `T1,T2,T3` level alone — it must come from further
+   out, even though naively `(H^4)_{vv}` only needs `(H²)` restricted to
+   `v`'s closed neighborhood.
+2. **"It's about a corner (degree 2) sitting where a generic degree-4
+   vertex was assumed."** False as the deciding factor. `v=1`'s own `a`
+   *is* a degree-2 corner and `v=11`'s is degree 4, yet both cases were
+   compared as the example in (1) precisely to control for this — the
+   split persists independent of it. (Separately confirmed at level 4:
+   corner-adjacency occurs on both "generic" and "bad" prefixes.)
+3. **"`a` and `c` (the two triangles' own vertices) share a hidden common
+   neighbor beyond `v`, breaking the `EXACT_VERIFICATION.md` §3 formula a
+   second time."** Checked exhaustively for all 243 sibling vertices at
+   level 5: zero such coincidences, in either generic or bad cases.
+4. **"`e` (§5's third vertex) is itself a fresh sibling vertex at a
+   deeper prefix, and its own good/bad status feeds back into `v`'s."**
+   Checked at levels 3 and 4: `e` is always a "deep" vertex in the
+   `EXACT_VERIFICATION.md` §4 sense (never itself sibling-type), so this
+   specific feedback path doesn't exist as stated.
+
+**What's left, restated precisely:** something at distance greater than 2
+from `v` (beyond `T1 ∪ T2 ∪ T3 ∪ {e}`) must still influence
+`(H^4)_{vv}` despite `(H^4)_{vv}` formally only requiring `(H²)` on `v`'s
+closed neighborhood — which means the error is more likely in how one of
+the §3/§5 `(H²)` formulas was extended to this setting than in a missing
+graph-distance-4 vertex. The next step should be re-deriving `(H²)_{a,d}`,
+`(H²)_{b,c}` and `(H²)_{b,d}` from scratch for this exact configuration,
+checking every summand against the `v=1` vs `v=11` example above term by
+term, rather than searching for new hypotheses.
