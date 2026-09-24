@@ -182,3 +182,38 @@ def test_bad_prefix_count_matches_closed_form():
             if automaton_predict(p) == "bad"
         )
         assert bad == (3**L - 1) // 2, L
+
+
+def test_third_sibling_always_creates_cross_adjacency():
+    """Documents the mechanism behind the split (see docs/SPLIT_AUTOMATON.md
+    section 5): for every sibling vertex v with triangles T1={v,a,b} and
+    T2={v,c,d}, the third sibling triangle (sharing v's prefix but not
+    touching v) always contains exactly one of {a,b} and one of {c,d} --
+    so one of {a,b} is always directly adjacent to one of {c,d}. This is
+    the assumption that EXACT_VERIFICATION.md section 3's generic formula
+    silently relies on being FALSE for every sibling vertex (not only the
+    "bad" ones), which is why that formula alone is not the whole story."""
+    for level in [2, 3, 4]:
+        _, E, faces = sg_tree_graph_with_faces(level)
+        adj = {}
+        for a, b in E:
+            adj.setdefault(a, set()).add(b)
+            adj.setdefault(b, set()).add(a)
+        n = max(max(f) for f in faces) + 1
+        incident = {i: [] for i in range(n)}
+        for idx, (a, b, c) in enumerate(faces):
+            incident[a].append(idx)
+            incident[b].append(idx)
+            incident[c].append(idx)
+
+        checked = 0
+        for v, prefix in _sibling_vertices_with_prefix(level):
+            f1, f2 = incident[v]
+            others1 = [x for x in faces[f1] if x != v]
+            others2 = [x for x in faces[f2] if x != v]
+            cross = [
+                (p, q) for p in others1 for q in others2 if q in adj[p]
+            ]
+            assert len(cross) == 1, (level, v, others1, others2, cross)
+            checked += 1
+        assert checked == 3 * 3 ** (level - 1)

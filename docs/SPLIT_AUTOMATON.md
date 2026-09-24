@@ -138,3 +138,30 @@ a Lean-checked proof — that translation is separate work, tracked in
 pytest tests/test_split_automaton.py -v             # m=2,3, seconds
 pytest tests/test_split_automaton.py -v -m slow      # m=4,5, ~10s
 ```
+
+
+## 5. Where the correction actually comes from (partial progress on §4.2)
+
+`EXACT_VERIFICATION.md` §3 derived `(H²)_{a,c} = U(a,v)·U(v,c)` for `a` in
+`v`'s triangle `T1 = {v,a,b}` and `c` in `v`'s other triangle `T2 = {v,c,d}`,
+assuming `a` and `c` share no common neighbor besides `v`. **For every
+sibling vertex this assumption is false, not just for the "bad" ones:**
+the third sibling triangle (the one not touching `v`) is always made up of
+exactly one of `{a,b}` and one of `{c,d}` — so that one of `{a,b}` and one
+of `{c,d}` are always directly adjacent to each other, via an edge of that
+third triangle. Checked on every one of the 117 sibling instances from §2,
+no exceptions. So the true `(H²)` cross-term
+has an extra summand through that edge, using the *third* triangle's own
+edge matrix. For the FF-type vertex specifically, that shared edge is the
+third triangle's **flux edge** (carries the rotation); for OF₀/OF₁ it is
+one of its **identity** edges instead — a difference confirmed computationally
+but not yet reconciled into one formula (both types obey the *same*
+automaton, so whatever the correction is, it must reduce to the same
+good/bad answer either way).
+
+This identifies exactly *where* the extra term standing between the
+current derivation and a full induction proof comes from — a concrete,
+checked fact rather than a guess — but the correction has not been carried
+through the `(H^4)_{vv}` sum, and doing so, recursively, is what §4.2
+still asks for. Left here so the next attempt starts from a specific edge,
+not from scratch.
