@@ -7,9 +7,11 @@ the H⁴ trace-defect closed form in [THEOREM.md](THEOREM.md) holds *exactly*
 for `m = 1..7`, and a specific local mechanism that explains *why* the
 identity holds is derived and confirmed.
 
-**Not established:** a proof for general `m`. There is a genuine, identified
-gap (below), and no Lean proof of the operator-level identity exists yet
-(see `formalization/README.md`).
+**Not established:** a proof for general `m`. §4 below identifies a specific
+gap; [`SPLIT_AUTOMATON.md`](SPLIT_AUTOMATON.md) gives an exact rule for it
+(verified exhaustively, not yet proved by induction) and shows that rule
+algebraically reproduces the closed form for general `m`. No Lean proof of
+the operator-level identity exists yet (see `formalization/README.md`).
 
 This note does not change the status of anything in `THEOREM.md`.
 
@@ -123,12 +125,13 @@ values happen to sum correctly, but the *rule* for which instances get
 which value — as a function of `m` and position, for all `m` — is not
 yet identified.
 
-**This is the concrete remaining gap for a hand proof covering all `m`.**
-Closing it looks tractable (finitely many local patterns, self-similar
-structure, a bounded amount of extra context should pin it down) but is a
-distinct piece of work from anything else in this repository, and is a
-prerequisite for the harder job of writing the corresponding Lean proof
-for `TraceDefectIdentity` (`formalization/EvgenyTheorem.lean`).
+**Update:** the exact rule behind this split has since been found and
+verified exhaustively (360 instances, `m` up to 5, zero exceptions) — see
+[`SPLIT_AUTOMATON.md`](SPLIT_AUTOMATON.md), which also shows it
+algebraically reproduces `Δ_m(θ)` for general `m`. What's left is an
+induction proof of that rule itself (not yet done) and, after that, the
+Lean translation for `TraceDefectIdentity`
+(`formalization/EvgenyTheorem.lean`).
 
 ## Reproduce
 
