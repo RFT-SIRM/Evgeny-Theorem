@@ -2,22 +2,31 @@
 
 ## Status
 
-**Exactly verified (symbolic, zero exceptions):** a 3-state automaton that
-predicts, for every FF/OF0/OF1-type vertex, whether its local contribution
-is the generic `-8 sin²(θ/2)` or exactly `0`. Checked against direct exact
-computation for **every** relevant vertex at `m = 2, 3, 4, 5` — 360
-instances, 0 mismatches (`tests/test_split_automaton.py`).
+**Resolved (§7): the sibling-vertex value is a bounded, local formula.**
+Sections 2-6 found and exhaustively verified a 3-state automaton reading a
+vertex's shared prefix, without being able to explain from the operator
+algebra why the dependence should be unbounded. §7 shows that dependence
+was an artifact of an incompletely specified formula, not a real feature
+of the operator algebra: correctly handling `operators.py`'s min/max
+edge-direction convention (§7) makes `(H^4)_{vv}` for *any* sibling vertex
+computable from six vertices — `T1`, `T2`, and the third sibling triangle
+`T3` alone — with **zero exceptions across all 117 sibling instances at
+m = 2, 3, 4** (`tests/test_bounded_formula.py`). The automaton (§2) and this
+bounded formula agree exactly everywhere checked; the bounded formula is
+now the primary, explained result, and the automaton stands as an exactly
+-verified corollary of it.
 
-**Established given that rule:** an exact algebraic re-derivation of the
-full closed form `Δ_m(θ) = -16(3^(m-1)+1) sin²(θ/2)` **for general `m`**,
-by counting how many vertices of each type land on which side of the
-automaton (§3 below) — not merely checked for specific `m`.
+**Established:** an exact algebraic re-derivation of the full closed form
+`Δ_m(θ) = -16(3^(m-1)+1) sin²(θ/2)` **for general `m`** (§3), by counting
+how many vertices of each type land on which side of the automaton.
 
-**Not yet established:** an inductive proof that the automaton rule itself
-holds for *every* `m` (as opposed to: verified exhaustively at 4 different
-sizes). This is now a precisely stated, narrow, well-evidenced combinatorial
-claim rather than an open-ended mystery — see §4 for exactly what's left
-and why it looks tractable. No Lean proof exists yet either way.
+**Not yet established:** §7 still leaves one finite, concrete question open
+— an explicit combinatorial rule (from the recursive graph construction
+alone, not by querying integer vertex labels) for which of each edge's two
+endpoints gets the smaller index, since that determines the Hermitian
+-conjugate direction. This is now a fact about `sg_tree_graph_with_faces`'s
+own labeling order, not a mystery about the SU(2) operator identity — see
+§7 for exactly what's left. No Lean proof exists yet.
 
 This builds directly on [`EXACT_VERIFICATION.md`](EXACT_VERIFICATION.md)
 §3–4 and uses its notation (types FF, FO₀, FO₁, OF₀, OF₁; roles `flux`/`opp`;
@@ -206,3 +215,73 @@ graph-distance-4 vertex. The next step should be re-deriving `(H²)_{a,d}`,
 `(H²)_{b,c}` and `(H²)_{b,d}` from scratch for this exact configuration,
 checking every summand against the `v=1` vs `v=11` example above term by
 term, rather than searching for new hypotheses.
+
+
+## 7. The bounded formula: where the "unbounded" dependence actually went
+
+§6 ruled out four hypotheses by comparing `v=1` (level 3, generic) and
+`v=11` (level 3, bad) — two sibling vertices with an *identical* `T1,T2,T3`
+picture (same flux/identity assignment on every edge, same "is the cross
+-edge T3's flux edge" answer) but different outcomes. That comparison
+seemed to prove the split couldn't be local. It doesn't — it proves an
+earlier hand-expansion of the `(H²)` cross-terms was incomplete.
+
+`operators.py` stores one SU(2) matrix per edge, for the
+`(min(x,y), max(x,y))` direction; `H` uses its Hermitian conjugate for the
+reverse direction. The `(H²)` formulas in §3 and §5 were written without
+tracking which direction each edge matrix (`U(v,a)`, `U(a,b)`, `U(b,d)`,
+etc.) actually corresponded to. Redone with that tracked explicitly —
+`U_{x,y} = U_{\text{edge}}` if `x < y`, else `U_{\text{edge}}^\dagger` —
+the full set of formulas becomes:
+
+```
+(H²)_{v,v} = deg(v)² + deg(v)                         [same as §3]
+(H²)_{a,a}, (H²)_{b,b}, (H²)_{c,c}, (H²)_{d,d}          analogous
+(H²)_{v,a} = -deg(v)U_{v,a} - deg(a)U_{v,a} + U_{v,b}·U_{b,a}
+(H²)_{v,b} = -deg(v)U_{v,b} - deg(b)U_{v,b} + U_{v,a}·U_{a,b}
+(H²)_{v,c} = -deg(v)U_{v,c} - deg(c)U_{v,c} + U_{v,d}·U_{d,c}
+(H²)_{v,d} = -deg(v)U_{v,d} - deg(d)U_{v,d} + U_{v,c}·U_{c,d}
+(H²)_{a,b} = U_{a,v}·U_{v,b} - (deg(a)+deg(b))U_{a,b}
+(H²)_{c,d} = U_{c,v}·U_{v,d} - (deg(c)+deg(d))U_{c,d}
+(H²)_{a,c} = U_{a,v}·U_{v,c}
+(H²)_{a,d} = U_{a,v}·U_{v,d} + U_{a,b}·U_{b,d}
+(H²)_{b,c} = U_{b,v}·U_{v,c} + U_{b,d}·U_{d,c}
+(H²)_{b,d} = U_{b,v}·U_{v,d} + U_{b,e}·U_{e,d} - (deg(b)+deg(d))U_{b,d}
+```
+
+with every `U_{x,y}` on the right meaning "the edge's stored matrix, or its
+dagger, according to whether `x<y`" — and
+
+```
+(H^4)_{vv} = Σ_{x1,x3 ∈ {v,a,b,c,d}} H_{v,x1}·(H²)_{x1,x3}·H_{x3,v}
+```
+
+**This bounded, six-vertex (`v,a,b,c,d,e`) formula, using only `T1`, `T2`,
+`T3` and the real degrees of `v,a,b,c,d`, exactly reproduces the true value
+for every sibling vertex checked** — all 117 instances at `m = 2, 3, 4`,
+zero exceptions (`tests/test_bounded_formula.py`). It correctly gives
+`-8sin²(θ/2)` for `v=1` and exactly `0` for `v=11`, using their (identical
+-looking) `T1,T2,T3` data — the difference comes entirely from which
+vertex of each pair (`v` vs `a`, `v` vs `b`, `v` vs `d`, `b` vs `d`, ...)
+happens to carry the smaller integer label, which flips a dagger.
+
+**What this resolves:** the "arbitrarily deep prefix" dependence in §2's
+automaton is not a real feature of the SU(2)/trace identity — it was this
+repository's own incomplete bookkeeping surfacing as apparent recursion.
+The true dependence is local (bounded by `T1 ∪ T2 ∪ T3`); the automaton
+(§2) remains an exactly-verified *description* of the outcome, now
+explained rather than mysterious.
+
+**What's still open, precisely:** a closed statement of which endpoint of
+each relevant edge gets the smaller label, derived from the recursive
+definition of `sg_tree_graph_with_faces` itself (vertex-dictionary
+insertion order across the three shifted copies at each recursive step),
+rather than by constructing the graph and comparing integers. Checked
+across all 81 level-4 sibling instances: `v < c` and `b < d` held in
+*every* case; `v` vs `a`, `v` vs `b`, and `v` vs `d` each went both ways
+(4 distinct patterns observed). This is a finite fact about a Python
+function's labeling order — tractable by reading `sg_tree_graph_with_faces`
+and `one_step`'s vertex-dictionary construction directly — not a further
+open question about the operator identity itself. Once stated, it
+completes the hand proof of `TraceDefectIdentity` for all `m`; Lean
+formalization would still be separate work after that.
