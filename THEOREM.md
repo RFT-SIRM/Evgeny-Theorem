@@ -21,7 +21,7 @@ Let `Δ_m(H⁴, θ) = Tr(H_C⁴) − Tr(H_C'⁴)`.
 
 exactly, for every tested `(m, θ)` pair, to numerical precision better than `1e-9` (small `m`) down to `1e-6` (`m=7`, dim 6564). See `VERIFICATION.md`.
 
-This has also been checked as an *exact* computer-algebra identity (no floating point, no tolerance) for `m = 1..7`, and the local mechanism behind it is derived, in [docs/EXACT_VERIFICATION.md](docs/EXACT_VERIFICATION.md). That note also states the specific, still-open gap standing between this and a proof for general `m`.
+This has also been checked as an *exact* computer-algebra identity (no floating point, no tolerance) for `m = 1..7`, with the local mechanism behind it derived in [docs/EXACT_VERIFICATION.md](docs/EXACT_VERIFICATION.md) and [docs/SPLIT_AUTOMATON.md](docs/SPLIT_AUTOMATON.md). [docs/PROOF.md](docs/PROOF.md) assembles these into a complete hand proof of this identity for every `m`, not only the tested range — still short of a Lean-checked proof (`formalization/README.md`).
 
 Normalizing by `dim(H) = 2n(m) = 3^(m+1) + 3` gives the intensive invariant:
 
