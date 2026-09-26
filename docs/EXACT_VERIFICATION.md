@@ -7,11 +7,12 @@ the H⁴ trace-defect closed form in [THEOREM.md](THEOREM.md) holds *exactly*
 for `m = 1..7`, and a specific local mechanism that explains *why* the
 identity holds is derived and confirmed.
 
-**Not established:** a proof for general `m`. §4 below identifies a specific
-gap; [`SPLIT_AUTOMATON.md`](SPLIT_AUTOMATON.md) gives an exact rule for it
-(verified exhaustively, not yet proved by induction) and shows that rule
-algebraically reproduces the closed form for general `m`. No Lean proof of
-the operator-level identity exists yet (see `formalization/README.md`).
+**Now established (see [`PROOF.md`](PROOF.md)):** a complete hand proof for
+general `m`. §4 below identifies the gap this note originally left open;
+[`SPLIT_AUTOMATON.md`](SPLIT_AUTOMATON.md) resolves it completely (§7–§9),
+and [`PROOF.md`](PROOF.md) assembles everything into one induction on `m`.
+No Lean proof of the operator-level identity exists yet (see
+`formalization/README.md`) — that remains the only missing piece.
 
 This note does not change the status of anything in `THEOREM.md`.
 
