@@ -1,4 +1,10 @@
-import Mathlib
+import Mathlib.Data.Matrix.Basic
+import Mathlib.LinearAlgebra.Matrix.Trace
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Data.Complex.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-! SU(2) connection matrices and Pauli-matrix identities for the spectral-moment formalization. -/
 

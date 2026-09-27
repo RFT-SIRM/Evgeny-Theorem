@@ -1,7 +1,13 @@
 import EvgenyTheorem.Graph.Sierpinski
 import EvgenyTheorem.SanityChecks
 import EvgenyTheorem.SU2
-import Mathlib
+import Mathlib.Data.Matrix.Basic
+import Mathlib.LinearAlgebra.Matrix.Trace
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Data.Complex.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 namespace EvgenyTheorem
 
