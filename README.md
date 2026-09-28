@@ -188,7 +188,10 @@ Evgeny-Theorem/
 ├── THEOREM.md
 ├── VERIFICATION.md
 ├── docs/
-│   └── HIGHER_MOMENTS.md
+│   ├── HIGHER_MOMENTS.md
+│   ├── EXACT_VERIFICATION.md   exact (symbolic) verification for m=1..7; locality mechanism
+│   ├── SPLIT_AUTOMATON.md      the sibling-vertex split: rule, mechanism, recursion
+│   └── PROOF.md                hand proof of the identity for all m (not Lean-checked)
 ├── formalization/              Lean 4 formalization (graph-level infrastructure)
 │   ├── EvgenyTheorem.lean      delta, I, TraceDefectIdentity (scaffold), delta_one_pi_div_two
 │   └── EvgenyTheorem/
@@ -197,7 +200,8 @@ Evgeny-Theorem/
 │       │   └── Faces.lean      triangular faces, flux edges, axis assignment
 │       ├── SU2.lean            Pauli matrices, SU(2) rotations
 │       ├── Operator.lean       HC, HC', traceDefect, traceDefect_zero
-│       └── SanityChecks.lean   decidable graph-level checks (degrees, vertex counts)
+│       ├── SanityChecks.lean   decidable graph-level checks (degrees, vertex counts; levels 1-3)
+│       └── SanityChecksLevel4.lean  same checks at level 4 (slow, not in the default build)
 ├── src/
 │   ├── graph/
 │   ├── su2/
@@ -209,7 +213,12 @@ Evgeny-Theorem/
 │   ├── test_heldout.py
 │   ├── test_gauge_invariance.py
 │   ├── test_higher_moments.py
-│   └── test_path_class_h6.py
+│   ├── test_path_class_h6.py
+│   ├── test_exact_symbolic.py       exact symbolic check of the closed form, m=1..7
+│   ├── test_split_automaton.py      the sibling-vertex split rule
+│   ├── test_bounded_formula.py      bounded 6-vertex local formula
+│   ├── test_history_automaton.py    split rule from the vertex construction history
+│   └── test_recursion_mechanism.py  why the recursion's additive constant is fixed
 ├── data/
 ├── figures/
 └── reproducibility/
