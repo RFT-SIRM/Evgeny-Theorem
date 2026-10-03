@@ -38,12 +38,14 @@ edges, zero diagonal). `s = sin(θ/2)`, `c = cos(θ/2)`. `H'`, `A'`: all flux ax
 
 | # | Statement | Where | Difficulty |
 |---|---|---|---|
-| L1 | Algebraic reduction 1–3 for a finite graph with unitary edge blocks (abstract, no `SG`) | new `Reduction.lean` | medium |
+| L1a | `Tr((D−A)⁴) = Tr D⁴ − 4Tr D³A + 4Tr D²A² + 2Tr DADA − 4Tr DA³ + Tr A⁴` (noncommutative expansion + cyclicity of trace) | `Reduction.lean` | easy |
+| L1b | `Tr D³A = 0`, `Tr D²A²`, `Tr DADA` coincide for `H`, `H'`: needs `(A²)_{vv} = deg(v)·1` for general `m` (unitarity + `Adj_symm`) | `Reduction.lean` | medium |
+| L1c | `Tr DA³` coincides for `H`, `H'`: every 3-cycle of `SG(m)` has at most one flux edge, so its holonomy trace is `2c`. **Depends on L2.** | `Rhombi.lean` | hard |
 | L2 | Combinatorics of `SG(m)`: ≤ 2 common neighbours; rhombus ⇔ pair with 2; the flux-carrying rhombi are exactly `X–Z`, `Y–Z` per cell | new `Rhombi.lean`, induction on `EdgeB` | **hard** |
 | L3 | Holonomy traces of the two flux rhombus types (finite computation, like `Algebra.lean`) | extend `Algebra.lean` | easy |
 | L4 | Geometric version: `Δ_m = −32·3^(m−1) s²` from L1–L3 | new `Geometric.lean` | medium |
 | L5 | `#{k : index(face[0]) > index(face[1])} = (3^(m−1)−1)/2`, all `k ≡ 1 mod 3`, using `vertexOrder` (`Orientation.lean`) | new `FlipCount.lean`, induction with `eraseDups` | **hard** (new combinatorics) |
 | L6 | Assemble L4 + L5 into `traceDefect m θ = −16(3^(m−1)+1) s²` | new `Main.lean` | easy |
 
-L1, L3, L4 give a complete Lean proof of the geometric closed form; L5 is what the
+L1a–c, L3, L4 give a complete Lean proof of the geometric closed form; L5 is what the
 index-orientation formula additionally needs.
