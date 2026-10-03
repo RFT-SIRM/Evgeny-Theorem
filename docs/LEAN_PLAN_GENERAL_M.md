@@ -34,6 +34,26 @@ edges, zero diagonal). `s = sin(θ/2)`, `c = cos(θ/2)`. `H'`, `A'`: all flux ax
    `Δ_m = −32 s² (3^(m−1) − F_m) = −16 (3^(m−1)+1) s²`, and `F_{m+1} = 3F_m + 1` is exactly
    `Δ_{m+1} = 3Δ_m + 32 s²` of `PROOF.md`.
 
+## Proof idea for L5 (derived from `vertexOrder`; numbers checked, **not yet in Lean**)
+
+`vertexOrder (m+1) = eraseDups (P ++ shiftB P ++ shiftC P)`, `P = vertexOrder m`. Consequences:
+
+* **Copy A**: its vertices are the prefix of the list, in the old order, so a face of copy A is
+  flipped iff it is flipped at level `m`. Contribution `F_m`.
+* **Copy B**: the only removed duplicate is the local corner `(0,0)` (local index 0, smallest),
+  so the relative order of any two B-vertices is the old one. Contribution `F_m`.
+* **Copy C**: two removed duplicates, local corners `(0,0)` (lies in part A) and `(2^m,0)` (lies in
+  part B). Both precede all new C-vertices. Relative order changes only for an edge with an endpoint at
+  the local corner `(2^m,0)`; the corner roles say that this corner is the *second* endpoint `f1` of
+  its flux edge, whose first endpoint is a new C-vertex, so exactly one face becomes flipped.
+  Contribution `F_m + 1`.
+
+Hence `F_{m+1} = 3F_m + 1`, `F_1 = 0`, so `F_m = (3^(m−1)−1)/2`. Checked: flips split as
+`(F_{m−1}, F_{m−1}, F_{m−1}+1)` over the three copies for `m = 2..7`; the corner roles are
+`(0,0)=f0`, `(2^m,0)=f1`, `(0,2^m)` not a flux endpoint for `m = 1..5`
+(`tests/general_m_structure_check.py`). The corner roles themselves (PROOF.md §4.1) still need a
+proof by induction on `EdgeB`/`facesExact`; this is the first sub-lemma of L5.
+
 ## Lean targets (in this order)
 
 | # | Statement | Where | Difficulty |
