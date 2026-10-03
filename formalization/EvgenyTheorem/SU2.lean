@@ -109,6 +109,39 @@ theorem su2Rotation_inverse (σ : Matrix C2 C2 ℂ)
   norm_num
 
 
+
+/-! ### Unitarity building blocks
+
+`su2Rotation σ θ` is unitary for `σ ∈ {pauliX, pauliY, pauliZ}`: its
+conjugate transpose equals `su2Rotation σ (-θ)`, which combined with
+`su2Rotation_inverse` gives `U * Uᴴ = 1`. This is the operator-level fact
+underlying `docs/EXACT_VERIFICATION.md` §3 and `docs/PROOF.md` §3 — every
+edge matrix in the construction is unitary. -/
+
+theorem su2Rotation_pauliX_conjTranspose (θ : ℝ) :
+    (su2Rotation pauliX θ)ᴴ = su2Rotation pauliX (-θ) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [su2Rotation, pauliX, Matrix.conjTranspose_apply, Matrix.smul_apply,
+      Complex.star_def, ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg, Complex.ofReal_neg] <;> ring
+
+theorem su2Rotation_pauliY_conjTranspose (θ : ℝ) :
+    (su2Rotation pauliY θ)ᴴ = su2Rotation pauliY (-θ) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [su2Rotation, pauliY, Matrix.conjTranspose_apply, Matrix.smul_apply,
+      Complex.star_def, ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg, Complex.ofReal_neg] <;> ring
+
+theorem su2Rotation_pauliZ_conjTranspose (θ : ℝ) :
+    (su2Rotation pauliZ θ)ᴴ = su2Rotation pauliZ (-θ) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [su2Rotation, pauliZ, Matrix.conjTranspose_apply, Matrix.smul_apply,
+      Complex.star_def, ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg, Complex.ofReal_neg] <;> ring
+
 end EvgenyTheorem
 
 

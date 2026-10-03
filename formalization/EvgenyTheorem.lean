@@ -1,6 +1,12 @@
 import EvgenyTheorem.Graph.Sierpinski
 import EvgenyTheorem.SanityChecks
 import EvgenyTheorem.SU2
+import EvgenyTheorem.Operator
+import EvgenyTheorem.Locality
+import EvgenyTheorem.Orientation
+import EvgenyTheorem.Algebra
+import EvgenyTheorem.Setup
+import EvgenyTheorem.BaseCaseTheorem
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Analysis.Complex.Trigonometric

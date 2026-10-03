@@ -1,4 +1,5 @@
 import EvgenyTheorem.Graph.Faces
+import EvgenyTheorem.Orientation
 import EvgenyTheorem.SU2
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
@@ -100,7 +101,7 @@ noncomputable def connectionOperatorWithAxis
       let pv : Point := (v.1.1.1, v.1.1.2)
       let e : Point × Point := if pu ≤ pv then (pu, pv) else (pv, pu)
       let U := edgeUnitaryWithAxis m θ axisOfIndex e
-      if pu ≤ pv then
+      if vIdx m pu ≤ vIdx m pv then
         -U u.2 v.2
       else
         -Uᴴ u.2 v.2
@@ -149,5 +150,20 @@ theorem traceDefect_zero (m : ℕ) :
   rw [show HC m 0 = HCprime m 0 from
     connectionOperatorWithAxis_zero_eq m faceAxis (fun _ => 2)]
   ring
+
+
+/-- Every `axisRotation` (the SU(2) matrix attached to a flux edge, for
+any of the three axes) is unitary. The key operator-level fact behind
+`docs/EXACT_VERIFICATION.md` §3 and `docs/PROOF.md` §3: it is exactly
+what makes the `(H²)` diagonal/cross-term formulas there depend only on
+local data (degrees and a vertex's own one or two triangles), since every
+`Σ_{neighbor} U U†`-style sum collapses via this to a multiple of `1`. -/
+theorem axisRotation_unitary (a : Axis) (θ : ℝ) :
+    axisRotation a θ * (axisRotation a θ)ᴴ = 1 := by
+  fin_cases a <;>
+    simp only [axisRotation, axisPauli] <;>
+    [rw [su2Rotation_pauliX_conjTranspose, su2Rotation_inverse pauliX pauliX_sq];
+     rw [su2Rotation_pauliY_conjTranspose, su2Rotation_inverse pauliY pauliY_sq];
+     rw [su2Rotation_pauliZ_conjTranspose, su2Rotation_inverse pauliZ pauliZ_sq]]
 
 end EvgenyTheorem
