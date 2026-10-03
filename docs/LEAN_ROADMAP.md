@@ -14,18 +14,46 @@ kernel-checked `decide` (only the standard `propext`/`Classical.choice`/
 `Quot.sound` axioms — confirmed with `#print axioms`). This is the
 `m`-fixed, decidable half of [`PROOF.md`](PROOF.md) §4.1's claim.
 
-**Not yet started in Lean:** everything else in `PROOF.md` — the base
-case (§2), the locality lemma (§3), the *general-`m`* versions of §4.1–4.3
-(all currently only hand-proved + checked at small `m`, not formalized),
-and the assembly (§5). None of this involves `sorry`; it simply hasn't
-been written yet.
+**Also proved: full unitarity, for every axis and every `m`.**
+`axisRotation_unitary` (`Operator.lean`) — `U * Uᴴ = 1` for every rotation
+the construction uses, for any axis and any `θ`. Built from three new
+lemmas in `SU2.lean` (`su2Rotation_pauli{X,Y,Z}_conjTranspose`) combined
+with the pre-existing `su2Rotation_inverse`. This is the single fact that
+makes every `(H²)` formula in `PROOF.md` §3 / `SPLIT_AUTOMATON.md` §7 go
+through (every `Σ U U†`-style sum collapses to a multiple of `1`) — it is
+*not* `m`-dependent, so unlike the degree-count theorems this one already
+covers the general case, not just small `m`. Confirmed with `#print axioms`
+(standard axioms only).
+
+**Also proved: the base case (PROOF.md §2), `m = 1`, all `θ`.**
+`traceDefect_one` (`BaseCaseTheorem.lean`):
+`traceDefect 1 θ = -32 * (sin (θ/2))^2` (in `ℂ`), for the actual operators
+`HC 1 θ` / `HCprime 1 θ`. Kernel-checked, no `sorry`; `#print axioms` shows
+only `propext`, `Classical.choice`, `Quot.sound`. Structure of the proof:
+`Algebra.lean` (explicit 12x12 matrices in `c, s, I`, their squares, and the
+identity `Tr(H^4) - Tr(H'^4) = -32 s^2` using only `I^2 = -1`),
+`Setup.lean` (`traceDefect` -> plain trace bridge, trace of 4th power under
+an equivalence, `eqv12`), `BaseCaseTheorem.lean` (the 144 matrix entries of
+`HC 1 θ` / `HCprime 1 θ` in the `eqv12` basis, then assembly).
+
+**Important convention fix (`Orientation.lean`).** In `connectionOperatorWithAxis`
+the edge direction (`-U` vs `-Uᴴ`) is now decided by `vIdx m` -- the vertex
+creation order of `sg_graph.py` (`one_step`) -- instead of the coordinate order
+`pu ≤ pv`. For `m = 1` the two coincide. For `m ≥ 2` they do not: with coordinate
+orientation the closed form `-16(3^(m-1)+1) sin^2(θ/2)` is NOT reproduced
+(checked numerically at m = 2, 3), with index orientation it is (m = 1, 2, 3).
+
+**Not yet started in Lean:** the locality block formulas for `(H²)` (§3; the
+unitarity lemmas in `Locality.lean` are the input), the *general-`m`* versions of
+§4.1-4.3 (the degree facts above are only checked at small `m`), and the assembly
+(§5). None of this involves `sorry`; it simply hasn't been written yet.
 
 ## Map: `PROOF.md` section → Lean target
 
 | `PROOF.md` | What it says | Lean status | Where it would go |
 |---|---|---|---|
-| §2 Base case | `Δ_1(θ) = −32 sin²(θ/2)` | Not started. `traceDefect_zero` (θ=0 only) exists in `Operator.lean`; general θ needs expanding a 12×12 matrix product symbolically. | New theorem in `Operator.lean` or a new `BaseCase.lean`, e.g. `theorem traceDefect_one (θ : ℝ) : traceDefect 1 θ = -32 * (Real.sin (θ/2))^2` |
-| §3 Locality | `δ(v)` depends only on `v`'s own 1–2 triangles, given edge direction is tracked | Partially present as *code* (the `if pu ≤ pv then ... else ...ᴴ` branch in `connectionOperator` already encodes the direction convention correctly). Not yet stated as a standalone *lemma* about `(H²)` blocks. | A new lemma isolating `(H²)_{x,y}` in terms of local edge data, mirroring `SPLIT_AUTOMATON.md` §7's formula |
+| §2 Base case | `Δ_1(θ) = −32 sin²(θ/2)` | **Done**: `traceDefect_one` in `BaseCaseTheorem.lean`. | — |
+| §3 Locality | `δ(v)` depends only on `v`'s own 1–2 triangles, given edge direction is tracked | **Unitarity done** (`axisRotation_unitary`, general in `m`/axis/θ) — the key input every `(H²)` formula needs. The formulas themselves (diagonal `deg²+deg`, cross-terms) are not yet stated. | A new lemma isolating `(H²)_{x,y}` in terms of local edge data, mirroring `SPLIT_AUTOMATON.md` §7's formula, now buildable directly from `axisRotation_unitary` |
 | §4.1 Corner roles | Corners `(0,0)`,`(2^m,0)` are `flux`, `(0,2^m)` is `opp`, for every `m` | `decide`-checked only for `m ≤ 4` today (`SanityChecks*.lean` covers *degree*, not yet *role*). General-`m` version needs induction on `InSG`/`EdgeB`, following the pattern in `EdgeB_symm`. | New lemma(s) in `Graph/Faces.lean` or a new file, by `Nat.rec` |
 | §4.2 One corner-merge discrepancy | Exactly one of 3 corner merges differs from the sum, by `+8 sin²(θ/2)`, at every level | Not started; depends on §4.1 first | Follows once §4.1 is general |
 | §4.3 Exactly 3 inconclusive vertices | Same count at every level, via copy `B` preserving the set bijectively | Not started; this is the "vertex construction history" argument (`SPLIT_AUTOMATON.md` §9) — no Lean-side notion of "history" exists yet | Would need a new definition mirroring `one_step`'s copy-tagging, then the induction from `PROOF.md` §4.3 |
@@ -34,11 +62,13 @@ been written yet.
 
 ## Recommended order for the next session
 
-1. **§2 (base case) first.** It's the most self-contained — a single
-   concrete `m=1` computation, no induction needed — and proving it
-   forces working out the right `simp`/`decide`/trig-identity tactic
-   combination that later steps (which also involve concrete small-`m`
-   matrix algebra, e.g. inside the §4.2 induction step) will reuse.
+1. ~~**§2 (base case) first.**~~ (done) It's the most self-contained — a single
+   concrete `m=1` computation, no induction needed — and `axisRotation_unitary`
+   is already available to build the `(H²)` block computations it needs.
+   The tactic combination worked out for unitarity (`Complex.star_def`,
+   `← Complex.cos_conj`/`← Complex.sin_conj`, `Complex.conj_ofReal`,
+   `map_ofNat`, `neg_div`, finished with `ring`) is the one to reach for
+   again here and in the §4.2 induction step.
 2. **§4.1 (corner roles) by induction**, since §4.2 and the recursion
    assembly both depend on it, and it's pure graph combinatorics (no
    matrices), analogous to the existing `EdgeB_symm` induction proof —
