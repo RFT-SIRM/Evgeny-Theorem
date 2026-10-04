@@ -34,7 +34,9 @@ edges, zero diagonal). `s = sin(θ/2)`, `c = cos(θ/2)`. `H'`, `A'`: all flux ax
    `Δ_m = −32 s² (3^(m−1) − F_m) = −16 (3^(m−1)+1) s²`, and `F_{m+1} = 3F_m + 1` is exactly
    `Δ_{m+1} = 3Δ_m + 32 s²` of `PROOF.md`.
 
-## Proof idea for L5 (derived from `vertexOrder`; numbers checked, **not yet in Lean**)
+## L5: DONE in Lean (`FlipCount.lean`: `flipCount_succ`, `flipCount_closed`)
+
+Proof (as formalized; files `VertexOrder`, `VertexIndex`, `ListOrder`, `FlipB`, `FlipC`, `FlipFaces`, `FlipCount`):
 
 `vertexOrder (m+1) = eraseDups (P ++ shiftB P ++ shiftC P)`, `P = vertexOrder m`. Consequences:
 
@@ -51,8 +53,7 @@ edges, zero diagonal). `s = sin(θ/2)`, `c = cos(θ/2)`. `H'`, `A'`: all flux ax
 Hence `F_{m+1} = 3F_m + 1`, `F_1 = 0`, so `F_m = (3^(m−1)−1)/2`. Checked: flips split as
 `(F_{m−1}, F_{m−1}, F_{m−1}+1)` over the three copies for `m = 2..7`; the corner roles are
 `(0,0)=f0`, `(2^m,0)=f1`, `(0,2^m)` not a flux endpoint for `m = 1..5`
-(`tests/general_m_structure_check.py`). The corner roles themselves (PROOF.md §4.1) still need a
-proof by induction on `EdgeB`/`facesExact`; this is the first sub-lemma of L5.
+(`tests/general_m_structure_check.py`). Everything needed was proved directly (no separate corner-role lemma): endpoints of faces lie in `vertexOrder`, the bottom-row order `bottom_lt`, and `corner_count` (exactly one face ends at `(2^m,0)`).
 
 ## Lean targets (in this order)
 
@@ -64,7 +65,7 @@ proof by induction on `EdgeB`/`facesExact`; this is the first sub-lemma of L5.
 | L2 | Combinatorics of `SG(m)`: ≤ 2 common neighbours; rhombus ⇔ pair with 2; the flux-carrying rhombi are exactly `X–Z`, `Y–Z` per cell | new `Rhombi.lean`, induction on `EdgeB` | **hard** |
 | L3 | Holonomy traces of the two flux rhombus types (finite computation, like `Algebra.lean`) | extend `Algebra.lean` | easy |
 | L4 | Geometric version: `Δ_m = −32·3^(m−1) s²` from L1–L3 | new `Geometric.lean` | medium |
-| L5 | `#{k : index(face[0]) > index(face[1])} = (3^(m−1)−1)/2`, all `k ≡ 1 mod 3`, using `vertexOrder` (`Orientation.lean`) | new `FlipCount.lean`, induction with `eraseDups` | **hard** (new combinatorics) |
+| L5 | `#{faces with index(f.2.1) < index(f.1)} = (3^(m−1)−1)/2` via `vertexOrder` | `FlipCount.lean` | **done** (`2·flipCount (m+1) + 1 = 3^m`; only standard axioms) |
 | L6 | Assemble L4 + L5 into `traceDefect m θ = −16(3^(m−1)+1) s²` | new `Main.lean` | easy |
 
 L1a–c, L3, L4 give a complete Lean proof of the geometric closed form; L5 is what the

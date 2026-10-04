@@ -8,6 +8,13 @@ import EvgenyTheorem.Algebra
 import EvgenyTheorem.Setup
 import EvgenyTheorem.BaseCaseTheorem
 import EvgenyTheorem.TraceExpand
+import EvgenyTheorem.ListOrder
+import EvgenyTheorem.VertexOrder
+import EvgenyTheorem.VertexIndex
+import EvgenyTheorem.FlipB
+import EvgenyTheorem.FlipC
+import EvgenyTheorem.FlipFaces
+import EvgenyTheorem.FlipCount
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Analysis.Complex.Trigonometric
