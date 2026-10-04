@@ -55,7 +55,39 @@ Hence `F_{m+1} = 3F_m + 1`, `F_1 = 0`, so `F_m = (3^(m−1)−1)/2`. Checked: fl
 `(0,0)=f0`, `(2^m,0)=f1`, `(0,2^m)` not a flux endpoint for `m = 1..5`
 (`tests/general_m_structure_check.py`). Everything needed was proved directly (no separate corner-role lemma): endpoints of faces lie in `vertexOrder`, the bottom-row order `bottom_lt`, and `corner_count` (exactly one face ends at `(2^m,0)`).
 
-## Lean targets (in this order)
+## Refined route (recursion over the three copies; supersedes L1–L4, L6 below)
+
+Reasoning (not yet formalized, except where marked **done**):
+
+* **R1. Additivity.** The edge set of `SG(m+1)` is the disjoint union of the three copies' edge sets
+  (`EdgeB` is a disjunction of three exclusive cases; **done**: `EdgeB_sound`, `EdgeB_irrefl`,
+  `mem_vertexOrder_iff` in `SGStruct.lean`). Degrees add, so
+  `H_{m+1} = Σ_X ι_X H_X ι_X†` exactly, where `H_X` is the level-`m` operator with the orientation
+  induced from level `m+1`. Orientation transport is **done**: copies A, B keep the level-`m`
+  orientation (`flipped_A`, `flipped_B`), copy C differs only at the face ending in the corner
+  `(2^m, 0)` (`flipped_C`, `bottom_lt`, `corner_count`). The axes agree for `m ≥ 1` since face
+  indices shift by `3^m ≡ 0 (mod 3)`.
+* **R2. Cross words.** Expand `Tr H_{m+1}⁴` over words in `{A,B,C}⁴`. The copies pairwise share
+  exactly one corner, and for `m ≥ 1` the corners of a copy are pairwise non-adjacent
+  (**done**: `corners_not_adj`, `EdgeB_step` in `EdgeStep.lean`). Every non-constant cyclic word then
+  either contains a length-1 run between two different corners (contributes 0) or consists of
+  corner-to-same-corner runs, i.e. only the numbers `(H_X²)(v,v) = (d²+d)·1` and
+  `tr (H_X³)(v,v)` at corners `v` (degree `d = 2`). The latter involves a single 3-cycle (the
+  corner triangle, one flux edge), so its trace is `2c`-type, **independent of the axes**.
+  Hence cross words cancel in `Tr H⁴ − Tr H'⁴`: `Δ_{m+1} = Δ(H_A) + Δ(H_B) + Δ(H_C)` (`m ≥ 1`).
+* **R3. One flip.** `Δ(H_C) = Δ(H_m) + 32 s²`: flipping the flux edge `e = ((2^m−1,0),(2^m,0))`
+  (axis `Y`, the corner vertex has degree 2) changes `Tr A⁴` only through closed 4-walks using `e`
+  exactly once, i.e. the rhombus `p, c, q, z` with `p=(s−1,0)`, `c=(s,0)`, `q=(s−1,1)`, `z=(s−2,1)`
+  (`Z`-flux edge `q–z`). With `A'` (all `z`) the loop trace changes from `2(c²−s²)` to `2`, and
+  `8·(2 − 2c² + 2s²) = 32 s²`; for `A` (axes `Y`,`Z`) both traces equal `2c²`.
+* **R4. Induction.** `Δ_1 = −32 s²` (**done**: `traceDefect_one`), then
+  `Δ_{m+1} = 3Δ_m + 32 s²` gives `Δ_m = −16(3^(m−1)+1) s²`.
+
+Remaining Lean work for this route: the matrix identity R1 (embeddings `Vertex m → Vertex (m+1)`),
+the word expansion R2, corner facts (degree 2, one flux edge on the corner triangle, shape of the
+corner cell), and R3.
+
+## Lean targets (original plan; see the refined route above) (in this order)
 
 | # | Statement | Where | Difficulty |
 |---|---|---|---|
