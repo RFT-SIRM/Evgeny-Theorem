@@ -17,6 +17,10 @@ import EvgenyTheorem.FlipFaces
 import EvgenyTheorem.FlipCount
 import EvgenyTheorem.SGStruct
 import EvgenyTheorem.EdgeStep
+import EvgenyTheorem.PointModel1
+import EvgenyTheorem.PointModel2
+import EvgenyTheorem.EdgeCopies
+import EvgenyTheorem.EdgeSplit
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Analysis.Complex.Trigonometric
