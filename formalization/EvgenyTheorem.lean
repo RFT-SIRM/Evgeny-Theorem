@@ -21,6 +21,10 @@ import EvgenyTheorem.PointModel1
 import EvgenyTheorem.PointModel2
 import EvgenyTheorem.EdgeCopies
 import EvgenyTheorem.EdgeSplit
+import EvgenyTheorem.DegSplit
+import EvgenyTheorem.FluxSplit
+import EvgenyTheorem.OpSplit1
+import EvgenyTheorem.OpSplit2
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Analysis.Complex.Trigonometric
