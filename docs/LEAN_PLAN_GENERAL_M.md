@@ -87,6 +87,29 @@ Remaining Lean work for this route: the matrix identity R1 (embeddings `Vertex m
 the word expansion R2, corner facts (degree 2, one flux edge on the corner triangle, shape of the
 corner cell), and R3.
 
+## Final route (supersedes R3): coupled recursion, no local flip lemma
+
+`Δ̃_m` = trace defect of the level-`m` operator whose index orientation is reversed on the single
+flux edge `((2^m−1,0),(2^m,0))` (the face ending at the corner `(2^m,0)`). Numerically
+(`m ≤ 4`, verified): `Δ̃_m = −16(3^(m−1)−1) s²` and
+
+* `Δ_{m+1} = 2Δ_m + Δ̃_m`  (copies: A keeps σ_m, B keeps σ_m, C gets σ_m with the corner edge flipped),
+* `Δ̃_{m+1} = Δ_m + 2Δ̃_m`  (the level-`(m+1)` corner edge lies in copy B, so B and C both get the flip).
+
+Together with `Δ_1 = −32 s²` (done) and `Δ̃_1 = 0` (new finite computation, like `traceDefect_one`)
+this gives `Δ_m = −16(3^(m−1)+1) s²` by induction, **without** analysing the rhombus at the corner.
+
+What it needs (everything orientation-generic, orientations antisymmetric):
+1. `pHe_succ` for an arbitrary orientation (the proof of `pHe_succ` already carries the orientation
+   through unchanged), plus orientation transport on flux edges (`flipped_A/B/C`, done) for both
+   `σ_m` and `σ_m ⊕ flip`.
+2. **Gluing algebra** (abstract, `GlueAlg.lean`): for block-diagonal `K` and the gluing matrix `N`,
+   `Tr((K+KN)⁴) = Tr K⁴ + 4 S₃ + 2 S₂ + S₁`, where `S₃, S₂, S₁` only involve the diagonal entries of
+   `K, K², K³` at glued points.
+3. Corner facts for the three corners of `SG(m)`, `m ≥ 1`: degree 2, neighbours adjacent, the corner
+   triangle has exactly one flux edge (so `tr (K³)_{cc}` and `(K²)_{cc}` do not depend on the axes).
+4. The base cases and the induction.
+
 ## Lean targets (original plan; see the refined route above) (in this order)
 
 | # | Statement | Where | Difficulty |
