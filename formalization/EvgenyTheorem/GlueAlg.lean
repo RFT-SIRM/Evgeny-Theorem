@@ -16,7 +16,12 @@ structure GlueData (cp : W → ι) where
   g_σ : ∀ w, g w → g (σ w)
   σσ : ∀ w, g w → σ (σ w) = w
   cp_σ : ∀ w, g w → cp (σ w) ≠ cp w
-  uniq : ∀ w w', g w → g w' → cp w = cp w' → cp (σ w) = cp (σ w') → w = w'
+
+/-- `X` has vanishing entries between two distinct glued points that lie in the same copy and
+whose partners also lie in a common copy. (Replaces the former field `uniq`, which is false when
+the index also carries the two spin components of one point.) -/
+def GlueDiag {cp : W → ι} (G : GlueData cp) (X : Matrix W W ℂ) : Prop :=
+  ∀ w w', G.g w → G.g w' → cp w = cp w' → cp (G.σ w) = cp (G.σ w') → w ≠ w' → X w w' = 0
 
 attribute [instance] GlueData.dg
 
@@ -127,7 +132,8 @@ theorem trace_mul_Q {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
   simp only [Matrix.diag_apply, Matrix.mul_diagonal]
   by_cases ha : G.g a <;> simp [ha]
 
-theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X) :
+theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
+    (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
       ∑ a, if G.g a then X a a * X (G.σ a) (G.σ a) else 0 := by
   have e : X * G.N * X * G.N = (X * G.N) * (X * G.N) := by simp only [Matrix.mul_assoc]
@@ -147,10 +153,13 @@ theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : 
         · rw [if_pos gc, if_pos ga, if_neg (fun h => hc h.1)]
           by_cases h1 : cp a = cp (G.σ c)
           · by_cases h2 : cp c = cp (G.σ a)
-            · exfalso
-              apply hc
-              have hu := G.uniq a (G.σ c) ga (G.g_σ c gc) h1 (by rw [G.σσ c gc]; exact h2.symm)
-              rw [← G.σσ c gc, ← hu]
+            · have hne : a ≠ G.σ c := by
+                intro h
+                apply hc
+                rw [h, G.σσ c gc]
+              have hz := hu a (G.σ c) ga (G.g_σ c gc) h1
+                (by rw [G.σσ c gc]; exact h2.symm) hne
+              rw [hz, zero_mul]
             · rw [hX c (G.σ a) h2, mul_zero]
           · rw [hX a (G.σ c) h1, zero_mul]
       · rw [if_neg gc, zero_mul, if_neg]
@@ -195,7 +204,8 @@ theorem trace_KQKQ {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd :
 
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
-    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0) :
+    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
+    (hu2 : GlueDiag G (K * K)) :
     Matrix.trace ((K + K * G.N) * (K + K * G.N) * (K + K * G.N) * (K + K * G.N)) =
       Matrix.trace (K * K * K * K) +
         4 * ∑ a, (if G.g a then (K * K * K) a a * K (G.σ a) (G.σ a) else 0) +
@@ -215,7 +225,7 @@ theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
   have r4 : Matrix.trace (K * K * (G.N * K * G.N) * K * G.N) = 0 :=
     trace_BD_N G (BD_mul (BD_mul hK2 hQ) hbd)
   have r3 := trace_mul_Q G K hbd hkg (K * K * K)
-  have r2 := trace_XNXN G hK2
+  have r2 := trace_XNXN G hK2 hu2
   have r5 := trace_KQKQ G K hbd hkg
   have e1 : Matrix.trace (K * K * K * -(K * G.N)) = - Matrix.trace (K * K * K * K * G.N) := by
     simp only [Matrix.mul_neg, Matrix.trace_neg, Matrix.mul_assoc]
