@@ -27,6 +27,7 @@ import EvgenyTheorem.OpSplit1
 import EvgenyTheorem.OpSplit2
 import EvgenyTheorem.OpSplit3
 import EvgenyTheorem.GlueAlg
+import EvgenyTheorem.CornerFaces
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Analysis.Complex.Trigonometric
