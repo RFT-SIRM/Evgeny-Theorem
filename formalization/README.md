@@ -1,6 +1,6 @@
 # Lean formalization — Evgeny's Theorem
 
-Lean 4 + Mathlib (versions pinned in `lean-toolchain` / `lakefile.toml`). Build with `lake build`.
+Lean 4 + Mathlib (versions pinned in `lean-toolchain` / `lakefile.toml` in the repository root, which sets `srcDir = "formalization"`). Build with `lake build` from the repository root.
 
 ## Main result (machine-checked)
 

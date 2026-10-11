@@ -90,7 +90,7 @@ unitarity lemmas in `Locality.lean` are the input), the *general-`m`* versions o
 
 ## Practical notes for whoever continues this
 
-- Rebuilding after `git pull`: `cd formalization && lake build EvgenyTheorem`
+- Rebuilding after `git pull`: `lake build EvgenyTheorem`
   should complete in well under a minute from a warm `.lake` cache; expect
   a one-time cost (tens of minutes) if `.lake/` isn't already populated,
   since Mathlib's own prebuilt cache isn't reachable from every network

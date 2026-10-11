@@ -1,5 +1,7 @@
 name = "EvgenyTheorem"
 version = "0.1.0"
+srcDir = "formalization"
+description = "Lean 4 formalization of a closed-form trace identity on Sierpinski gasket graphs (SU(2) connection operator)"
 keywords = ["math"]
 defaultTargets = ["EvgenyTheorem"]
 

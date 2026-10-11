@@ -138,7 +138,7 @@ The proof follows a different route from the hand proof in `docs/PROOF.md`: the 
 3. **Coupled recursion.** `D_{m+1} = 2 D_m + D~_m` and `D~_{m+1} = D_m + 2 D~_m`
    (`defect_succ_num`, `defect_succ_til`), then induction (`FinalArith.lean`, `FinalTheorem.lean`).
 
-Check it yourself: `cd formalization && lake build`. The final theorems contain no `sorry` and depend only on
+Check it yourself: `lake build`. The final theorems contain no `sorry` and depend only on
 the standard axioms `propext`, `Classical.choice`, `Quot.sound` (verify with `#print axioms EvgenyTheorem.traceDefect_closed`). Details and a file map: [`formalization/README.md`](formalization/README.md).
 
 What this does *not* cover: the closed form is claimed for `m >= 1` only (not `m = 0`), and only for the fourth
