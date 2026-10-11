@@ -30,6 +30,7 @@ import EvgenyTheorem.GlueAlg
 import EvgenyTheorem.GlueTrace
 import EvgenyTheorem.GlueCornerCube
 import EvgenyTheorem.FinalOrient
+import EvgenyTheorem.FinalArith
 import EvgenyTheorem.AlgebraTilde
 import EvgenyTheorem.CornerFaces
 import Mathlib.Data.Matrix.Basic
