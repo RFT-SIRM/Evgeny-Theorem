@@ -7,6 +7,7 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/RFT-SIRM/Evgeny-Theorem/tests.yml?branch=main&style=for-the-badge&label=Tests&color=3ee290)](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-yellow?style=for-the-badge)](LICENSE)
 [![H4 Closed Form](https://img.shields.io/badge/H4-Exact%20Closed%20Form-5aa9ff?style=for-the-badge)](THEOREM.md)
+[![Lean 4](https://img.shields.io/badge/Lean%204-Closed%20Form%20Machine--Checked-3ee290?style=for-the-badge)](formalization/README.md)
 [![H6 Research](https://img.shields.io/badge/H6-Open%20Research%20Program-orange?style=for-the-badge)](docs/HIGHER_MOMENTS.md)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-lightgrey?style=for-the-badge)](reproducibility/requirements.txt)
 [![Visualization](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-c6ff5c?style=for-the-badge)](https://rft-sirm.github.io/Evgeny-Theorem/)
@@ -38,7 +39,7 @@ $$
 
 for every $m \ge 1$ and every $\theta$, verified numerically to better than
 $10^{-9}$ at every tested parameter pair, and to $10^{-13}$ at $m = 7$
-(matrix dimension 6564).
+(matrix dimension 6564). The identity is also proved, for every $m \ge 1$ and every $\theta$, in Lean 4 (see [Lean 4 formalization](#lean-4-formalization)).
 
 Normalizing by $\dim(H) = 3^{m+1} + 3$ gives the intensive invariant
 
@@ -64,7 +65,7 @@ at $\theta = \pi/2$, with geometric convergence confirmed through $m = 7$.
 | **H6/H8/H10 reference values** | Numerical regression, locked by tests |
 | **Closed form for H6, H8, H10** | Open -- no claim made |
 | **Lean 4: graph infrastructure** ($SG(m)$, `Vertex`, `Adj`, `degree`) | Computable, decidable, machine-checked (`lake build`) |
-| **Lean 4: operator-level `TraceDefectIdentity`** | Open -- stated as a proposition, not yet proved for the concrete `traceDefect` |
+| **Lean 4: operator-level closed form** (`traceDefect_closed`) | Machine-checked for every `m >= 1` and every `theta`, for the concrete operators; no `sorry`, standard axioms only (see below) |
 
 ---
 
@@ -110,22 +111,39 @@ Full statement: [THEOREM.md](THEOREM.md) -- Full tables: [VERIFICATION.md](VERIF
 
 ### Lean 4 formalization
 
-The graph-level construction -- the Sierpinski-gasket graph $SG(m)$, the
-vertex type, the adjacency relation, and vertex degree -- is formalized in
-[`formalization/`](formalization/) and is fully computable: `Vertex.fintype`
-and `Adj.decidable` let Lean's kernel decide graph facts directly
-(`Fintype.card (Vertex 1) = 6`, individual vertex degrees, etc.), checked
-by `lake build` against Mathlib.
+The closed form is machine-checked in Lean 4 against Mathlib, for the concrete operators, for every
+refinement level `m >= 1` and every angle `theta`
+([`formalization/EvgenyTheorem/TildeEntries.lean`](formalization/EvgenyTheorem/TildeEntries.lean)):
 
-What this does *not* yet cover: the operator-level identity connecting
-$\mathrm{Tr}(H_C^4) - \mathrm{Tr}(H_{C'}^4)$ to the closed
-form above is stated in `EvgenyTheorem.lean` as `TraceDefectIdentity`, a
-proposition, together with one proved instance (`delta_one_pi_div_two`,
-the $m=1$, $\theta=\pi/2$ case) and the unconditional lemma
-`traceDefect_zero` ($\theta = 0$ gives zero for every $m$). The general
-identity for all $m$ and $\theta$ -- the actual content of the closed
-form above -- is not yet proved in Lean; this numerical verification
-(section above) remains the primary evidence for it.
+```lean
+theorem traceDefect_closed (θ : ℝ) (m : ℕ) (hm : 1 ≤ m) :
+    traceDefect m θ =
+      -16 * ((3 : ℂ) ^ (m - 1) + 1) * ((Real.sin (θ / 2) : ℝ) : ℂ) ^ 2
+```
+
+Here `traceDefect m θ` is the difference of the fourth traces of `HC` and `HCprime` (`Operator.lean`): the
+connection operators on the Sierpinski-gasket graph `SG(m)` with SU(2) edge unitaries, the axis on the flux
+edge of each triangle cycling through x, y, z (`faceAxis`) versus fixed to z. In
+[`EvgenyTheorem.lean`](formalization/EvgenyTheorem.lean), `traceDefect_eq_delta` restates it as
+`traceDefect m θ = (delta m θ : ℂ)` with `delta` the real closed form, and `traceDefect_re_eq_delta` /
+`traceDefect_im_eq_zero` give the real and imaginary parts.
+
+The proof follows a different route from the hand proof in `docs/PROOF.md`: the level-`m+1` operator is glued from three copies of the level-`m` operator, and a coupled recursion over two orientations closes the induction:
+
+1. **Base cases.** `traceDefect_one` (`m = 1`, explicit 12x12 matrices) and `tilde_base` (the same computation with
+   the corner flux edge reversed; the defect is `0`).
+2. **Gluing.** `H_{m+1} = E K E^T` for the block-diagonal `K` of three copies; an abstract trace identity
+   (`GlueAlg.lean`, `GlueBridge.lean`) leaves only corner data, proved in `sgK_corner_data`
+   (the `Glue*.lean` files).
+3. **Coupled recursion.** `D_{m+1} = 2 D_m + D~_m` and `D~_{m+1} = D_m + 2 D~_m`
+   (`defect_succ_num`, `defect_succ_til`), then induction (`FinalArith.lean`, `FinalTheorem.lean`).
+
+Check it yourself: `cd formalization && lake build`. The final theorems contain no `sorry` and depend only on
+the standard axioms `propext`, `Classical.choice`, `Quot.sound` (verify with `#print axioms EvgenyTheorem.traceDefect_closed`). Details and a file map: [`formalization/README.md`](formalization/README.md).
+
+What this does *not* cover: the closed form is claimed for `m >= 1` only (not `m = 0`), and only for the fourth
+moment; the H6/H8/H10 values remain numerical. The edge orientation in the Lean operator is the vertex-index
+order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
 
 ---
 
@@ -191,15 +209,15 @@ Evgeny-Theorem/
 │   ├── HIGHER_MOMENTS.md
 │   ├── EXACT_VERIFICATION.md   exact (symbolic) verification for m=1..7; locality mechanism
 │   ├── SPLIT_AUTOMATON.md      the sibling-vertex split: rule, mechanism, recursion
-│   └── PROOF.md                hand proof of the identity for all m (not Lean-checked)
-├── formalization/              Lean 4 formalization (graph-level infrastructure)
-│   ├── EvgenyTheorem.lean      delta, I, TraceDefectIdentity (scaffold), delta_one_pi_div_two
+│   └── PROOF.md                hand proof of the identity for all m (not Lean-checked; the Lean proof takes a different route)
+├── formalization/              Lean 4 formalization (closed form proved for all m >= 1)
+│   ├── EvgenyTheorem.lean      delta, I, traceDefect_eq_delta, delta_one_pi_div_two
+│   ├── README.md               proof structure, file map, how to check
 │   └── EvgenyTheorem/
-│       ├── Graph/
-│       │   ├── Sierpinski.lean SG(m) graph, computable Vertex/Adj instances
-│       │   └── Faces.lean      triangular faces, flux edges, axis assignment
-│       ├── SU2.lean            Pauli matrices, SU(2) rotations
-│       ├── Operator.lean       HC, HC', traceDefect, traceDefect_zero
+│       ├── Graph/              SG(m) graph (computable Vertex/Adj), triangular faces, flux edges
+│       ├── SU2.lean, Operator.lean   Pauli matrices, SU(2) rotations, HC, HC', traceDefect
+│       ├── Glue*.lean          gluing of three copies, corner data (hcorner)
+│       ├── Final*.lean, Tilde*.lean, AlgebraTilde.lean   recursions, base cases, closed form
 │       ├── SanityChecks.lean   decidable graph-level checks (degrees, vertex counts; levels 1-3)
 │       └── SanityChecksLevel4.lean  same checks at level 4 (slow, not in the default build)
 ├── src/

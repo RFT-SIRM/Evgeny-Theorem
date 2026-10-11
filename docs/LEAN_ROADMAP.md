@@ -1,5 +1,10 @@
 # Lean formalization: what's done, what's next
 
+> **Current status: the closed form is proved.** `traceDefect_closed` (`TildeEntries.lean`) establishes
+> `traceDefect m θ = -16(3^(m-1)+1) sin²(θ/2)` for every `m ≥ 1` and every `θ`, with no `sorry`. The route is
+> described in `formalization/README.md`. Everything below is the historical roadmap written before that proof and
+> is kept for the record; its "not yet started" items are superseded.
+
 ## Status
 
 **Environment: working and verified.** Lean 4.33.1 + Mathlib build,

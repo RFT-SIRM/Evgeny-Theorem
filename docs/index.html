@@ -1192,52 +1192,50 @@ footer{
       <p class="sec-sub">The graph-level construction of SG(m) lives in the <b style="color:var(--cyan)">formalization/</b> directory and is checked by <b style="color:var(--cyan)">lake build</b> against Mathlib. The kernel decides graph facts directly — nothing is assumed. Below: the operator layer exactly as stated in Lean, and precisely what is proved versus open.</p>
     </div>
     <div class="stats-grid lean-stats reveal">
-      <div class="stat"><div class="val" style="color:var(--green)">lake&nbsp;build&nbsp;✓</div><div class="cap">Machine-checked<br>vs Mathlib</div></div>
-      <div class="stat"><div class="val"><em style="color:var(--green)">6</em></div><div class="cap">Fintype.card<br>(Vertex 1) — kernel-decided</div></div>
-      <div class="stat"><div class="val"><em style="color:var(--green)">2</em></div><div class="cap">Proved<br>instances</div></div>
-      <div class="stat"><div class="val"><em style="color:var(--pink)">1</em></div><div class="cap">Proposition<br>still open</div></div>
-    </div>
-
-    <div class="lean-ide reveal">
-      <div class="term lean-term">
-        <div class="term-bar"><i></i><i></i><i></i><span>formalization/EvgenyTheorem.lean — operator layer</span></div>
-        <div class="term-body lean-code"><span class="lc-kw">noncomputable</span> <span class="lc-kw">section</span>
-
-<span class="lc-com">/-- Trace defect: fourth moment of C minus C′ on SG(m). -/</span>
-<span class="lc-kw">def</span> <span class="lc-fn">delta</span> (m : ℕ) (θ : ℝ) : ℝ :=
-  tr (H_C m θ)^4 - tr (H_C&#39; m θ)^4
-
-<span class="lc-com">/-- THE EVGENY THEOREM — full statement. General case: OPEN. -/</span>
-<span class="lc-thm">theorem</span> <span class="lc-fn">TraceDefectIdentity</span> (m : ℕ) (θ : ℝ) :
-    delta m θ = -16 * (3^(m-1) + 1) * (Real.sin (θ/2))^2 :=
-  <span class="lc-kw">by</span> <span class="lc-sorry">sorry</span>   <span class="lc-com">-- the single sorry in the repo, tracked below</span>
-
-<span class="lc-com">/-- PROVED — kernel-checked instance, m = 1, θ = π/2. -/</span>
-<span class="lc-thm">theorem</span> <span class="lc-fn">delta_one_pi_div_two</span> :
-    delta 1 (Real.pi / 2) = -32 :=
-  <span class="lc-kw">by</span> <span class="lc-builtin">native_decide</span>
-
-<span class="lc-com">/-- PROVED — unconditional: θ = 0 kills the defect at every level. -/</span>
-<span class="lc-thm">theorem</span> <span class="lc-fn">traceDefect_zero</span> (m : ℕ) :
-    delta m 0 = 0 :=
-  <span class="lc-kw">by</span> <span class="lc-builtin">simp</span> [delta]</div>
+        <div class="stat"><div class="val" style="color:var(--green)">lake&nbsp;build&nbsp;&#10003;</div><div class="cap">Machine-checked<br>vs Mathlib</div></div>
+        <div class="stat"><div class="val"><em style="color:var(--green)">0</em></div><div class="cap">sorry in the<br>proof chain</div></div>
+        <div class="stat"><div class="val"><em style="color:var(--green)">m&nbsp;&ge;&nbsp;1</em></div><div class="cap">every level,<br>every &theta;</div></div>
+        <div class="stat"><div class="val"><em style="color:var(--green)">std</em></div><div class="cap">axioms only<br>(#print axioms)</div></div>
       </div>
-      <div class="lean-verdicts">
-        <div class="verdict proved">
-          <div class="v-head"><span class="v-name">delta_one_pi_div_two</span><span class="v-badge proved">PROVED</span></div>
-          <p>First refinement level at rotation angle π/2 — the closed form holds as a kernel-checked Lean fact: <b>Δ₁(H⁴, π/2) = −32</b>.</p>
+      <div class="lean-ide reveal">
+        <div class="term lean-term">
+          <div class="term-bar"><i></i><i></i><i></i><span>formalization/EvgenyTheorem/ &mdash; key statements (proofs omitted)</span></div>
+          <div class="term-body lean-code"><span class="lc-com">/-- THE EVGENY THEOREM, operator level: PROVED for every m &ge; 1, every &theta;. -/</span>
+<span class="lc-thm">theorem</span> <span class="lc-fn">traceDefect_closed</span> (&theta; : ℝ) (m : ℕ) (hm : 1 &le; m) :
+    traceDefect m &theta; =
+      -16 * ((3 : ℂ) ^ (m - 1) + 1) * ((Real.sin (&theta; / 2) : ℝ) : ℂ) ^ 2
+
+<span class="lc-com">/-- Coupled recursion over two orientations. -/</span>
+<span class="lc-thm">theorem</span> <span class="lc-fn">defect_succ_num</span> (m : ℕ) (hm : 1 &le; m) (&theta; : ℝ) :
+    defectO (m + 1) &theta; faceAxis (fun _ =&gt; 2) (oNum (m + 1)) =
+      2 * defectO m &theta; faceAxis (fun _ =&gt; 2) (oNum m) +
+        defectO m &theta; faceAxis (fun _ =&gt; 2) (oTil m)
+<span class="lc-thm">theorem</span> <span class="lc-fn">defect_succ_til</span> (m : ℕ) (hm : 1 &le; m) (&theta; : ℝ) :
+    defectO (m + 1) &theta; faceAxis (fun _ =&gt; 2) (oTil (m + 1)) =
+      defectO m &theta; faceAxis (fun _ =&gt; 2) (oNum m) +
+        2 * defectO m &theta; faceAxis (fun _ =&gt; 2) (oTil m)
+
+<span class="lc-com">/-- Base case with the corner flux edge reversed. -/</span>
+<span class="lc-thm">theorem</span> <span class="lc-fn">tilde_base</span> (&theta; : ℝ) :
+    defectO 1 &theta; faceAxis (fun _ =&gt; 2) (oTil 1) = 0</div>
         </div>
-        <div class="verdict proved">
-          <div class="v-head"><span class="v-name">traceDefect_zero</span><span class="v-badge proved">PROVED</span></div>
-          <p>Unconditional. At <b>θ = 0</b> the trace defect vanishes for <b>every</b> level m — pure algebra, no numerics involved.</p>
-        </div>
-        <div class="verdict open">
-          <div class="v-head"><span class="v-name">TraceDefectIdentity</span><span class="v-badge open">OPEN</span></div>
-          <p>The general case — <b>all m, all θ</b>. Stated as a proposition, not yet proved. The numerical verification layer above remains the primary evidence. No overclaim.</p>
+        <div class="lean-verdicts">
+          <div class="verdict proved">
+            <div class="v-head"><span class="v-name">traceDefect_closed</span><span class="v-badge proved">PROVED</span></div>
+            <p>For the concrete operators <b>H<sub>C</sub></b> and <b>H<sub>C&prime;</sub></b> on SG(m): <b>&Delta;<sub>m</sub>(H&#8308;, &theta;) = &minus;16(3<sup>m&minus;1</sup>+1) sin&sup2;(&theta;/2)</b>, for every m &ge; 1 and every &theta;. Kernel-checked, no <code>sorry</code>.</p>
+          </div>
+          <div class="verdict proved">
+            <div class="v-head"><span class="v-name">gluing + recursion</span><span class="v-badge proved">PROVED</span></div>
+            <p>Three copies glued into the next level, corner data proved for every m, and the recursions D<sub>m+1</sub> = 2D<sub>m</sub> + D&#771;<sub>m</sub>, D&#771;<sub>m+1</sub> = D<sub>m</sub> + 2D&#771;<sub>m</sub> close the induction.</p>
+          </div>
+          <div class="verdict open">
+            <div class="v-head"><span class="v-name">scope</span><span class="v-badge open">NOT CLAIMED</span></div>
+            <p>m = 0, and any moment other than the fourth: the H6/H8/H10 values stay numerical regression references. No overclaim.</p>
+          </div>
         </div>
       </div>
-    </div>
-        <div class="reveal" style="margin-top:26px;">
+
+      <div class="reveal" style="margin-top:26px;">
       <table>
         <thead><tr><th>Result</th><th>Status</th><th>Basis</th></tr></thead>
         <tbody>
@@ -1246,7 +1244,7 @@ footer{
           <tr><td>Gauge invariance · vanishes at p = 1, 2, 3</td><td class="ok">CONFIRMED</td><td>&lt; 8e−15 under random SU(2) gauge · first nonzero at p = 4</td></tr>
           <tr><td>H6 growth law α(θ)·3^m + β(θ) · recurrence · path-class zero</td><td style="color:var(--amber)">DERIVED</td><td>machine-precision numerics, locked by tests</td></tr>
           <tr><td>H6 / H8 / H10 closed forms</td><td style="color:var(--pink)">OPEN</td><td>no claim made — reference values only</td></tr>
-          <tr><td>Lean operator-level TraceDefectIdentity (all m, θ)</td><td style="color:var(--pink)">OPEN</td><td>proposition stated; one instance proved</td></tr>
+          <tr><td>Lean 4 operator-level closed form (all m &ge; 1, all &theta;)</td><td class="ok">CONFIRMED</td><td>machine-checked, no sorry &middot; <code>traceDefect_closed</code></td></tr>
         </tbody>
       </table>
     </div>
@@ -1341,7 +1339,7 @@ footer{
 │   ├── <span class="fil">index.html</span>            this site
 │   └── <span class="fil">HIGHER_MOMENTS.md</span>    H6/H8/H10 — growth law, recurrence, path classes
 ├── <span class="dir">formalization/</span>  Lean 4 — graph infra machine-checked (lake build)
-│   ├── <span class="fil">EvgenyTheorem.lean</span>   delta, I, TraceDefectIdentity (open), proved instances
+│   ├── <span class="fil">EvgenyTheorem.lean</span>   delta, I, traceDefect_eq_delta, TraceDefectIdentity (abstract form)
 │   └── <span class="dir">EvgenyTheorem/</span>       Graph (SG(m), Faces) · SU2 · Operator · SanityChecks
 ├── <span class="dir">src/</span>
 │   ├── <span class="dir">graph/</span>      SG graph construction (3-connected, tree-of-triangles)

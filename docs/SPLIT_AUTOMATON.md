@@ -26,7 +26,8 @@ alone, not by querying integer vertex labels) for which of each edge's two
 endpoints gets the smaller index, since that determines the Hermitian
 -conjugate direction. This is now a fact about `sg_tree_graph_with_faces`'s
 own labeling order, not a mystery about the SU(2) operator identity — see
-§7 for exactly what's left. No Lean proof exists yet.
+§7 for exactly what's left. (Update: the identity is now machine-checked in Lean 4 by a different route that does not use this rule; see
+`formalization/README.md`.)
 
 This builds directly on [`EXACT_VERIFICATION.md`](EXACT_VERIFICATION.md)
 §3–4 and uses its notation (types FF, FO₀, FO₁, OF₀, OF₁; roles `flux`/`opp`;

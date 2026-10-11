@@ -16,11 +16,10 @@ adds nothing new computationally; it assembles those pieces into one
 induction and states, explicitly, why each piece holds for *every* `m`
 rather than only the levels checked.
 
-**What this is not:** a Lean-checked proof. Every step below is checked
-either by direct linear algebra (no `m`-dependence to worry about) or by
-an explicit induction argument on `m`; none of it has been machine
--verified in a proof assistant. See `formalization/README.md` for that
-separate, remaining task.
+**What this is not:** a Lean-checked proof. Every step below is checked either by direct linear algebra or by an
+explicit induction argument on `m`; none of this text has been machine-verified. The identity itself *is* now
+machine-checked in Lean 4 for every `m ≥ 1`, by a different route (see `formalization/README.md`), which does not
+use this hand proof.
 
 ---
 
@@ -213,6 +212,10 @@ This is exactly the recursion boxed in §1, for every `m ≥ 2`, completing
 the induction.
 
 ## 6. What would remain for Lean
+
+> **Status update.** Superseded: the Lean proof was completed along a different route (gluing of three copies and a
+> coupled recursion, `formalization/README.md`). The text below is the original plan for translating *this* hand
+> proof and is kept for the record.
 
 Every step above is either (a) a finite linear-algebra computation with
 no `m` in it (§2, §3, and the *specific* computation inside §4.2), or (b)

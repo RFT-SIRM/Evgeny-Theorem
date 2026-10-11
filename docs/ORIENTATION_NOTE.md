@@ -25,7 +25,8 @@ the +x direction by that numbering. With a uniform geometric direction the value
 * `docs/PROOF.md` calls itself a complete hand proof. Three of its ingredients are checked
   at small levels rather than derived for all `m`: §4.1 (corner roles, `k ≤ 5`), §4.2
   (corner-merge discrepancy, transitions 2→3 and 3→4), §4.3 (the history rule from
-  `SPLIT_AUTOMATON.md` §9). The general-`m` statement should be treated as verified for
-  `m ≤ 4` (this script) and unproved for larger `m` until those are derived.
+  `SPLIT_AUTOMATON.md` §9). The hand proof remains unverified beyond small levels. **Update:** the general-`m` statement for the index orientation
+is now proved in Lean 4 (`traceDefect_closed`, every `m ≥ 1`) by a different route that does not rely on these
+three ingredients.
 * If the intended object is a connection with geometrically uniform flux directions, the
   formula to prove is `−32·3^(m−1)·sin²(θ/2)`.

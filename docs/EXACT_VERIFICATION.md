@@ -11,8 +11,8 @@ identity holds is derived and confirmed.
 general `m`. §4 below identifies the gap this note originally left open;
 [`SPLIT_AUTOMATON.md`](SPLIT_AUTOMATON.md) resolves it completely (§7–§9),
 and [`PROOF.md`](PROOF.md) assembles everything into one induction on `m`.
-No Lean proof of the operator-level identity exists yet (see
-`formalization/README.md`) — that remains the only missing piece.
+The operator-level identity is now also machine-checked in Lean 4 for every `m ≥ 1`, by a different route (see
+`formalization/README.md`).
 
 This note does not change the status of anything in `THEOREM.md`.
 

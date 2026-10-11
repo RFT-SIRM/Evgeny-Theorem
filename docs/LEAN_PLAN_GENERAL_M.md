@@ -1,8 +1,9 @@
 # Plan for the general-`m` proof (replaces the Lean-related part of `PROOF.md` §3–§5)
 
-Status of the facts below: every numbered claim is checked numerically by
-`tests/general_m_structure_check.py` (levels as stated); **none is proved yet**.
-`traceDefect_one` (m = 1) is the only Lean-proved case so far.
+**Status: completed.** The plan below was carried out; the closed form `traceDefect_closed` is machine-checked for
+every `m ≥ 1` (see `formalization/README.md`). The "Final route" section is the route that was formalized; the
+numbered claims in the earlier sections are checked numerically by `tests/general_m_structure_check.py` and
+describe superseded routes.
 
 Notation: `H = D − A`, `D = diag(deg)⊗1`, `A` = connection adjacency (2×2 blocks, unitary on
 edges, zero diagonal). `s = sin(θ/2)`, `c = cos(θ/2)`. `H'`, `A'`: all flux axes equal to `z`.
