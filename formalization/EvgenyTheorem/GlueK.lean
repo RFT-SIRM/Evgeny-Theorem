@@ -1,0 +1,271 @@
+import EvgenyTheorem.GlueSG
+import EvgenyTheorem.OpSplit3
+import EvgenyTheorem.OrientSq
+
+/-!
+# The operator `H_{m+1}` as `E K Eᵀ`
+
+`K` is block diagonal with the three copy operators (with the orientation transported from
+level `m+1`), `E = Emat (sgπ m)`.  Combined with `sg_trace4_glue` this gives the gluing
+identity for the *actual* operator.  Remaining hypotheses (`hkg`, `hu2`) are corner facts.
+-/
+
+namespace EvgenyTheorem
+
+open Matrix
+
+/-! ### Abstract part: block-diagonal matrices and pushforwards -/
+
+section Abstract
+
+/-- Block-diagonal matrix with blocks `H c`. -/
+def blockK {ι X : Type*} [DecidableEq ι] (H : ι → Matrix X X ℂ) :
+    Matrix (ι × X) (ι × X) ℂ :=
+  fun w w' => if w.1 = w'.1 then H w.1 w.2 w'.2 else 0
+
+theorem blockK_BD {ι X : Type*} [DecidableEq ι] (H : ι → Matrix X X ℂ) :
+    BD (fun w : ι × X => w.1) (blockK H) := by
+  intro w w' h
+  have h' : w.1 ≠ w'.1 := h
+  simp [blockK, h']
+
+theorem EK_apply {ι X V : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
+    [Fintype V] [DecidableEq V] (πc : ι → X → V) (H : ι → Matrix X X ℂ) (v : V) (c' : ι) (y : X) :
+    (Emat (fun w : ι × X => πc w.1 w.2) * blockK H) v (c', y) =
+      (Emat (πc c') * H c') v y := by
+  simp only [Matrix.mul_apply, Emat, blockK, Fintype.sum_prod_type]
+  rw [Finset.sum_eq_single c']
+  · simp
+  · intro c _ hne
+    simp [hne]
+  · intro h
+    exact absurd (Finset.mem_univ c') h
+
+theorem EKEt_eq_sum {ι X V : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
+    [Fintype V] [DecidableEq V] (πc : ι → X → V) (H : ι → Matrix X X ℂ) :
+    Emat (fun w : ι × X => πc w.1 w.2) * blockK H * (Emat (fun w : ι × X => πc w.1 w.2))ᵀ =
+      ∑ c, Emat (πc c) * H c * (Emat (πc c))ᵀ := by
+  ext v v'
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
+  simp only [EK_apply]
+  rw [Matrix.sum_apply]
+  refine Finset.sum_congr rfl (fun c _ => ?_)
+  rw [Matrix.mul_apply]
+  refine Finset.sum_congr rfl (fun y _ => ?_)
+  first
+    | rfl
+    | simp [Matrix.transpose_apply, Emat]
+
+theorem Ec_entry {X V : Type*} [Fintype X] [DecidableEq X] [Fintype V] [DecidableEq V]
+    (π : X → V) (M : Matrix X X ℂ) (v v' : V) :
+    (Emat π * M * (Emat π)ᵀ) v v' =
+      ∑ x, ∑ y, (if π x = v then (1 : ℂ) else 0) * M x y * (if π y = v' then (1 : ℂ) else 0) := by
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, Emat, Finset.sum_mul]
+  exact Finset.sum_comm
+
+theorem sum_sum_ind {X V : Type*} [Fintype X] [DecidableEq V] (π : X → V)
+    (hinj : Function.Injective π) (M : X → X → ℂ) (x0 y0 : X) (v v' : V)
+    (hx : π x0 = v) (hy : π y0 = v') :
+    ∑ x, ∑ y, (if π x = v then (1 : ℂ) else 0) * M x y * (if π y = v' then (1 : ℂ) else 0) =
+      M x0 y0 := by
+  rw [Finset.sum_eq_single x0]
+  · rw [Finset.sum_eq_single y0]
+    · simp [hx, hy]
+    · intro y _ hne
+      have : π y ≠ v' := fun h => hne (hinj (h.trans hy.symm))
+      simp [this]
+    · simp
+  · intro x _ hne
+    have : π x ≠ v := fun h => hne (hinj (h.trans hx.symm))
+    simp [this]
+  · simp
+
+theorem sum_sum_ind_zero_left {X V : Type*} [Fintype X] [DecidableEq V] (π : X → V)
+    (M : X → X → ℂ) (v v' : V) (h : ∀ x, π x ≠ v) :
+    ∑ x, ∑ y, (if π x = v then (1 : ℂ) else 0) * M x y * (if π y = v' then (1 : ℂ) else 0) =
+      0 := by
+  simp [h]
+
+theorem sum_sum_ind_zero_right {X V : Type*} [Fintype X] [DecidableEq V] (π : X → V)
+    (M : X → X → ℂ) (v v' : V) (h : ∀ y, π y ≠ v') :
+    ∑ x, ∑ y, (if π x = v then (1 : ℂ) else 0) * M x y * (if π y = v' then (1 : ℂ) else 0) =
+      0 := by
+  simp [h]
+
+end Abstract
+
+theorem sum_gcopy (f : GCopy → ℂ) : ∑ c, f c = f .A + f .B + f .C := by
+  have h : (Finset.univ : Finset GCopy) = {GCopy.A, GCopy.B, GCopy.C} := by
+    ext x
+    cases x <;> simp
+  rw [h, Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton,
+    add_assoc]
+
+/-! ### Concrete part -/
+
+theorem GCopy.shift_inj (m : ℕ) (c : GCopy) {x y : Point}
+    (h : c.shift m x = c.shift m y) : x = y := by
+  cases c <;> exact shiftPoint_injective _ _ _ h
+
+theorem sgπ_inj (m : ℕ) (c : GCopy) :
+    Function.Injective (fun x : Pt m × C2 => sgπ m (c, x)) := by
+  intro x y h
+  have h1 : c.shift m x.1.1 = c.shift m y.1.1 := congrArg (fun z => z.1.1) h
+  have h2 : x.2 = y.2 := by
+    have h3 := congrArg Prod.snd h
+    exact h3
+  exact Prod.ext (Subtype.ext (GCopy.shift_inj m c h1)) h2
+
+/-- The three copy operators. -/
+noncomputable def Hc (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] : GCopy → Matrix (Pt m × C2) (Pt m × C2) ℂ
+  | .A => fun x y => pHeO m θ ax o x.1.1 y.1.1 x.2 y.2
+  | .B => fun x y => pHeO m θ ax (oBo m o) x.1.1 y.1.1 x.2 y.2
+  | .C => fun x y => pHeO m θ ax (oCo m o) x.1.1 y.1.1 x.2 y.2
+
+/-- The block-diagonal operator on three disjoint copies. -/
+noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
+  blockK (Hc m θ ax o)
+
+/-- Generic evaluation of one copy's contribution. -/
+theorem copy_gen (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (oo : Point → Point → Prop) [DecidableRel oo]
+    (c : GCopy) (P : Point → Prop) [DecidablePred P] (un : Point → Point)
+    (hP : ∀ z, P z ↔ ∃ x ∈ vertexOrder m, c.shift m x = z)
+    (hun : ∀ x ∈ vertexOrder m, un (c.shift m x) = x)
+    (v v' : Pt (m + 1) × C2) :
+    ∑ x : Pt m × C2, ∑ y : Pt m × C2,
+        (if sgπ m (c, x) = v then (1 : ℂ) else 0) * pHeO m θ ax oo x.1.1 y.1.1 x.2 y.2 *
+          (if sgπ m (c, y) = v' then (1 : ℂ) else 0) =
+      if P v.1.1 ∧ P v'.1.1 then pHeO m θ ax oo (un v.1.1) (un v'.1.1) v.2 v'.2 else 0 := by
+  have hpre : ∀ u : Pt (m + 1) × C2, (∃ x : Pt m × C2, sgπ m (c, x) = u) ↔ P u.1.1 := by
+    intro u
+    constructor
+    · rintro ⟨x, rfl⟩
+      exact (hP _).mpr ⟨x.1.1, List.mem_toFinset.mp x.1.2, rfl⟩
+    · intro h
+      obtain ⟨x, hx, hxs⟩ := (hP _).mp h
+      exact ⟨(⟨x, List.mem_toFinset.mpr hx⟩, u.2), Prod.ext (Subtype.ext hxs) rfl⟩
+  by_cases h1 : P v.1.1
+  · by_cases h2 : P v'.1.1
+    · obtain ⟨x0, hx0⟩ := (hpre v).mpr h1
+      obtain ⟨y0, hy0⟩ := (hpre v').mpr h2
+      refine (sum_sum_ind (fun x => sgπ m (c, x)) (sgπ_inj m c)
+        (fun x y => pHeO m θ ax oo x.1.1 y.1.1 x.2 y.2) x0 y0 v v' hx0 hy0).trans ?_
+      rw [if_pos (And.intro h1 h2)]
+      subst hx0 hy0
+      have hxm := List.mem_toFinset.mp x0.1.2
+      have hym := List.mem_toFinset.mp y0.1.2
+      have e1 : (sgπ m (c, x0)).1.1 = c.shift m x0.1.1 := rfl
+      have e2 : (sgπ m (c, y0)).1.1 = c.shift m y0.1.1 := rfl
+      have e3 : (sgπ m (c, x0)).2 = x0.2 := rfl
+      have e4 : (sgπ m (c, y0)).2 = y0.2 := rfl
+      rw [e1, e2, e3, e4, hun _ hxm, hun _ hym]
+    · have hn : ∀ y : Pt m × C2, sgπ m (c, y) ≠ v' :=
+        fun y hy => h2 ((hpre v').mp ⟨y, hy⟩)
+      refine (sum_sum_ind_zero_right (fun x => sgπ m (c, x))
+        (fun x y => pHeO m θ ax oo x.1.1 y.1.1 x.2 y.2) v v' hn).trans ?_
+      rw [if_neg (fun h => h2 h.2)]
+  · have hn : ∀ x : Pt m × C2, sgπ m (c, x) ≠ v :=
+      fun x hx => h1 ((hpre v).mp ⟨x, hx⟩)
+    refine (sum_sum_ind_zero_left (fun x => sgπ m (c, x))
+      (fun x y => pHeO m θ ax oo x.1.1 y.1.1 x.2 y.2) v v' hn).trans ?_
+    rw [if_neg (fun h => h1 h.1)]
+
+theorem shiftA_eq (m : ℕ) (x : Point) : GCopy.shift m .A x = x := by
+  simp [GCopy.shift, shiftPoint]
+
+theorem hP_A (m : ℕ) (z : Point) :
+    inA m z ↔ ∃ x ∈ vertexOrder m, GCopy.shift m .A x = z := by
+  constructor
+  · intro h
+    exact ⟨z, List.mem_toFinset.mp h, shiftA_eq m z⟩
+  · rintro ⟨x, hx, rfl⟩
+    rw [shiftA_eq]
+    exact List.mem_toFinset.mpr hx
+
+theorem hP_B (m : ℕ) (z : Point) :
+    inB m z ↔ ∃ x ∈ vertexOrder m, GCopy.shift m .B x = z := by
+  constructor
+  · intro h
+    exact ⟨unB m z, inB_mem h, inB_shift h⟩
+  · rintro ⟨x, hx, rfl⟩
+    have hx' : x ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hx
+    refine ⟨?_, ?_⟩
+    · simp [GCopy.shift, shiftPoint]
+    · simpa [GCopy.shift, shiftPoint] using hx'
+
+theorem hP_C (m : ℕ) (z : Point) :
+    inC m z ↔ ∃ x ∈ vertexOrder m, GCopy.shift m .C x = z := by
+  constructor
+  · intro h
+    exact ⟨unC m z, inC_mem h, inC_shift h⟩
+  · rintro ⟨x, hx, rfl⟩
+    have hx' : x ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hx
+    refine ⟨?_, ?_⟩
+    · simp [GCopy.shift, shiftPoint]
+    · simpa [GCopy.shift, shiftPoint] using hx'
+
+theorem copy_A (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (v v' : Pt (m + 1) × C2) :
+    (Emat (fun x : Pt m × C2 => sgπ m (GCopy.A, x)) * Hc m θ ax o GCopy.A *
+        (Emat (fun x : Pt m × C2 => sgπ m (GCopy.A, x)))ᵀ) v v' =
+      KAo m θ ax o v.1.1 v'.1.1 v.2 v'.2 := by
+  rw [Ec_entry]
+  exact copy_gen m θ ax o GCopy.A (inA m) id (hP_A m)
+    (fun x _ => shiftA_eq m x) v v'
+
+theorem copy_B (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (v v' : Pt (m + 1) × C2) :
+    (Emat (fun x : Pt m × C2 => sgπ m (GCopy.B, x)) * Hc m θ ax o GCopy.B *
+        (Emat (fun x : Pt m × C2 => sgπ m (GCopy.B, x)))ᵀ) v v' =
+      KBo m θ ax o v.1.1 v'.1.1 v.2 v'.2 := by
+  rw [Ec_entry]
+  exact copy_gen m θ ax (oBo m o) GCopy.B (inB m) (unB m) (hP_B m)
+    (fun x _ => by simp [unB, GCopy.shift, shiftPoint]) v v'
+
+theorem copy_C (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (v v' : Pt (m + 1) × C2) :
+    (Emat (fun x : Pt m × C2 => sgπ m (GCopy.C, x)) * Hc m θ ax o GCopy.C *
+        (Emat (fun x : Pt m × C2 => sgπ m (GCopy.C, x)))ᵀ) v v' =
+      KCo m θ ax o v.1.1 v'.1.1 v.2 v'.2 := by
+  rw [Ec_entry]
+  exact copy_gen m θ ax (oCo m o) GCopy.C (inC m) (unC m) (hP_C m)
+    (fun x _ => by simp [unC, GCopy.shift, shiftPoint]) v v'
+
+/-- **`H_{m+1} = E K Eᵀ`**, for an arbitrary orientation `o`. -/
+theorem sg_EKEt (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k) (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k) :
+    Emat (sgπ m) * sgK m θ ax o * (Emat (sgπ m))ᵀ = pOpO (m + 1) θ ax o := by
+  have h := EKEt_eq_sum (fun (c : GCopy) (x : Pt m × C2) => sgπ m (c, x)) (Hc m θ ax o)
+  refine h.trans ?_
+  ext v v'
+  show _ = pHeO (m + 1) θ ax o v.1.1 v'.1.1 v.2 v'.2
+  rw [Matrix.sum_apply, sum_gcopy, pHeO_succ m θ ax o hax1 hax2 v.1.1 v'.1.1 v.2 v'.2]
+  exact congrArg₂ (· + ·) (congrArg₂ (· + ·) (copy_A m θ ax o v v') (copy_B m θ ax o v v'))
+    (copy_C m θ ax o v v')
+
+/-- Right-hand side of the gluing identity. -/
+noncomputable def glueRHS (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  Matrix.trace (K * K * K * K) +
+    4 * ∑ a, (if (sgGlue m).g a then (K * K * K) a a * K ((sgGlue m).σ a) ((sgGlue m).σ a)
+      else 0) +
+    2 * ∑ a, (if (sgGlue m).g a then (K * K) a a * (K * K) ((sgGlue m).σ a) ((sgGlue m).σ a)
+      else 0) +
+    ∑ a, (if (sgGlue m).g a then K a a * K a a * (K ((sgGlue m).σ a) ((sgGlue m).σ a) *
+      K ((sgGlue m).σ a) ((sgGlue m).σ a)) else 0)
+
+/-- **Gluing identity for the actual operator.** Only the corner hypotheses
+`hkg`, `hu2` remain to be discharged. -/
+theorem pOpO_trace4_glue (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hkg : ∀ w w', (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+      sgK m θ ax o w w' = 0)
+    (hu2 : GlueDiag (sgGlue m) (sgK m θ ax o * sgK m θ ax o)) :
+    Matrix.trace (pOpO (m + 1) θ ax o * pOpO (m + 1) θ ax o * pOpO (m + 1) θ ax o *
+        pOpO (m + 1) θ ax o) = glueRHS m (sgK m θ ax o) := by
+  rw [← sg_EKEt m θ ax o hax1 hax2]
+  exact sg_trace4_glue m (sgK m θ ax o) (blockK_BD _) hkg hu2
+
+end EvgenyTheorem

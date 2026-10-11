@@ -1,0 +1,205 @@
+import EvgenyTheorem.GlueK
+import EvgenyTheorem.EdgeStep
+import EvgenyTheorem.OrientSq
+import EvgenyTheorem.PairUnit
+
+/-!
+# Corner hypotheses `hkg` and `hu2` for the glued operator
+
+* `hkg`: two distinct glued points of one copy are either the same point with different spin
+  (diagonal entry, spin-diagonal) or two distinct corners (not adjacent for `m ≥ 1`).
+* `hu2`: for the same point and different spins, `(K·K)` vanishes by the edge identity
+  `pHeO_edge_mul'`; for two distinct corners of one copy the two partners lie in different
+  copies, so the hypothesis of `GlueDiag` is never satisfied.
+-/
+
+namespace EvgenyTheorem
+
+open Matrix
+
+/-! ### Corners -/
+
+theorem glued_corner {m : ℕ} {w : WSG m} (h : (sgGlue m).g w) :
+    w.2.1.1 = (0, 0) ∨ w.2.1.1 = (2 ^ m, 0) ∨ w.2.1.1 = (0, 2 ^ m) := by
+  have h' : ∃ w', glW m w w' := h
+  obtain ⟨w', hw'⟩ := h'
+  have hg : gl m w.1 w.2.1.1 w'.1 w'.2.1.1 := hw'.1
+  rcases hg with ⟨_, b, _, _⟩ | ⟨_, b, _, _⟩ | ⟨_, b, _, _⟩ | ⟨_, b, _, _⟩ |
+    ⟨_, b, _, _⟩ | ⟨_, b, _, _⟩
+  · exact Or.inr (Or.inl b)
+  · exact Or.inl b
+  · exact Or.inr (Or.inr b)
+  · exact Or.inl b
+  · exact Or.inr (Or.inr b)
+  · exact Or.inr (Or.inl b)
+
+theorem corners_far {m : ℕ} (hm : 1 ≤ m) {p q : Point}
+    (hp : p = (0, 0) ∨ p = (2 ^ m, 0) ∨ p = (0, 2 ^ m))
+    (hq : q = (0, 0) ∨ q = (2 ^ m, 0) ∨ q = (0, 2 ^ m))
+    (hne : p ≠ q) : ¬ EdgeB m p.1 p.2 q.1 q.2 = true := by
+  intro hE
+  have hd := EdgeB_dist hE
+  have h2 : 2 ≤ 2 ^ m :=
+    calc 2 = 2 ^ 1 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  rcases hp with rfl | rfl | rfl <;> rcases hq with rfl | rfl | rfl <;>
+    first
+      | exact hne rfl
+      | (dsimp only at hd; omega)
+      | (simp at hd; omega)
+
+/-- The two glued corners of one copy have partners in different copies. -/
+theorem gl_partner_inj {m : ℕ} {c c1 c2 : GCopy} {p q p1 q1 : Point}
+    (h1 : gl m c p c1 p1) (h2 : gl m c q c2 q1) (hc : c1 = c2) : p = q := by
+  subst hc
+  cases c <;> cases c1 <;> simp [gl, Prod.ext_iff] at h1 h2 ⊢ <;> omega
+
+/-! ### Entries of `Hc` -/
+
+theorem Hc_zero_diag (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (c : GCopy) (x y : Pt m × C2) (hp : x.1.1 = y.1.1) (hs : x.2 ≠ y.2) :
+    Hc m θ ax o c x y = 0 := by
+  cases c
+  · show pHeO m θ ax o x.1.1 y.1.1 x.2 y.2 = 0
+    rw [hp, pHeO_diag, if_neg hs]
+  · show pHeO m θ ax (oBo m o) x.1.1 y.1.1 x.2 y.2 = 0
+    rw [hp, pHeO_diag, if_neg hs]
+  · show pHeO m θ ax (oCo m o) x.1.1 y.1.1 x.2 y.2 = 0
+    rw [hp, pHeO_diag, if_neg hs]
+
+theorem Hc_zero_edge (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (c : GCopy) (x y : Pt m × C2) (hpq : x.1.1 ≠ y.1.1)
+    (hE : ¬ EdgeB m x.1.1.1 x.1.1.2 y.1.1.1 y.1.1.2 = true) :
+    Hc m θ ax o c x y = 0 := by
+  cases c
+  · exact pHeO_zero_of_not_edge m θ ax o hpq hE x.2 y.2
+  · exact pHeO_zero_of_not_edge m θ ax (oBo m o) hpq hE x.2 y.2
+  · exact pHeO_zero_of_not_edge m θ ax (oCo m o) hpq hE x.2 y.2
+
+/-! ### `hkg` -/
+
+theorem sgK_hkg (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] :
+    ∀ w w', (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+      sgK m θ ax o w w' = 0 := by
+  intro w w' hw hw' hc hne
+  have e : sgK m θ ax o w w' = Hc m θ ax o w.1 w.2 w'.2 := by
+    show (if w.1 = w'.1 then Hc m θ ax o w.1 w.2 w'.2 else 0) = _
+    rw [if_pos hc]
+  rw [e]
+  by_cases hp : w.2.1.1 = w'.2.1.1
+  · have hs : w.2.2 ≠ w'.2.2 := fun h => hne (Prod.ext hc (Prod.ext (Subtype.ext hp) h))
+    exact Hc_zero_diag m θ ax o w.1 w.2 w'.2 hp hs
+  · exact Hc_zero_edge m θ ax o w.1 w.2 w'.2 hp
+      (corners_far hm (glued_corner hw) (glued_corner hw') hp)
+
+/-! ### `hu2` -/
+
+theorem blockK_mul_same {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
+    (H : ι → Matrix X X ℂ) (w w' : ι × X) (hc : w.1 = w'.1) :
+    (blockK H * blockK H) w w' = (H w.1 * H w.1) w.2 w'.2 := by
+  simp only [Matrix.mul_apply, Fintype.sum_prod_type]
+  rw [Finset.sum_eq_single w.1]
+  · refine Finset.sum_congr rfl (fun y _ => ?_)
+    simp [blockK, hc]
+  · intro c _ hne
+    refine Finset.sum_eq_zero (fun y _ => ?_)
+    have : w.1 ≠ c := fun h => hne h.symm
+    simp [blockK, this]
+  · intro h
+    exact absurd (Finset.mem_univ _) h
+
+theorem local_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (oo : Point → Point → Prop)
+    [DecidableRel oo] (hanti : OAnti m oo) (p : Point) (x : Pt m) (s s' : C2) (hs : s ≠ s') :
+    ∑ t : C2, pHeO m θ ax oo p x.1 s t * pHeO m θ ax oo x.1 p t s' = 0 := by
+  by_cases hx : p = x.1
+  · apply Finset.sum_eq_zero
+    intro t _
+    rw [← hx, pHeO_diag, pHeO_diag]
+    by_cases h1 : s = t
+    · have h2 : ¬ t = s' := fun h => hs (h1.trans h)
+      rw [if_neg h2, mul_zero]
+    · rw [if_neg h1, zero_mul]
+  · by_cases hE : EdgeB m p.1 p.2 x.1.1 x.1.2 = true
+    · rw [pHeO_edge_mul' m θ ax oo hanti hx hE s s', if_neg hs]
+    · apply Finset.sum_eq_zero
+      intro t _
+      rw [pHeO_zero_of_not_edge m θ ax oo hx hE s t, zero_mul]
+
+theorem sq_zero_gen (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (oo : Point → Point → Prop)
+    [DecidableRel oo] (hanti : OAnti m oo) (M : Matrix (Pt m × C2) (Pt m × C2) ℂ)
+    (hM : ∀ x y, M x y = pHeO m θ ax oo x.1.1 y.1.1 x.2 y.2)
+    (a b : Pt m × C2) (hab : a.1.1 = b.1.1) (hs : a.2 ≠ b.2) : (M * M) a b = 0 := by
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
+  apply Finset.sum_eq_zero
+  intro x _
+  simp only [hM]
+  rw [← hab]
+  exact local_sq_zero m θ ax oo hanti a.1.1 x a.2 b.2 hs
+
+theorem oanti_A (m : ℕ) (o : Point → Point → Prop) (hanti : OAnti (m + 1) o) : OAnti m o := by
+  intro p q hp hq hpq
+  have hp' : p ∈ vertexOrder (m + 1) := by
+    have := GCopy.shift_mem m GCopy.A hp
+    rwa [shiftA_eq] at this
+  have hq' : q ∈ vertexOrder (m + 1) := by
+    have := GCopy.shift_mem m GCopy.A hq
+    rwa [shiftA_eq] at this
+  exact hanti p q hp' hq' hpq
+
+theorem oanti_B (m : ℕ) (o : Point → Point → Prop) (hanti : OAnti (m + 1) o) :
+    OAnti m (oBo m o) := by
+  intro p q hp hq hpq
+  have hne : GCopy.B.shift m p ≠ GCopy.B.shift m q :=
+    fun h => hpq (GCopy.shift_inj m GCopy.B h)
+  exact hanti _ _ (GCopy.shift_mem m GCopy.B hp) (GCopy.shift_mem m GCopy.B hq) hne
+
+theorem oanti_C (m : ℕ) (o : Point → Point → Prop) (hanti : OAnti (m + 1) o) :
+    OAnti m (oCo m o) := by
+  intro p q hp hq hpq
+  have hne : GCopy.C.shift m p ≠ GCopy.C.shift m q :=
+    fun h => hpq (GCopy.shift_inj m GCopy.C h)
+  exact hanti _ _ (GCopy.shift_mem m GCopy.C hp) (GCopy.shift_mem m GCopy.C hq) hne
+
+theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
+    (hab : a.1.1 = b.1.1) (hs : a.2 ≠ b.2) :
+    (Hc m θ ax o c * Hc m θ ax o c) a b = 0 := by
+  cases c
+  · exact sq_zero_gen m θ ax o (oanti_A m o hanti) (Hc m θ ax o GCopy.A)
+      (fun x y => rfl) a b hab hs
+  · exact sq_zero_gen m θ ax (oBo m o) (oanti_B m o hanti) (Hc m θ ax o GCopy.B)
+      (fun x y => rfl) a b hab hs
+  · exact sq_zero_gen m θ ax (oCo m o) (oanti_C m o hanti) (Hc m θ ax o GCopy.C)
+      (fun x y => rfl) a b hab hs
+
+theorem sgK_hu2 (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (hanti : OAnti (m + 1) o) :
+    GlueDiag (sgGlue m) (sgK m θ ax o * sgK m θ ax o) := by
+  intro w w' hw hw' hc hσc hne
+  have hc' : w.1 = w'.1 := hc
+  have hσc' : (sgσ m w).1 = (sgσ m w').1 := hσc
+  by_cases hp : w.2.1.1 = w'.2.1.1
+  · have hs : w.2.2 ≠ w'.2.2 :=
+      fun h => hne (Prod.ext hc' (Prod.ext (Subtype.ext hp) h))
+    have e : (sgK m θ ax o * sgK m θ ax o) w w' =
+        (Hc m θ ax o w.1 * Hc m θ ax o w.1) w.2 w'.2 :=
+      blockK_mul_same (Hc m θ ax o) w w' hc'
+    rw [e]
+    exact Hc_sq_zero m θ ax o hanti w.1 w.2 w'.2 hp hs
+  · exfalso
+    have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    rw [← hc'] at h2
+    exact hp (gl_partner_inj h1 h2 hσc')
+
+/-! ### Gluing identity without corner hypotheses -/
+
+theorem pOpO_trace4_glue_final (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (hanti : OAnti (m + 1) o)
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k) (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k) :
+    Matrix.trace (pOpO (m + 1) θ ax o * pOpO (m + 1) θ ax o * pOpO (m + 1) θ ax o *
+        pOpO (m + 1) θ ax o) = glueRHS m (sgK m θ ax o) :=
+  pOpO_trace4_glue m θ ax o hax1 hax2 (sgK_hkg m hm θ ax o) (sgK_hu2 m θ ax o hanti)
+
+end EvgenyTheorem
