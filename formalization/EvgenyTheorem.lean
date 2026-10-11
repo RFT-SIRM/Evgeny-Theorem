@@ -1,3 +1,4 @@
+import EvgenyTheorem.TildeEntries
 import EvgenyTheorem.Graph.Sierpinski
 import EvgenyTheorem.SanityChecks
 import EvgenyTheorem.SU2
