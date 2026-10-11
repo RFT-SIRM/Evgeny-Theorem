@@ -29,6 +29,7 @@ import EvgenyTheorem.OpSplit3
 import EvgenyTheorem.GlueAlg
 import EvgenyTheorem.GlueTrace
 import EvgenyTheorem.GlueCornerCube
+import EvgenyTheorem.FinalOrient
 import EvgenyTheorem.CornerFaces
 import Mathlib.Data.Matrix.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
