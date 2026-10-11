@@ -45,12 +45,4 @@ theorem sgK_sq_diag (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Poin
     rw [e]
     simpa using h
 
-/-- Cube: needs the corner-triangle computation (`U + U† = 2cos(θ/2)`). -/
-theorem sgK_cube_diag (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o] (hanti : OAnti (m + 1) o)
-    (a : WSG m) (ha : (sgGlue m).g a) :
-    (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o) a a =
-      (sgK m θ ax' o * sgK m θ ax' o * sgK m θ ax' o) a a := by
-  sorry
-
 end EvgenyTheorem
