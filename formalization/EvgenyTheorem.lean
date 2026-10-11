@@ -79,10 +79,9 @@ theorem delta_one_pi_div_two :
 /--
 Operator-level bridge.
 
-This is intentionally a proposition, not an axiom: the final formal proof
-must construct `traceDefect` from the concrete Sierpiński-gasket graph,
-SU(2) edge connection, operators H_C and H_C', and Tr(H^4), and then prove
-this identity for every m and θ.
+Abstract form of the statement: a function `traceDefect : ℕ → ℝ → ℝ` satisfies the closed form at
+every level. This is a proposition, not an axiom. For the concrete operators `HC`, `HCprime` the closed form is
+proved below (`traceDefect_eq_delta`, from `traceDefect_closed`) for every level `m ≥ 1`; it is not claimed at `m = 0`.
 -/
 def TraceDefectIdentity (traceDefect : ℕ → ℝ → ℝ) : Prop :=
   ∀ m θ, traceDefect m θ = delta m θ
@@ -105,5 +104,26 @@ theorem normalized_evgeny_theorem
     traceDefect m θ / ((3 : ℝ) ^ (m + 1) + 3) = I m θ := by
   rw [h m θ]
   rfl
+
+/-- **Evgeny's Theorem, operator level (machine-checked).** For every level `m ≥ 1` and every angle `θ`,
+the fourth-moment trace defect of the concrete operators `HC`, `HCprime` on `SG(m)` equals the closed
+form `delta m θ`. The closed form is not claimed at `m = 0`. -/
+theorem traceDefect_eq_delta (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) :
+    traceDefect m θ = (delta m θ : ℂ) := by
+  rw [traceDefect_closed θ m hm]
+  first
+    | (simp [delta]; done)
+    | (simp [delta]; ring)
+    | (unfold delta; push_cast; ring)
+
+theorem traceDefect_re_eq_delta (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) :
+    (traceDefect m θ).re = delta m θ := by
+  rw [traceDefect_eq_delta m hm θ]
+  exact Complex.ofReal_re _
+
+theorem traceDefect_im_eq_zero (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) :
+    (traceDefect m θ).im = 0 := by
+  rw [traceDefect_eq_delta m hm θ]
+  exact Complex.ofReal_im _
 
 end EvgenyTheorem
