@@ -258,20 +258,24 @@ theorem trace_two_N_word {cp : W → ι} (G : GlueData cp)
     _ = ∑ a, if G.g a then ((ys ++ xs).prod) a a * M (G.σ a) (G.σ a) else 0 := by
       exact trace_two_N G M ((ys ++ xs).prod) hbd hkg
 
-/-- Two-pairing word formula for arbitrary natural powers of K. The geometric
-condition is stated explicitly for the middle power; it is not inferred merely
-from block diagonality of K. -/
-/-- The corner-vanishing condition needed by the two-pairing formula follows
-from the project's GlueDiag hypothesis together with block diagonality.
-If the partners lie in the same copy, use GlueDiag; otherwise use BD. -/
+/-- The two-pairing formula for powers requires a corner-vanishing
+condition for the middle power; block diagonality alone does not imply it. -/
+/-- Derive the glued-corner vanishing condition when partner copies coincide.
+For partner points in different copies, the required vanishing is supplied
+explicitly as a separate hypothesis. -/
 theorem GlueDiag_pair_vanish {cp : W → ι} (G : GlueData cp)
-    (M : Matrix W W ℂ) (hbd : BD cp M) (hdiag : GlueDiag G M) :
+    (M : Matrix W W ℂ) (hdiag : GlueDiag G M)
+    (hcross : ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      cp (G.σ w) ≠ cp (G.σ w') → w ≠ w' → M w w' = 0) :
     ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → M w w' = 0 := by
   intro w w' hw hw' hcopy hne
   by_cases hpartner : cp (G.σ w) = cp (G.σ w')
   · exact hdiag w w' hw hw' hcopy hpartner hne
-  · exact hbd w w' hpartner
+  · exact hcross w w' hw hw' hcopy hpartner hne
 
+/-- Two-pairing word formula for arbitrary natural powers of K. The geometric
+condition is stated explicitly for the middle power; it is not inferred merely
+from block diagonality of K. -/
 theorem trace_two_N_powers {cp : W → ι} (G : GlueData cp)
     (K : Matrix W W ℂ) (a b c : ℕ) (hbd : BD cp (K ^ b))
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
