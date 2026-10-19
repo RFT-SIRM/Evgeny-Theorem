@@ -62,20 +62,22 @@ Independent numerical work recorded during this research found, at (\theta=\pi),
 
 Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation (R_3^{(p)}=R_4^{(p)}) for (p=6,8,10). However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
 
-## 4a. Newly machine-checked reusable lemma
+## 4a. Machine-checked reusable lemmas now in `main`
 
-The Lean file `formalization/EvgenyTheorem/GlueTrace.lean` now proves
-`blockK_pow` and `trace_blockK_pow` for every natural exponent. In particular,
-the trace of a power of the three-copy block-diagonal operator is the sum of the
-corresponding copy traces. This removes the exponent-four restriction from the
-**block-diagonal step only**.
+The Lean development contains the arbitrary-exponent block-diagonal lemmas
+`blockK_pow` and `trace_blockK_pow` in `formalization/EvgenyTheorem/GlueTrace.lean`.
+These remove the exponent-four restriction from the **block-diagonal step only**.
 
-It does not generalize `glue_trace4`: the latter still depends on the fourth-power
-word expansion and the corner identities `GlueDiag G (K * K)`. The next proof
-target is a generic ordered-word expansion for `Tr((K + K*N)^p)`, with cyclic
-trace equivalence and multiplicities represented explicitly. Only after that
-expansion is machine-checked should the project derive a boundary formula for
-p = 6, 8, and 10.
+The ordered-word expansion for `(K + K*N)^p` and its trace-level version are
+also now in `formalization/EvgenyTheorem/TraceExpand.lean`. They preserve word
+ordering and multiplicity. In `formalization/EvgenyTheorem/GlueAlg.lean`,
+`trace_single_KN_word_zero` proves that a trace word with exactly one `K*N`
+factor vanishes when the remaining factors are powers of a block-diagonal `K`,
+using the existing `trace_pow_N_pow_zero` result.
+
+These are reusable algebraic components, not a generalization of `glue_trace4`
+to higher moments. The corner identities `GlueDiag G (K * K)`, controlled
+boundary reductions, and the multi-pairing strata still need separate proofs.
 
 ## 4b. Reproducible combinatorial certificate
 
@@ -93,8 +95,8 @@ that any term vanishes, or close the higher-moment theorem.
 
 ## 5. Proof obligations before claiming closure
 
-1. Prove a general finite expansion of (\operatorname{Tr}((K+KN)^p)) that records multiplicities and cyclic classes without losing ordering information.
-2. Prove, under explicit hypotheses, that terms with one (N) vanish by block diagonality; do not assume that all other terms vanish.
+1. Use the machine-checked ordered-word expansion to organize the p = 6, 8, and 10 terms with their exact ordering and multiplicities; do not collapse terms merely because they share a cyclic class.
+2. Reduce the remaining multi-pairing terms under explicit hypotheses. The r = 1 stratum now has a machine-checked vanishing lemma; r = 2 still needs its corner-vanishing hypothesis, and r >= 3 is not covered by the current generic reductions.
 3. Derive the remaining boundary expression in terms of marked corner entries of (K^j), with (j\le p-1), and state every required corner-separation/vanishing hypothesis.
 4. Prove that the relevant marked corner blocks are equivalent for the two orientations. Graph-neighborhood isomorphism alone is insufficient unless it preserves the operator labels or an explicit basis transformation is supplied.
 5. Establish the finite base transition for (R_3=R_4) with an independently reproducible exact certificate or a direct formal proof.
@@ -113,10 +115,10 @@ The existing fourth-moment result should remain unchanged while these components
 
 ## 7. Status summary
 
-- **Machine-checked:** the existing fourth-moment development, subject to the repository's actual current build status.
+- **Machine-checked components in `main`:** the existing fourth-moment development; arbitrary-exponent block-diagonal trace lemmas; the ordered noncommutative word/trace expansion; and the r = 1 single-pairing trace-vanishing corollary. Check the current GitHub Actions status before describing the latest commit as fully CI-verified.
 - **Combinatorially counted and reproducibly certified:** binary words and cyclic-rotation classes for p = 6, 8, and 10; the committed JSON inventory is checked against the generator by tests.
-- **Numerically supported:** finite-level higher-moment residual patterns described above; reproducible artifact still to be added.
-- **Not yet proved/formalized here:** the all-level (p=6,8,10) residual identity and its propagation.
+- **Numerically supported:** finite-level higher-moment residual patterns described above; the full independent calculation is not yet packaged here as a reproducible, reviewed certificate.
+- **Not yet proved/formalized here:** the complete higher-moment boundary formulas, the required corner equivalences, and the all-level (p=6,8,10) residual identity and its propagation.
 
 
 ## 4c. Cyclic gap encoding by the number of pairing factors
