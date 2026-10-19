@@ -361,6 +361,42 @@ theorem trace_three_N_powers {cp : W → ι} (G : GlueData cp)
     · exact BD_pow K hK c
   exact trace_BD_N G hprod
 
+
+
+/-- General three-pairing reduction for an ordered word. The factors outside
+the three displayed pairing matrices may be different block-diagonal matrices;
+their order is preserved. If the middle factor M makes N*M*N diagonal, the
+remaining single N forces the trace to vanish. This is a reusable list-level
+lemma, not a claim that the required corner condition holds for every power
+of K. -/
+theorem trace_three_N_word_zero {cp : W → ι} (G : GlueData cp)
+    (xs ys zs : List (Matrix W W ℂ)) (M : Matrix W W ℂ)
+    (hxs : ∀ A, A ∈ xs → BD cp A)
+    (hys : ∀ A, A ∈ ys → BD cp A)
+    (hzs : ∀ A, A ∈ zs → BD cp A)
+    (hMbd : BD cp M)
+    (hMkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → M w w' = 0) :
+    Matrix.trace (xs.prod * G.N * M * G.N * ys.prod * G.N * zs.prod) = 0 := by
+  have hQ : BD cp (G.N * M * G.N) := by
+    rw [Q_eq_diag G M hMbd hMkg]
+    exact BD_diagonal _
+  have hrotate :
+      Matrix.trace (xs.prod * G.N * M * G.N * ys.prod * G.N * zs.prod) =
+        Matrix.trace ((zs.prod * xs.prod) * (G.N * M * G.N) * ys.prod * G.N) := by
+    calc
+      Matrix.trace (xs.prod * G.N * M * G.N * ys.prod * G.N * zs.prod) =
+          Matrix.trace ((xs.prod * (G.N * M * G.N) * ys.prod * G.N) * zs.prod) := by
+            simp only [Matrix.mul_assoc]
+      _ = Matrix.trace (zs.prod * (xs.prod * (G.N * M * G.N) * ys.prod * G.N)) :=
+        Matrix.trace_mul_comm _ _
+      _ = Matrix.trace ((zs.prod * xs.prod) * (G.N * M * G.N) * ys.prod * G.N) := by
+        simp only [Matrix.mul_assoc]
+  rw [hrotate]
+  have hleft : BD cp (zs.prod * xs.prod) := BD_mul (BD_list_prod zs hzs) (BD_list_prod xs hxs)
+  have hprod : BD cp ((zs.prod * xs.prod) * (G.N * M * G.N) * ys.prod) := by
+    exact BD_mul (BD_mul hleft hQ) (BD_list_prod ys hys)
+  exact trace_BD_N G hprod
+
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
