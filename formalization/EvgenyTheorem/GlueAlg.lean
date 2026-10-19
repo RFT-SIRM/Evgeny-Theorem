@@ -90,6 +90,32 @@ theorem trace_BD_N {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : 
     exact hX w (G.σ w) (fun h => G.cp_σ w hw h.symm)
   · rw [if_neg hw]
 
+/-- A finite product of matrices that are block diagonal across the copy map
+remains block diagonal. The factors need not be equal or commute. -/
+theorem BD_list_prod {cp : W → ι} (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → BD cp M) : BD cp xs.prod := by
+  induction xs with
+  | nil =>
+      intro w w' h
+      have hne : w ≠ w' := fun e => h (congrArg cp e)
+      simp [Matrix.one_apply, hne]
+  | cons A xs ih =>
+      change BD cp (A * xs.prod)
+      apply BD_mul
+      · exact hxs A (by simp)
+      · apply ih
+        intro M hM
+        exact hxs M (by simp [hM])
+
+/-- Any ordered finite product of block-diagonal factors has zero trace after
+multiplication by the pairing matrix. This generalizes the power-only case:
+the block-diagonal factors may all be different. -/
+theorem trace_list_prod_mul_N_zero {cp : W → ι} (G : GlueData cp)
+    (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → BD cp M) :
+    Matrix.trace (xs.prod * G.N) = 0 := by
+  exact trace_BD_N G (BD_list_prod xs hxs)
+
 /-- Block diagonality is preserved by every natural power. -/
 theorem BD_pow {cp : W → ι} (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
     BD cp (K ^ n) := by
