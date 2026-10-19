@@ -1,0 +1,29 @@
+name: Lean formalization
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "formalization/**/*.lean"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/lean-formalization.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "formalization/**/*.lean"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - "lake-manifest.json"
+      - ".github/workflows/lean-formalization.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+      - name: Build formalization
+        run: lake build EvgenyTheorem
