@@ -231,6 +231,17 @@ theorem trace_two_N_powers {cp : W → ι} (G : GlueData cp)
     _ = ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 :=
       trace_two_N G (K ^ b) (K ^ c * K ^ a) hbd hkg
 
+ /-- Convenient specialization of `trace_two_N_powers`: block diagonality of the
+middle power is derived from block diagonality of K, so callers need only provide
+the separate glued-corner vanishing condition for that power. -/
+theorem trace_two_N_powers_of_BD {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K) (a b c : ℕ)
+    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c) =
+      ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 := by
+  exact trace_two_N_powers G K a b c (BD_pow K hK b) hkg
+
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
