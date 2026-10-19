@@ -100,7 +100,7 @@ that any term vanishes, or close the higher-moment theorem.
 ## 5. Proof obligations before claiming closure
 
 1. Use the machine-checked ordered-word expansion to organize the $p=6,8,10$ terms with their exact ordering and multiplicities; do not collapse terms merely because they share a cyclic class.
-2. Reduce the remaining multi-pairing terms under explicit hypotheses. The r = 1 stratum now has a machine-checked vanishing lemma; r = 2 still needs its corner-vanishing hypothesis, and r >= 3 is not covered by the current generic reductions.
+2. Reduce the remaining multi-pairing terms under explicit hypotheses. The $r=1$ stratum now has a machine-checked vanishing lemma; $r=2$ still needs its corner-vanishing hypothesis, and $r\ge3$ is not covered by the current generic reductions.
 3. Derive the remaining boundary expression in terms of marked corner entries of $K^j$, with $j\le p-1$, and state every required corner-separation/vanishing hypothesis.
 4. Prove that the relevant marked corner blocks are equivalent for the two orientations. Graph-neighborhood isomorphism alone is insufficient unless it preserves the operator labels or an explicit basis transformation is supplied.
 5. Establish the finite base transition for $R_3=R_4$ with an independently reproducible exact certificate or a direct formal proof.
@@ -163,7 +163,7 @@ The class counts make the remaining gap concrete:
 
 Thus the two-N lemma is a useful component but cannot by itself close the
 $p=6,8,10$ expansion. The next mathematical target is a controlled reduction
-for words with at least three K*N factors (or a proof that specific classes
+for words with at least three $K N$ factors (or a proof that specific classes
 vanish under additional explicit geometric hypotheses), while preserving their
 ordering and multiplicities. The ledger is checked against the inventory in CI.
 
@@ -191,7 +191,7 @@ or prove the $p=6,8,10$ residual recurrence.
 
 **CI status checked 2026-10-19:** the current PR head `fd2bf98` passes the Lean `Build formalization` job and both Python jobs (Python 3.11 and 3.12) after a successful retry of a transient TLS download failure. This verifies compilation and these test suites for the current head; it does not discharge the mathematical obligations listed below. PR #4 remains open and should not be merged solely on the strength of this conditional lemma.
 
-## 4f. Exact $r=3$ gap split for p = 6, 8, 10
+## 4f. Exact $r=3$ gap split for $p=6,8,10$
 
 The committed inventory and a dedicated regression test now split the
 three-pairing classes according to whether any cyclic K-gap is zero. A zero
