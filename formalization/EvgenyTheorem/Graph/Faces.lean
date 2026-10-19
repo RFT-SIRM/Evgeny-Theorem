@@ -388,10 +388,10 @@ theorem fluxEdges_succ_blocks (m : ℕ) :
     dsimp [B2, fluxEdges]
     exact map_shift 0 1 (facesExact m) (by intro f hf; exact hf)
   have hsucc : fluxEdges (m + 1) = B0 ++ (B1 ++ B2) := by
-    simp only [fluxEdges, facesExact, List.map_append, List.append_assoc]
-    rfl
+    simp only [fluxEdges, facesExact, List.map_append, List.append_assoc,
+      B0, B1, B2, s]
   rw [hsucc, h0, h1, h2]
-  rfl
+  simp [shiftEdge, shiftPoint]
 
 /-- The three SU(2) axes assigned cyclically to the flux edges.
 The face ordering in `facesExact` is exactly the order used by the
