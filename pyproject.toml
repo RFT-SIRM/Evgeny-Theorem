@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 markers = [
     "slow: computationally heavier tests (e.g. level 7, dim=6564); run with `pytest -m slow`",
 ]
