@@ -58,6 +58,51 @@ theorem vIdx_orientationBranch_eq
     (vIdx m) (vIdx (m + 1)) φ horder p q
 
 /--
+Filtering a nodup list preserves the relative order of any two retained
+elements. This is the reusable list-theoretic step needed for the B and C
+copies, whose duplicate vertices are removed by `removeAll`.
+-/
+theorem idxOf_filter_lt_of_nodup {α : Type*} [BEq α] [LawfulBEq α]
+    (p : α → Bool) :
+    ∀ {l : List α} {x y : α}, l.Nodup → x ∈ l → y ∈ l →
+      p x = true → p y = true → l.idxOf x < l.idxOf y →
+      (l.filter p).idxOf x < (l.filter p).idxOf y := by
+  intro l
+  induction l with
+  | nil =>
+      intro x y hnd hx
+      simp at hx
+  | cons a t ih =>
+      intro x y hnd hx hy hpx hpy hlt
+      have hn := List.nodup_cons.mp hnd
+      rcases List.mem_cons.mp hx with hax | hxt
+      · subst x
+        have hay : a ≠ y := by
+          intro heq
+          subst y
+          simp at hlt
+        have hyt : y ∈ t := (List.mem_cons.mp hy).resolve_left hay
+        simp [List.filter_cons, hpx, List.idxOf_cons, hay]
+      · have hax : a ≠ x := fun heq => hxt ▸ hn.1 (by simpa [heq])
+        rcases List.mem_cons.mp hy with hay | hyt
+        · subst y
+          have hlt' : ¬ l.idxOf x < l.idxOf a := by
+            simp [List.idxOf_cons, hax] at hlt
+          omega
+        · have hay : a ≠ y := fun heq => hyt ▸ hn.1 (by simpa [heq])
+          have hxt' : x ∈ t := hxt
+          have hyt' : y ∈ t := hyt
+          have hltTail : t.idxOf x < t.idxOf y := by
+            simpa [List.idxOf_cons, hax, hay] using hlt
+          have hrec := ih hn.2 hxt' hyt' hpx hpy hltTail
+          cases hpa : p a with
+          | false =>
+              simpa [List.filter_cons, hpa] using hrec
+          | true =>
+              simpa [List.filter_cons, hpa, List.idxOf_cons, hax, hay] using
+                Nat.succ_lt_succ hrec
+
+/--
 The first copy in the recursive Sierpinski vertex order is the old vertex list.
 For vertices already present at level m, their global indices are unchanged at
 level m+1; hence every pairwise index comparison within that copy is preserved.
