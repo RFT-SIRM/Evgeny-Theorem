@@ -90,6 +90,17 @@ theorem trace_BD_N {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : 
     exact hX w (G.σ w) (fun h => G.cp_σ w hw h.symm)
   · rw [if_neg hw]
 
+/-- Block diagonality is preserved by every natural power. -/
+theorem BD_pow {cp : W → ι} (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
+    BD cp (K ^ n) := by
+  induction n with
+  | zero =>
+      intro w w' h
+      have hne : w ≠ w' := fun e => h (congrArg cp e)
+      simp [Matrix.one_apply, hne]
+  | succ n ih =>
+      simpa [pow_succ] using BD_mul ih hK
+
 theorem Q_apply {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0) (a b : W) :
     (G.N * K * G.N) a b = if G.g a ∧ a = b then K (G.σ a) (G.σ a) else 0 := by
