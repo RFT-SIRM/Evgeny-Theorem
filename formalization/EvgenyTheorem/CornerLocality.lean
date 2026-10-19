@@ -132,9 +132,11 @@ theorem vIdx_succ_B_le_iff (m : ℕ)
     vIdx m a.1 ≤ vIdx m b.1 ↔
       vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 a.1) ≤
         vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 b.1) := by
-  apply le_iff_of_lt_iff_of_injective
+  refine le_iff_of_lt_iff_of_injective
+    (α := {p : Point // p ∈ vertexOrder m ∧ p ≠ (0, 0)})
     (fun x => vIdx m x.1)
     (fun x => vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 x.1))
+    ?_ ?_ ?_ a b
   · intro x y hxy
     exact Subtype.ext (vIdx_injective_on_vertexOrder m x.2.1 y.2.1 hxy)
   · intro x y hxy
@@ -155,9 +157,11 @@ theorem vIdx_succ_C_le_iff (m : ℕ)
     vIdx m a.1 ≤ vIdx m b.1 ↔
       vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 a.1) ≤
         vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 b.1) := by
-  apply le_iff_of_lt_iff_of_injective
+  refine le_iff_of_lt_iff_of_injective
+    (α := {p : Point // p ∈ vertexOrder m ∧ p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0)})
     (fun x => vIdx m x.1)
     (fun x => vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 x.1))
+    ?_ ?_ ?_ a b
   · intro x y hxy
     exact Subtype.ext (vIdx_injective_on_vertexOrder m x.2.1 y.2.1 hxy)
   · intro x y hxy
