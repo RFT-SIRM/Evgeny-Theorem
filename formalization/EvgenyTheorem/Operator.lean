@@ -83,6 +83,14 @@ noncomputable def edgeUnitaryWithAxis
   else
     (1 : Matrix C2 C2 ℂ)
 
+
+/-- Using the geometric face-axis function recovers the original edge unitary. -/
+theorem edgeUnitaryWithAxis_faceAxis_eq
+    (m : ℕ) (θ : ℝ) (e : Point × Point) :
+    edgeUnitaryWithAxis m θ faceAxis e = edgeUnitary m θ e := by
+  unfold edgeUnitaryWithAxis edgeUnitary edgeAxis
+  by_cases he : e ∈ fluxEdges m <;> simp [he]
+
 noncomputable def connectionOperatorWithAxis
     (m : ℕ) (θ : ℝ) (axisOfIndex : ℕ → Axis) :
     Matrix (HilbertIndex m) (HilbertIndex m) ℂ := by
