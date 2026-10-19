@@ -133,3 +133,29 @@ the gaps between pairing factors, which is the natural shape needed to apply
 the two-N trace formula and identify which middle powers K^b arise. It remains
 combinatorics only and does not assert that words with the same gap data have
 equal trace contributions beyond cyclic rotation.
+
+
+## 4d. Reduction ledger: what the current generic lemmas do and do not cover
+
+A machine-readable ledger now partitions every word and cyclic class by the
+number r of factors K*N. It explicitly separates the strata that have generic
+reductions from those that do not: r=0 is the K^p term; r=1 is covered by the
+one-N trace-vanishing lemma under block diagonality; r=2 is covered by the
+two-N formula only when its corner-vanishing hypothesis is supplied. The strata
+r>=3 are marked as not covered by the current generic reductions. This is a
+statement about the current proof infrastructure, not a claim that those terms
+are nonzero or irreducible.
+
+The class counts make the remaining gap concrete:
+
+| p | total cyclic classes | r=2 classes | r>=3 classes |
+|---:|---:|---:|---:|
+| 6 | 14 | 3 | 9 |
+| 8 | 36 | 4 | 30 |
+| 10 | 108 | 5 | 101 |
+
+Thus the two-N lemma is a useful component but cannot by itself close the
+p=6, 8, or 10 expansion. The next mathematical target is a controlled reduction
+for words with at least three K*N factors (or a proof that specific classes
+vanish under additional explicit geometric hypotheses), while preserving their
+ordering and multiplicities. The ledger is checked against the inventory in CI.

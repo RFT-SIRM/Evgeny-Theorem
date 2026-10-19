@@ -1,0 +1,185 @@
+[
+  {
+    "p": 6,
+    "total_words": 64,
+    "total_cyclic_classes": 14,
+    "strata": [
+      {
+        "kn_factor_count": 0,
+        "word_count": 1,
+        "cyclic_class_count": 1,
+        "reduction_status": "base_K_power"
+      },
+      {
+        "kn_factor_count": 1,
+        "word_count": 6,
+        "cyclic_class_count": 1,
+        "reduction_status": "vanishes_by_existing_one_N_lemma"
+      },
+      {
+        "kn_factor_count": 2,
+        "word_count": 15,
+        "cyclic_class_count": 3,
+        "reduction_status": "two_N_formula_with_corner_hypothesis"
+      },
+      {
+        "kn_factor_count": 3,
+        "word_count": 20,
+        "cyclic_class_count": 4,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 4,
+        "word_count": 15,
+        "cyclic_class_count": 3,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 5,
+        "word_count": 6,
+        "cyclic_class_count": 1,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 6,
+        "word_count": 1,
+        "cyclic_class_count": 1,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      }
+    ]
+  },
+  {
+    "p": 8,
+    "total_words": 256,
+    "total_cyclic_classes": 36,
+    "strata": [
+      {
+        "kn_factor_count": 0,
+        "word_count": 1,
+        "cyclic_class_count": 1,
+        "reduction_status": "base_K_power"
+      },
+      {
+        "kn_factor_count": 1,
+        "word_count": 8,
+        "cyclic_class_count": 1,
+        "reduction_status": "vanishes_by_existing_one_N_lemma"
+      },
+      {
+        "kn_factor_count": 2,
+        "word_count": 28,
+        "cyclic_class_count": 4,
+        "reduction_status": "two_N_formula_with_corner_hypothesis"
+      },
+      {
+        "kn_factor_count": 3,
+        "word_count": 56,
+        "cyclic_class_count": 7,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 4,
+        "word_count": 70,
+        "cyclic_class_count": 10,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 5,
+        "word_count": 56,
+        "cyclic_class_count": 7,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 6,
+        "word_count": 28,
+        "cyclic_class_count": 4,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 7,
+        "word_count": 8,
+        "cyclic_class_count": 1,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 8,
+        "word_count": 1,
+        "cyclic_class_count": 1,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      }
+    ]
+  },
+  {
+    "p": 10,
+    "total_words": 1024,
+    "total_cyclic_classes": 108,
+    "strata": [
+      {
+        "kn_factor_count": 0,
+        "word_count": 1,
+        "cyclic_class_count": 1,
+        "reduction_status": "base_K_power"
+      },
+      {
+        "kn_factor_count": 1,
+        "word_count": 10,
+        "cyclic_class_count": 1,
+        "reduction_status": "vanishes_by_existing_one_N_lemma"
+      },
+      {
+        "kn_factor_count": 2,
+        "word_count": 45,
+        "cyclic_class_count": 5,
+        "reduction_status": "two_N_formula_with_corner_hypothesis"
+      },
+      {
+        "kn_factor_count": 3,
+        "word_count": 120,
+        "cyclic_class_count": 12,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 4,
+        "word_count": 210,
+        "cyclic_class_count": 22,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 5,
+        "word_count": 252,
+        "cyclic_class_count": 26,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 6,
+        "word_count": 210,
+        "cyclic_class_count": 22,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 7,
+        "word_count": 120,
+        "cyclic_class_count": 12,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 8,
+        "word_count": 45,
+        "cyclic_class_count": 5,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 9,
+        "word_count": 10,
+        "cyclic_class_count": 1,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      },
+      {
+        "kn_factor_count": 10,
+        "word_count": 1,
+        "cyclic_class_count": 1,
+        "reduction_status": "not_covered_by_current_generic_reductions"
+      }
+    ]
+  }
+]

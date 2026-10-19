@@ -82,3 +82,29 @@ def test_cyclic_gap_representative_is_rotation_invariant():
         assert "nonempty" in str(exc)
     else:
         raise AssertionError("empty words must be rejected")
+
+
+def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        p = entry["p"]
+        inventory = word_inventory(p)
+        assert entry["total_words"] == inventory["all_factor_words"]
+        assert entry["total_cyclic_classes"] == inventory["cyclic_classes"]
+        assert sum(row["word_count"] for row in entry["strata"]) == entry["total_words"]
+        assert sum(row["cyclic_class_count"] for row in entry["strata"]) == entry["total_cyclic_classes"]
+        statuses = {row["kn_factor_count"]: row["reduction_status"] for row in entry["strata"]}
+        assert statuses[0] == "base_K_power"
+        assert statuses[1] == "vanishes_by_existing_one_N_lemma"
+        assert statuses[2] == "two_N_formula_with_corner_hypothesis"
+        assert all(
+            statuses[r] == "not_covered_by_current_generic_reductions"
+            for r in range(3, p + 1)
+        )
