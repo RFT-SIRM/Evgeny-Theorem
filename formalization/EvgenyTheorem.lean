@@ -172,6 +172,23 @@ theorem fluxEdges_edge_ne {m : ℕ} {e : Point × Point} (he : e ∈ fluxEdges m
     congrArg (fun p : Point => p.1) h
   omega
 
+/-- The old (A) copy preserves the full SU(2) edge unitary. -/
+theorem edgeUnitary_succ_A (m : ℕ) (θ : ℝ) (e : Point × Point)
+    (he : e ∈ fluxEdges m) :
+    edgeUnitary (m + 1) θ e = edgeUnitary m θ e := by
+  have hend := fluxEdges_endpoints he
+  have hne := fluxEdges_edge_ne he
+  have heA : e ∈ fluxEdges (m + 1) := by
+    exact (shiftA_mem_fluxEdges_succ_iff hend.1 hend.2 hne).2 he
+  calc
+    edgeUnitary (m + 1) θ e =
+        axisRotation (edgeAxis (m + 1) e) θ := by
+          simp [edgeUnitary, heA]
+    _ = axisRotation (edgeAxis m e) θ := by
+          rw [edgeAxis_succ_A m e he]
+    _ = edgeUnitary m θ e := by
+          simp [edgeUnitary, he]
+
 /-- Copy B preserves the full SU(2) edge unitary, not just its axis label. -/
 theorem edgeUnitary_succ_B (m : ℕ) (θ : ℝ) (e : Point × Point)
     (he : e ∈ fluxEdges m) (hm : 1 ≤ m) :
