@@ -16,6 +16,14 @@ theorem trace_cyc4 {n : Type*} [Fintype n] (a b c d : Matrix n n ℂ) :
     simp only [Matrix.mul_assoc]
   rw [h, h', Matrix.trace_mul_comm]
 
+/-- Cyclic invariance of the trace for an arbitrary split of a finite product.
+This packages cyclic rotation of an ordered word without assuming its factors commute. -/
+theorem trace_cyclic_list {n : Type*} [Fintype n]
+    (xs ys : List (Matrix n n ℂ)) :
+    Matrix.trace ((xs ++ ys).prod) = Matrix.trace ((ys ++ xs).prod) := by
+  rw [List.prod_append, List.prod_append]
+  exact Matrix.trace_mul_comm _ _
+
 /-- **L1a.** Expansion of the fourth power of `D - A` under the trace
 (`D` need not commute with `A`). -/
 theorem trace_sub_pow4 {n : Type*} [Fintype n] [DecidableEq n] (D A : Matrix n n ℂ) :
