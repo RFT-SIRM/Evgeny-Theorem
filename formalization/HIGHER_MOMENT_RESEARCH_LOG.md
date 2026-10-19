@@ -289,3 +289,42 @@ This interface is the next code-level target. No Lean source was changed in this
 commit, because the available GitHub interface does not execute lake build;
 adding an uncompiled theorem here would risk turning a proof obligation into a
 false claim. The conjectural status stated above is unchanged.
+
+## 4i. Concrete one-step support for `sgK`
+
+The concrete matrix in this repository is `sgK m θ ax o = blockK (Hc m θ ax o)`.
+The existing lemmas already give the right one-step split:
+
+- `blockK` makes an entry zero whenever the copy labels differ.
+- `Hc_zero_diag` handles equal geometric coordinates with unequal spin by
+  showing that the entry is zero; equal coordinate and equal spin is the
+  diagonal case.
+- `Hc_zero_edge` shows that an entry between distinct geometric coordinates
+  is zero if `EdgeB` says they are not adjacent.
+- `EdgeB_dist` bounds each coordinate change across an actual edge by one.
+
+Thus the local lemma to prove before induction is state-resolved:
+
+```lean
+lemma sgK_entry_local (w w' : WSG m) :
+  sgK m θ ax o w w' ≠ 0 →
+    (w.2.1.1 = w'.2.1.1) ∨
+    EdgeB m w.2.1.1.1 w.2.1.1.2 w'.2.1.1.1 w'.2.1.1.2 = true
+```
+
+The displayed type is an interface sketch, not committed Lean code; exact
+projection simplification and the diagonal/spin cases still need to be checked
+by the compiler. Once this is proved, the induction for `K^b` should use the
+two coordinate inequalities from `EdgeB_dist` and the unchanged-coordinate
+case to establish an `L∞` displacement bound of at most `b`.
+
+An important detail: the six directions in `Step6` include diagonal lattice
+moves, so the Manhattan metric is not appropriate. The maximum coordinate
+difference is the compatible metric: each edge changes each coordinate by at
+most one. Corner separation in either coordinate is `2^m`, which is exactly
+why the bound `b < 2^m` would imply the desired distinct-corner vanishing.
+
+**Current proof boundary:** the existing `corners_far` proves only that distinct
+corners are not connected by one edge. It must not be cited as if it proved
+the arbitrary-power statement. Neither `sgK_entry_local` nor the power-support
+induction has yet been added as a compiled Lean theorem.
