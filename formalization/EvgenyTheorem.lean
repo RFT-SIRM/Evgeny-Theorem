@@ -127,4 +127,28 @@ theorem traceDefect_im_eq_zero (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) :
   rw [traceDefect_eq_delta m hm θ]
   exact Complex.ofReal_im _
 
+/-- A shift by two recursive flux blocks also preserves the cyclic axis label. -/
+theorem faceAxis_shift_by_two_three_pow (m i : ℕ) (hm : 1 ≤ m) :
+    faceAxis (2 * 3 ^ m + i) = faceAxis i := by
+  have hsum : 3 ^ m + (3 ^ m + i) = 2 * 3 ^ m + i := by omega
+  rw [← hsum]
+  exact (faceAxis_shift_by_three_pow m (3 ^ m + i) hm).trans
+    (faceAxis_shift_by_three_pow m i hm)
+
+/-- The axis label of an edge is unchanged when the edge is copied into block B. -/
+theorem edgeAxis_succ_B (m : ℕ) (e : Point × Point)
+    (he : e ∈ fluxEdges m) (hm : 1 ≤ m) :
+    edgeAxis (m + 1) (shiftEdge (2 ^ m) 1 0 e) = edgeAxis m e := by
+  unfold edgeAxis
+  rw [fluxIndex_succ_B he]
+  exact faceAxis_shift_by_three_pow m (fluxIndex m e) hm
+
+/-- The axis label of an edge is unchanged when the edge is copied into block C. -/
+theorem edgeAxis_succ_C (m : ℕ) (e : Point × Point)
+    (he : e ∈ fluxEdges m) (hm : 1 ≤ m) :
+    edgeAxis (m + 1) (shiftEdge (2 ^ m) 0 1 e) = edgeAxis m e := by
+  unfold edgeAxis
+  rw [fluxIndex_succ_C he]
+  exact faceAxis_shift_by_two_three_pow m (fluxIndex m e) hm
+
 end EvgenyTheorem
