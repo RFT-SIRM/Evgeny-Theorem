@@ -258,8 +258,6 @@ theorem trace_two_N_word {cp : W → ι} (G : GlueData cp)
     _ = ∑ a, if G.g a then ((ys ++ xs).prod) a a * M (G.σ a) (G.σ a) else 0 := by
       exact trace_two_N G M ((ys ++ xs).prod) hbd hkg
 
-/-- The two-pairing formula for powers requires a corner-vanishing
-condition for the middle power; block diagonality alone does not imply it. -/
 /-- Derive the glued-corner vanishing condition when partner copies coincide.
 For partner points in different copies, the required vanishing is supplied
 explicitly as a separate hypothesis. -/
