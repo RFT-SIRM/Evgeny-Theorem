@@ -99,9 +99,9 @@ that any term vanishes, or close the higher-moment theorem.
 
 ## 5. Proof obligations before claiming closure
 
-1. Use the machine-checked ordered-word expansion to organize the p = 6, 8, and 10 terms with their exact ordering and multiplicities; do not collapse terms merely because they share a cyclic class.
+1. Use the machine-checked ordered-word expansion to organize the $p=6,8,10$ terms with their exact ordering and multiplicities; do not collapse terms merely because they share a cyclic class.
 2. Reduce the remaining multi-pairing terms under explicit hypotheses. The r = 1 stratum now has a machine-checked vanishing lemma; r = 2 still needs its corner-vanishing hypothesis, and r >= 3 is not covered by the current generic reductions.
-3. Derive the remaining boundary expression in terms of marked corner entries of (K^j), with (j\le p-1), and state every required corner-separation/vanishing hypothesis.
+3. Derive the remaining boundary expression in terms of marked corner entries of $K^j$, with $j\le p-1$, and state every required corner-separation/vanishing hypothesis.
 4. Prove that the relevant marked corner blocks are equivalent for the two orientations. Graph-neighborhood isomorphism alone is insufficient unless it preserves the operator labels or an explicit basis transformation is supplied.
 5. Establish the finite base transition for $R_3=R_4$ with an independently reproducible exact certificate or a direct formal proof.
 6. Prove the level-to-level recurrence (or another valid induction step) that propagates the residual identity to every claimed level.
@@ -120,7 +120,7 @@ The existing fourth-moment result should remain unchanged while these components
 ## 7. Status summary
 
 - **Machine-checked components in `main`:** the existing fourth-moment development and the components already merged there. The new three-pairing lemmas described in Sections 4e–4f are on PR #4's working branch, not `main`.
-- **Current PR head `f77ff9e` (checked 2026-10-19):** Lean `Build formalization`, Python 3.11 tests, and Python 3.12 tests all pass in GitHub Actions. This is CI evidence for the current branch head, not proof of the full higher-moment conjecture.
+- **Current PR head `fd2bf98` (checked 2026-10-19):** the Lean `Build formalization` job and Python tests (3.11 and 3.12) pass in GitHub Actions after retrying a transient TLS failure while downloading Lean 4.33.1. This is CI evidence for the current branch head, not proof of the full higher-moment conjecture.
 - **Combinatorially counted and reproducibly certified:** binary words and cyclic-rotation classes for $p=6,8,10$; the committed JSON inventory is checked against the generator by tests.
 - **Numerically supported:** finite-level higher-moment residual patterns described above; the full independent calculation is not yet packaged here as a reproducible, reviewed certificate.
 - **Not yet proved/formalized here:** the complete higher-moment boundary formulas, the required corner equivalences, and the all-level $p=6,8,10$ residual identity and its propagation.
@@ -189,7 +189,7 @@ This extends the reusable formal reduction pattern for the $r=3$ stratum, but
 does not settle the $r\ge4$ strata, establish the needed hypotheses for all powers,
 or prove the $p=6,8,10$ residual recurrence.
 
-**CI status checked 2026-10-19:** the current PR head `f77ff9e` passes the Lean `Build formalization` job and both Python jobs (Python 3.11 and 3.12). This verifies compilation and these test suites for the current head; it does not discharge the mathematical obligations listed below. PR #4 remains open and should not be merged solely on the strength of this conditional lemma.
+**CI status checked 2026-10-19:** the current PR head `fd2bf98` passes the Lean `Build formalization` job and both Python jobs (Python 3.11 and 3.12) after a successful retry of a transient TLS download failure. This verifies compilation and these test suites for the current head; it does not discharge the mathematical obligations listed below. PR #4 remains open and should not be merged solely on the strength of this conditional lemma.
 
 ## 4f. Exact $r=3$ gap split for p = 6, 8, 10
 
