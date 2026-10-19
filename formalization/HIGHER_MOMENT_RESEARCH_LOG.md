@@ -62,6 +62,21 @@ Independent numerical work recorded during this research found, at (\theta=\pi),
 
 Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation (R_3^{(p)}=R_4^{(p)}) for (p=6,8,10). However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
 
+## 4a. Newly machine-checked reusable lemma
+
+The Lean file `formalization/EvgenyTheorem/GlueTrace.lean` now proves
+`blockK_pow` and `trace_blockK_pow` for every natural exponent. In particular,
+the trace of a power of the three-copy block-diagonal operator is the sum of the
+corresponding copy traces. This removes the exponent-four restriction from the
+**block-diagonal step only**.
+
+It does not generalize `glue_trace4`: the latter still depends on the fourth-power
+word expansion and the corner identities `GlueDiag G (K * K)`. The next proof
+target is a generic ordered-word expansion for `Tr((K + K*N)^p)`, with cyclic
+trace equivalence and multiplicities represented explicitly. Only after that
+expansion is machine-checked should the project derive a boundary formula for
+p = 6, 8, and 10.
+
 ## 5. Proof obligations before claiming closure
 
 1. Prove a general finite expansion of (\operatorname{Tr}((K+KN)^p)) that records multiplicities and cyclic classes without losing ordering information.
