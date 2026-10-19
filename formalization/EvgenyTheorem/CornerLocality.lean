@@ -176,4 +176,31 @@ theorem vIdx_succ_C_le_iff (m : ℕ)
   · intro x y
     exact (vIdx_succ_C_lt_iff x.2.1 y.2.1 x.2.2.1 x.2.2.2 y.2.2.1 y.2.2.2).symm
 
+/-- Copy A satisfies the shared order interface on all vertices of the previous level. -/
+theorem sameLocalIndexOrder_A (m : ℕ) :
+    SameLocalIndexOrder
+      (fun x : {p : Point // p ∈ vertexOrder m} => vIdx m x.1)
+      (fun p : Point => vIdx (m + 1) p)
+      (fun x => x.1) := by
+  intro a b
+  rw [vIdx_succ_of_mem a.2, vIdx_succ_of_mem b.2]
+
+/-- Copy B satisfies the shared order interface on its genuinely new vertices. -/
+theorem sameLocalIndexOrder_B (m : ℕ) :
+    SameLocalIndexOrder
+      (fun x : {p : Point // p ∈ vertexOrder m ∧ p ≠ (0, 0)} => vIdx m x.1)
+      (fun p : Point => vIdx (m + 1) p)
+      (fun x => shiftPoint (2 ^ m) 1 0 x.1) := by
+  intro a b
+  exact vIdx_succ_B_le_iff m a b
+
+/-- Copy C satisfies the shared order interface on its genuinely new vertices. -/
+theorem sameLocalIndexOrder_C (m : ℕ) :
+    SameLocalIndexOrder
+      (fun x : {p : Point // p ∈ vertexOrder m ∧ p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0)} => vIdx m x.1)
+      (fun p : Point => vIdx (m + 1) p)
+      (fun x => shiftPoint (2 ^ m) 0 1 x.1) := by
+  intro a b
+  exact vIdx_succ_C_le_iff m a b
+
 end EvgenyTheorem
