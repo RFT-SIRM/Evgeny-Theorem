@@ -345,6 +345,53 @@ theorem fluxEdges_nodup (m : ℕ) : (fluxEdges m).Nodup := by
 
       have dall : (B0 ++ (B1 ++ B2)).Nodup := d0.append d12 dj0
       simpa [fluxEdges, facesExact, Function.comp_def, B0, B1, B2] using dall
+/--
+The recursive flux-edge list is the concatenation of the three translated
+copies of the previous level, in exactly the same order as the face list.
+This exposes the block offsets needed to reason about the axis labels of
+copied edges.
+-/
+theorem fluxEdges_succ_blocks (m : ℕ) :
+    fluxEdges (m + 1) =
+      fluxEdges m ++
+        (List.map (shiftEdge (2 ^ m) 1 0) (fluxEdges m) ++
+          List.map (shiftEdge (2 ^ m) 0 1) (fluxEdges m)) := by
+  let s := 2 ^ m
+  let B0 := List.map (fun f => fluxEdge (shiftFace s 0 0 f)) (facesExact m)
+  let B1 := List.map (fun f => fluxEdge (shiftFace s 1 0 f)) (facesExact m)
+  let B2 := List.map (fun f => fluxEdge (shiftFace s 0 1 f)) (facesExact m)
+  have map_shift :
+      ∀ (dx dy : ℕ) (l : List Face),
+        (∀ f ∈ l, f ∈ facesExact m) →
+          List.map (fun f => fluxEdge (shiftFace s dx dy f)) l =
+            List.map (shiftEdge s dx dy) (List.map fluxEdge l) := by
+    intro dx dy l
+    induction l with
+    | nil =>
+        intro _
+        rfl
+    | cons f l ih =>
+        intro hl
+        have hf : f ∈ facesExact m := hl f (by simp)
+        have htail : ∀ g ∈ l, g ∈ facesExact m := by
+          intro g hg
+          exact hl g (by simp [hg])
+        simp only [List.map_cons]
+        rw [fluxEdge_shift m dx dy f hf, ih htail]
+  have h0 : B0 = List.map (shiftEdge s 0 0) (fluxEdges m) := by
+    dsimp [B0, fluxEdges]
+    exact map_shift 0 0 (facesExact m) (by intro f hf; exact hf)
+  have h1 : B1 = List.map (shiftEdge s 1 0) (fluxEdges m) := by
+    dsimp [B1, fluxEdges]
+    exact map_shift 1 0 (facesExact m) (by intro f hf; exact hf)
+  have h2 : B2 = List.map (shiftEdge s 0 1) (fluxEdges m) := by
+    dsimp [B2, fluxEdges]
+    exact map_shift 0 1 (facesExact m) (by intro f hf; exact hf)
+  change B0 ++ (B1 ++ B2) = _
+  rw [h0, h1, h2]
+  simp only [fluxEdges, facesExact, List.map_append]
+  rfl
+
 /-- The three SU(2) axes assigned cyclically to the flux edges.
 The face ordering in `facesExact` is exactly the order used by the
 Python reference construction, so the axis is the face position modulo 3. -/
