@@ -425,5 +425,6 @@ theorem faceAxis_fluxEdges_length_add (m i : ℕ) (hm : 1 ≤ m) :
   apply Fin.ext
   simp only [faceAxis, Fin.mk.injEq]
   rw [Nat.add_mod, hpow, Nat.zero_add]
+  exact Nat.mod_mod _ _
 
 end EvgenyTheorem
