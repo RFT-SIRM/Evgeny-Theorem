@@ -161,9 +161,8 @@ theorem fluxEdges_edge_ne {m : ℕ} {e : Point × Point} (he : e ∈ fluxEdges m
   have hx : (fluxEdge f).1.1 + 1 = (fluxEdge f).2.1 := by
     simpa [fluxEdge, horder] using hshape
   intro h
-  have h' := congrArg (fun p : Point => p.1) h
-  simp only [Prod.mk.injEq] at h'
-  simp [fluxEdge, horder] at h'
+  have h' : (fluxEdge f).1.1 = (fluxEdge f).2.1 :=
+    congrArg (fun p : Point => p.1) h
   omega
 
 /-- Copy B preserves the full SU(2) edge unitary, not just its axis label. -/
