@@ -99,6 +99,18 @@ theorem sgK_entry_local (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
       simp [sgK, blockK, hc]
     exact (h hz).elim
 
+/-- A nonzero one-step `sgK` entry changes each lattice coordinate by at most one.
+This combines `sgK_entry_local` with the six-direction bound for `EdgeB`. -/
+theorem sgK_entry_coord_dist (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (w w' : WSG m)
+    (h : sgK m θ ax o w w' ≠ 0) :
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 1 ∧ w'.2.1.1.1 ≤ w.2.1.1.1 + 1 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 1 ∧ w'.2.1.1.2 ≤ w.2.1.1.2 + 1 := by
+  rcases sgK_entry_local m θ ax o w w' h with hp | hE
+  · simp only [hp]
+    omega
+  · exact EdgeB_dist hE
+
 /-! ### `hkg` -/
 
 theorem sgK_hkg (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
