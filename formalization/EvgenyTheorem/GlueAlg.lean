@@ -353,16 +353,13 @@ theorem trace_three_N_powers {cp : W → ι} (G : GlueData cp)
       _ = Matrix.trace ((K ^ d * K ^ a) * (G.N * K ^ b * G.N) * K ^ c * G.N) := by
         simp only [Matrix.mul_assoc]
   rw [hrotate]
-  apply trace_list_prod_mul_N_zero G [K ^ d * K ^ a, G.N * K ^ b * G.N, K ^ c]
-  intro M hM
-  simp only [List.mem_cons, List.mem_singleton] at hM
-  rcases hM with hM | hM | hM
-  · subst M
-    exact BD_mul (BD_pow K hK d) (BD_pow K hK a)
-  · subst M
-    exact hQ
-  · subst M
-    exact BD_pow K hK c
+  have hprod : BD cp ((K ^ d * K ^ a) * (G.N * K ^ b * G.N) * K ^ c) := by
+    apply BD_mul
+    · apply BD_mul
+      · exact BD_mul (BD_pow K hK d) (BD_pow K hK a)
+      · exact hQ
+    · exact BD_pow K hK c
+  exact trace_BD_N G hprod
 
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
