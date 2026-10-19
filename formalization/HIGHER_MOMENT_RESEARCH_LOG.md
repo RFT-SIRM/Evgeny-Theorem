@@ -10,7 +10,7 @@ The existing Lean development contains the fourth-moment gluing lemma `glue_trac
 `formalization/EvgenyTheorem/GlueAlg.lean`. Its hypotheses include block diagonality of
 `K`, a vanishing condition for distinct glued vertices, and the corner condition
 `GlueDiag G (K * K)`. The conclusion expresses the fourth-power trace after gluing as the
-unglued trace plus explicit corner terms involving powers through (K^3).
+unglued trace plus explicit corner terms involving powers through $K^3$.
 
 This is the current reusable formal baseline. It does **not** itself prove the corresponding
 formula for moments 6, 8, or 10.
@@ -20,18 +20,18 @@ formula for moments 6, 8, or 10.
 For a fixed angle $\theta$ and an even moment $p$, define
 
 \[
-\Delta_m^{(p)}(\theta)
+\Delta_m^{$p$}(\theta)
 = \operatorname{Tr}\!\left(H_C(m,\theta)^p\right)
 - \operatorname{Tr}\!\left(H_{C'}(m,\theta)^p\right),
 \qquad
-R_m^{(p)}(\theta)
-= \Delta_m^{(p)}(\theta)-3\Delta_{m-1}^{(p)}(\theta).
+R_m^{$p$}(\theta)
+= \Delta_m^{$p$}(\theta)-3\Delta_{m-1}^{$p$}(\theta).
 \]
 
 For $p\in\{6,8,10\}$, the working target is the eventual residual identity
 
 \[
-R_m^{(p)}(\theta)=R_4^{(p)}(\theta),\qquad m\ge 3.
+R_m^{$p$}(\theta)=R_4^{$p$}(\theta),\qquad $m\ge3$. 
 \]
 under the project's exact operator and gluing hypotheses. This remains a **conjectural target** until a complete proof and a successful Lean build establish it. No all-level higher-moment theorem is claimed here.
 
@@ -39,7 +39,7 @@ under the project's exact operator and gluing hypotheses. This remains a **conje
 
 Expanding $(K+KN)^p$ gives $2^p$ binary words of length $p$, where each position chooses $K$ or $KN$. Excluding the all-$K$ word leaves $2^p-1$ words containing at least one $N$.
 
-The number of binary necklaces (cyclic-rotation classes) of length (p) over two symbols is
+The number of binary necklaces (cyclic-rotation classes) of length $p$ over two symbols is
 \[
 \frac{1}{p}\sum_{d\mid p}\varphi(d)\,2^{p/d}.
 \]
@@ -51,9 +51,9 @@ For the three target moments, this gives:
 | 8 | 256 | 255 | 36 | 35 |
 | 10 | 1024 | 1023 | 108 | 107 |
 
-These are **combinatorial counts only**. Necklace classes are not yet a trace identity: cyclic trace equivalence, matrix constraints, vanishing terms, and multiplicities must be handled explicitly. In particular, the class with exactly one $N$ is represented by (\operatorname{Tr}(K^pN)) after cyclic rotation and vanishes if (K^p) is block diagonal across the paired copy classes, as in the existing `trace_BD_N` lemma.
+These are **combinatorial counts only**. Necklace classes are not yet a trace identity: cyclic trace equivalence, matrix constraints, vanishing terms, and multiplicities must be handled explicitly. In particular, the class with exactly one $N$ is represented by (\operatorname{Tr}$K^pN$) after cyclic rotation and vanishes if $K^p$ is block diagonal across the paired copy classes, as in the existing `trace_BD_N` lemma.
 
-A related but different enumeration describes cyclic compositions: for (r\) occurrences of (N), it groups positive gap lengths (a_1,\ldots,a_r) with sum (p), modulo cyclic rotation. These composition counts must not be conflated with binary-necklace counts, and neither count alone supplies the coefficients of the final trace formula.
+A related but different enumeration describes cyclic compositions: for (r\) occurrences of (N), it groups positive gap lengths (a_1,\ldots,a_r) with sum $p$, modulo cyclic rotation. These composition counts must not be conflated with binary-necklace counts, and neither count alone supplies the coefficients of the final trace formula.
 
 ## 4. Computational evidence (not formal proof)
 
@@ -62,7 +62,7 @@ Independent numerical work recorded during this research found, at (\theta=\pi),
 - (p=8): (R_2=268960), (R_3=277504), and (R_m=277504) for the tested levels (4\le m\le10).
 - (p=10): (R_2=4006040), (R_3=4507520), and (R_m=4507520) for the tested levels (4\le m\le10).
 
-Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation (R_3^{(p)}=R_4^{(p)}) for (p=6,8,10). However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
+Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation $R_3^{$p$}=R_4^{$p$}$ for $p\in\{6,8,10\}$. However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
 
 ## 4a. Machine-checked reusable lemmas now in `main`
 
@@ -70,7 +70,7 @@ The Lean development contains the arbitrary-exponent block-diagonal lemmas
 `blockK_pow` and `trace_blockK_pow` in `formalization/EvgenyTheorem/GlueTrace.lean`.
 These remove the exponent-four restriction from the **block-diagonal step only**.
 
-The ordered-word expansion for `(K + K*N)^p` and its trace-level version are
+The ordered-word expansion for `$(K+KN)^p$` and its trace-level version are
 also now in `formalization/EvgenyTheorem/TraceExpand.lean`. They preserve word
 ordering and multiplicity. In `formalization/EvgenyTheorem/GlueAlg.lean`,
 `trace_single_KN_word_zero` proves that a trace word with exactly one `K*N`
@@ -85,7 +85,7 @@ boundary reductions, and the multi-pairing strata still need separate proofs.
 
 The generated inventory is committed at
 `computational/trace_word_inventory_p6_p8_p10.json`. It records every canonical
-cyclic representative for p = 6, 8, and 10, the number of occurrences of the
+cyclic representative for $p=6,8,10$, the number of occurrences of the
 `K*N` factor in each representative, and the size of its rotation orbit.
 The Python test suite now compares the committed JSON byte-independent data
 structure against fresh output from `word_inventory`, so accidental drift in
@@ -101,14 +101,14 @@ that any term vanishes, or close the higher-moment theorem.
 2. Reduce the remaining multi-pairing terms under explicit hypotheses. The r = 1 stratum now has a machine-checked vanishing lemma; r = 2 still needs its corner-vanishing hypothesis, and r >= 3 is not covered by the current generic reductions.
 3. Derive the remaining boundary expression in terms of marked corner entries of (K^j), with (j\le p-1), and state every required corner-separation/vanishing hypothesis.
 4. Prove that the relevant marked corner blocks are equivalent for the two orientations. Graph-neighborhood isomorphism alone is insufficient unless it preserves the operator labels or an explicit basis transformation is supplied.
-5. Establish the finite base transition for (R_3=R_4) with an independently reproducible exact certificate or a direct formal proof.
+5. Establish the finite base transition for $R_3=R_4$ with an independently reproducible exact certificate or a direct formal proof.
 6. Prove the level-to-level recurrence (or another valid induction step) that propagates the residual identity to every claimed level.
 7. Compile the Lean project from a clean checkout and record the exact toolchain and successful build output before describing any result as machine-checked.
 
 ## 6. Intended Lean decomposition
 
 A maintainable route is to separate the proof into:
-- a generic algebraic expansion/collection lemma for arbitrary (p);
+- a generic algebraic expansion/collection lemma for arbitrary $p$;
 - a gluing-boundary formula expressed through corner matrix entries;
 - geometric lemmas proving the required corner-block relations for the concrete graph operators;
 - the finite base case and the induction/recurrence theorem.
@@ -119,9 +119,9 @@ The existing fourth-moment result should remain unchanged while these components
 
 - **Machine-checked components in `main`:** the existing fourth-moment development and the components already merged there. The new three-pairing lemmas described in Sections 4e–4f are on PR #4's working branch, not `main`.
 - **Current PR head `f77ff9e` (checked 2026-10-19):** Lean `Build formalization`, Python 3.11 tests, and Python 3.12 tests all pass in GitHub Actions. This is CI evidence for the current branch head, not proof of the full higher-moment conjecture.
-- **Combinatorially counted and reproducibly certified:** binary words and cyclic-rotation classes for p = 6, 8, and 10; the committed JSON inventory is checked against the generator by tests.
+- **Combinatorially counted and reproducibly certified:** binary words and cyclic-rotation classes for $p=6,8,10$; the committed JSON inventory is checked against the generator by tests.
 - **Numerically supported:** finite-level higher-moment residual patterns described above; the full independent calculation is not yet packaged here as a reproducible, reviewed certificate.
-- **Not yet proved/formalized here:** the complete higher-moment boundary formulas, the required corner equivalences, and the all-level (p=6,8,10) residual identity and its propagation.
+- **Not yet proved/formalized here:** the complete higher-moment boundary formulas, the required corner equivalences, and the all-level $p=6,8,10$ residual identity and its propagation.
 
 
 ## 4c. Cyclic gap encoding by the number of pairing factors
@@ -131,7 +131,7 @@ cyclic tuple of numbers of K factors between consecutive K*N factors. For a word
 with r occurrences of K*N, this tuple has length r and its entries sum to p-r.
 The all-K word is represented by the empty tuple. This encoding is rotation-invariant
 and gives a one-to-one representation of binary necklace classes at each fixed r;
-the generator and tests check uniqueness and counts for p = 6, 8, and 10.
+the generator and tests check uniqueness and counts for $p=6,8,10$.
 
 This is an organizational result for the expansion: it groups cyclic words by
 the gaps between pairing factors, which is the natural shape needed to apply
@@ -144,23 +144,23 @@ equal trace contributions beyond cyclic rotation.
 
 A machine-readable ledger now partitions every word and cyclic class by the
 number r of factors K*N. It explicitly separates the strata that have generic
-reductions from those that do not: r=0 is the K^p term; r=1 is covered by the
-one-N trace-vanishing lemma under block diagonality; r=2 is covered by the
+reductions from those that do not: $r=0$ is the K^p term; $r=1$ is covered by the
+one-N trace-vanishing lemma under block diagonality; $r=2$ is covered by the
 two-N formula only when its corner-vanishing hypothesis is supplied. The strata
-r>=3 are marked as not covered by the current generic reductions. This is a
+$r\ge3$ are marked as not covered by the current generic reductions. This is a
 statement about the current proof infrastructure, not a claim that those terms
 are nonzero or irreducible.
 
 The class counts make the remaining gap concrete:
 
-| p | total cyclic classes | r=2 classes | r>=3 classes |
+| p | total cyclic classes | $r=2$ classes | $r\ge3$ classes |
 |---:|---:|---:|---:|
 | 6 | 14 | 3 | 9 |
 | 8 | 36 | 4 | 30 |
 | 10 | 108 | 5 | 101 |
 
 Thus the two-N lemma is a useful component but cannot by itself close the
-p=6, 8, or 10 expansion. The next mathematical target is a controlled reduction
+$p=6,8,10$ expansion. The next mathematical target is a controlled reduction
 for words with at least three K*N factors (or a proof that specific classes
 vanish under additional explicit geometric hypotheses), while preserving their
 ordering and multiplicities. The ledger is checked against the inventory in CI.
@@ -183,13 +183,13 @@ where required by `GlueDiag_pair_vanish`.
 
 The resulting trace is zero because the diagonalized N*M*N factor, together
 with the remaining block-diagonal factors, leaves one N in the cyclic trace.
-This extends the reusable formal reduction pattern for the r=3 stratum, but
-does not settle the r>=4 strata, establish the needed hypotheses for all powers,
-or prove the p=6, 8, 10 residual recurrence.
+This extends the reusable formal reduction pattern for the $r=3$ stratum, but
+does not settle the $r\ge4$ strata, establish the needed hypotheses for all powers,
+or prove the $p=6,8,10$ residual recurrence.
 
 **CI status checked 2026-10-19:** the current PR head `f77ff9e` passes the Lean `Build formalization` job and both Python jobs (Python 3.11 and 3.12). This verifies compilation and these test suites for the current head; it does not discharge the mathematical obligations listed below. PR #4 remains open and should not be merged solely on the strength of this conditional lemma.
 
-## 4f. Exact r=3 gap split for p = 6, 8, 10
+## 4f. Exact $r=3$ gap split for p = 6, 8, 10
 
 The committed inventory and a dedicated regression test now split the
 three-pairing classes according to whether any cyclic K-gap is zero. A zero
@@ -198,7 +198,7 @@ corresponding N factors is exactly K^1. The ordered three-pairing lemma can
 therefore use the already stated glued-corner condition for K, with all other
 K powers kept as block-diagonal exterior factors.
 
-| p | r=3 classes | Classes with a zero gap | Remaining classes (canonical gap tuples) |
+| p | $r=3$ classes | Classes with a zero gap | Remaining classes (canonical gap tuples) |
 |---:|---:|---:|---|
 | 6 | 4 | 3 | (1,1,1) |
 | 8 | 7 | 5 | (1,1,3), (1,2,2) |
