@@ -17,23 +17,25 @@ formula for moments 6, 8, or 10.
 
 ## 2. Definitions for the higher-moment target
 
-For a fixed angle $\theta$ and an even moment $p$, define
+For a fixed angle $\theta$ and an even moment $p$, define the trace defect and its residual by
 
-\[
+$$
 \Delta_m^{(p)}(\theta)
 = \operatorname{Tr}\!\left(H_C(m,\theta)^p\right)
 - \operatorname{Tr}\!\left(H_{C'}(m,\theta)^p\right),
 \qquad
 R_m^{(p)}(\theta)
 = \Delta_m^{(p)}(\theta)-3\Delta_{m-1}^{(p)}(\theta).
-\]
+$$
 
 For $p\in\{6,8,10\}$, the working target is the eventual residual identity
 
-\[
-R_m^{(p)}(\theta)=R_4^{(p)}(\theta),\qquad m\ge 3,
-\]
-under the project's exact operator and gluing hypotheses. This remains a **conjectural target** until a complete proof and a successful Lean build establish it. No all-level higher-moment theorem is claimed here.
+$$
+R_m^{(p)}(\theta)=R_4^{(p)}(\theta),
+\qquad m\ge 3.
+$$
+
+This target is conditional on the project's exact operator and gluing hypotheses. It remains a **conjecture** until a complete proof is established; the current Lean formalization does not claim an all-level theorem for moments $p=6,8,10$.
 
 ## 3. Exact combinatorial counts
 
