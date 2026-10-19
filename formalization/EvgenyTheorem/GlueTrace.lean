@@ -50,6 +50,24 @@ theorem trace_blockK (H : ι → Matrix X X ℂ) :
   refine Finset.sum_congr rfl (fun c _ => ?_)
   simp [Matrix.trace, Matrix.diag, blockK]
 
+/-- Powers of a block-diagonal matrix are computed independently in each block. -/
+theorem blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
+    blockK H ^ n = blockK (fun c => H c ^ n) := by
+  induction n with
+  | zero =>
+      ext w w'
+      simp [blockK]
+  | succ n ih =>
+      rw [pow_succ, ih, blockK_mul]
+      congr 1
+      funext c
+      rw [pow_succ]
+
+/-- The trace of any natural power of a block-diagonal matrix is the sum of block traces. -/
+theorem trace_blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
+    Matrix.trace (blockK H ^ n) = ∑ c, Matrix.trace (H c ^ n) := by
+  rw [blockK_pow, trace_blockK]
+
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
       ∑ c, Matrix.trace (H c * H c * H c * H c) := by
