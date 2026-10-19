@@ -189,3 +189,27 @@ Python jobs pass for the current branch head, this addition should not be
 described as CI-verified. PR #4 remains open and must not be merged on the
 strength of this conditional lemma alone.
 
+## 4f. Exact r=3 gap split for p = 6, 8, 10
+
+The committed inventory and a dedicated regression test now split the
+three-pairing classes according to whether any cyclic K-gap is zero. A zero
+gap means two consecutive factors of the form K*N, so the power between the
+corresponding N factors is exactly K^1. The ordered three-pairing lemma can
+therefore use the already stated glued-corner condition for K, with all other
+K powers kept as block-diagonal exterior factors.
+
+| p | r=3 classes | Classes with a zero gap | Remaining classes (canonical gap tuples) |
+|---:|---:|---:|---|
+| 6 | 4 | 3 | (1,1,1) |
+| 8 | 7 | 5 | (1,1,3), (1,2,2) |
+| 10 | 12 | 7 | (1,1,5), (1,4,2), (1,2,4), (1,3,3), (2,2,3) |
+
+This split is checked against the generator by
+`test_three_pairing_classes_split_by_unit_cyclic_gap`. It certifies the
+classification and exact cyclic representatives, not the matrix-trace theorem
+itself. For each remaining tuple, every gap is positive, so the middle powers
+between N factors are at least K^2. The existing hypothesis on K does not imply
+the needed corner-vanishing condition for these powers. The next mathematical
+obligation is to prove or refute those specific higher-power conditions from
+the concrete graph/operator definitions, rather than assume them.
+
