@@ -161,3 +161,31 @@ p=6, 8, or 10 expansion. The next mathematical target is a controlled reduction
 for words with at least three K*N factors (or a proof that specific classes
 vanish under additional explicit geometric hypotheses), while preserving their
 ordering and multiplicities. The ledger is checked against the inventory in CI.
+
+## 4e. Ordered three-pairing reduction (current working branch)
+
+The working branch `work/three-pairing-word-reduction` now adds the Lean lemma
+`trace_three_N_word_zero` in `formalization/EvgenyTheorem/GlueAlg.lean`.
+It extends the three-pairing reduction from natural powers of one matrix to
+ordered lists of potentially different block-diagonal matrices on the outside
+of the three displayed pairing factors. The lemma preserves the order of those
+factors and uses cyclicity only to rotate the exterior product.
+
+Its key assumption is explicit: the middle matrix M must be block diagonal and
+must satisfy the glued-corner off-diagonal vanishing condition, so that N*M*N
+is diagonal by `Q_eq_diag`. This condition is not derived from block diagonality
+alone. In applications with M = K^b, the proof must separately establish the
+corner condition for that specific exponent b, including the cross-copy case
+where required by `GlueDiag_pair_vanish`.
+
+The resulting trace is zero because the diagonalized N*M*N factor, together
+with the remaining block-diagonal factors, leaves one N in the cyclic trace.
+This extends the reusable formal reduction pattern for the r=3 stratum, but
+does not settle the r>=4 strata, establish the needed hypotheses for all powers,
+or prove the p=6, 8, 10 residual recurrence.
+
+The new commit is awaiting the full CI result; until the Lean build and both
+Python jobs pass for the current branch head, this addition should not be
+described as CI-verified. PR #4 remains open and must not be merged on the
+strength of this conditional lemma alone.
+
