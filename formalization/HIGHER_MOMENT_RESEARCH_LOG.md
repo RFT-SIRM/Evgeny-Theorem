@@ -257,3 +257,35 @@ this argument. The positive-gap `r = 3` classes listed in Section 4f remain
 unresolved, as do the full higher-moment boundary identity and the all-level
 residual recurrence for `p in {6, 8, 10}`. This section records narrowed
 proof obligations and must not be read as a Lean proof.
+
+## 4h. Exact interface needed for a formal support proof
+
+The distance argument should be formalized as two separate lemmas, rather than
+folded directly into the trace expansion:
+
+1. **Entry locality:** for states whose geometric coordinates differ, a nonzero
+   entry of K implies EdgeB adjacency. The diagonal part of the operator must
+   be handled separately because it can contribute when the coordinate is
+   unchanged.
+2. **Power support:** for every natural b, a nonzero entry of K^b implies
+   that the coordinate distance (the maximum of the absolute differences in
+   the two coordinates) is at most b. The induction step expands
+   Matrix.mul_apply; each intermediate state either keeps the coordinate or
+   changes it by one in each coordinate, by EdgeB_dist.
+
+The second statement is intentionally a necessary support bound, not a claim
+that all pairs at distance at most b have nonzero entries. Its contrapositive
+is the corner-zero result needed by the two-pairing trace lemma. The proof must
+also preserve the state/spin indices in the matrix sum: projecting only to
+geometric coordinates is insufficient to discharge same-coordinate,
+different-spin terms.
+
+Before using this result in the moment proof, the implementation must establish
+which coordinate metric is compatible with every disjunct of Step6, and prove
+its one-step bound in Lean. EdgeB_dist supplies coordinate inequalities for
+an actual edge, but it is not by itself the induction theorem for powers.
+
+This interface is the next code-level target. No Lean source was changed in this
+commit, because the available GitHub interface does not execute lake build;
+adding an uncompiled theorem here would risk turning a proof obligation into a
+false claim. The conjectural status stated above is unchanged.
