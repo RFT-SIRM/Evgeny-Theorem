@@ -116,6 +116,15 @@ theorem trace_list_prod_mul_N_zero {cp : W → ι} (G : GlueData cp)
     Matrix.trace (xs.prod * G.N) = 0 := by
   exact trace_BD_N G (BD_list_prod xs hxs)
 
+/-- The same vanishing holds when the pairing matrix occurs at the left
+edge of the trace: cyclicity moves it to the right edge. -/
+theorem trace_N_mul_list_prod_zero {cp : W → ι} (G : GlueData cp)
+    (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → BD cp M) :
+    Matrix.trace (G.N * xs.prod) = 0 := by
+  rw [Matrix.trace_mul_comm]
+  exact trace_list_prod_mul_N_zero G xs hxs
+
 /-- Block diagonality is preserved by every natural power. -/
 theorem BD_pow {cp : W → ι} (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
     BD cp (K ^ n) := by
