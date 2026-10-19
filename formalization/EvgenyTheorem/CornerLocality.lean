@@ -183,7 +183,9 @@ theorem sameLocalIndexOrder_A (m : ℕ) :
       (fun p : Point => vIdx (m + 1) p)
       (fun x => x.1) := by
   intro a b
-  rw [vIdx_succ_of_mem a.2, vIdx_succ_of_mem b.2]
+  change vIdx m a.1 ≤ vIdx m b.1 ↔
+    vIdx (m + 1) a.1 ≤ vIdx (m + 1) b.1
+  exact (vIdx_order_preserved_on_old_copy m a.1 b.1 a.2 b.2).symm
 
 /-- Copy B satisfies the shared order interface on its genuinely new vertices. -/
 theorem sameLocalIndexOrder_B (m : ℕ) :
