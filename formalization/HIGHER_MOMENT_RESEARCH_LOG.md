@@ -258,73 +258,80 @@ unresolved, as do the full higher-moment boundary identity and the all-level
 residual recurrence for `p in {6, 8, 10}`. This section records narrowed
 proof obligations and must not be read as a Lean proof.
 
-## 4h. Exact interface needed for a formal support proof
+## 4h. Exact interface and current proof boundary
 
-The distance argument should be formalized as two separate lemmas, rather than
-folded directly into the trace expansion:
+The locality-to-power-support argument is split into a one-step theorem and an
+induction that remains open.
 
-1. **Entry locality:** for states whose geometric coordinates differ, a nonzero
-   entry of K implies EdgeB adjacency. The diagonal part of the operator must
-   be handled separately because it can contribute when the coordinate is
-   unchanged.
-2. **Power support:** for every natural b, a nonzero entry of K^b implies
-   that the coordinate distance (the maximum of the absolute differences in
-   the two coordinates) is at most b. The induction step expands
-   Matrix.mul_apply; each intermediate state either keeps the coordinate or
-   changes it by one in each coordinate, by EdgeB_dist.
+The one-step part is now machine-checked in
+`formalization/EvgenyTheorem/GlueCorner.lean`:
 
-The second statement is intentionally a necessary support bound, not a claim
-that all pairs at distance at most b have nonzero entries. Its contrapositive
-is the corner-zero result needed by the two-pairing trace lemma. The proof must
-also preserve the state/spin indices in the matrix sum: projecting only to
-geometric coordinates is insufficient to discharge same-coordinate,
-different-spin terms.
+- `sgK_entry_local`: a nonzero entry of `sgK` either preserves the geometric
+  coordinate or follows an `EdgeB` edge.
+- `sgK_entry_coord_dist`: each coordinate changes by at most one across a
+  nonzero one-step entry.
 
-Before using this result in the moment proof, the implementation must establish
-which coordinate metric is compatible with every disjunct of Step6, and prove
-its one-step bound in Lean. EdgeB_dist supplies coordinate inequalities for
-an actual edge, but it is not by itself the induction theorem for powers.
+The second lemma combines the first with `EdgeB_dist`. These results handle
+the state/copy/spin projections at the one-step level; they do **not** prove
+the analogous statement for `K^b`.
 
-This interface is the next code-level target. No Lean source was changed in this
-commit, because the available GitHub interface does not execute lake build;
-adding an uncompiled theorem here would risk turning a proof obligation into a
-false claim. The conjectural status stated above is unchanged.
+The remaining power-support target is that a nonzero entry of `K^b` implies
+that each coordinate changes by at most `b`. Its induction step must expand
+`Matrix.mul_apply`, retain the intermediate state (including spin), and use
+the one-step bound for the final factor. Only after this induction is proved
+can the coordinate-distance bound be used contrapositively to establish
+corner-entry vanishing for exponents below the corner separation.
 
-## 4i. Concrete one-step support for `sgK`
+The compatible metric is the maximum of the absolute coordinate differences,
+not Manhattan distance: the six directions in `Step6` include diagonal
+moves, while each coordinate changes by at most one per edge. Distinct
+geometric corners differ by `2^m` in at least one coordinate. Thus the
+intended coordinate-only consequence is vanishing for distinct corner
+coordinates when `b < 2^m`, if the power-support induction is completed.
 
-The concrete matrix in this repository is `sgK m θ ax o = blockK (Hc m θ ax o)`.
-The existing lemmas already give the right one-step split:
+## 4i. Verified one-step support for `sgK`
 
-- `blockK` makes an entry zero whenever the copy labels differ.
-- `Hc_zero_diag` handles equal geometric coordinates with unequal spin by
-  showing that the entry is zero; equal coordinate and equal spin is the
-  diagonal case.
-- `Hc_zero_edge` shows that an entry between distinct geometric coordinates
-  is zero if `EdgeB` says they are not adjacent.
-- `EdgeB_dist` bounds each coordinate change across an actual edge by one.
-
-Thus the local lemma to prove before induction is state-resolved:
+The concrete matrix is `sgK m θ ax o = blockK (Hc m θ ax o)`. The current
+Lean source proves the exact one-step interface:
 
 ```lean
-lemma sgK_entry_local (w w' : WSG m) :
-  sgK m θ ax o w w' ≠ 0 →
-    (w.2.1.1 = w'.2.1.1) ∨
-    EdgeB m w.2.1.1.1 w.2.1.1.2 w'.2.1.1.1 w'.2.1.1.2 = true
+theorem sgK_entry_local (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (w w' : WSG m)
+    (h : sgK m θ ax o w w' ≠ 0) :
+    w.2.1.1 = w'.2.1.1 ∨
+      EdgeB m w.2.1.1.1 w.2.1.1.2 w'.2.1.1.1 w'.2.1.1.2 = true
 ```
 
-The displayed type is an interface sketch, not committed Lean code; exact
-projection simplification and the diagonal/spin cases still need to be checked
-by the compiler. Once this is proved, the induction for `K^b` should use the
-two coordinate inequalities from `EdgeB_dist` and the unchanged-coordinate
-case to establish an `L∞` displacement bound of at most `b`.
+It also proves the quantitative bound:
 
-An important detail: the six directions in `Step6` include diagonal lattice
-moves, so the Manhattan metric is not appropriate. The maximum coordinate
-difference is the compatible metric: each edge changes each coordinate by at
-most one. Corner separation in either coordinate is `2^m`, which is exactly
-why the bound `b < 2^m` would imply the desired distinct-corner vanishing.
+```lean
+theorem sgK_entry_coord_dist (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (w w' : WSG m)
+    (h : sgK m θ ax o w w' ≠ 0) :
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 1 ∧ w'.2.1.1.1 ≤ w.2.1.1.1 + 1 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 1 ∧ w'.2.1.1.2 ≤ w.2.1.1.2 + 1
+```
 
-**Current proof boundary:** the existing `corners_far` proves only that distinct
-corners are not connected by one edge. It must not be cited as if it proved
-the arbitrary-power statement. Neither `sgK_entry_local` nor the power-support
-induction has yet been added as a compiled Lean theorem.
+Both lemmas are present in the current branch, and the current branch head's
+Lean formalization and test workflows passed. This upgrades the one-step
+locality interface from a proposed sketch to a compiled result.
+
+The next Lean theorem must lift this bound from entries of `K` to entries of
+`K^b`. It must not discard spin indices in the intermediate-state sum. Even
+if that coordinate-only power theorem is proved, same-coordinate/different-spin
+corner entries remain a separate obligation: `Hc_sq_zero` covers the
+second-power cancellation only and cannot be generalized to higher powers
+without proof.
+
+The coordinate argument would cover distinct-coordinate corner entries for
+`b ≤ 9` at levels `m ≥ 4`, since `2^m ≥ 16`. It does not settle the
+exceptional level `m = 3` for powers `8` and `9`, nor does it settle
+same-coordinate/different-spin entries. Those entries must be computed or
+proved separately, and any nonzero contributions must be retained in the
+boundary formula.
+
+**Status:** one-step support and coordinate displacement are proved and
+compiled; arbitrary-power support, the exceptional level-3 entries, the
+spin-resolved higher-power corner conditions, the full higher-moment boundary
+identity, and the all-level residual recurrence for `p ∈ {6, 8, 10}` remain
+open. The higher-moment target remains conjectural.
