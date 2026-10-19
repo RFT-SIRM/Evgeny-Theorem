@@ -147,9 +147,7 @@ theorem vIdx_succ_B_le_iff (m : ℕ)
     have hpoints := vIdx_injective_on_vertexOrder (m + 1) hx hy hxy
     exact Subtype.ext (shiftPoint_injective _ _ _ hpoints)
   · intro x y
-    exact vIdx_succ_B_lt_iff x.2.1 y.2.1 x.2.2 y.2.2
-  · exact a
-  · exact b
+    exact (vIdx_succ_B_lt_iff x.2.1 y.2.1 x.2.2 y.2.2).symm
 
 /-- Copy C: strict-order preservation also preserves the non-strict comparison used for orientation. -/
 theorem vIdx_succ_C_le_iff (m : ℕ)
@@ -172,8 +170,6 @@ theorem vIdx_succ_C_le_iff (m : ℕ)
     have hpoints := vIdx_injective_on_vertexOrder (m + 1) hx hy hxy
     exact Subtype.ext (shiftPoint_injective _ _ _ hpoints)
   · intro x y
-    exact vIdx_succ_C_lt_iff x.2.1 y.2.1 x.2.2.1 x.2.2.2 y.2.1 y.2.2.1 y.2.2.2
-  · exact a
-  · exact b
+    exact (vIdx_succ_C_lt_iff x.2.1 y.2.1 x.2.2.1 x.2.2.2 y.2.2.1 y.2.2.2).symm
 
 end EvgenyTheorem
