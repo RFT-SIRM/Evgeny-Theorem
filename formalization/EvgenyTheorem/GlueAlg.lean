@@ -302,6 +302,19 @@ theorem trace_two_N_powers_of_BD {cp : W → ι} (G : GlueData cp)
       ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 := by
   exact trace_two_N_powers G K a b c (BD_pow K hK b) hkg
 
+/-- Two-pairing formula with the middle corner condition discharged by
+`GlueDiag` on the middle power and an explicit cross-copy hypothesis.
+This is the convenient interface for applications to powers of K. -/
+theorem trace_two_N_powers_of_GlueDiag {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K) (a b c : ℕ)
+    (hdiag : GlueDiag G (K ^ b))
+    (hcross : ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      cp (G.σ w) ≠ cp (G.σ w') → w ≠ w' → (K ^ b) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c) =
+      ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 := by
+  apply trace_two_N_powers_of_BD G K hK a b c
+  exact GlueDiag_pair_vanish G (K ^ b) hdiag hcross
+
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
