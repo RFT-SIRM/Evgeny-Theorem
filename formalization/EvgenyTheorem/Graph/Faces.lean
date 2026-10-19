@@ -407,24 +407,5 @@ theorem faceAxis_mul_three_add_two (k : ℕ) :
   apply Fin.ext
   simp [faceAxis, Nat.mul_add_mod]
 
-/-- The flux-edge list has one entry for each recursively generated face. -/
-theorem fluxEdges_length (m : ℕ) : (fluxEdges m).length = 3 ^ m := by
-  simp [fluxEdges, facesExact_length]
-
-/--
-For every positive level, shifting a flux-edge index by the length of one
-recursive block preserves its cyclic Pauli-axis label.
--/
-theorem faceAxis_fluxEdges_length_add (m i : ℕ) (hm : 1 ≤ m) :
-    faceAxis ((fluxEdges m).length + i) = faceAxis i := by
-  rw [fluxEdges_length]
-  have hpow : 3 ^ m % 3 = 0 := by
-    cases m with
-    | zero => omega
-    | succ m => simp [pow_succ, Nat.mul_mod]
-  apply Fin.ext
-  simp only [faceAxis, Fin.mk.injEq]
-  rw [Nat.add_mod, hpow, Nat.zero_add]
-  exact Nat.mod_mod _ _
 
 end EvgenyTheorem
