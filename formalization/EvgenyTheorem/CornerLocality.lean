@@ -57,4 +57,17 @@ theorem vIdx_orientationBranch_eq
   exact orientationBranch_eq_of_sameLocalIndexOrder
     (vIdx m) (vIdx (m + 1)) φ horder p q
 
+/--
+The first copy in the recursive Sierpinski vertex order is the old vertex list.
+For vertices already present at level m, their global indices are unchanged at
+level m+1; hence every pairwise index comparison within that copy is preserved.
+This is the concrete base case for the recursive orientation-locality proof.
+-/
+theorem vIdx_order_preserved_on_old_copy
+    (m : ℕ) (p q : Point)
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m) :
+    (vIdx (m + 1) p ≤ vIdx (m + 1) q) ↔
+      (vIdx m p ≤ vIdx m q) := by
+  rw [vIdx_succ_of_mem hp, vIdx_succ_of_mem hq]
+
 end EvgenyTheorem
