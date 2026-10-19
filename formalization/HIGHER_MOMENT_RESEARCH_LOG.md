@@ -77,6 +77,20 @@ trace equivalence and multiplicities represented explicitly. Only after that
 expansion is machine-checked should the project derive a boundary formula for
 p = 6, 8, and 10.
 
+## 4b. Reproducible combinatorial certificate
+
+The generated inventory is committed at
+`computational/trace_word_inventory_p6_p8_p10.json`. It records every canonical
+cyclic representative for p = 6, 8, and 10, the number of occurrences of the
+`K*N` factor in each representative, and the size of its rotation orbit.
+The Python test suite now compares the committed JSON byte-independent data
+structure against fresh output from `word_inventory`, so accidental drift in
+the certificate is caught by CI.
+
+This makes the **word enumeration** independently auditable and reproducible.
+It does not establish equality of the matrix traces for different words, prove
+that any term vanishes, or close the higher-moment theorem.
+
 ## 5. Proof obligations before claiming closure
 
 1. Prove a general finite expansion of (\operatorname{Tr}((K+KN)^p)) that records multiplicities and cyclic classes without losing ordering information.
@@ -100,6 +114,6 @@ The existing fourth-moment result should remain unchanged while these components
 ## 7. Status summary
 
 - **Machine-checked:** the existing fourth-moment development, subject to the repository's actual current build status.
-- **Combinatorially counted:** binary words and cyclic-rotation classes listed above.
+- **Combinatorially counted and reproducibly certified:** binary words and cyclic-rotation classes for p = 6, 8, and 10; the committed JSON inventory is checked against the generator by tests.
 - **Numerically supported:** finite-level higher-moment residual patterns described above; reproducible artifact still to be added.
 - **Not yet proved/formalized here:** the all-level (p=6,8,10) residual identity and its propagation.
