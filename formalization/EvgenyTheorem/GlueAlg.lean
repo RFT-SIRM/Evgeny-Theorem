@@ -143,6 +143,22 @@ theorem trace_pow_mul_N_zero {cp : W → ι} (G : GlueData cp)
     Matrix.trace (K ^ n * G.N) = 0 := by
   exact trace_BD_N G (BD_pow K hK n)
 
+/-- A single pairing factor vanishes in the trace even when block-diagonal
+powers of K occur on both sides. Cyclicity moves the right-hand power next
+to the left-hand power, after which they combine into one power. -/
+theorem trace_pow_N_pow_zero {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K) (a b : ℕ) :
+    Matrix.trace (K ^ a * G.N * K ^ b) = 0 := by
+  calc
+    Matrix.trace ((K ^ a * G.N) * K ^ b) =
+        Matrix.trace (K ^ b * (K ^ a * G.N)) :=
+      Matrix.trace_mul_comm _ _
+    _ = Matrix.trace ((K ^ b * K ^ a) * G.N) := by
+      rw [← Matrix.mul_assoc]
+    _ = Matrix.trace (K ^ (b + a) * G.N) := by
+      rw [← pow_add]
+    _ = 0 := trace_pow_mul_N_zero G K hK (b + a)
+
 theorem Q_apply {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0) (a b : W) :
     (G.N * K * G.N) a b = if G.g a ∧ a = b then K (G.σ a) (G.σ a) else 0 := by
