@@ -202,4 +202,16 @@ theorem pOpO_trace4_glue_final (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ →
         pOpO (m + 1) θ ax o) = glueRHS m (sgK m θ ax o) :=
   pOpO_trace4_glue m θ ax o hax1 hax2 (sgK_hkg m hm θ ax o) (sgK_hu2 m θ ax o hanti)
 
+/-!
+### Higher-power support boundary
+
+The corner lemmas above establish one-step off-diagonal vanishing (`sgK_hkg`)
+and the required second-power statement (`sgK_hu2`). They do not imply
+corner vanishing for arbitrary powers. In particular, a proof for `K ^ n`
+must analyze the intermediate-state sum in `Matrix.mul_apply` and preserve
+both coordinate and spin indices. The higher-moment research log records the
+remaining support lemma as an open obligation; no arbitrary-power claim is
+made here.
+-/
+
 end EvgenyTheorem
