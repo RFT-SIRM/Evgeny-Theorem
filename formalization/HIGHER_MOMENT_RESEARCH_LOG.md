@@ -215,3 +215,46 @@ the needed corner-vanishing condition for these powers. The next mathematical
 obligation is to prove or refute those specific higher-power conditions from
 the concrete graph/operator definitions, rather than assume them.
 
+## 4g. Support-by-distance reduction and the remaining spin obstruction
+
+The concrete locality facts isolate a useful partial route for the unresolved
+positive cyclic-gap classes. The operator entry vanishes when the geometric
+coordinates differ and the corresponding vertices are not joined by an
+`EdgeB` edge; diagonal degree terms preserve the coordinate. The theorem
+`EdgeB_step` bounds the change in each coordinate along one edge by one.
+Distinct geometric corners of a level-`m` copy differ by (2^m) in at least
+one coordinate. Consequently, any edge path between such corners has length
+at least (2^m).
+
+The intended matrix-power lemma is therefore:
+
+[
+(K^b)_{u,v}=0
+\quad\text{for distinct geometric corner coordinates and }b<2^m.
+]
+
+Its Lean proof must expand the matrix product at the induction step and show
+that every summand vanishes: either the last edge is unsupported, or the
+preceding power is already zero by the induction hypothesis. This is a proof
+target, not yet a theorem in the repository.
+
+If established, this coordinate-support result covers exponents (b\le9)
+at levels (m\ge4), since (2^m\ge16). It does **not** cover the exceptional
+level (m=3) for exponents (b=8,9), where the distance lower bound is only
+eight. Those entries need a finite exact calculation or a separate graph
+argument.
+
+There is a second independent limitation: the hypothesis used by the generic
+trace reduction quantifies over distinct glued *states*, not just distinct
+geometric coordinates. When two states have the same coordinate but different
+spin, the distance argument is inapplicable. The existing `Hc_sq_zero`
+establishes a specific second-power cancellation only; it does not justify
+vanishing for powers three and above. Any complete application must either
+prove the needed spin-resolved corner entries for each relevant exponent or
+retain their contributions in the boundary formula.
+
+**Status:** no unconditional corner-power lemma has been added on the basis of
+this argument. In particular, the positive-gap (r=3) classes listed in
+Section 4f remain unresolved, as do the full higher-moment boundary identity
+and the all-level residual recurrence for (p\in\{6,8,10\}). This section
+records the narrowed proof obligations and must not be read as a Lean proof.
