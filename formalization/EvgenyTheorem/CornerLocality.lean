@@ -1,4 +1,4 @@
-import EvgenyTheorem.VertexIndex
+import EvgenyTheorem.FlipC
 
 namespace EvgenyTheorem
 
@@ -69,5 +69,41 @@ theorem vIdx_order_preserved_on_old_copy
     (vIdx (m + 1) p ≤ vIdx (m + 1) q) ↔
       (vIdx m p ≤ vIdx m q) := by
   rw [vIdx_succ_of_mem hp, vIdx_succ_of_mem hq]
+
+/--
+On a duplicate-free vertex-order list, the index function is injective on
+members of that list. This converts strict-order preservation into the
+orientation comparison needed by the connection operator.
+-/
+theorem vIdx_injective_on_vertexOrder (m : ℕ) {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hidx : vIdx m p = vIdx m q) : p = q := by
+  unfold vIdx at hidx
+  exact (List.idxOf_inj hp).mp hidx
+
+/-- Strict index order is preserved inside copy A (the old vertices). -/
+theorem vIdx_succ_A_lt_iff (m : ℕ) {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m) :
+    vIdx (m + 1) p < vIdx (m + 1) q ↔ vIdx m p < vIdx m q := by
+  rw [vIdx_succ_of_mem hp, vIdx_succ_of_mem hq]
+
+/-- Strict index order is preserved inside the new, non-duplicated part of copy B. -/
+theorem vIdx_succ_B_order_bridge {m : ℕ} {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hq0 : q ≠ (0, 0)) :
+    vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 p) <
+      vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 q) ↔
+    vIdx m p < vIdx m q :=
+  vIdx_succ_B_lt_iff hp hq hp0 hq0
+
+/-- Strict index order is preserved inside the new, non-duplicated part of copy C. -/
+theorem vIdx_succ_C_order_bridge {m : ℕ} {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hps : p ≠ (2 ^ m, 0))
+    (hq0 : q ≠ (0, 0)) (hqs : q ≠ (2 ^ m, 0)) :
+    vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 p) <
+      vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 q) ↔
+    vIdx m p < vIdx m q :=
+  vIdx_succ_C_lt_iff hp hq hp0 hps hq0 hqs
 
 end EvgenyTheorem
