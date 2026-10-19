@@ -159,6 +159,19 @@ theorem trace_pow_N_pow_zero {cp : W → ι} (G : GlueData cp)
       rw [← pow_add]
     _ = 0 := trace_pow_mul_N_zero G K hK (b + a)
 
+/-- A word with exactly one factor of the form `K * N` vanishes under
+the trace when the remaining factors are powers of a block-diagonal `K`.
+This is the single-pairing stratum needed when expanding `(K + K*N)^p`. -/
+theorem trace_single_KN_word_zero {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K) (a b : ℕ) :
+    Matrix.trace (K ^ a * (K * G.N) * K ^ b) = 0 := by
+  calc
+    Matrix.trace (K ^ a * (K * G.N) * K ^ b) =
+        Matrix.trace (K ^ (a + 1) * G.N * K ^ b) := by
+      rw [pow_succ]
+      simp only [Matrix.mul_assoc]
+    _ = 0 := trace_pow_N_pow_zero G K hK (a + 1) b
+
 /-- In a trace word with exactly one pairing factor N, its position is irrelevant:
 if every other factor is block diagonal across copies, cyclicity gathers those
 factors into one block-diagonal product and the trace vanishes. -/
