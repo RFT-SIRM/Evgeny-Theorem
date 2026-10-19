@@ -20,18 +20,18 @@ formula for moments 6, 8, or 10.
 For a fixed angle $\theta$ and an even moment $p$, define
 
 \[
-\Delta_m^{$p$}(\theta)
+\Delta_m^{(p)}(\theta)
 = \operatorname{Tr}\!\left(H_C(m,\theta)^p\right)
 - \operatorname{Tr}\!\left(H_{C'}(m,\theta)^p\right),
 \qquad
-R_m^{$p$}(\theta)
-= \Delta_m^{$p$}(\theta)-3\Delta_{m-1}^{$p$}(\theta).
+R_m^{(p)}(\theta)
+= \Delta_m^{(p)}(\theta)-3\Delta_{m-1}^{(p)}(\theta).
 \]
 
 For $p\in\{6,8,10\}$, the working target is the eventual residual identity
 
 \[
-R_m^{$p$}(\theta)=R_4^{$p$}(\theta),\qquad $m\ge3$. 
+R_m^{(p)}(\theta)=R_4^{(p)}(\theta),\qquad m\ge 3,
 \]
 under the project's exact operator and gluing hypotheses. This remains a **conjectural target** until a complete proof and a successful Lean build establish it. No all-level higher-moment theorem is claimed here.
 
@@ -62,7 +62,7 @@ Independent numerical work recorded during this research found, at (\theta=\pi),
 - (p=8): (R_2=268960), (R_3=277504), and (R_m=277504) for the tested levels (4\le m\le10).
 - (p=10): (R_2=4006040), (R_3=4507520), and (R_m=4507520) for the tested levels (4\le m\le10).
 
-Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation $R_3^{$p$}=R_4^{$p$}$ for $p\in\{6,8,10\}$. However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
+Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation $R_3^{(p)}=R_4^{(p)}$ for $p\in\{6,8,10\}$. However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
 
 ## 4a. Machine-checked reusable lemmas now in `main`
 
