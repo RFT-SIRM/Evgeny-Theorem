@@ -54,4 +54,58 @@ theorem trace_sub_pow4 {n : Type*} [Fintype n] [DecidableEq n] (D A : Matrix n n
   rw [h3, h2, h1, h6, h5, h4, h7, h8, h9, h10]
   ring
 
+
+/-- Sum of a list of right-multiplied matrices: multiplication distributes over
+the finite sum without reordering any factor. -/
+theorem matrix_list_sum_map_mul_right {n : Type*} [Fintype n] [DecidableEq n]
+    (xs : List (Matrix n n ℂ)) (A : Matrix n n ℂ) :
+    (xs.map (fun X => X * A)).sum = xs.sum * A := by
+  induction xs with
+  | nil => simp
+  | cons X xs ih =>
+      simp only [List.map_cons, List.sum_cons, ih, add_mul]
+
+/-- Ordered expansion of a noncommutative power. At each step the new factor
+is appended on the right, so the list retains factor order and repeated terms
+retain their multiplicity. -/
+def orderedWordExpansion {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) : ℕ → List (Matrix n n ℂ)
+  | 0 => [1]
+  | p + 1 =>
+      (orderedWordExpansion A B p).map (fun X => X * A) ++
+      (orderedWordExpansion A B p).map (fun X => X * B)
+
+/-- The ordered word list sums to the corresponding power. This is valid for
+noncommuting matrices A and B; no permutation or collection of words is used. -/
+theorem sum_orderedWordExpansion {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p : ℕ) :
+    (orderedWordExpansion A B p).sum = (A + B) ^ p := by
+  induction p with
+  | zero => simp [orderedWordExpansion]
+  | succ p ih =>
+      simp only [orderedWordExpansion, List.sum_append,
+        matrix_list_sum_map_mul_right, ih]
+      rw [pow_succ, mul_add]
+
+/-- Trace-level form of the ordered expansion. The right-hand side is a list
+sum rather than a set or a cyclic-class sum, so duplicate words are counted
+with their full multiplicity. -/
+theorem trace_sum_list {n : Type*} [Fintype n] [DecidableEq n]
+    (xs : List (Matrix n n ℂ)) :
+    Matrix.trace xs.sum = (xs.map Matrix.trace).sum := by
+  induction xs with
+  | nil => simp
+  | cons X xs ih =>
+      simp only [List.sum_cons, List.map_cons, List.sum_cons,
+        Matrix.trace_add, ih]
+
+/-- General trace expansion for the power of A + B that preserves the original
+order and multiplicities of all 2^p factor-choice words. -/
+theorem trace_orderedWordExpansion {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p : ℕ) :
+    Matrix.trace ((A + B) ^ p) =
+      ((orderedWordExpansion A B p).map Matrix.trace).sum := by
+  rw [← sum_orderedWordExpansion A B p]
+  exact trace_sum_list (orderedWordExpansion A B p)
+
 end EvgenyTheorem
