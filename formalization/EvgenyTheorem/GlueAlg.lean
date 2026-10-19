@@ -201,6 +201,36 @@ theorem trace_mul_Q {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
   simp only [Matrix.diag_apply, Matrix.mul_diagonal]
   by_cases ha : G.g a <;> simp [ha]
 
+ /-- General two-pairing trace formula. The middle factor may be any matrix M,
+provided it is block diagonal and satisfies the required glued-corner vanishing.
+This isolates the boundary contribution of a word with exactly two N factors. -/
+theorem trace_two_N {cp : W → ι} (G : GlueData cp)
+    (M X : Matrix W W ℂ) (hbd : BD cp M)
+    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → M w w' = 0) :
+    Matrix.trace (X * (G.N * M * G.N)) =
+      ∑ a, if G.g a then X a a * M (G.σ a) (G.σ a) else 0 := by
+  exact trace_mul_Q G M hbd hkg X
+
+/-- Two-pairing word formula for arbitrary natural powers of K. The geometric
+condition is stated explicitly for the middle power; it is not inferred merely
+from block diagonality of K. -/
+theorem trace_two_N_powers {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (a b c : ℕ) (hbd : BD cp (K ^ b))
+    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c) =
+      ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 := by
+  calc
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c) =
+        Matrix.trace ((K ^ a * G.N * K ^ b * G.N) * K ^ c) := by
+          simp only [Matrix.mul_assoc]
+    _ = Matrix.trace (K ^ c * (K ^ a * G.N * K ^ b * G.N)) :=
+      Matrix.trace_mul_comm _ _
+    _ = Matrix.trace ((K ^ c * K ^ a) * (G.N * K ^ b * G.N)) := by
+      simp only [Matrix.mul_assoc]
+    _ = ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 :=
+      trace_two_N G (K ^ b) (K ^ c * K ^ a) hbd hkg
+
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
