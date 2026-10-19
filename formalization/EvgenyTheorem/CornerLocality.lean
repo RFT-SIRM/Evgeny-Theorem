@@ -2,6 +2,18 @@ import EvgenyTheorem.VertexIndex
 
 namespace EvgenyTheorem
 
+
+/--
+The recursive face-list offset is a multiple of three, so the cyclic Pauli-axis
+label is unchanged when an edge is copied into either later face block.
+-/
+theorem faceAxis_shift_by_three_pow (m i : ℕ) (hm : 1 ≤ m) :
+    faceAxis (3 ^ m + i) = faceAxis i := by
+  cases m with
+  | zero => omega
+  | succ m =>
+      simp [faceAxis, pow_succ, Nat.mul_add_mod]
+
 /--
 The comparison of vertex indices is the only orientation choice made by
 connectionOperatorWithAxis: the smaller-index endpoint receives the forward
