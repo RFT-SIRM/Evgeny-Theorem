@@ -151,6 +151,13 @@ theorem edgeAxis_succ_C (m : ℕ) (e : Point × Point)
   rw [fluxIndex_succ_C he]
   exact faceAxis_shift_by_two_three_pow m (fluxIndex m e) hm
 
+/-- The axis label of an edge is unchanged in the old (A) copy. -/
+theorem edgeAxis_succ_A (m : ℕ) (e : Point × Point)
+    (he : e ∈ fluxEdges m) :
+    edgeAxis (m + 1) e = edgeAxis m e := by
+  unfold edgeAxis
+  rw [fluxIndex_succ_A he]
+
 /-- Every flux edge has distinct endpoints, by the unit horizontal step in its face. -/
 theorem fluxEdges_edge_ne {m : ℕ} {e : Point × Point} (he : e ∈ fluxEdges m) :
     e.1 ≠ e.2 := by
