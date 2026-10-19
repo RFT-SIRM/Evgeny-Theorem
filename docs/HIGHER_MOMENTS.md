@@ -22,18 +22,16 @@ with error below `10⁻⁸` across all tested θ values.
 No quadratic term `3^(2m)` is present. The coefficient of `9^m` in a
 3-point fit using `m = 3, 4, 5` is below `10⁻¹⁵` relative to the linear term.
 
-### 2. Exact recurrence (established)
+### 2. Recurrence pattern (numerically observed; proof remains open)
 
-For `m ≥ 2`:
-Δ_m(H⁶, θ) = 3 · Δ_{m−1}(H⁶, θ) + C(θ)
+For `m ≥ 2`, the tested data are consistent with
+Δ_m(H⁶, θ) = 3 · Δ_{m−1}(H⁶, θ) + C(θ),
 
-where `C(θ)` is independent of `m`. Verified by checking that
-`Δ_m − 3·Δ_{m−1}` is constant across `m = 2, 3, 4, 5` for all tested θ.
+where `C(θ)` appears independent of `m`. This is a finite-level numerical observation: checking `Δ_m − 3·Δ_{m−1}` at `m = 2, 3, 4, 5` does **not** prove the recurrence for all levels or all angles. An analytic derivation and a reproducible exact certificate remain open.
 
-### 3. Exact value C(π) = 5280
+### 3. Candidate exact value at θ = π: C(π) = 5280
 
-At `θ = π`, the recurrence constant is the exact integer:
-C(π) = 5280 = 2⁵ · 3 · 5 · 11
+At `θ = π`, the computed recurrence constant is `5280 = 2⁵ · 3 · 5 · 11`. The integer is a candidate exact value supported by the calculations; this document does not claim an independent symbolic proof of the recurrence or of `C(π)`.
 
 | θ | C(θ) |
 |---|------|
@@ -45,14 +43,12 @@ C(π) = 5280 = 2⁵ · 3 · 5 · 11
 | 2π/3 | 3954.831… |
 | **π** | **5280** (exact integer) |
 
-At `θ = π`, the growth law also yields exact fractions:
-`α(π) = −4112/3`, `β(π) = −2640`.
+At `θ = π`, the fitted growth law gives the candidate values `α(π) = −4112/3`, `β(π) = −2640`; these remain computationally inferred rather than Lean-proved identities.
 
-### 4. Path-class zero theorem (established)
+### 4. Path-class zero pattern on SG(1) (finite-level result)
 
-On `SG(1)` (6 vertices, 9 edges, 3 triangles), all closed walks of length 6
-are classified by which triangles they visit. Their contribution to
-`Δ(H⁶) = Tr(H_C⁶) − Tr(H_C′⁶)` satisfies:
+On `SG(1)` (6 vertices, 9 edges, 3 triangles), closed walks of length 6 were classified computationally by which triangles they visit. Their contribution to
+`Δ(H⁶) = Tr(H_C⁶) − Tr(H_C′⁶)` is reported as follows:
 
 | Path class (triangles visited) | Count | Δ contribution |
 |---|---:|---:|
@@ -60,8 +56,7 @@ are classified by which triangles they visit. Their contribution to
 | Two triangles `{0,1}`, `{0,2}`, or `{1,2}` | 168 each | **0** (exact) |
 | All three triangles `{0,1,2}` | 486 | **nonzero** |
 
-Only paths sampling all three rotation axes (x, y, z) contribute.
-Verified on isolated triangle Hamiltonians to `10⁻¹²`.
+In these finite-level calculations, only paths sampling all three rotation axes (x, y, z) contribute. The isolated triangle calculations agree to `10⁻¹²`; this is not an all-level theorem.
 
 The physical reason: for two axes, `Tr([R_a, R_b] · M) = 0` — the
 pairwise commutator leaves no trace. All three axes are required.
