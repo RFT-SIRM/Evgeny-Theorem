@@ -51,16 +51,16 @@ For the three target moments, this gives:
 | 8 | 256 | 255 | 36 | 35 |
 | 10 | 1024 | 1023 | 108 | 107 |
 
-These are **combinatorial counts only**. Necklace classes are not yet a trace identity: cyclic trace equivalence, matrix constraints, vanishing terms, and multiplicities must be handled explicitly. In particular, the class with exactly one $N$ is represented by (\operatorname{Tr}$K^pN$) after cyclic rotation and vanishes if $K^p$ is block diagonal across the paired copy classes, as in the existing `trace_BD_N` lemma.
+These are **combinatorial counts only**. Necklace classes are not yet a trace identity: cyclic trace equivalence, matrix constraints, vanishing terms, and multiplicities must be handled explicitly. In particular, the class with exactly one $N$ is represented by $\operatorname{Tr}(K^pN)$ after cyclic rotation and vanishes if $K^p$ is block diagonal across the paired copy classes, as in the existing `trace_BD_N` lemma.
 
-A related but different enumeration describes cyclic compositions: for (r\) occurrences of (N), it groups positive gap lengths (a_1,\ldots,a_r) with sum $p$, modulo cyclic rotation. These composition counts must not be conflated with binary-necklace counts, and neither count alone supplies the coefficients of the final trace formula.
+A related but different enumeration describes cyclic compositions: for $r$ occurrences of $N$, it groups positive gap lengths $(a_1,\ldots,a_r)$ with sum $p$, modulo cyclic rotation. These composition counts must not be conflated with binary-necklace counts, and neither count alone supplies the coefficients of the final trace formula.
 
 ## 4. Computational evidence (not formal proof)
 
-Independent numerical work recorded during this research found, at (\theta=\pi), the following residual values:
-- (p=6): (R_2=5256), (R_3=5280), and (R_m=5280) for the tested levels (4\le m\le10).
-- (p=8): (R_2=268960), (R_3=277504), and (R_m=277504) for the tested levels (4\le m\le10).
-- (p=10): (R_2=4006040), (R_3=4507520), and (R_m=4507520) for the tested levels (4\le m\le10).
+Independent numerical work recorded during this research found, at $\theta=\pi$, the following residual values:
+- $p=6$: $R_2=5256$, $R_3=5280$, and $R_m=5280$ for tested levels $4\le m\le10$.
+- $p=8$: $R_2=268960$, $R_3=277504$, and $R_m=277504$ for tested levels $4\le m\le10$.
+- $p=10$: $R_2=4006040$, $R_3=4507520$, and $R_m=4507520$ for tested levels $4\le m\le10$.
 
 Additional floating-point checks across angles and a modular/DFT check were reported to support the finite-level relation $R_3^{(p)}=R_4^{(p)}$ for $p\in\{6,8,10\}$. However, the full independent calculation is not yet packaged in this repository as a reproducible, reviewed certificate. These observations must therefore be treated as **computational evidence**, not as a machine-checked theorem. They do not prove the all-level recurrence.
 
