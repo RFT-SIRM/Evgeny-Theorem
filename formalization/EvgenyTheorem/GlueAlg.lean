@@ -90,13 +90,6 @@ theorem trace_BD_N {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : 
     exact hX w (G.σ w) (fun h => G.cp_σ w hw h.symm)
   · rw [if_neg hw]
 
-/-- The trace contribution of a single pairing factor vanishes after any natural power
-of a matrix that is block diagonal across the copy map. -/
-theorem trace_pow_mul_N_zero {cp : W → ι} (G : GlueData cp)
-    (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
-    Matrix.trace (K ^ n * G.N) = 0 := by
-  exact trace_BD_N G (BD_pow K hK n)
-
 /-- Block diagonality is preserved by every natural power. -/
 theorem BD_pow {cp : W → ι} (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
     BD cp (K ^ n) := by
@@ -107,6 +100,13 @@ theorem BD_pow {cp : W → ι} (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
       simp [Matrix.one_apply, hne]
   | succ n ih =>
       simpa [pow_succ] using BD_mul ih hK
+
+/-- The trace contribution of a single pairing factor vanishes after any natural power
+of a matrix that is block diagonal across the copy map. -/
+theorem trace_pow_mul_N_zero {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K) (n : ℕ) :
+    Matrix.trace (K ^ n * G.N) = 0 := by
+  exact trace_BD_N G (BD_pow K hK n)
 
 theorem Q_apply {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0) (a b : W) :
