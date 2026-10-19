@@ -225,7 +225,7 @@ theorem trace_mul_Q {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
   simp only [Matrix.diag_apply, Matrix.mul_diagonal]
   by_cases ha : G.g a <;> simp [ha]
 
- /-- General two-pairing trace formula. The middle factor may be any matrix M,
+/-- General two-pairing trace formula. The middle factor may be any matrix M,
 provided it is block diagonal and satisfies the required glued-corner vanishing.
 This isolates the boundary contribution of a word with exactly two N factors. -/
 theorem trace_two_N {cp : W → ι} (G : GlueData cp)
@@ -293,7 +293,7 @@ theorem trace_two_N_powers {cp : W → ι} (G : GlueData cp)
     _ = ∑ x, if G.g x then (K ^ c * K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 :=
       trace_two_N G (K ^ b) (K ^ c * K ^ a) hbd hkg
 
- /-- Convenient specialization of `trace_two_N_powers`: block diagonality of the
+/-- Convenient specialization of `trace_two_N_powers`: block diagonality of the
 middle power is derived from block diagonality of K, so callers need only provide
 the separate glued-corner vanishing condition for that power. -/
 theorem trace_two_N_powers_of_BD {cp : W → ι} (G : GlueData cp)
