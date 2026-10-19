@@ -117,3 +117,19 @@ The existing fourth-moment result should remain unchanged while these components
 - **Combinatorially counted and reproducibly certified:** binary words and cyclic-rotation classes for p = 6, 8, and 10; the committed JSON inventory is checked against the generator by tests.
 - **Numerically supported:** finite-level higher-moment residual patterns described above; reproducible artifact still to be added.
 - **Not yet proved/formalized here:** the all-level (p=6,8,10) residual identity and its propagation.
+
+
+## 4c. Cyclic gap encoding by the number of pairing factors
+
+The combinatorial inventory now records, for each binary necklace, the canonical
+cyclic tuple of numbers of K factors between consecutive K*N factors. For a word
+with r occurrences of K*N, this tuple has length r and its entries sum to p-r.
+The all-K word is represented by the empty tuple. This encoding is rotation-invariant
+and gives a one-to-one representation of binary necklace classes at each fixed r;
+the generator and tests check uniqueness and counts for p = 6, 8, and 10.
+
+This is an organizational result for the expansion: it groups cyclic words by
+the gaps between pairing factors, which is the natural shape needed to apply
+the two-N trace formula and identify which middle powers K^b arise. It remains
+combinatorics only and does not assert that words with the same gap data have
+equal trace contributions beyond cyclic rotation.

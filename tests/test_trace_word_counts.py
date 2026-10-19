@@ -50,3 +50,35 @@ def test_committed_inventory_certificate_matches_generator():
     generated = [word_inventory(p) for p in (6, 8, 10)]
     assert committed == generated
 
+
+
+def test_cyclic_gap_encoding_is_a_bijection_on_necklace_classes():
+    for p in (6, 8, 10):
+        got = word_inventory(p)
+        for k in range(p + 1):
+            rows = [row for row in got["classes"] if row["kn_factor_count"] == k]
+            gap_reps = [tuple(row["cyclic_gap_representative"]) for row in rows]
+            assert len(gap_reps) == len(set(gap_reps))
+            assert len(set(gap_reps)) == got["cyclic_gap_classes_by_KN_count"][str(k)]
+            assert got["cyclic_gap_classes_by_KN_count"][str(k)] == got["cyclic_classes_by_KN_count"][str(k)]
+            for row in rows:
+                gaps = row["cyclic_gap_representative"]
+                if k == 0:
+                    assert gaps == []
+                else:
+                    assert len(gaps) == k
+                    assert sum(gaps) == p - k
+
+
+def test_cyclic_gap_representative_is_rotation_invariant():
+    from computational.trace_word_counts import cyclic_gap_representative
+
+    word = ("K", "K*N", "K", "K*N", "K", "K")
+    for i in range(len(word)):
+        assert cyclic_gap_representative(word[i:] + word[:i]) == cyclic_gap_representative(word)
+    try:
+        cyclic_gap_representative(())
+    except ValueError as exc:
+        assert "nonempty" in str(exc)
+    else:
+        raise AssertionError("empty words must be rejected")

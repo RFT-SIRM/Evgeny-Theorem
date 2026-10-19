@@ -21,6 +21,18 @@ def canonical_rotation(word: tuple[str, ...]) -> tuple[str, ...]:
     return min(word[i:] + word[:i] for i in range(len(word)))
 
 
+def cyclic_gap_representative(word: tuple[str, ...]) -> tuple[int, ...]:
+    """Encode a cyclic word by K-gap lengths between successive K*N factors."""
+    if not word:
+        raise ValueError("word must be nonempty")
+    marked = [i for i, factor in enumerate(word) if factor == "K*N"]
+    if not marked:
+        return ()
+    n = len(word)
+    gaps = tuple((marked[(j + 1) % len(marked)] - pos - 1) % n for j, pos in enumerate(marked))
+    return min(gaps[i:] + gaps[:i] for i in range(len(gaps)))
+
+
 def word_inventory(p: int) -> dict[str, object]:
     """Count factor-choice words and cyclic classes, retaining representatives."""
     if p < 1:
@@ -35,6 +47,7 @@ def word_inventory(p: int) -> dict[str, object]:
             "representative": list(rep),
             "kn_factor_count": rep.count("K*N"),
             "orbit_size": len(members),
+            "cyclic_gap_representative": list(cyclic_gap_representative(rep)),
         }
         for rep, members in sorted(classes.items())
     ]
@@ -45,6 +58,10 @@ def word_inventory(p: int) -> dict[str, object]:
     }
     class_counts_by_kn = {
         str(k): sum(row["kn_factor_count"] == k for row in class_rows)
+        for k in range(p + 1)
+    }
+    gap_classes_by_kn_count = {
+        str(k): len({tuple(row["cyclic_gap_representative"]) for row in class_rows if row["kn_factor_count"] == k})
         for k in range(p + 1)
     }
     orbit_size_counts = {
@@ -59,6 +76,7 @@ def word_inventory(p: int) -> dict[str, object]:
         "cyclic_classes_with_KN_factor": len(classes_with_kn),
         "factor_words_by_KN_count": by_kn_count,
         "cyclic_classes_by_KN_count": class_counts_by_kn,
+        "cyclic_gap_classes_by_KN_count": gap_classes_by_kn_count,
         "class_orbit_size_counts": orbit_size_counts,
         "classes": class_rows,
     }

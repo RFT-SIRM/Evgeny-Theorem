@@ -23,6 +23,15 @@
       "5": 1,
       "6": 1
     },
+    "cyclic_gap_classes_by_KN_count": {
+      "0": 1,
+      "1": 1,
+      "2": 3,
+      "3": 4,
+      "4": 3,
+      "5": 1,
+      "6": 1
+    },
     "class_orbit_size_counts": {
       "1": 2,
       "2": 1,
@@ -40,7 +49,8 @@
           "K"
         ],
         "kn_factor_count": 0,
-        "orbit_size": 1
+        "orbit_size": 1,
+        "cyclic_gap_representative": []
       },
       {
         "representative": [
@@ -52,7 +62,10 @@
           "K*N"
         ],
         "kn_factor_count": 1,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          5
+        ]
       },
       {
         "representative": [
@@ -64,7 +77,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          4
+        ]
       },
       {
         "representative": [
@@ -76,7 +93,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -88,7 +109,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -100,7 +126,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 3
+        "orbit_size": 3,
+        "cyclic_gap_representative": [
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -112,7 +142,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -124,7 +159,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -136,7 +176,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -148,7 +194,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 2
+        "orbit_size": 2,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -160,7 +211,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -172,7 +229,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 3
+        "orbit_size": 3,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -184,7 +247,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 6
+        "orbit_size": 6,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -196,7 +266,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 1
+        "orbit_size": 1,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       }
     ]
   },
@@ -228,6 +306,17 @@
       "7": 1,
       "8": 1
     },
+    "cyclic_gap_classes_by_KN_count": {
+      "0": 1,
+      "1": 1,
+      "2": 4,
+      "3": 7,
+      "4": 10,
+      "5": 7,
+      "6": 4,
+      "7": 1,
+      "8": 1
+    },
     "class_orbit_size_counts": {
       "1": 2,
       "2": 1,
@@ -247,7 +336,8 @@
           "K"
         ],
         "kn_factor_count": 0,
-        "orbit_size": 1
+        "orbit_size": 1,
+        "cyclic_gap_representative": []
       },
       {
         "representative": [
@@ -261,7 +351,10 @@
           "K*N"
         ],
         "kn_factor_count": 1,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          7
+        ]
       },
       {
         "representative": [
@@ -275,7 +368,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          6
+        ]
       },
       {
         "representative": [
@@ -289,7 +386,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          1,
+          5
+        ]
       },
       {
         "representative": [
@@ -303,7 +404,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          5
+        ]
       },
       {
         "representative": [
@@ -317,7 +423,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          2,
+          4
+        ]
       },
       {
         "representative": [
@@ -331,7 +441,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          4,
+          1
+        ]
       },
       {
         "representative": [
@@ -345,7 +460,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          4
+        ]
       },
       {
         "representative": [
@@ -359,7 +479,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          4
+        ]
       },
       {
         "representative": [
@@ -373,7 +499,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 4
+        "orbit_size": 4,
+        "cyclic_gap_representative": [
+          3,
+          3
+        ]
       },
       {
         "representative": [
@@ -387,7 +517,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          3,
+          2
+        ]
       },
       {
         "representative": [
@@ -401,7 +536,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -415,7 +555,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          3,
+          1
+        ]
       },
       {
         "representative": [
@@ -429,7 +575,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          3
+        ]
       },
       {
         "representative": [
@@ -443,7 +594,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -457,7 +614,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -471,7 +634,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -485,7 +655,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          1,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -499,7 +674,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -513,7 +694,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -527,7 +714,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -541,7 +734,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -555,7 +755,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 4
+        "orbit_size": 4,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -569,7 +775,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -583,7 +795,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -597,7 +816,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -611,7 +837,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -625,7 +858,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -639,7 +880,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 2
+        "orbit_size": 2,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -653,7 +900,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -667,7 +921,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -681,7 +942,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -695,7 +964,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -709,7 +986,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 4
+        "orbit_size": 4,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -723,7 +1008,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 8
+        "orbit_size": 8,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -737,7 +1031,17 @@
           "K*N"
         ],
         "kn_factor_count": 8,
-        "orbit_size": 1
+        "orbit_size": 1,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       }
     ]
   },
@@ -773,6 +1077,19 @@
       "9": 1,
       "10": 1
     },
+    "cyclic_gap_classes_by_KN_count": {
+      "0": 1,
+      "1": 1,
+      "2": 5,
+      "3": 12,
+      "4": 22,
+      "5": 26,
+      "6": 22,
+      "7": 12,
+      "8": 5,
+      "9": 1,
+      "10": 1
+    },
     "class_orbit_size_counts": {
       "1": 2,
       "2": 1,
@@ -794,7 +1111,8 @@
           "K"
         ],
         "kn_factor_count": 0,
-        "orbit_size": 1
+        "orbit_size": 1,
+        "cyclic_gap_representative": []
       },
       {
         "representative": [
@@ -810,7 +1128,10 @@
           "K*N"
         ],
         "kn_factor_count": 1,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          9
+        ]
       },
       {
         "representative": [
@@ -826,7 +1147,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          8
+        ]
       },
       {
         "representative": [
@@ -842,7 +1167,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          7
+        ]
       },
       {
         "representative": [
@@ -858,7 +1187,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          7
+        ]
       },
       {
         "representative": [
@@ -874,7 +1208,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          2,
+          6
+        ]
       },
       {
         "representative": [
@@ -890,7 +1228,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          6,
+          1
+        ]
       },
       {
         "representative": [
@@ -906,7 +1249,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          6
+        ]
       },
       {
         "representative": [
@@ -922,7 +1270,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          6
+        ]
       },
       {
         "representative": [
@@ -938,7 +1292,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          3,
+          5
+        ]
       },
       {
         "representative": [
@@ -954,7 +1312,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          5,
+          2
+        ]
       },
       {
         "representative": [
@@ -970,7 +1333,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          5
+        ]
       },
       {
         "representative": [
@@ -986,7 +1354,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          5,
+          1
+        ]
       },
       {
         "representative": [
@@ -1002,7 +1376,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          5
+        ]
       },
       {
         "representative": [
@@ -1018,7 +1397,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          5
+        ]
       },
       {
         "representative": [
@@ -1034,7 +1419,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          5
+        ]
       },
       {
         "representative": [
@@ -1050,7 +1441,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          5
+        ]
       },
       {
         "representative": [
@@ -1066,7 +1464,11 @@
           "K*N"
         ],
         "kn_factor_count": 2,
-        "orbit_size": 5
+        "orbit_size": 5,
+        "cyclic_gap_representative": [
+          4,
+          4
+        ]
       },
       {
         "representative": [
@@ -1082,7 +1484,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          4,
+          3
+        ]
       },
       {
         "representative": [
@@ -1098,7 +1505,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          4,
+          2
+        ]
       },
       {
         "representative": [
@@ -1114,7 +1526,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          4,
+          2
+        ]
       },
       {
         "representative": [
@@ -1130,7 +1548,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          2,
+          4
+        ]
       },
       {
         "representative": [
@@ -1146,7 +1569,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          4,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -1162,7 +1591,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          4,
+          1
+        ]
       },
       {
         "representative": [
@@ -1178,7 +1613,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          4,
+          1
+        ]
       },
       {
         "representative": [
@@ -1194,7 +1636,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          3,
+          4
+        ]
       },
       {
         "representative": [
@@ -1210,7 +1657,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          0,
+          4
+        ]
       },
       {
         "representative": [
@@ -1226,7 +1679,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          1,
+          4
+        ]
       },
       {
         "representative": [
@@ -1242,7 +1701,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          4,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -1258,7 +1724,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          4
+        ]
       },
       {
         "representative": [
@@ -1274,7 +1746,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          4
+        ]
       },
       {
         "representative": [
@@ -1290,7 +1769,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          4
+        ]
       },
       {
         "representative": [
@@ -1306,7 +1792,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ]
       },
       {
         "representative": [
@@ -1322,7 +1816,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          3,
+          3
+        ]
       },
       {
         "representative": [
@@ -1338,7 +1837,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          3,
+          3
+        ]
       },
       {
         "representative": [
@@ -1354,7 +1859,12 @@
           "K*N"
         ],
         "kn_factor_count": 3,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          2,
+          2,
+          3
+        ]
       },
       {
         "representative": [
@@ -1370,7 +1880,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          3,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -1386,7 +1902,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          3,
+          2
+        ]
       },
       {
         "representative": [
@@ -1402,7 +1924,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          3,
+          2
+        ]
       },
       {
         "representative": [
@@ -1418,7 +1947,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          3,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -1434,7 +1969,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -1450,7 +1991,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          3,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -1466,7 +2014,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          3,
+          1
+        ]
       },
       {
         "representative": [
@@ -1482,7 +2036,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          3,
+          1
+        ]
       },
       {
         "representative": [
@@ -1498,7 +2059,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          3,
+          1
+        ]
       },
       {
         "representative": [
@@ -1514,7 +2082,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          3,
+          1
+        ]
       },
       {
         "representative": [
@@ -1530,7 +2106,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 5
+        "orbit_size": 5,
+        "cyclic_gap_representative": [
+          0,
+          3,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -1546,7 +2128,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -1562,7 +2150,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          3,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -1578,7 +2173,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       {
         "representative": [
@@ -1594,7 +2195,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          1,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -1610,7 +2218,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -1626,7 +2241,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          3,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -1642,7 +2265,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -1658,7 +2288,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -1674,7 +2311,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -1690,7 +2335,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          2,
+          3
+        ]
       },
       {
         "representative": [
@@ -1706,7 +2358,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -1722,7 +2382,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          3
+        ]
       },
       {
         "representative": [
@@ -1738,7 +2406,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3
+        ]
       },
       {
         "representative": [
@@ -1754,7 +2431,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -1770,7 +2453,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -1786,7 +2475,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -1802,7 +2498,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -1818,7 +2521,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -1834,7 +2544,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          2
+        ]
       },
       {
         "representative": [
@@ -1850,7 +2568,13 @@
           "K*N"
         ],
         "kn_factor_count": 4,
-        "orbit_size": 5
+        "orbit_size": 5,
+        "cyclic_gap_representative": [
+          1,
+          2,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -1866,7 +2590,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -1882,7 +2613,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -1898,7 +2636,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          2,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -1914,7 +2659,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          2,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -1930,7 +2683,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          2,
+          0,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -1946,7 +2706,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          1,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -1962,7 +2729,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          1,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -1978,7 +2753,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -1994,7 +2777,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -2010,7 +2801,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          1
+        ]
       },
       {
         "representative": [
@@ -2026,7 +2826,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          2,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2042,7 +2849,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          2,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2058,7 +2873,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          1,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -2074,7 +2896,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2090,7 +2920,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          1,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2106,7 +2944,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          2,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2122,7 +2968,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2138,7 +2993,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 5
+        "orbit_size": 5,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          2,
+          0,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2154,7 +3017,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          1,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2170,7 +3041,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -2186,7 +3065,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2202,7 +3090,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -2218,7 +3114,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2234,7 +3139,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2250,7 +3164,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          2
+        ]
       },
       {
         "representative": [
@@ -2266,7 +3189,17 @@
           "K*N"
         ],
         "kn_factor_count": 8,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2
+        ]
       },
       {
         "representative": [
@@ -2282,7 +3215,14 @@
           "K*N"
         ],
         "kn_factor_count": 5,
-        "orbit_size": 2
+        "orbit_size": 2,
+        "cyclic_gap_representative": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2298,7 +3238,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2314,7 +3262,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          0,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2330,7 +3286,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2346,7 +3311,15 @@
           "K*N"
         ],
         "kn_factor_count": 6,
-        "orbit_size": 5
+        "orbit_size": 5,
+        "cyclic_gap_representative": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2362,7 +3335,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2378,7 +3360,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2394,7 +3385,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2410,7 +3410,17 @@
           "K*N"
         ],
         "kn_factor_count": 8,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1
+        ]
       },
       {
         "representative": [
@@ -2426,7 +3436,16 @@
           "K*N"
         ],
         "kn_factor_count": 7,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2442,7 +3461,17 @@
           "K*N"
         ],
         "kn_factor_count": 8,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2458,7 +3487,17 @@
           "K*N"
         ],
         "kn_factor_count": 8,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2474,7 +3513,17 @@
           "K*N"
         ],
         "kn_factor_count": 8,
-        "orbit_size": 5
+        "orbit_size": 5,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2490,7 +3539,18 @@
           "K*N"
         ],
         "kn_factor_count": 9,
-        "orbit_size": 10
+        "orbit_size": 10,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
       },
       {
         "representative": [
@@ -2506,7 +3566,19 @@
           "K*N"
         ],
         "kn_factor_count": 10,
-        "orbit_size": 1
+        "orbit_size": 1,
+        "cyclic_gap_representative": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       }
     ]
   }
