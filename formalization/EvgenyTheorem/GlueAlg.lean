@@ -159,6 +159,30 @@ theorem trace_pow_N_pow_zero {cp : W → ι} (G : GlueData cp)
       rw [← pow_add]
     _ = 0 := trace_pow_mul_N_zero G K hK (b + a)
 
+/-- In a trace word with exactly one pairing factor N, its position is irrelevant:
+if every other factor is block diagonal across copies, cyclicity gathers those
+factors into one block-diagonal product and the trace vanishes. -/
+theorem trace_one_N_between_products_zero {cp : W → ι} (G : GlueData cp)
+    (xs ys : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → BD cp M)
+    (hys : ∀ M, M ∈ ys → BD cp M) :
+    Matrix.trace (xs.prod * G.N * ys.prod) = 0 := by
+  calc
+    Matrix.trace ((xs.prod * G.N) * ys.prod) =
+        Matrix.trace (ys.prod * (xs.prod * G.N)) :=
+      Matrix.trace_mul_comm _ _
+    _ = Matrix.trace ((ys.prod * xs.prod) * G.N) := by
+      rw [← Matrix.mul_assoc]
+    _ = Matrix.trace ((ys ++ xs).prod * G.N) := by
+      rw [List.prod_append]
+    _ = 0 := by
+      apply trace_list_prod_mul_N_zero G (ys ++ xs)
+      intro M hM
+      simp only [List.mem_append] at hM
+      rcases hM with hM | hM
+      · exact hys M hM
+      · exact hxs M hM
+
 theorem Q_apply {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0) (a b : W) :
     (G.N * K * G.N) a b = if G.g a ∧ a = b then K (G.σ a) (G.σ a) else 0 := by
