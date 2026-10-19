@@ -151,4 +151,55 @@ theorem edgeAxis_succ_C (m : ℕ) (e : Point × Point)
   rw [fluxIndex_succ_C he]
   exact faceAxis_shift_by_two_three_pow m (fluxIndex m e) hm
 
+/-- Every flux edge has distinct endpoints, by the unit horizontal step in its face. -/
+theorem fluxEdges_edge_ne {m : ℕ} {e : Point × Point} (he : e ∈ fluxEdges m) :
+    e.1 ≠ e.2 := by
+  unfold fluxEdges at he
+  obtain ⟨f, hf, rfl⟩ := List.mem_map.mp he
+  have horder := flux_edge_order m f hf
+  have hshape := (flux_edge_shape m f hf).1
+  have hx : (fluxEdge f).1.1 + 1 = (fluxEdge f).2.1 := by
+    simpa [fluxEdge, horder] using hshape
+  intro h
+  have h' := congrArg (fun p : Point => p.1) h
+  simp only [Prod.mk.injEq] at h'
+  simp [fluxEdge, horder] at h'
+  omega
+
+/-- Copy B preserves the full SU(2) edge unitary, not just its axis label. -/
+theorem edgeUnitary_succ_B (m : ℕ) (θ : ℝ) (e : Point × Point)
+    (he : e ∈ fluxEdges m) (hm : 1 ≤ m) :
+    edgeUnitary (m + 1) θ (shiftEdge (2 ^ m) 1 0 e) =
+      edgeUnitary m θ e := by
+  have hend := fluxEdges_endpoints he
+  have hne := fluxEdges_edge_ne he
+  have heB : shiftEdge (2 ^ m) 1 0 e ∈ fluxEdges (m + 1) := by
+    exact (shiftB_mem_fluxEdges_succ_iff hend.1 hend.2 hne).2 he
+  calc
+    edgeUnitary (m + 1) θ (shiftEdge (2 ^ m) 1 0 e) =
+        axisRotation (edgeAxis (m + 1) (shiftEdge (2 ^ m) 1 0 e)) θ := by
+          simp [edgeUnitary, heB]
+    _ = axisRotation (edgeAxis m e) θ := by
+          rw [edgeAxis_succ_B m e he hm]
+    _ = edgeUnitary m θ e := by
+          simp [edgeUnitary, he]
+
+/-- Copy C preserves the full SU(2) edge unitary, not just its axis label. -/
+theorem edgeUnitary_succ_C (m : ℕ) (θ : ℝ) (e : Point × Point)
+    (he : e ∈ fluxEdges m) (hm : 1 ≤ m) :
+    edgeUnitary (m + 1) θ (shiftEdge (2 ^ m) 0 1 e) =
+      edgeUnitary m θ e := by
+  have hend := fluxEdges_endpoints he
+  have hne := fluxEdges_edge_ne he
+  have heC : shiftEdge (2 ^ m) 0 1 e ∈ fluxEdges (m + 1) := by
+    exact (shiftC_mem_fluxEdges_succ_iff hend.1 hend.2 hne).2 he
+  calc
+    edgeUnitary (m + 1) θ (shiftEdge (2 ^ m) 0 1 e) =
+        axisRotation (edgeAxis (m + 1) (shiftEdge (2 ^ m) 0 1 e)) θ := by
+          simp [edgeUnitary, heC]
+    _ = axisRotation (edgeAxis m e) θ := by
+          rw [edgeAxis_succ_C m e he hm]
+    _ = edgeUnitary m θ e := by
+          simp [edgeUnitary, he]
+
 end EvgenyTheorem
