@@ -55,11 +55,9 @@ theorem blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
     blockK H ^ n = blockK (fun c => H c ^ n) := by
   induction n with
   | zero =>
-      ext w w'
-      by_cases hc : w.1 = w'.1
-      · subst w'.1
-        simp [blockK]
-      · simp [blockK, hc]
+      ext ⟨i, x⟩ ⟨j, y⟩
+      by_cases hij : i = j <;> by_cases hxy : x = y <;>
+        simp [blockK, hij, hxy]
   | succ n ih =>
       rw [pow_succ, ih, blockK_mul]
       exact congrArg blockK (funext fun c => by rw [pow_succ])
