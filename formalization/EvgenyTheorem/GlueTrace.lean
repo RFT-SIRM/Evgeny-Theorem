@@ -56,12 +56,13 @@ theorem blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
   induction n with
   | zero =>
       ext w w'
-      simp [blockK]
+      by_cases hc : w.1 = w'.1
+      · subst w'.1
+        simp [blockK]
+      · simp [blockK, hc]
   | succ n ih =>
       rw [pow_succ, ih, blockK_mul]
-      congr 1
-      funext c
-      rw [pow_succ]
+      exact congrArg blockK (funext fun c => by rw [pow_succ])
 
 /-- The trace of any natural power of a block-diagonal matrix is the sum of block traces. -/
 theorem trace_blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
