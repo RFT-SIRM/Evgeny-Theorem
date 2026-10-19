@@ -328,6 +328,42 @@ theorem trace_two_N_powers_of_GlueDiag {cp : W → ι} (G : GlueData cp)
   apply trace_two_N_powers_of_BD G K hK a b c
   exact GlueDiag_pair_vanish G (K ^ b) hdiag hcross
 
+/-- A word with three pairing factors vanishes when the middle power satisfies
+the explicit glued-corner vanishing condition. Pairing the first two N factors
+produces a diagonal matrix; the remaining block-diagonal factors then leave one
+N factor in the trace, which vanishes. -/
+theorem trace_three_N_powers {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K) (a b c d : ℕ)
+    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d) = 0 := by
+  have hbd : BD cp (K ^ b) := BD_pow K hK b
+  have hQ : BD cp (G.N * K ^ b * G.N) := by
+    rw [Q_eq_diag G (K ^ b) hbd hkg]
+    exact BD_diagonal _
+  have hrotate :
+      Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d) =
+        Matrix.trace ((K ^ d * K ^ a) * (G.N * K ^ b * G.N) * K ^ c * G.N) := by
+    calc
+      Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d) =
+          Matrix.trace ((K ^ a * (G.N * K ^ b * G.N) * K ^ c * G.N) * K ^ d) := by
+            simp only [Matrix.mul_assoc]
+      _ = Matrix.trace (K ^ d * (K ^ a * (G.N * K ^ b * G.N) * K ^ c * G.N)) :=
+        Matrix.trace_mul_comm _ _
+      _ = Matrix.trace ((K ^ d * K ^ a) * (G.N * K ^ b * G.N) * K ^ c * G.N) := by
+        simp only [Matrix.mul_assoc]
+  rw [hrotate]
+  apply trace_list_prod_mul_N_zero G [K ^ d * K ^ a, G.N * K ^ b * G.N, K ^ c]
+  intro M hM
+  simp only [List.mem_cons, List.mem_singleton] at hM
+  rcases hM with hM | hM | hM
+  · subst M
+    exact BD_mul (BD_pow K hK d) (BD_pow K hK a)
+  · subst M
+    exact hQ
+  · subst M
+    exact BD_pow K hK c
+
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
