@@ -4,6 +4,7 @@ import EvgenyTheorem.SanityChecks
 import EvgenyTheorem.SU2
 import EvgenyTheorem.Operator
 import EvgenyTheorem.Locality
+import EvgenyTheorem.CornerLocality
 import EvgenyTheorem.Orientation
 import EvgenyTheorem.Algebra
 import EvgenyTheorem.Setup
