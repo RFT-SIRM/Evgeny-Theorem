@@ -298,4 +298,20 @@ theorem pow_entry_coord_dist
       obtain ⟨h5, h6, h7, h8⟩ := hK k j hright
       exact ⟨by omega, by omega, by omega, by omega⟩
 
+/-- Specialization of the generic support estimate to the glued Sierpinski
+operator. This bounds geometric coordinates of every nonzero power entry;
+it does not by itself establish the stronger corner-vanishing hypotheses needed
+for the higher-moment trace reduction. -/
+theorem sgK_pow_entry_coord_dist (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    ∀ n w w', (sgK m θ ax o ^ n) w w' ≠ 0 →
+      w.2.1.1.1 ≤ w'.2.1.1.1 + n ∧
+      w'.2.1.1.1 ≤ w.2.1.1.1 + n ∧
+      w.2.1.1.2 ≤ w'.2.1.1.2 + n ∧
+      w'.2.1.1.2 ≤ w.2.1.1.2 + n := by
+  apply pow_entry_coord_dist (K := sgK m θ ax o)
+    (coord := fun w => (w.2.1.1.1, w.2.1.1.2))
+  intro w w' h
+  exact sgK_entry_coord_dist m θ ax o w w' h
+
 end EvgenyTheorem
