@@ -249,4 +249,53 @@ remaining support lemma as an open obligation; no arbitrary-power claim is
 made here.
 -/
 
+/-! ### Generic coordinate support for powers (induction scaffold)
+
+For a sparse operator whose nonzero entries change each coordinate by at most
+one, every nonzero entry of its n-th power must lie within coordinate distance
+n. This is the support estimate needed before applying the graph-specific
+corner analysis to higher moments.
+-/
+
+theorem pow_entry_coord_dist
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (coord : W → ℕ × ℕ)
+    (hK : ∀ i j, K i j ≠ 0 →
+      (coord i).1 ≤ (coord j).1 + 1 ∧
+      (coord j).1 ≤ (coord i).1 + 1 ∧
+      (coord i).2 ≤ (coord j).2 + 1 ∧
+      (coord j).2 ≤ (coord i).2 + 1) :
+    ∀ n i j, (K ^ n) i j ≠ 0 →
+      (coord i).1 ≤ (coord j).1 + n ∧
+      (coord j).1 ≤ (coord i).1 + n ∧
+      (coord i).2 ≤ (coord j).2 + n ∧
+      (coord j).2 ≤ (coord i).2 + n := by
+  classical
+  intro n
+  induction n with
+  | zero =>
+      intro i j h
+      by_cases hij : i = j
+      · subst j
+        simp
+      · simp [Matrix.one_apply, hij] at h
+  | succ n ih =>
+      intro i j h
+      have hmul : (K ^ n * K) i j ≠ 0 := by
+        simpa [pow_succ] using h
+      have hex : ∃ k, (K ^ n) i k * K k j ≠ 0 := by
+        by_contra hn
+        push_neg at hn
+        apply hmul
+        rw [Matrix.mul_apply]
+        apply Finset.sum_eq_zero
+        intro k hk
+        exact hn k
+      obtain ⟨k, hk⟩ := hex
+      have hleft : (K ^ n) i k ≠ 0 := fun hz => hk (by simp [hz])
+      have hright : K k j ≠ 0 := fun hz => hk (by simp [hz])
+      obtain ⟨h1, h2, h3, h4⟩ := ih i k hleft
+      obtain ⟨h5, h6, h7, h8⟩ := hK k j hright
+      exact ⟨by omega, by omega, by omega, by omega⟩
+
 end EvgenyTheorem
