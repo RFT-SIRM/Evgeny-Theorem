@@ -235,6 +235,29 @@ theorem trace_two_N {cp : W → ι} (G : GlueData cp)
       ∑ a, if G.g a then X a a * M (G.σ a) (G.σ a) else 0 := by
   exact trace_mul_Q G M hbd hkg X
 
+/-- Two-pairing formula for an arbitrary ordered word: the factors before and
+after the two N's are arbitrary finite products of block-diagonal matrices.
+Cyclicity combines the outside factors in their correct order; no commutation
+of individual factors is assumed. -/
+theorem trace_two_N_word {cp : W → ι} (G : GlueData cp)
+    (xs ys : List (Matrix W W ℂ)) (M : Matrix W W ℂ)
+    (hbd : BD cp M)
+    (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → M w w' = 0) :
+    Matrix.trace (xs.prod * G.N * M * G.N * ys.prod) =
+      ∑ a, if G.g a then ((ys ++ xs).prod) a a * M (G.σ a) (G.σ a) else 0 := by
+  calc
+    Matrix.trace (xs.prod * G.N * M * G.N * ys.prod) =
+        Matrix.trace ((xs.prod * G.N * M * G.N) * ys.prod) := by
+          simp only [Matrix.mul_assoc]
+    _ = Matrix.trace (ys.prod * (xs.prod * G.N * M * G.N)) :=
+      Matrix.trace_mul_comm _ _
+    _ = Matrix.trace ((ys.prod * xs.prod) * (G.N * M * G.N)) := by
+      simp only [Matrix.mul_assoc]
+    _ = Matrix.trace ((ys ++ xs).prod * (G.N * M * G.N)) := by
+      rw [List.prod_append]
+    _ = ∑ a, if G.g a then ((ys ++ xs).prod) a a * M (G.σ a) (G.σ a) else 0 := by
+      exact trace_two_N G M ((ys ++ xs).prod) hbd hkg
+
 /-- Two-pairing word formula for arbitrary natural powers of K. The geometric
 condition is stated explicitly for the middle power; it is not inferred merely
 from block diagonality of K. -/
