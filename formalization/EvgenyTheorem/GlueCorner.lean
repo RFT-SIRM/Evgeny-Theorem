@@ -76,6 +76,29 @@ theorem Hc_zero_edge (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Poi
   · exact pHeO_zero_of_not_edge m θ ax (oBo m o) hpq hE x.2 y.2
   · exact pHeO_zero_of_not_edge m θ ax (oCo m o) hpq hE x.2 y.2
 
+/-- A nonzero `sgK` entry either preserves the geometric coordinate or follows an
+edge of the Sierpinski graph. This is the one-step support lemma used by the
+higher-power support induction. -/
+theorem sgK_entry_local (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (w w' : WSG m)
+    (h : sgK m θ ax o w w' ≠ 0) :
+    w.2.1.1 = w'.2.1.1 ∨
+      EdgeB m w.2.1.1.1 w.2.1.1.2 w'.2.1.1.1 w'.2.1.1.2 = true := by
+  by_cases hc : w.1 = w'.1
+  · have e : sgK m θ ax o w w' = Hc m θ ax o w.1 w.2 w'.2 := by
+      show (if w.1 = w'.1 then Hc m θ ax o w.1 w.2 w'.2 else 0) = _
+      rw [if_pos hc]
+    by_cases hp : w.2.1.1 = w'.2.1.1
+    · exact Or.inl hp
+    · right
+      by_contra hE
+      have hz := Hc_zero_edge m θ ax o w.1 w.2 w'.2 hp hE
+      apply h
+      rw [e, hz]
+  · have hz : sgK m θ ax o w w' = 0 := by
+      simp [sgK, blockK, hc]
+    exact (h hz).elim
+
 /-! ### `hkg` -/
 
 theorem sgK_hkg (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
