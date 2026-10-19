@@ -36,3 +36,17 @@ def test_canonical_rotation_and_reject_empty_word():
         assert "nonempty" in str(exc)
     else:
         raise AssertionError("empty words must be rejected")
+
+def test_committed_inventory_certificate_matches_generator():
+    import json
+    from pathlib import Path
+
+    certificate_path = (
+        Path(__file__).resolve().parents[1]
+        / "computational"
+        / "trace_word_inventory_p6_p8_p10.json"
+    )
+    committed = json.loads(certificate_path.read_text(encoding="utf-8"))
+    generated = [word_inventory(p) for p in (6, 8, 10)]
+    assert committed == generated
+
