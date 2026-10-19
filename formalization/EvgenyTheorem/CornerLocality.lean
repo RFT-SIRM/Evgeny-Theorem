@@ -106,4 +106,74 @@ theorem vIdx_succ_C_order_bridge {m : ℕ} {p q : Point}
     vIdx m p < vIdx m q :=
   vIdx_succ_C_lt_iff hp hq hp0 hps hq0 hqs
 
+/-- Strict-order preservation upgrades to non-strict-order preservation whenever both index maps are injective. -/
+theorem le_iff_of_lt_iff_of_injective
+    {α : Type*} (f g : α → ℕ)
+    (hf : Function.Injective f) (hg : Function.Injective g)
+    (hlt : ∀ a b, f a < f b ↔ g a < g b) (a b : α) :
+    f a ≤ f b ↔ g a ≤ g b := by
+  constructor
+  · intro hab
+    by_cases heq : a = b
+    · subst b
+      exact Nat.le_refl _
+    · have hne : f a ≠ f b := fun h => heq (hf h)
+      exact Nat.le_of_lt (hlt a b |>.mp (Nat.lt_of_le_of_ne hab hne))
+  · intro hab
+    by_cases heq : a = b
+    · subst b
+      exact Nat.le_refl _
+    · have hne : g a ≠ g b := fun h => heq (hg h)
+      exact Nat.le_of_lt (hlt a b |>.mpr (Nat.lt_of_le_of_ne hab hne))
+
+/-- Copy B: strict-order preservation also preserves the non-strict comparison used for orientation. -/
+theorem vIdx_succ_B_le_iff (m : ℕ)
+    (a b : {p : Point // p ∈ vertexOrder m ∧ p ≠ (0, 0)}) :
+    vIdx m a.1 ≤ vIdx m b.1 ↔
+      vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 a.1) ≤
+        vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 b.1) := by
+  apply le_iff_of_lt_iff_of_injective
+    (fun x => vIdx m x.1)
+    (fun x => vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 x.1))
+  · intro x y hxy
+    exact Subtype.ext (vIdx_injective_on_vertexOrder m x.2.1 y.2.1 hxy)
+  · intro x y hxy
+    have hx : shiftPoint (2 ^ m) 1 0 x.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr ⟨x.1, x.2.1, rfl⟩))
+    have hy : shiftPoint (2 ^ m) 1 0 y.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr ⟨y.1, y.2.1, rfl⟩))
+    have hpoints := vIdx_injective_on_vertexOrder (m + 1) hx hy hxy
+    exact Subtype.ext (shiftPoint_injective _ _ _ hpoints)
+  · intro x y
+    exact vIdx_succ_B_lt_iff x.2.1 y.2.1 x.2.2 y.2.2
+  · exact a
+  · exact b
+
+/-- Copy C: strict-order preservation also preserves the non-strict comparison used for orientation. -/
+theorem vIdx_succ_C_le_iff (m : ℕ)
+    (a b : {p : Point // p ∈ vertexOrder m ∧ p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0)}) :
+    vIdx m a.1 ≤ vIdx m b.1 ↔
+      vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 a.1) ≤
+        vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 b.1) := by
+  apply le_iff_of_lt_iff_of_injective
+    (fun x => vIdx m x.1)
+    (fun x => vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 x.1))
+  · intro x y hxy
+    exact Subtype.ext (vIdx_injective_on_vertexOrder m x.2.1 y.2.1 hxy)
+  · intro x y hxy
+    have hx : shiftPoint (2 ^ m) 0 1 x.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inr (List.mem_map.mpr ⟨x.1, x.2.1, rfl⟩))
+    have hy : shiftPoint (2 ^ m) 0 1 y.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inr (List.mem_map.mpr ⟨y.1, y.2.1, rfl⟩))
+    have hpoints := vIdx_injective_on_vertexOrder (m + 1) hx hy hxy
+    exact Subtype.ext (shiftPoint_injective _ _ _ hpoints)
+  · intro x y
+    exact vIdx_succ_C_lt_iff x.2.1 y.2.1 x.2.2.1 x.2.2.2 y.2.1 y.2.2.1 y.2.2.2
+  · exact a
+  · exact b
+
 end EvgenyTheorem
