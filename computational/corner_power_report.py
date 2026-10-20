@@ -28,7 +28,15 @@ def report(level, theta, commuting, max_power):
     for p in range(1, max_power + 1):
         power_matrix = power_matrix @ H
         blocks = []
+        same_corner_spin = []
         for i, source in enumerate(corners):
+            diagonal_block = power_matrix[2*indices[i]:2*indices[i]+2,
+                                          2*indices[i]:2*indices[i]+2]
+            same_corner_spin.append({
+                "corner": list(source),
+                "spin_offdiag": _complex(diagonal_block[0, 1]),
+                "spin_offdiag_abs": float(abs(diagonal_block[0, 1])),
+            })
             for j, target in enumerate(corners):
                 if i == j:
                     continue
@@ -39,7 +47,11 @@ def report(level, theta, commuting, max_power):
                     "max_abs": float(np.max(np.abs(block))),
                     "entries": [[_complex(z) for z in row] for row in block],
                 })
-        powers.append({"power": p, "corner_blocks": blocks})
+        powers.append({
+            "power": p,
+            "corner_blocks": blocks,
+            "same_corner_spin_offdiag": same_corner_spin,
+        })
     return {
         "purpose": "Python vertex-corner diagnostic only; not a Lean proof",
         "level": level, "theta": theta, "commuting": commuting,
