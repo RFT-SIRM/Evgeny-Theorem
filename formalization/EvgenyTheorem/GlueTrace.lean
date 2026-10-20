@@ -67,6 +67,22 @@ theorem trace_blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
     Matrix.trace (blockK H ^ n) = ∑ c, Matrix.trace (H c ^ n) := by
   rw [blockK_pow, trace_blockK]
 
+/-- Recursive noncommutative expansion of a power of a sum.
+The recurrence appends either factor on the right, so it preserves matrix order. -/
+def addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) : ℕ → Matrix X X ℂ
+  | 0 => 1
+  | n + 1 => addWordSum D E n * D + addWordSum D E n * E
+
+/-- The recursive word sum equals the power of the sum, without assuming commutativity. -/
+theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) (n : ℕ) :
+    (D + E) ^ n = addWordSum D E n := by
+  induction n with
+  | zero => simp [addWordSum]
+  | succ n ih =>
+      rw [pow_succ, ih, addWordSum, add_mul]
+
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
       ∑ c, Matrix.trace (H c * H c * H c * H c) := by
