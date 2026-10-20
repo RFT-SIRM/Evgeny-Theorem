@@ -404,3 +404,12 @@ These identities are local: they control a single edge, a backtracking pair, a s
 The next calculation should enumerate the actual supported walks for the unresolved level-3 corner entries and multiply their 2×2 blocks in path order, grouping a path with its reversed path only after taking the relevant adjoint/trace relation into account. Any cancellation must be derived from these concrete products or formalized as a separate lemma. No new all-level higher-moment claim follows from the local identities alone.
 
 **Status:** this audit narrows the available reduction rules but does not close the exceptional level-3 entries or the higher-moment conjecture.
+
+
+## 4m. Numerical pipeline audit: trace values are not corner certificates
+
+The current Python implementation provides a concrete finite-level SU(2) operator in `src/operators/operators.py`, built from the graph in `src/graph/sg_graph.py`. The higher-moment tests evaluate full traces of powers for levels 1–4 at `θ = π/2`; these tests are useful regression checks for the implemented convention, but they do not expose the individual glued-corner entries `(K^8)_{w,w'}` and `(K^9)_{w,w'}` required by the conditional Lean reduction.
+
+This distinction matters because a trace-difference match cannot certify that every boundary term vanishes: nonzero corner contributions could cancel in a total trace or be absorbed into a residual value. The next numerical artifact should therefore be a targeted corner-entry report at level 3, with the exact endpoint state labels and complex values for powers 1 through 9, computed from the same operator builder and the same `commuting`/axis convention as the existing tests. It should separately report (i) different geometric corner coordinates and (ii) same-coordinate states with different spin/copy labels. Such a report can identify a finite candidate identity, but the resulting equality still needs an exact symbolic or Lean proof before it can discharge the formal hypothesis.
+
+**Audit result:** the existing numerical higher-moment tests are not a substitute for the exceptional-corner calculation. No conclusion about the level-3 entries of powers 8 or 9 is asserted here.
