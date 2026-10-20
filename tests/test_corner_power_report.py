@@ -80,7 +80,10 @@ def test_corner_report_values_match_direct_matrix_powers():
                 2 * indices[j] : 2 * indices[j] + 2,
             ]
             assert np.allclose(
-                np.asarray(block["entries"], dtype=complex), direct,
+                np.asarray([
+                    [complex(value["re"], value["im"]) for value in row]
+                    for row in block["entries"]
+                ], dtype=complex), direct,
                 rtol=1e-11, atol=1e-10,
             )
 
