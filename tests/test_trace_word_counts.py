@@ -134,3 +134,39 @@ def test_three_pairing_classes_split_by_unit_cyclic_gap():
         assert unresolved == sorted(unresolved_gaps)
         assert len(covered) + len(unresolved) == len(rows)
 
+def test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity():
+    """Each K*N contributes its own leading K, so power exponents are gap + 1."""
+    expected = {
+        6: {
+            (1, 1, 1): (2, 2, 2, 2),
+        },
+        8: {
+            (1, 1, 3): (2, 2, 4, 8),
+            (1, 2, 2): (2, 3, 3, 8),
+        },
+        10: {
+            (1, 1, 5): (2, 2, 6, 10),
+            (1, 4, 2): (2, 5, 3, 10),
+            (1, 2, 4): (2, 3, 5, 10),
+            (1, 3, 3): (2, 4, 4, 10),
+            (2, 2, 3): (3, 3, 4, 10),
+        },
+    }
+    for p, classes in expected.items():
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 3
+        ]
+        by_gap = {
+            tuple(row["cyclic_gap_representative"]): row
+            for row in rows
+        }
+        for gaps, (a, b, c, orbit_size) in classes.items():
+            row = by_gap[gaps]
+            assert (gaps[0] + 1, gaps[1] + 1, gaps[2] + 1) == (a, b, c)
+            assert row["orbit_size"] == orbit_size
+            assert len(row["representative"]) == p
+            assert row["representative"].count("K*N") == 3
+        assert sum(by_gap[g]["orbit_size"] for g in classes) == sum(
+            value[3] for value in classes.values()
+        )
