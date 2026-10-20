@@ -359,4 +359,37 @@ theorem sgK_pow_entry_zero_of_coord_gap
     (hK := sgK_entry_coord_dist m θ ax o)
     (n := n) (i := w) (j := w') hgap
 
+
+/-- Distinct geometric Sierpinski corners differ by the full side length
+in at least one coordinate. -/
+theorem corner_coord_gap {m : ℕ} (hm : 1 ≤ m) {p q : Point}
+    (hp : p = (0, 0) ∨ p = (2 ^ m, 0) ∨ p = (0, 2 ^ m))
+    (hq : q = (0, 0) ∨ q = (2 ^ m, 0) ∨ q = (0, 2 ^ m))
+    (hne : p ≠ q) :
+    p.1 > q.1 ∨ q.1 > p.1 ∨ p.2 > q.2 ∨ q.2 > p.2 := by
+  have hpos : 0 < 2 ^ m := by positivity
+  rcases hp with hp | hp | hp <;> rcases hq with hq | hq | hq <;>
+    subst p <;> subst q <;> simp_all <;> omega
+
+/-- Between distinct glued geometric corners, every power shorter than the
+side length has zero matrix entry. This is the geometric-corner case only;
+it does not cover states with the same coordinate and different spin. -/
+theorem sgK_pow_zero_of_distinct_glued_corner_coords
+    (m n : ℕ) (hm : 1 ≤ m) (hn : n < 2 ^ m)
+    (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m)
+    (hw : (sgGlue m).g w) (hw' : (sgGlue m).g w')
+    (hcoord : w.2.1.1 ≠ w'.2.1.1) :
+    (sgK m θ ax o ^ n) w w' = 0 := by
+  have hgap := corner_coord_gap hm (glued_corner hw) (glued_corner hw') hcoord
+  rcases hgap with hgap | hgap | hgap | hgap
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inl (by omega)
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inr (Or.inl (by omega))
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inr (Or.inr (Or.inl (by omega)))
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inr (Or.inr (Or.inr (by omega)))
+
 end EvgenyTheorem
