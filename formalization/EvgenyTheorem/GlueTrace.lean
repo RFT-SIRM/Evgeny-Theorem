@@ -83,6 +83,14 @@ theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
   | succ n ih =>
       rw [pow_succ, ih, addWordSum, mul_add]
 
+/-- The trace recurrence exposes the two ordered extensions of each word. -/
+theorem trace_addWordSum_succ {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) (n : ℕ) :
+    Matrix.trace (addWordSum D E (n + 1)) =
+      Matrix.trace (addWordSum D E n * D) +
+        Matrix.trace (addWordSum D E n * E) := by
+  rw [addWordSum, Matrix.trace_add]
+
 /-- Trace-level form of the recursive noncommutative expansion. -/
 theorem trace_add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
     (D E : Matrix X X ℂ) (n : ℕ) :
