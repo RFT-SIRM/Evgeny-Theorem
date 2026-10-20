@@ -525,3 +525,12 @@ The script `computational/corner_power_report.py` now reports the spin-off-diago
 Run the diagnostic from the repository root for each selected level, angle, and axis mode, preserving the JSON output as an artifact. Inspect the maximum `spin_offdiag_abs` over all three outer corners and powers (1\le n\le9). Any nonzero value beyond a justified numerical tolerance is a counterexample to the proposed blanket cancellation for that configuration; near-zero output is only evidence and must be followed by an exact proof.
 
 The Lean proof target remains an identity for the intermediate-state sum of `(sgK m θ ax o ^ n) w w'` when the geometric coordinates agree and the spin states differ. Its assumptions must state any required orientation and axis conditions explicitly. Until that theorem is proved, the conditional trace reduction remains the supported result, and the level-independent residual conjecture for (p\in\{6,8,10\}) remains unproved.
+
+
+## 4x. Exact level-3 same-corner spin-flip diagnostic
+
+Added `computational/exact_corner_spin.py`, which evaluates the level-3 outer-vertex spin-flip entries using exact Gaussian-integer arithmetic at `theta = pi`, rather than floating-point powers. The companion regression test checks all three outer vertices, both source spin states, both commuting modes, and powers 1 through 5.
+
+For this concrete Python operator, every tested same-vertex spin-flip entry is exactly `(0, 0)` in Gaussian-integer coordinates. This directly probes the powers relevant to the listed r=3 gap tuples (middle powers 2 through 5), but it is still a finite diagnostic for the Python operator at one angle and one level. It does **not** prove the quantified Lean hypothesis for all orientations, angles, levels, or glued-state/copy indices. The level-3 calculation is not enough to close Issue #5 or to upgrade the all-level p=6,8,10 residual conjecture.
+
+The test deliberately keeps the exact scope narrow: it checks the actual returned entries and exact arithmetic, not a numerical tolerance. Full Lean and Python CI is still required before treating the branch as validated.
