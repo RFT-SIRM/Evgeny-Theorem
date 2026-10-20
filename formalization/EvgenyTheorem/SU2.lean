@@ -243,6 +243,18 @@ theorem su2Rotation_pauliY_quaternionForm (θ : ℝ) :
       Complex.ofReal_neg] <;> ring
 
 
+/-- The Pauli-Z rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliZ_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliZ θ) := by
+  constructor
+  · simp [su2Rotation, pauliZ, Matrix.smul_apply, Matrix.sub_apply,
+      Matrix.one_apply]
+  · simp [su2Rotation, pauliZ, Matrix.smul_apply, Matrix.sub_apply,
+      Matrix.one_apply, Complex.star_def, Complex.conj_ofReal,
+      Complex.conj_I]
+    ring
+
+
 
 
 end EvgenyTheorem
