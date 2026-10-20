@@ -314,4 +314,29 @@ theorem sgK_pow_entry_coord_dist (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   intro w w' h
   exact sgK_entry_coord_dist m θ ax o w w' h
 
+
+/-- Converse support form: if one geometric coordinate separates two states
+by more than the power length, the corresponding matrix entry must vanish.
+This is a generic consequence of `pow_entry_coord_dist`, not a claim that
+nearby corner entries vanish. -/
+theorem pow_entry_zero_of_coord_gap
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (coord : W → ℕ × ℕ)
+    (hK : ∀ i j, K i j ≠ 0 →
+      (coord i).1 ≤ (coord j).1 + 1 ∧
+      (coord j).1 ≤ (coord i).1 + 1 ∧
+      (coord i).2 ≤ (coord j).2 + 1 ∧
+      (coord j).2 ≤ (coord i).2 + 1)
+    (n : ℕ) (i j : W)
+    (hgap : (coord i).1 > (coord j).1 + n ∨
+      (coord j).1 > (coord i).1 + n ∨
+      (coord i).2 > (coord j).2 + n ∨
+      (coord j).2 > (coord i).2 + n) :
+    (K ^ n) i j = 0 := by
+  by_contra hzero
+  have hne : (K ^ n) i j ≠ 0 := fun h => hzero h
+  obtain ⟨h1, h2, h3, h4⟩ :=
+    pow_entry_coord_dist K coord hK n i j hne
+  rcases hgap with hgap | hgap | hgap | hgap <;> omega
+
 end EvgenyTheorem
