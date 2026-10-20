@@ -97,8 +97,8 @@ theorem addWordSum_two {X : Type*} [Fintype X] [DecidableEq X]
     addWordSum D E 2 = D * D + E * D + D * E + E * E := by
   simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
 
-/-- Explicit degree-four expansion into all sixteen ordered words. -/
 set_option maxHeartbeats 800000 in
+/-- Explicit degree-four expansion into all sixteen ordered words. -/
 theorem addWordSum_four {X : Type*} [Fintype X] [DecidableEq X]
     (D E : Matrix X X ℂ) :
     addWordSum D E 4 =
