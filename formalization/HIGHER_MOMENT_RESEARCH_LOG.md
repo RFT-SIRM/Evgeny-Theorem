@@ -451,3 +451,12 @@ A closer read of `Operator.lean` and `docs/LEAN_ROADMAP.md` sharpens §4p. The r
 Thus the correct conclusion is: **the operator's direction convention has already been deliberately corrected; the remaining cross-implementation audit is to verify the recursive vertex list, edge adjacency, face ordering, and flux-edge-to-face-index map—not to change the orientation rule again.** The p=4 closed form and its CI evidence should not be disturbed while investigating higher moments.
 
 A useful independent check for the next pass is a small deterministic comparison of Python's scaled vertex list against Lean's `vertexOrder` at levels 0–2, then comparison of each face's first-second edge against the corresponding Python `faces[i]` edge and axis `i mod 3`. Until that table is produced, higher-moment corner entries remain diagnostic only. No claim is made here that the level-3 powers 8 or 9 vanish.
+
+
+## 4r. Verification status and the next finite comparison
+
+The CI status has been rechecked against GitHub Actions: both `Lean formalization` and `Tests` completed successfully for commit `9b4345872cb7b3bd5d6382b6a4bce287e6ae8191` (runs 39377867112 and 39377867121). The same two workflows also passed for `6c345e4` and `eaef375`. These are repository-level checks; they do not establish the conjectural higher-moment identity.
+
+The next finite comparison is specified as a data table rather than another prose-only audit. For each level `m = 0, 1, 2`, it should list: (a) the ordered vertex coordinates in Python and Lean, after scaling by `2^m`; (b) the canonical undirected edge set; (c) each ordered face triple; (d) the face index and axis assigned to its first-second edge; and (e) any duplicate edge assignment with conflicting axes. The comparison must use the actual Python functions and Lean definitions, not a separately reconstructed graph. A mismatch should fail loudly and identify the first differing item.
+
+Until that executable comparison exists and passes, the level-3 corner report remains diagnostic. Even a successful convention comparison would not prove the higher-moment theorem: the exceptional powers still need either an exact corner-entry identity or an explicit boundary correction. The established p=4 theorem is to remain unchanged.
