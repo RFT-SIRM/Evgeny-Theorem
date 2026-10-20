@@ -161,7 +161,16 @@ theorem quaternionForm_hermitian_offdiag_zero
     simpa [Matrix.conjTranspose_apply] using h
   rw [hform] at h01
   simp only [star_neg, star_star] at h01
+  have hz : M (0 : C2) (1 : C2) + M (0 : C2) (1 : C2) = 0 := by
+    calc
+      M (0 : C2) (1 : C2) + M (0 : C2) (1 : C2) =
+          (-M (0 : C2) (1 : C2)) + M (0 : C2) (1 : C2) :=
+        congrArg (fun z : ℂ => z + M (0 : C2) (1 : C2)) h01.symm
+      _ = 0 := neg_add_cancel _
   have hzero : (2 : ℂ) * M (0 : C2) (1 : C2) = 0 := by
-    linear_combination h01
+    calc
+      (2 : ℂ) * M (0 : C2) (1 : C2) =
+          M (0 : C2) (1 : C2) + M (0 : C2) (1 : C2) := by ring
+      _ = 0 := hz
   exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
 end EvgenyTheorem
