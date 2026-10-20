@@ -154,7 +154,7 @@ argument; it does not assert that concrete powers satisfy the form. -/
 theorem quaternionForm_hermitian_offdiag_zero
     {M : Matrix C2 C2 ℂ}
     (hform : M 1 0 = - star (M 0 1))
-    (hH : Mᴴ = M) :
+    (hH : Matrix.conjTranspose M = M) :
     M 0 1 = 0 := by
   have h := congrFun (congrFun hH 0) 1
   have h01 : star (M 1 0) = M 0 1 := by
