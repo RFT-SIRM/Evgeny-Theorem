@@ -335,3 +335,34 @@ compiled; arbitrary-power support, the exceptional level-3 entries, the
 spin-resolved higher-power corner conditions, the full higher-moment boundary
 identity, and the all-level residual recurrence for `p ∈ {6, 8, 10}` remain
 open. The higher-moment target remains conjectural.
+
+## 4j. Machine-checked arbitrary-power coordinate support
+
+The induction gap described in Sections 4g–4i has now been closed at the
+coordinate-support level in `GlueCorner.lean`. The generic theorem
+`pow_entry_coord_dist` proves that if every nonzero one-step matrix entry
+changes each coordinate by at most one, then every nonzero entry of `K^n`
+changes each coordinate by at most `n`. Its induction step expands
+`Matrix.mul_apply` and extracts an intermediate state with a nonzero product;
+the intermediate state is not replaced by a coordinate-only or spin-free
+surrogate.
+
+The concrete specialization `sgK_pow_entry_coord_dist` applies that theorem
+to the glued Sierpinski operator. The contraposition is formalized by
+`pow_entry_zero_of_coord_gap`, with the concrete specialization
+`sgK_pow_entry_zero_of_coord_gap`: if any coordinate gap exceeds the power
+length, the corresponding matrix-power entry is zero.
+
+**CI status checked 2026-10-20:** after correcting the concrete corollary's
+state type to let Lean infer it from `sgK`, both the `Lean formalization`
+workflow and the `Tests` workflow passed on commit
+`9407a8ae47c7f2da1c7f0cffd09badefecb4702b`. This is the exact commit checked;
+later commits require their own CI confirmation.
+
+This result closes only the coordinate-distance induction. It does not by
+itself prove the corner condition used by `trace_three_N_word_zero`: that
+condition distinguishes glued states and can include states sharing geometric
+coordinates but differing in spin/copy labels. The exceptional level-`3`
+powers `8` and `9`, same-coordinate/different-spin entries, and the full
+boundary identity remain open. Therefore the residual recurrence for
+`p ∈ {6, 8, 10}` remains conjectural, not a proved theorem.
