@@ -174,3 +174,58 @@ theorem quaternionForm_hermitian_offdiag_zero
       _ = 0 := hz
   exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
 end EvgenyTheorem
+
+/-- Quaternionic SU(2) block form: the lower-left entry is minus the
+conjugate of the upper-right entry, and the diagonal entries are conjugates. -/
+def SU2QuaternionForm (M : Matrix C2 C2 ℂ) : Prop :=
+  M (1 : C2) (0 : C2) = - star (M (0 : C2) (1 : C2)) ∧
+  M (1 : C2) (1 : C2) = star (M (0 : C2) (0 : C2))
+
+theorem SU2QuaternionForm_zero : SU2QuaternionForm (0 : Matrix C2 C2 ℂ) := by
+  constructor <;> simp [SU2QuaternionForm]
+
+theorem SU2QuaternionForm_one : SU2QuaternionForm (1 : Matrix C2 C2 ℂ) := by
+  constructor <;> simp [SU2QuaternionForm, Matrix.one_apply]
+
+theorem SU2QuaternionForm_smul_one {c : ℂ} (hc : star c = c) :
+    SU2QuaternionForm (c • (1 : Matrix C2 C2 ℂ)) := by
+  constructor <;> simp [SU2QuaternionForm, Matrix.smul_apply, Matrix.one_apply, hc]
+
+theorem SU2QuaternionForm_neg {M : Matrix C2 C2 ℂ}
+    (hM : SU2QuaternionForm M) : SU2QuaternionForm (-M) := by
+  rcases hM with ⟨h01, h00⟩
+  constructor <;> simp [SU2QuaternionForm, h01, h00, star_neg, Matrix.neg_apply]
+
+theorem SU2QuaternionForm_mul {A B : Matrix C2 C2 ℂ}
+    (hA : SU2QuaternionForm A) (hB : SU2QuaternionForm B) :
+    SU2QuaternionForm (A * B) := by
+  rcases hA with ⟨ha01, ha00⟩
+  rcases hB with ⟨hb01, hb00⟩
+  constructor <;>
+    simp [SU2QuaternionForm, Matrix.mul_apply, Fin.sum_univ_two,
+      ha01, ha00, hb01, hb00, star_mul, star_neg, star_star] <;> ring
+
+theorem SU2QuaternionForm_sum {ι : Type*} [Fintype ι]
+    (M : ι → Matrix C2 C2 ℂ)
+    (hM : ∀ i, SU2QuaternionForm (M i)) :
+    SU2QuaternionForm (∑ i, M i) := by
+  constructor
+  · change (∑ i, M i (1 : C2) (0 : C2)) =
+      - star (∑ i, M i (0 : C2) (1 : C2))
+    have hs : (∑ i, M i (1 : C2) (0 : C2)) =
+        ∑ i, -star (M i (0 : C2) (1 : C2)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      exact (hM i).1
+    rw [hs]
+    simp only [Finset.sum_neg_distrib, map_sum]
+  · change (∑ i, M i (1 : C2) (1 : C2)) =
+      star (∑ i, M i (0 : C2) (0 : C2))
+    have hs : (∑ i, M i (1 : C2) (1 : C2)) =
+        ∑ i, star (M i (0 : C2) (0 : C2)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      exact (hM i).2
+    rw [hs]
+    simp only [map_sum]
+
