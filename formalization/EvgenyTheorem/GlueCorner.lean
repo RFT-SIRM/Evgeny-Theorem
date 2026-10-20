@@ -347,7 +347,7 @@ same-coordinate/different-spin corner cancellation needed for all moments. -/
 theorem sgK_pow_entry_zero_of_coord_gap
     (m n : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
-    (w w' : GlueState m)
+    (w w')
     (hgap : w.2.1.1.1 > w'.2.1.1.1 + n ∨
       w'.2.1.1.1 > w.2.1.1.1 + n ∨
       w.2.1.1.2 > w'.2.1.1.2 + n ∨
