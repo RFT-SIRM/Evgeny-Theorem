@@ -56,7 +56,7 @@ def test_python_ordered_faces_match_lean_faces_exact():
     for level in range(3):
         vertices, _, faces = sg_tree_graph_with_faces(level)
         index = {
-            (round(x * (2**level)), round(y * (2**level)): i
+            (round(x * (2**level)), round(y * (2**level))): i
             for i, (x, y) in enumerate(vertices)
         }
         expected = [
