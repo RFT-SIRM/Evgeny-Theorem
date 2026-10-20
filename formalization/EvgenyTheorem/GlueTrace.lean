@@ -97,6 +97,16 @@ theorem addWordSum_two {X : Type*} [Fintype X] [DecidableEq X]
     addWordSum D E 2 = D * D + E * D + D * E + E * E := by
   simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
 
+/-- Explicit degree-four expansion into all sixteen ordered words. -/
+theorem addWordSum_four {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    addWordSum D E 4 =
+      D * D * D * D + E * D * D * D + D * E * D * D + E * E * D * D +
+      D * D * E * D + E * D * E * D + D * E * E * D + E * E * E * D +
+      D * D * D * E + E * D * D * E + D * E * D * E + E * E * D * E +
+      D * D * E * E + E * D * E * E + D * E * E * E + E * E * E * E := by
+  simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
+
 /-- The trace recurrence exposes the two ordered extensions of each word. -/
 theorem trace_addWordSum_succ {X : Type*} [Fintype X] [DecidableEq X]
     (D E : Matrix X X ℂ) (n : ℕ) :
