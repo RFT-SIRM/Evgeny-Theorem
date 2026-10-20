@@ -144,6 +144,8 @@ theorem su2Rotation_pauliZ_conjTranspose (θ : ℝ) :
 
 end EvgenyTheorem
 
+namespace EvgenyTheorem
+
 /-- A Hermitian matrix in the quaternionic SU(2) block form has zero
 off-diagonal spin entry.  This is the algebraic endpoint needed once the
 same form has been shown to be preserved by operator-block multiplication. -/
@@ -161,3 +163,5 @@ theorem quaternionForm_hermitian_offdiag_zero
     linear_combination h01
   exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
 
+
+end EvgenyTheorem
