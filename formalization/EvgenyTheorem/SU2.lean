@@ -175,6 +175,8 @@ theorem quaternionForm_hermitian_offdiag_zero
   exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
 end EvgenyTheorem
 
+namespace EvgenyTheorem
+
 /-- Quaternionic SU(2) block form: the lower-left entry is minus the
 conjugate of the upper-right entry, and the diagonal entries are conjugates. -/
 def SU2QuaternionForm (M : Matrix C2 C2 ℂ) : Prop :=
@@ -210,22 +212,24 @@ theorem SU2QuaternionForm_sum {ι : Type*} [Fintype ι]
     (hM : ∀ i, SU2QuaternionForm (M i)) :
     SU2QuaternionForm (∑ i, M i) := by
   constructor
-  · change (∑ i, M i (1 : C2) (0 : C2)) =
-      - star (∑ i, M i (0 : C2) (1 : C2))
-    have hs : (∑ i, M i (1 : C2) (0 : C2)) =
-        ∑ i, -star (M i (0 : C2) (1 : C2)) := by
+  · change (∑ i, (M i) (1 : C2) (0 : C2)) =
+      - star (∑ i, (M i) (0 : C2) (1 : C2))
+    have hs : (∑ i, (M i) (1 : C2) (0 : C2)) =
+        ∑ i, -star ((M i) (0 : C2) (1 : C2)) := by
       apply Finset.sum_congr rfl
       intro i hi
       exact (hM i).1
     rw [hs]
     simp only [Finset.sum_neg_distrib, map_sum]
-  · change (∑ i, M i (1 : C2) (1 : C2)) =
-      star (∑ i, M i (0 : C2) (0 : C2))
-    have hs : (∑ i, M i (1 : C2) (1 : C2)) =
-        ∑ i, star (M i (0 : C2) (0 : C2)) := by
+  · change (∑ i, (M i) (1 : C2) (1 : C2)) =
+      star (∑ i, (M i) (0 : C2) (0 : C2))
+    have hs : (∑ i, (M i) (1 : C2) (1 : C2)) =
+        ∑ i, star ((M i) (0 : C2) (0 : C2)) := by
       apply Finset.sum_congr rfl
       intro i hi
       exact (hM i).2
     rw [hs]
     simp only [map_sum]
+
+end EvgenyTheorem
 
