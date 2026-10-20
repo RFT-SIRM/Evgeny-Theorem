@@ -108,3 +108,29 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
             statuses[r] == "not_covered_by_current_generic_reductions"
             for r in range(3, p + 1)
         )
+
+def test_three_pairing_classes_split_by_unit_cyclic_gap():
+    """A zero K-gap means a K**N factor pair with middle power K^1."""
+    expected = {
+        6: (3, [(1, 1, 1)]),
+        8: (5, [(1, 1, 3), (1, 2, 2)]),
+        10: (7, [(1, 1, 5), (1, 4, 2), (1, 2, 4), (1, 3, 3), (2, 2, 3)]),
+    }
+    for p, (covered_count, unresolved_gaps) in expected.items():
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 3
+        ]
+        covered = [
+            row for row in rows
+            if 0 in row["cyclic_gap_representative"]
+        ]
+        unresolved = sorted(
+            tuple(row["cyclic_gap_representative"])
+            for row in rows
+            if 0 not in row["cyclic_gap_representative"]
+        )
+        assert len(covered) == covered_count
+        assert unresolved == sorted(unresolved_gaps)
+        assert len(covered) + len(unresolved) == len(rows)
+

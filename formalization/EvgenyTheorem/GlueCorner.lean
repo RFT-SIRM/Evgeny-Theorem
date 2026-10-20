@@ -76,6 +76,41 @@ theorem Hc_zero_edge (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Poi
   · exact pHeO_zero_of_not_edge m θ ax (oBo m o) hpq hE x.2 y.2
   · exact pHeO_zero_of_not_edge m θ ax (oCo m o) hpq hE x.2 y.2
 
+/-- A nonzero `sgK` entry either preserves the geometric coordinate or follows an
+edge of the Sierpinski graph. This is the one-step support lemma used by the
+higher-power support induction. -/
+theorem sgK_entry_local (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (w w' : WSG m)
+    (h : sgK m θ ax o w w' ≠ 0) :
+    w.2.1.1 = w'.2.1.1 ∨
+      EdgeB m w.2.1.1.1 w.2.1.1.2 w'.2.1.1.1 w'.2.1.1.2 = true := by
+  by_cases hc : w.1 = w'.1
+  · have e : sgK m θ ax o w w' = Hc m θ ax o w.1 w.2 w'.2 := by
+      show (if w.1 = w'.1 then Hc m θ ax o w.1 w.2 w'.2 else 0) = _
+      rw [if_pos hc]
+    by_cases hp : w.2.1.1 = w'.2.1.1
+    · exact Or.inl hp
+    · right
+      by_contra hE
+      have hz := Hc_zero_edge m θ ax o w.1 w.2 w'.2 hp hE
+      apply h
+      rw [e, hz]
+  · have hz : sgK m θ ax o w w' = 0 := by
+      simp [sgK, blockK, hc]
+    exact (h hz).elim
+
+/-- A nonzero one-step `sgK` entry changes each lattice coordinate by at most one.
+This combines `sgK_entry_local` with the six-direction bound for `EdgeB`. -/
+theorem sgK_entry_coord_dist (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (w w' : WSG m)
+    (h : sgK m θ ax o w w' ≠ 0) :
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 1 ∧ w'.2.1.1.1 ≤ w.2.1.1.1 + 1 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 1 ∧ w'.2.1.1.2 ≤ w.2.1.1.2 + 1 := by
+  rcases sgK_entry_local m θ ax o w w' h with hp | hE
+  · simp only [hp]
+    omega
+  · exact EdgeB_dist hE
+
 /-! ### `hkg` -/
 
 theorem sgK_hkg (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
@@ -201,5 +236,160 @@ theorem pOpO_trace4_glue_final (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ →
     Matrix.trace (pOpO (m + 1) θ ax o * pOpO (m + 1) θ ax o * pOpO (m + 1) θ ax o *
         pOpO (m + 1) θ ax o) = glueRHS m (sgK m θ ax o) :=
   pOpO_trace4_glue m θ ax o hax1 hax2 (sgK_hkg m hm θ ax o) (sgK_hu2 m θ ax o hanti)
+
+/-!
+### Higher-power support boundary
+
+The corner lemmas above establish one-step off-diagonal vanishing (`sgK_hkg`)
+and the required second-power statement (`sgK_hu2`). They do not imply
+corner vanishing for arbitrary powers. In particular, a proof for `K ^ n`
+must analyze the intermediate-state sum in `Matrix.mul_apply` and preserve
+both coordinate and spin indices. The higher-moment research log records the
+remaining support lemma as an open obligation; no arbitrary-power claim is
+made here.
+-/
+
+/-! ### Generic coordinate support for powers (induction scaffold)
+
+For a sparse operator whose nonzero entries change each coordinate by at most
+one, every nonzero entry of its n-th power must lie within coordinate distance
+n. This is the support estimate needed before applying the graph-specific
+corner analysis to higher moments.
+-/
+
+theorem pow_entry_coord_dist
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (coord : W → ℕ × ℕ)
+    (hK : ∀ i j, K i j ≠ 0 →
+      (coord i).1 ≤ (coord j).1 + 1 ∧
+      (coord j).1 ≤ (coord i).1 + 1 ∧
+      (coord i).2 ≤ (coord j).2 + 1 ∧
+      (coord j).2 ≤ (coord i).2 + 1) :
+    ∀ n i j, (K ^ n) i j ≠ 0 →
+      (coord i).1 ≤ (coord j).1 + n ∧
+      (coord j).1 ≤ (coord i).1 + n ∧
+      (coord i).2 ≤ (coord j).2 + n ∧
+      (coord j).2 ≤ (coord i).2 + n := by
+  classical
+  intro n
+  induction n with
+  | zero =>
+      intro i j h
+      by_cases hij : i = j
+      · subst j
+        simp
+      · simp [Matrix.one_apply, hij] at h
+  | succ n ih =>
+      intro i j h
+      have hmul : (K ^ n * K) i j ≠ 0 := by
+        simpa [pow_succ] using h
+      have hex : ∃ k, (K ^ n) i k * K k j ≠ 0 := by
+        by_contra hn
+        push_neg at hn
+        apply hmul
+        rw [Matrix.mul_apply]
+        apply Finset.sum_eq_zero
+        intro k hk
+        exact hn k
+      obtain ⟨k, hk⟩ := hex
+      have hleft : (K ^ n) i k ≠ 0 := fun hz => hk (by simp [hz])
+      have hright : K k j ≠ 0 := fun hz => hk (by simp [hz])
+      obtain ⟨h1, h2, h3, h4⟩ := ih i k hleft
+      obtain ⟨h5, h6, h7, h8⟩ := hK k j hright
+      exact ⟨by omega, by omega, by omega, by omega⟩
+
+/-- Specialization of the generic support estimate to the glued Sierpinski
+operator. This bounds geometric coordinates of every nonzero power entry;
+it does not by itself establish the stronger corner-vanishing hypotheses needed
+for the higher-moment trace reduction. -/
+theorem sgK_pow_entry_coord_dist (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    ∀ n w w', (sgK m θ ax o ^ n) w w' ≠ 0 →
+      w.2.1.1.1 ≤ w'.2.1.1.1 + n ∧
+      w'.2.1.1.1 ≤ w.2.1.1.1 + n ∧
+      w.2.1.1.2 ≤ w'.2.1.1.2 + n ∧
+      w'.2.1.1.2 ≤ w.2.1.1.2 + n := by
+  apply pow_entry_coord_dist (K := sgK m θ ax o)
+    (coord := fun w => (w.2.1.1.1, w.2.1.1.2))
+  intro w w' h
+  exact sgK_entry_coord_dist m θ ax o w w' h
+
+
+/-- Converse support form: if one geometric coordinate separates two states
+by more than the power length, the corresponding matrix entry must vanish.
+This is a generic consequence of `pow_entry_coord_dist`, not a claim that
+nearby corner entries vanish. -/
+theorem pow_entry_zero_of_coord_gap
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (coord : W → ℕ × ℕ)
+    (hK : ∀ i j, K i j ≠ 0 →
+      (coord i).1 ≤ (coord j).1 + 1 ∧
+      (coord j).1 ≤ (coord i).1 + 1 ∧
+      (coord i).2 ≤ (coord j).2 + 1 ∧
+      (coord j).2 ≤ (coord i).2 + 1)
+    (n : ℕ) (i j : W)
+    (hgap : (coord i).1 > (coord j).1 + n ∨
+      (coord j).1 > (coord i).1 + n ∨
+      (coord i).2 > (coord j).2 + n ∨
+      (coord j).2 > (coord i).2 + n) :
+    (K ^ n) i j = 0 := by
+  by_contra hzero
+  have hne : (K ^ n) i j ≠ 0 := fun h => hzero h
+  obtain ⟨h1, h2, h3, h4⟩ :=
+    pow_entry_coord_dist K coord hK n i j hne
+  rcases hgap with hgap | hgap | hgap | hgap <;> omega
+
+
+/-- Geometric support corollary for the glued Sierpinski operator:
+entries of `sgK ^ n` vanish when either coordinate gap exceeds `n`.
+This remains a distance-based support statement, not the stronger
+same-coordinate/different-spin corner cancellation needed for all moments. -/
+theorem sgK_pow_entry_zero_of_coord_gap
+    (m n : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w w')
+    (hgap : w.2.1.1.1 > w'.2.1.1.1 + n ∨
+      w'.2.1.1.1 > w.2.1.1.1 + n ∨
+      w.2.1.1.2 > w'.2.1.1.2 + n ∨
+      w'.2.1.1.2 > w.2.1.1.2 + n) :
+    (sgK m θ ax o ^ n) w w' = 0 := by
+  apply pow_entry_zero_of_coord_gap
+    (K := sgK m θ ax o)
+    (coord := fun z => (z.2.1.1.1, z.2.1.1.2))
+    (hK := sgK_entry_coord_dist m θ ax o)
+    (n := n) (i := w) (j := w') hgap
+
+
+/-- Distinct geometric Sierpinski corners differ by exactly the side length
+in one coordinate. -/
+theorem corner_coord_gap {m : ℕ} {p q : Point}
+    (hp : p = (0, 0) ∨ p = (2 ^ m, 0) ∨ p = (0, 2 ^ m))
+    (hq : q = (0, 0) ∨ q = (2 ^ m, 0) ∨ q = (0, 2 ^ m))
+    (hne : p ≠ q) :
+    p.1 = q.1 + 2 ^ m ∨ q.1 = p.1 + 2 ^ m ∨
+      p.2 = q.2 + 2 ^ m ∨ q.2 = p.2 + 2 ^ m := by
+  rcases hp with hp | hp | hp <;> rcases hq with hq | hq | hq <;>
+    subst p <;> subst q <;> simp_all <;> omega
+
+/-- Between distinct glued geometric corners, every power shorter than the
+side length has zero matrix entry. This is the geometric-corner case only;
+it does not cover states with the same coordinate and different spin. -/
+theorem sgK_pow_zero_of_distinct_glued_corner_coords
+    (m n : ℕ) (hn : n < 2 ^ m)
+    (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m)
+    (hw : (sgGlue m).g w) (hw' : (sgGlue m).g w')
+    (hcoord : w.2.1.1 ≠ w'.2.1.1) :
+    (sgK m θ ax o ^ n) w w' = 0 := by
+  have hgap := corner_coord_gap (glued_corner hw) (glued_corner hw') hcoord
+  rcases hgap with hgap | hgap | hgap | hgap
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inl (by omega)
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inr (Or.inl (by omega))
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inr (Or.inr (Or.inl (by omega)))
+  · apply sgK_pow_entry_zero_of_coord_gap
+    exact Or.inr (Or.inr (Or.inr (by omega)))
 
 end EvgenyTheorem

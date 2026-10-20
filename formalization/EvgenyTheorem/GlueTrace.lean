@@ -67,6 +67,68 @@ theorem trace_blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
     Matrix.trace (blockK H ^ n) = ∑ c, Matrix.trace (H c ^ n) := by
   rw [blockK_pow, trace_blockK]
 
+/-- Recursive noncommutative expansion of a power of a sum.
+The recurrence appends either factor on the right, so it preserves matrix order. -/
+def addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) : ℕ → Matrix X X ℂ
+  | 0 => 1
+  | n + 1 => addWordSum D E n * D + addWordSum D E n * E
+
+/-- The recursive word sum equals the power of the sum, without assuming commutativity. -/
+theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) (n : ℕ) :
+    (D + E) ^ n = addWordSum D E n := by
+  induction n with
+  | zero => simp [addWordSum]
+  | succ n ih =>
+      rw [pow_succ, ih, addWordSum, mul_add]
+
+/-- Explicit degree-three expansion, retaining the order of all eight words. -/
+theorem addWordSum_three {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    addWordSum D E 3 =
+      D * D * D + E * D * D + D * E * D + E * E * D +
+        D * D * E + E * D * E + D * E * E + E * E * E := by
+  simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
+
+/-- Explicit degree-two expansion. The four ordered products are retained. -/
+theorem addWordSum_two {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    addWordSum D E 2 = D * D + E * D + D * E + E * E := by
+  simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
+
+set_option maxHeartbeats 800000 in
+/-- Explicit degree-four expansion into all sixteen ordered words. -/
+theorem addWordSum_four {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    addWordSum D E 4 =
+      D * D * D * D + E * D * D * D + D * E * D * D + E * E * D * D +
+      D * D * E * D + E * D * E * D + D * E * E * D + E * E * E * D +
+      D * D * D * E + E * D * D * E + D * E * D * E + E * E * D * E +
+      D * D * E * E + E * D * E * E + D * E * E * E + E * E * E * E := by
+  simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
+
+/-- The trace recurrence exposes the two ordered extensions of each word. -/
+theorem trace_addWordSum_succ {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) (n : ℕ) :
+    Matrix.trace (addWordSum D E (n + 1)) =
+      Matrix.trace (addWordSum D E n * D) +
+        Matrix.trace (addWordSum D E n * E) := by
+  rw [addWordSum, Matrix.trace_add]
+
+/-- Trace-level form of the recursive noncommutative expansion. -/
+theorem trace_add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) (n : ℕ) :
+    Matrix.trace ((D + E) ^ n) = Matrix.trace (addWordSum D E n) := by
+  rw [add_pow_eq_addWordSum]
+
+/-- Degree-four regression form: the recursive expansion preserves the exact
+matrix power, so its trace agrees with the existing fourth-power expression. -/
+theorem trace_add_pow_four_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    Matrix.trace ((D + E) ^ 4) = Matrix.trace (addWordSum D E 4) := by
+  exact trace_add_pow_eq_addWordSum D E 4
+
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
       ∑ c, Matrix.trace (H c * H c * H c * H c) := by
