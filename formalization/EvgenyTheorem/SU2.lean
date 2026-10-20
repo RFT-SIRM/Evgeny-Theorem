@@ -153,16 +153,15 @@ off-diagonal entry. This is an algebraic helper for the corner-spin
 argument; it does not assert that concrete powers satisfy the form. -/
 theorem quaternionForm_hermitian_offdiag_zero
     {M : Matrix C2 C2 ℂ}
-    (hform : M 1 0 = - star (M 0 1))
+    (hform : M (1 : C2) (0 : C2) = - star (M (0 : C2) (1 : C2)))
     (hH : Matrix.conjTranspose M = M) :
-    M 0 1 = 0 := by
-  have h := congrFun (congrFun hH 0) 1
-  have h01 : star (M 1 0) = M 0 1 := by
+    M (0 : C2) (1 : C2) = 0 := by
+  have h := congrFun (congrFun hH (0 : C2)) (1 : C2)
+  have h01 : star (M (1 : C2) (0 : C2)) = M (0 : C2) (1 : C2) := by
     simpa [Matrix.conjTranspose_apply] using h
   rw [hform] at h01
   simp only [star_neg, star_star] at h01
-  have hzero : (2 : ℂ) * M 0 1 = 0 := by
+  have hzero : (2 : ℂ) * M (0 : C2) (1 : C2) = 0 := by
     linear_combination h01
   exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
-
 end EvgenyTheorem
