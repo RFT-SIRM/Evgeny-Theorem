@@ -460,3 +460,12 @@ The CI status has been rechecked against GitHub Actions: both `Lean formalizatio
 The next finite comparison is specified as a data table rather than another prose-only audit. For each level `m = 0, 1, 2`, it should list: (a) the ordered vertex coordinates in Python and Lean, after scaling by `2^m`; (b) the canonical undirected edge set; (c) each ordered face triple; (d) the face index and axis assigned to its first-second edge; and (e) any duplicate edge assignment with conflicting axes. The comparison must use the actual Python functions and Lean definitions, not a separately reconstructed graph. A mismatch should fail loudly and identify the first differing item.
 
 Until that executable comparison exists and passes, the level-3 corner report remains diagnostic. Even a successful convention comparison would not prove the higher-moment theorem: the exceptional powers still need either an exact corner-entry identity or an explicit boundary correction. The established p=4 theorem is to remain unchanged.
+
+
+## 4s. Convention regression test repaired and CI-confirmed
+
+The first run of `tests/test_lean_python_graph_conventions.py` failed because the test treated the Python level-0 face list as explicit, although the builder intentionally returns `faces=None` at that base level. The test now checks vertex order at levels 0–2 and checks ordered faces/flux-edge assignments only at levels 1–2, where the Python builder materializes faces. This is a test-domain correction; it does not alter the operator or any Lean theorem.
+
+The corrected commit `100524e334d3cc3787105c9c4ddc5417078eeeb1` has passed both workflows: [Tests run 39380417984](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39380417984) and [Lean formalization run 39380418011](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39380418011).
+
+Scope note: this test compares Python output against a Python encoding of the Lean recursive definitions; it is a regression check for the documented conventions, not a machine-checked cross-language theorem. It also does not yet prove the edge-to-axis map agrees with every `connectionOperatorWithAxis` entry, and it says nothing by itself about the conjectural `p = 6, 8, 10` residual identity. The next formal step remains either an explicit Lean correspondence lemma or an exact boundary correction for the exceptional powers.
