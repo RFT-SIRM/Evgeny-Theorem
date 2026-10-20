@@ -37,3 +37,50 @@ def test_corner_report_has_six_ordered_distinct_corner_blocks_per_power():
             assert block["from"] != block["to"]
             assert len(block["entries"]) == 2
             assert all(len(row) == 2 for row in block["entries"])
+
+def test_corner_report_values_match_direct_matrix_powers():
+    from graph.sg_graph import sg_tree_graph_with_faces
+    from operators.operators import build_su2_bundle
+
+    level, theta, max_power = 2, 0.73, 4
+    vertices, _, _ = sg_tree_graph_with_faces(level)
+    corners = [(0.0, 0.0), (1.0, 0.0), (0.0, 1.0)]
+    indices = [vertices.index(point) for point in corners]
+    H, _ = build_su2_bundle(level, theta, commuting=False)
+    result = report(level, theta, commuting=False, max_power=max_power)
+
+    direct_power = np.eye(H.shape[0], dtype=complex)
+    for p, item in enumerate(result["powers"], start=1):
+        direct_power = direct_power @ H
+        assert item["power"] == p
+        for i, vertex_index in enumerate(indices):
+            block = direct_power[
+                2 * vertex_index : 2 * vertex_index + 2,
+                2 * vertex_index : 2 * vertex_index + 2,
+            ]
+            recorded = item["same_corner_spin_offdiag"][i]
+            assert np.isclose(
+                recorded["spin_offdiag"]["re"], block[0, 1].real,
+                rtol=1e-11, atol=1e-10,
+            )
+            assert np.isclose(
+                recorded["spin_offdiag"]["im"], block[0, 1].imag,
+                rtol=1e-11, atol=1e-10,
+            )
+            assert np.isclose(
+                recorded["spin_offdiag_abs"], abs(block[0, 1]),
+                rtol=1e-11, atol=1e-10,
+            )
+
+        for block in item["corner_blocks"]:
+            i = corners.index(tuple(block["from"]))
+            j = corners.index(tuple(block["to"]))
+            direct = direct_power[
+                2 * indices[i] : 2 * indices[i] + 2,
+                2 * indices[j] : 2 * indices[j] + 2,
+            ]
+            assert np.allclose(
+                np.asarray(block["entries"], dtype=complex), direct,
+                rtol=1e-11, atol=1e-10,
+            )
+
