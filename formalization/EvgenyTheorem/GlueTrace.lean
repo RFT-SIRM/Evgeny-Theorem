@@ -83,6 +83,14 @@ theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
   | succ n ih =>
       rw [pow_succ, ih, addWordSum, mul_add]
 
+/-- Explicit degree-three expansion, retaining the order of all eight words. -/
+theorem addWordSum_three {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    addWordSum D E 3 =
+      D * D * D + E * D * D + D * E * D + E * E * D +
+        D * D * E + E * D * E + D * E * E + E * E * E := by
+  simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
+
 /-- Explicit degree-two expansion. The four ordered products are retained. -/
 theorem addWordSum_two {X : Type*} [Fintype X] [DecidableEq X]
     (D E : Matrix X X ℂ) :
