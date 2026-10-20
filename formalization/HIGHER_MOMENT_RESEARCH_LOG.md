@@ -387,3 +387,20 @@ are historical descriptions of the earlier state and are superseded by Section
 commit `60b6c75e441731a1edbbfb1c3f11072b6e108b40` passed both `Lean
 formalization` and `Tests`. This verifies the repository checks for that
 documentation commit; it does not upgrade the remaining conjecture to a theorem.
+
+
+## 4l. Local block identities checked against the concrete operator
+
+A further source audit of `GlueCornerTri.lean`, `GlueCornerData.lean`, and `PairUnit.lean` identifies the exact local identities available for future path reductions:
+
+- `Bk_diag`: the point-level diagonal block is the vertex degree times the 2×2 identity matrix.
+- `Bk_swap`: for an antisymmetric orientation, reversing an edge gives the conjugate transpose of its block.
+- `Bk_mul`: the two directed blocks of one edge multiply to the identity.
+- `tri_add_conj`: for a triangle with exactly one flux edge, the oriented loop product plus its adjoint is a scalar multiple of the identity, with coefficient `-2 * cC θ` in the project's notation.
+- `sgK_diag` and `sgK_sq_diag`: the diagonal entries of the first and second powers are respectively `d` and `d² + d`, independent of the axis function under the stated orientation hypotheses.
+
+These identities are local: they control a single edge, a backtracking pair, a specified triangle, or diagonal entries. They do not give a general rule for products along length-8 or length-9 paths. In particular, replacing adjacent reverse-edge blocks by the identity inside a longer ordered product is valid only when the factors are adjacent in that product; it cannot be used to commute unrelated SU(2) blocks.
+
+The next calculation should enumerate the actual supported walks for the unresolved level-3 corner entries and multiply their 2×2 blocks in path order, grouping a path with its reversed path only after taking the relevant adjoint/trace relation into account. Any cancellation must be derived from these concrete products or formalized as a separate lemma. No new all-level higher-moment claim follows from the local identities alone.
+
+**Status:** this audit narrows the available reduction rules but does not close the exceptional level-3 entries or the higher-moment conjecture.
