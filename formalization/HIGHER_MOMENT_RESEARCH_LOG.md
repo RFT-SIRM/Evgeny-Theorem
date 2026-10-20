@@ -433,3 +433,12 @@ A remaining convention check is still required before treating the level-3 numer
 The newly added `computational/corner_power_report.py` commit `8988422838517259f7f44d26cb8ad56de8ff798c` has now passed both CI workflows: [Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39375729447) and [Tests](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39375729465). These checks validate the repository build/tests, not mathematical equivalence of the Python and Lean operators.
 
 **Next comparison:** emit the ordered vertex coordinates and flux-edge orientation from both implementations at level 1, normalize each edge to a common geometric ordering, and compare its assigned axis and directed unitary. Only after this table agrees (or a precise gauge transform is proved) should level-3 corner values be used to adjust or prove the Lean boundary formula.
+
+
+## 4p. Follow-up on vertex ordering: one suspected mismatch is resolved
+
+Inspection of `Orientation.lean` resolves part of the convention concern raised in §4o. Lean's `vertexOrder` is explicitly defined as the deduplicated concatenation of the three recursive copies in `A ++ B ++ C` order, and `vIdx` is the index in that list. This mirrors the Python builder's `one_step`, which traverses offsets `(0,0)`, `(1/2,0)`, `(0,1/2)` and retains the first occurrence of each coordinate. `connectionOperatorWithAxis` deliberately uses `vIdx` to choose `U` versus `Uᴴ`, so the edge direction is intended to follow Python's vertex-index order, not lexicographic coordinate order.
+
+This means the earlier concern should be narrowed, not repeated as an established mismatch: recursive vertex order and the direction-selection rule are designed to agree. The remaining verification is concrete and finite: compare, after scaling Python coordinates by `2^m`, the ordered vertex list, edge set, ordered face triples, and per-edge axis at levels 0, 1, and 2. In particular, confirm that the face's first-second edge in `facesExact` maps to the same sorted-index edge assigned the rotation in Python. A proof of this correspondence is not yet present in Lean, so the level-3 numerical report remains diagnostic until the comparison is completed.
+
+**Correction to §4o:** vertex-index orientation is not an unexplained implementation discrepancy; `Orientation.lean` explicitly exists to reproduce Python's creation order. The open issue is a proved edge/face/axis correspondence, not evidence that the operators already differ.
