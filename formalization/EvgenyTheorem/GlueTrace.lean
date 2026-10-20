@@ -81,7 +81,7 @@ theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
   induction n with
   | zero => simp [addWordSum]
   | succ n ih =>
-      rw [pow_succ, ih, addWordSum, add_mul]
+      rw [pow_succ, ih, addWordSum, mul_add]
 
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
