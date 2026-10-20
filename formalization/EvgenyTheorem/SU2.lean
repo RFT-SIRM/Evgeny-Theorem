@@ -208,6 +208,17 @@ theorem SU2QuaternionForm_mul {A B : Matrix C2 C2 ℂ}
       ha01, ha00, hb01, hb00, star_mul, star_neg, star_star] <;> ring
 
 
+/-- The Pauli-X rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliX_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliX θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliX, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg,
+      Complex.ofReal_neg] <;> ring
+
+
 
 
 
