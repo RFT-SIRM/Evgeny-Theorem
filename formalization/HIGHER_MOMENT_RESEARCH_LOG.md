@@ -366,3 +366,24 @@ coordinates but differing in spin/copy labels. The exceptional level-`3`
 powers `8` and `9`, same-coordinate/different-spin entries, and the full
 boundary identity remain open. Therefore the residual recurrence for
 `p ∈ {6, 8, 10}` remains conjectural, not a proved theorem.
+
+## 4k. Status reconciliation after Section 4j
+
+Sections 4g and 4h were written before the generic induction was committed.
+Their statements that the coordinate-only power-support induction is still open
+are historical descriptions of the earlier state and are superseded by Section
+4j. The current state is:
+
+1. **Proved and compiled:** arbitrary-power coordinate displacement for any
+   matrix satisfying the one-step coordinate bound.
+2. **Proved and compiled:** the corresponding zero-entry consequence when a
+   coordinate gap exceeds the power length, including the `sgK` specialization.
+3. **Still open:** vanishing for distinct glued corner states whose geometric
+   coordinates are equal but whose spin/copy labels differ; the exceptional
+   level-`3` exponents `8` and `9`; the full boundary identity; and the
+   all-level residual recurrence for `p ∈ {6, 8, 10}`.
+
+**Documentation CI status checked 2026-10-20:** the research-log update in
+commit `60b6c75e441731a1edbbfb1c3f11072b6e108b40` passed both `Lean
+formalization` and `Tests`. This verifies the repository checks for that
+documentation commit; it does not upgrade the remaining conjecture to a theorem.
