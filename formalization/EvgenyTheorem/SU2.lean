@@ -212,8 +212,7 @@ theorem SU2QuaternionForm_sum {ι : Type*} [Fintype ι]
     (hM : ∀ i, SU2QuaternionForm (M i)) :
     SU2QuaternionForm (∑ i, M i) := by
   constructor
-  · change (∑ i, (M i) (1 : C2) (0 : C2)) =
-      - star (∑ i, (M i) (0 : C2) (1 : C2))
+  · simp only [Matrix.sum_apply]
     have hs : (∑ i, (M i) (1 : C2) (0 : C2)) =
         ∑ i, -star ((M i) (0 : C2) (1 : C2)) := by
       apply Finset.sum_congr rfl
@@ -221,8 +220,7 @@ theorem SU2QuaternionForm_sum {ι : Type*} [Fintype ι]
       exact (hM i).1
     rw [hs]
     simp only [Finset.sum_neg_distrib, map_sum]
-  · change (∑ i, (M i) (1 : C2) (1 : C2)) =
-      star (∑ i, (M i) (0 : C2) (0 : C2))
+  · simp only [Matrix.sum_apply]
     have hs : (∑ i, (M i) (1 : C2) (1 : C2)) =
         ∑ i, star ((M i) (0 : C2) (0 : C2)) := by
       apply Finset.sum_congr rfl
