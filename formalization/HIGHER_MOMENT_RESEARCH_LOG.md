@@ -525,3 +525,24 @@ The script `computational/corner_power_report.py` now reports the spin-off-diago
 Run the diagnostic from the repository root for each selected level, angle, and axis mode, preserving the JSON output as an artifact. Inspect the maximum `spin_offdiag_abs` over all three outer corners and powers (1\le n\le9). Any nonzero value beyond a justified numerical tolerance is a counterexample to the proposed blanket cancellation for that configuration; near-zero output is only evidence and must be followed by an exact proof.
 
 The Lean proof target remains an identity for the intermediate-state sum of `(sgK m θ ax o ^ n) w w'` when the geometric coordinates agree and the spin states differ. Its assumptions must state any required orientation and axis conditions explicitly. Until that theorem is proved, the conditional trace reduction remains the supported result, and the level-independent residual conjecture for (p\in\{6,8,10\}) remains unproved.
+
+## 4x. Exact middle-power map for the remaining three-pairing classes
+
+The cyclic-gap tuple counts the K factors *between* consecutive K*N factors. Since each K*N factor itself contributes one leading K, a gap entry a corresponds to a power exponent a + 1 in the word written cyclically as K^a N K^b N K^c N after combining adjacent K factors. The exact unresolved classes and orbit multiplicities from the committed inventory are:
+
+| Moment p | Canonical gap tuple | Actual middle-power exponents | Orbit size |
+|---:|---|---|---:|
+| 6 | (1,1,1) | (2,2,2) | 2 |
+| 8 | (1,1,3) | (2,2,4) | 8 |
+| 8 | (1,2,2) | (2,3,3) | 8 |
+| 10 | (1,1,5) | (2,2,6) | 10 |
+| 10 | (1,4,2) | (2,5,3) | 10 |
+| 10 | (1,2,4) | (2,3,5) | 10 |
+| 10 | (1,3,3) | (2,4,4) | 10 |
+| 10 | (2,2,3) | (3,3,4) | 10 |
+
+The orbit sizes sum to 2, 16, and 50 factor words respectively across the listed target classes; these multiplicities must be retained when collecting cyclic trace contributions. A regression test now checks this gap-to-exponent map and the orbit sizes against the generated inventory.
+
+This calculation narrows the geometric obligation. Every required exponent is at most 6. For distinct geometric corner coordinates, sgK_pow_zero_of_distinct_glued_corner_coords therefore applies at every level m >= 3, since 6 < 2^m. The remaining same-copy corner condition is the same-coordinate/different-spin entry: exponent 2 is covered by sgK_hu2, while exponents 3, 4, 5, and 6 still require a proof. The generic Hermitian/quaternion-form helper in SU2.lean is only an algebraic endpoint; until the quaternionic block form is shown to be preserved by the concrete Hc powers, it does not discharge these hypotheses.
+
+**Status:** exact combinatorial mapping and multiplicities are recorded and regression-tested; the concrete same-coordinate spin cancellation for powers 3–6 and the full residual theorem remain open.
