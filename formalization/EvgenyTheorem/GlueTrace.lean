@@ -83,6 +83,19 @@ theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
   | succ n ih =>
       rw [pow_succ, ih, addWordSum, mul_add]
 
+/-- Trace-level form of the recursive noncommutative expansion. -/
+theorem trace_add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) (n : ℕ) :
+    Matrix.trace ((D + E) ^ n) = Matrix.trace (addWordSum D E n) := by
+  rw [add_pow_eq_addWordSum]
+
+/-- Degree-four regression form: the recursive expansion preserves the exact
+matrix power, so its trace agrees with the existing fourth-power expression. -/
+theorem trace_add_pow_four_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    Matrix.trace ((D + E) ^ 4) = Matrix.trace (addWordSum D E 4) := by
+  exact trace_add_pow_eq_addWordSum D E 4
+
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
       ∑ c, Matrix.trace (H c * H c * H c * H c) := by
