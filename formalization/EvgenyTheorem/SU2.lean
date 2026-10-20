@@ -208,6 +208,29 @@ theorem SU2QuaternionForm_mul {A B : Matrix C2 C2 ℂ}
       ha01, ha00, hb01, hb00, star_mul, star_neg, star_star] <;> ring
 
 
+/-- Each Pauli-axis SU(2) rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliX_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliX θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliX, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      Complex.conj_ofReal] <;> ring
+
+theorem su2Rotation_pauliY_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliY θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliY, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      Complex.conj_ofReal] <;> ring
+
+theorem su2Rotation_pauliZ_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliZ θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliZ, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      Complex.conj_ofReal] <;> ring
+
+
 
 end EvgenyTheorem
 
