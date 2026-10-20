@@ -492,3 +492,25 @@ The next proof should split into two independent lemmas, avoiding a premature ge
 For `p=6,8,10`, the raw expansion has respectively 64, 256, and 1024 words before cyclic and support reductions. A direct expansion in Lean is likely unwieldy; the maintainable target is a recursive word-indexed sum, with small-degree lemmas used to validate the recursion against `trace4_split`. The existing p=4 theorem should serve as a regression check, not be rewritten during this step.
 
 CI was rechecked after the previous log update: commit `f69656cbf57a456e3d6113120e22012e31b39cdd` passed both workflows ([Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39382082225), [Tests](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39382082222)). This confirms the repository remains green, not the conjecture for higher moments.
+
+## 4v. Exact scope of the corner-support result
+
+A source-level audit of `GlueCorner.lean` identifies the strongest unconditional geometric statement currently available for powers of `sgK`:
+
+- `sgK_entry_coord_dist` proves that a nonzero one-step entry changes each lattice coordinate by at most one.
+- `pow_entry_coord_dist` lifts this to the (n)-th power by induction over the intermediate state in the matrix-product sum.
+- `sgK_pow_zero_of_distinct_glued_corner_coords` therefore proves vanishing between *distinct geometric corner coordinates* whenever (n < 2^m).
+
+This settles that particular support case for (n\le 9) at levels (m\ge4), but only for distinct coordinates. It does **not** settle the same-coordinate/different-spin case, and it does not cover powers (n=8,9) at level (m=3). Those are genuine remaining cases for any argument that needs all glued-corner entries of (K^n) to vanish.
+
+The distinction matters: a coordinate-distance bound cannot imply spin-diagonal cancellation for paths that return to the same vertex. The existing second-power result `sgK_hu2` is a separate edge-unitarity argument and must not be generalized to arbitrary powers without a new proof. In particular, neither `BD_pow` nor the support induction supplies that missing fact.
+
+### Current verified boundary
+
+The current PR head `4b27df57053162883bb2150387e7ed2e70b23888` passed both GitHub Actions workflows on 2026-10-20: [Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39409782910) and [Tests](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39409783057). PR #4 remains an open conditional algebraic result. These CI results do not prove the same-coordinate spin cancellation or the conjectured level-independent residual for (p=6,8,10).
+
+### Next concrete proof obligation
+
+Do not strengthen `sgK_hu2` by analogy. First isolate the same-coordinate spin-off-diagonal entry
+`(sgK m θ ax o ^ n) w w'` for glued states with equal geometric coordinate and unequal spin. Expand its intermediate-state sum into closed walks and determine whether cancellation follows from reverse-edge unitarity alone or whether triangular holonomy terms survive. If terms survive, preserve them in the boundary correction. The level-3 powers 8 and 9 should be treated separately rather than hidden by the (m\ge4) distance estimate.
+
