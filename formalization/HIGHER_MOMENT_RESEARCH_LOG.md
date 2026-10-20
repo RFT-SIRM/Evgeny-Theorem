@@ -514,3 +514,19 @@ The current PR head `4b27df57053162883bb2150387e7ed2e70b23888` passed both GitHu
 Do not strengthen `sgK_hu2` by analogy. First isolate the same-coordinate spin-off-diagonal entry
 `(sgK m θ ax o ^ n) w w'` for glued states with equal geometric coordinate and unequal spin. Expand its intermediate-state sum into closed walks and determine whether cancellation follows from reverse-edge unitarity alone or whether triangular holonomy terms survive. If terms survive, preserve them in the boundary correction. The level-3 powers 8 and 9 should be treated separately rather than hidden by the (m\ge4) distance estimate.
 
+## 4w. Numerical scan of same-corner spin mixing (diagnostic, not proof)
+
+After extending `computational/corner_power_report.py` to report the same-vertex spin-off-diagonal block, a local numerical scan was run against the repository's recursive SG graph and SU(2) operator construction.
+
+- Levels: (m=1,2,3,4) for several flux values; additionally (m=5) at (	heta=\pi/2).
+- Flux values included (\theta=0.37,\pi/2,2.1).
+- Both the noncommuting axis cycle and the commuting (z)-axis configuration were checked.
+- Powers checked: (1\le n\le9), at all three outer vertices.
+- In the commuting case, the tested off-diagonal spin entries were exactly zero in floating-point arithmetic. In the noncommuting case, the largest observed absolute entry over the scan was below (5\times10^{-11}), consistent with roundoff at these matrix sizes.
+
+This is evidence for a possible structural cancellation, but it is not a proof: floating-point near-zero cannot distinguish exact cancellation from a small nonzero value, the scan covers only finitely many levels and parameters, and it does not establish the universal Lean hypothesis required by the trace lemmas.
+
+### Refined proof target
+
+The data makes a universal same-corner spin-cancellation lemma a reasonable target to investigate, but not yet a theorem to assert. The proof must expose the exact algebraic mechanism in the closed-walk sum—likely pairing reversed walks together with the SU(2) edge/triangle identities—and show the pairing is valid for every length. If the argument needs restrictions on the orientation function or axis assignment, those assumptions must appear explicitly in the Lean theorem. Until that is established, retain the conditional statement and do not promote the (p=6,8,10) residual conjecture to a theorem.
+
