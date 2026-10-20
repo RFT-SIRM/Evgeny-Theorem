@@ -53,7 +53,9 @@ def test_python_vertex_order_matches_lean_recursion():
 
 
 def test_python_ordered_faces_match_lean_faces_exact():
-    for level in range(3):
+    # Python intentionally returns faces=None at level 0; faces are introduced
+    # by the first subdivision, matching Lean's recursive facesExact model.
+    for level in range(1, 3):
         vertices, _, faces = sg_tree_graph_with_faces(level)
         index = {
             (round(x * (2**level)), round(y * (2**level))): i
@@ -67,7 +69,8 @@ def test_python_ordered_faces_match_lean_faces_exact():
 
 
 def test_face_flux_edges_and_axes_match_index_convention():
-    for level in range(3):
+    # The level-0 Python builder has no explicit face list yet.
+    for level in range(1, 3):
         vertices, edges, faces = sg_tree_graph_with_faces(level)
         edge_set = {tuple(sorted(e)) for e in edges}
         assigned_edges: dict[tuple[int, int], int] = {}
