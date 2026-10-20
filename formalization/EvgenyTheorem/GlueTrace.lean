@@ -83,6 +83,12 @@ theorem add_pow_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
   | succ n ih =>
       rw [pow_succ, ih, addWordSum, mul_add]
 
+/-- Explicit degree-two expansion. The four ordered products are retained. -/
+theorem addWordSum_two {X : Type*} [Fintype X] [DecidableEq X]
+    (D E : Matrix X X ℂ) :
+    addWordSum D E 2 = D * D + E * D + D * E + E * E := by
+  simp [addWordSum, add_mul, mul_add, add_assoc, add_comm, add_left_comm]
+
 /-- The trace recurrence exposes the two ordered extensions of each word. -/
 theorem trace_addWordSum_succ {X : Type*} [Fintype X] [DecidableEq X]
     (D E : Matrix X X ℂ) (n : ℕ) :
