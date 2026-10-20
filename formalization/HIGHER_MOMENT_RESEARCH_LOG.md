@@ -478,3 +478,17 @@ The current formal trace infrastructure already contains the reusable identity `
 For `p = 4`, `pOpO_trace4_glue_final` packages that expansion as `glueRHS`, and `cornerTerm` collects the resulting boundary contributions using diagonal entries of `K`, `K^2`, and `K^3`. This is a special low-degree identity; it cannot be reused unchanged for higher p. At degree p, the expansion can contain longer alternating excursions across the glued partner map, and its boundary weights involve ordered products/sums of powers up to degree p−1. Any proposed higher-moment proof must first establish an exact degree-p analogue of `trace4_split`, rather than infer it from `trace_blockK_pow` or from the p=4 formula.
 
 **Concrete next lemma target:** formulate a generic finite-matrix theorem for a block-diagonal operator plus a boundary-supported coupling, expressing `trace((D+E)^p)` as the sum over cyclic words in `D` and `E`; then specialize the word expansion to the involutive glued partner map. This separates generic algebra (which can be proved without Sierpinski geometry) from the geometric claim that particular boundary words vanish or combine into a level-independent correction. No theorem for p=6, 8, or 10 is claimed by this entry.
+
+
+## 4u. Audit of the existing arbitrary-power lemma
+
+The latest audit confirms `trace_blockK_pow` is already fully general in the exponent `n`; it proves the trace identity for the copy-block-diagonal `blockK` operator at every natural power. The limitation is structural: `pOpO (m+1)` is not just `blockK Hc`; the exact fourth-power theorem first rewrites it through `pOpO_trace4_glue_final`, whose boundary expansion is specifically degree four. Thus strengthening `trace_blockK_pow` would not address the missing higher-moment argument.
+
+The next proof should split into two independent lemmas, avoiding a premature geometry claim:
+
+1. **Algebraic word expansion:** for finite matrices `D,E`, expand `(D+E)^p` into the `2^p` ordered words over `{D,E}` and apply trace linearity. The ordering of factors must be preserved; this is not a commutative binomial theorem.
+2. **Glue-word classification:** specialize `D = blockK (Hc ...)` and `E = pOpO - D`, then show which cyclic words involving `E` vanish by support or combine into explicit boundary terms. Only this second lemma depends on `sgGlue`, `σ`, and the Sierpinski corner geometry.
+
+For `p=6,8,10`, the raw expansion has respectively 64, 256, and 1024 words before cyclic and support reductions. A direct expansion in Lean is likely unwieldy; the maintainable target is a recursive word-indexed sum, with small-degree lemmas used to validate the recursion against `trace4_split`. The existing p=4 theorem should serve as a regression check, not be rewritten during this step.
+
+CI was rechecked after the previous log update: commit `f69656cbf57a456e3d6113120e22012e31b39cdd` passed both workflows ([Lean formalization](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39382082225), [Tests](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39382082222)). This confirms the repository remains green, not the conjecture for higher moments.
