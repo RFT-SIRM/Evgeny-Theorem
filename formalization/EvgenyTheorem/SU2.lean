@@ -207,27 +207,5 @@ theorem SU2QuaternionForm_mul {A B : Matrix C2 C2 ℂ}
     simp [SU2QuaternionForm, Matrix.mul_apply, Fin.sum_univ_two,
       ha01, ha00, hb01, hb00, star_mul, star_neg, star_star] <;> ring
 
-theorem SU2QuaternionForm_sum {ι : Type*} [Fintype ι]
-    (M : ι → Matrix C2 C2 ℂ)
-    (hM : ∀ i, SU2QuaternionForm (M i)) :
-    SU2QuaternionForm (∑ i, M i) := by
-  constructor
-  · simp only [Matrix.sum_apply]
-    have hs : (∑ i, (M i) (1 : C2) (0 : C2)) =
-        ∑ i, -star ((M i) (0 : C2) (1 : C2)) := by
-      apply Finset.sum_congr rfl
-      intro i hi
-      exact (hM i).1
-    rw [hs]
-    simp only [Finset.sum_neg_distrib, map_sum]
-  · simp only [Matrix.sum_apply]
-    have hs : (∑ i, (M i) (1 : C2) (1 : C2)) =
-        ∑ i, star ((M i) (0 : C2) (0 : C2)) := by
-      apply Finset.sum_congr rfl
-      intro i hi
-      exact (hM i).2
-    rw [hs]
-    simp only [map_sum]
-
 end EvgenyTheorem
 
