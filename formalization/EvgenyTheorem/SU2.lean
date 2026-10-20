@@ -160,7 +160,7 @@ theorem quaternionForm_hermitian_offdiag_zero
   have h01 : star (M 1 0) = M 0 1 := by
     simpa [Matrix.conjTranspose_apply] using h
   rw [hform] at h01
-  simp only [map_neg, star_star] at h01
+  simp only [star_neg, star_star] at h01
   have hzero : (2 : ℂ) * M 0 1 = 0 := by
     linear_combination h01
   exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
