@@ -339,4 +339,24 @@ theorem pow_entry_zero_of_coord_gap
     pow_entry_coord_dist K coord hK n i j hne
   rcases hgap with hgap | hgap | hgap | hgap <;> omega
 
+
+/-- Geometric support corollary for the glued Sierpinski operator:
+entries of `sgK ^ n` vanish when either coordinate gap exceeds `n`.
+This remains a distance-based support statement, not the stronger
+same-coordinate/different-spin corner cancellation needed for all moments. -/
+theorem sgK_pow_entry_zero_of_coord_gap
+    (m n : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : GlueState m)
+    (hgap : w.2.1.1.1 > w'.2.1.1.1 + n ∨
+      w'.2.1.1.1 > w.2.1.1.1 + n ∨
+      w.2.1.1.2 > w'.2.1.1.2 + n ∨
+      w'.2.1.1.2 > w.2.1.1.2 + n) :
+    (sgK m θ ax o ^ n) w w' = 0 := by
+  apply pow_entry_zero_of_coord_gap
+    (K := sgK m θ ax o)
+    (coord := fun z => (z.2.1.1.1, z.2.1.1.2))
+    (hK := sgK_entry_coord_dist m θ ax o)
+    (n := n) (i := w) (j := w') hgap
+
 end EvgenyTheorem
