@@ -232,6 +232,17 @@ theorem SU2QuaternionForm_pow {M : Matrix C2 C2 ℂ}
       exact SU2QuaternionForm_mul ih hM
 
 
+/-- The Pauli-Y rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliY_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliY θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliY, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg,
+      Complex.ofReal_neg] <;> ring
+
+
 
 
 end EvgenyTheorem
