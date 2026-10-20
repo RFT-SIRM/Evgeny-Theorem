@@ -220,6 +220,18 @@ theorem su2Rotation_pauliX_quaternionForm (θ : ℝ) :
 
 
 
+/-- Every natural power preserves the quaternionic SU(2) block form. -/
+theorem SU2QuaternionForm_pow {M : Matrix C2 C2 ℂ}
+    (hM : SU2QuaternionForm M) (n : ℕ) :
+    SU2QuaternionForm (M ^ n) := by
+  induction n with
+  | zero =>
+      simpa using SU2QuaternionForm_one
+  | succ n ih =>
+      rw [pow_succ]
+      exact SU2QuaternionForm_mul ih hM
+
+
 
 
 end EvgenyTheorem
