@@ -187,4 +187,20 @@ theorem edgeUnitaryWithAxis_quaternionForm
   · exact SU2QuaternionForm_one
 
 
+/-- Reduce the axis-indexed quaternionic-form obligation to the three
+Pauli rotations.  The X and Y cases are unconditional; the Z case is
+kept as an explicit hypothesis until its scalar conjugation proof is closed. -/
+theorem axisRotation_quaternionForm_of_pauliZ
+    (θ : ℝ)
+    (hZ : SU2QuaternionForm (su2Rotation pauliZ θ)) :
+    ∀ a : Axis, SU2QuaternionForm (axisRotation a θ) := by
+  intro a
+  fin_cases a
+  · simpa [axisRotation, axisPauli] using
+      (su2Rotation_pauliX_quaternionForm θ)
+  · simpa [axisRotation, axisPauli] using
+      (su2Rotation_pauliY_quaternionForm θ)
+  · simpa [axisRotation, axisPauli] using hZ
+
+
 end EvgenyTheorem
