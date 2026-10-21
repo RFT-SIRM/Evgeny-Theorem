@@ -253,3 +253,38 @@ def test_five_pairing_words_have_two_admissible_middle_power_bounds():
         assert sum(row["orbit_size"] for row in rows) == {
             6: 6, 8: 56, 10: 252
         }[p]
+
+
+def test_unresolved_high_pairing_strata_keep_exact_gap_classes_and_orbit_weights():
+    """Keep unresolved r>=6 classes tied to ordered representatives and multiplicities."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        p = entry["p"]
+        inventory = word_inventory(p)
+        for stratum in entry["strata"]:
+            r = stratum["kn_factor_count"]
+            if r < 6:
+                continue
+            rows = [
+                row for row in inventory["classes"]
+                if row["kn_factor_count"] == r
+            ]
+            assert len(rows) == stratum["cyclic_class_count"]
+            assert sum(int(row["orbit_size"]) for row in rows) == stratum["word_count"]
+            for row in rows:
+                representative = tuple(row["representative"])
+                gaps = tuple(row["cyclic_gap_representative"])
+                assert len(representative) == p
+                assert canonical_rotation(representative) == representative
+                assert representative.count("K*N") == r
+                assert cyclic_gap_representative(representative) == gaps
+                assert len(gaps) == r
+                assert sum(gaps) == p - r
+                assert row["orbit_size"] > 0
