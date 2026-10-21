@@ -174,6 +174,20 @@ noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Po
     [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
   blockK (Hc m θ ax o)
 
+/-- Powers of a block-diagonal matrix are computed independently in each block.
+This local copy avoids a dependency cycle with the trace-splitting module. -/
+theorem blockK_pow_local {ι X : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype X] [DecidableEq X] (H : ι → Matrix X X ℂ) (n : ℕ) :
+    blockK H ^ n = blockK (fun c => H c ^ n) := by
+  induction n with
+  | zero =>
+      ext ⟨i, x⟩ ⟨j, y⟩
+      by_cases hij : i = j <;> by_cases hxy : x = y <;>
+        simp [blockK, hij, hxy]
+  | succ n ih =>
+      rw [pow_succ, ih, blockK_mul]
+      exact congrArg blockK (funext fun c => by rw [pow_succ])
+
 /-! ### Transfer of copy-level cancellation to the glued index set -/
 
 /-- Same-point opposite-spin entries also vanish in every power of the
@@ -183,7 +197,7 @@ theorem sgK_pow_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Ax
     (hH : ∀ c : GCopy, Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c)
     (c : GCopy) (n : ℕ) (p : Pt m) :
     (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
-  rw [sgK, blockK_pow]
+  rw [sgK, blockK_pow_local]
   change (blockK (fun c' => Hc m θ ax o c' ^ n))
       (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0
   simp only [blockK, if_pos rfl]
