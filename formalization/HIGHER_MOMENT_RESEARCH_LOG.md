@@ -873,3 +873,28 @@ inventory, but does not by itself evaluate/cancel the r=8 or r=10 boundary
 sums. The r=6 boundary sum also remains unevaluated. Thus the complete
 residual identity, finite base transition, and level propagation are still
 open; no all-level moment identity is claimed.
+
+## 4t. First obstruction to finishing: even-stratum boundary cancellation
+
+The finite inventory and Lean reductions now separate two logically different
+tasks: (1) reducing an ordered trace word to a boundary expression, and
+(2) proving that expression cancels. The current theorems establish the first
+task for r=6,8,10, not the second. Added a regression test that prevents the
+ledger from relabelling any of these even strata as zero without a new proof.
+
+The smallest diagnostic case is p=6, r=6: its stratum has one ordered word
+and one cyclic class, with orbit weight one. Thus there is no cancellation
+between distinct cyclic classes inside this stratum. If the r=6 contribution
+is required to vanish separately, its single boundary trace must itself be
+shown zero from additional structure of the concrete operator. Alternatively,
+a proof of the full residual identity may establish cancellation against other
+r-strata, but that cross-stratum identity must be stated and proved explicitly.
+The present corner-diagonalization lemmas alone do not decide between these
+possibilities.
+
+Next mathematical target: specialize `trace_six_N_powers_boundary` to the
+p=6 all-pairing word and simplify its three diagonal boundary factors using
+the concrete `sgK`/`Hc` definitions and `OAnti`. Do not assume the
+boundary trace vanishes; either prove the needed identity or preserve it as a
+nonzero/unresolved contribution. The p=8 and p=10 boundary sums then require
+the same analysis with their full orbit weights.
