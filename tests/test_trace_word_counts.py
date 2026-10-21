@@ -116,7 +116,14 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
             for r in range(6, p + 1)
         )
         for row in entry["strata"]:
-            if row["kn_factor_count"] >= 6:
+            r = row["kn_factor_count"]
+            inventory_rows = [
+                item for item in inventory["classes"]
+                if item["kn_factor_count"] == r
+            ]
+            assert len(inventory_rows) == row["cyclic_class_count"]
+            assert sum(int(item["orbit_size"]) for item in inventory_rows) == row["word_count"]
+            if r >= 6:
                 assert "explicit glued-corner off-diagonal hypotheses" in row["reduction_note"]
                 assert "orbit multiplicities" in row["reduction_note"]
 
