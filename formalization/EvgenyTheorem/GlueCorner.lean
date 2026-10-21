@@ -290,6 +290,26 @@ theorem sgK_pow_GlueDiag_of_OAnti
     rw [← hc'] at h2
     exact hp (gl_partner_inj h1 h2 hσc')
 
+/-- Under orientation antisymmetry, the glued corner lemma supplies the
+middle-power hypothesis required to annihilate every ordered three-pairing
+trace word whose middle exponent is below the geometric bound. -/
+theorem trace_three_N_powers_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d) = 0 := by
+  apply trace_three_N_powers (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d
+  intro w w' hw hw' hcopy hne
+  have hdiag := sgK_pow_GlueDiag_of_OAnti m b hb θ ax o hanti
+  by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+  · exact hdiag w w' hw hw' hcopy hpartner hne
+  · exact (BD_pow (sgK m θ ax o) (blockK_BD _) b)
+      (sgσ m w) (sgσ m w') hpartner
+
 theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
     (hab : a.1.1 = b.1.1) (hs : a.2 ≠ b.2) :
