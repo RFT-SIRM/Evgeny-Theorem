@@ -124,8 +124,11 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
             assert len(inventory_rows) == row["cyclic_class_count"]
             assert sum(int(item["orbit_size"]) for item in inventory_rows) == row["word_count"]
             if r >= 6:
-                assert "explicit glued-corner off-diagonal hypotheses" in row["reduction_note"]
-                assert "orbit multiplicities" in row["reduction_note"]
+                note = row["reduction_note"]
+                assert "conditional all-power glued-corner theorem under OAnti" in note
+                assert "multi-pairing trace reduction" in note
+                assert "exact orbit multiplicities" in note
+                assert "Do not infer the p-moment identity" in note
 
 def test_three_pairing_classes_split_by_unit_gap_and_positive_gap_cases():
     """A zero K-gap means a K**N factor pair with middle power K^1."""
