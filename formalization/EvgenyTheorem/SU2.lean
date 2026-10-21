@@ -342,6 +342,7 @@ theorem spinBlock_pow_quaternionForm {X : Type*} [Fintype X] [DecidableEq X]
               (1 : Matrix C2 C2 ℂ) := by
           ext i j
           simp [spinBlock, Matrix.one_apply, Prod.ext_iff]
+        simp only [pow_zero]
         rw [hblock]
         exact SU2QuaternionForm_one
       · have hblock :
@@ -349,6 +350,7 @@ theorem spinBlock_pow_quaternionForm {X : Type*} [Fintype X] [DecidableEq X]
               (0 : Matrix C2 C2 ℂ) := by
           ext i j
           simp [spinBlock, Matrix.one_apply, Prod.ext_iff, hpq]
+        simp only [pow_zero]
         rw [hblock]
         exact SU2QuaternionForm_zero
   | succ n ih =>
