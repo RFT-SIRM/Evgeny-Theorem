@@ -306,5 +306,44 @@ theorem SU2QuaternionForm_sum_mul {ι : Type*} (s : Finset ι)
   exact SU2QuaternionForm_mul (hA i hi) (hB i hi)
 
 
+/-- Extract the 2×2 spin block at geometric indices p and q from a matrix
+whose state space is a product of geometric vertices and spin indices. -/
+def spinBlock {X : Type*} (M : Matrix (X × C2) (X × C2) ℂ) (p q : X) :
+    Matrix C2 C2 ℂ :=
+  fun i j => M (p, i) (q, j)
+
+/-- The spin block of a product is the sum over intermediate geometric vertices
+of the products of the corresponding spin blocks. The spin index remains inside
+each 2×2 matrix product, so no matrix factors are reordered. -/
+theorem spinBlock_mul {X : Type*} [Fintype X] [DecidableEq X]
+    (A B : Matrix (X × C2) (X × C2) ℂ) (p q : X) :
+    spinBlock (A * B) p q = ∑ x : X, spinBlock A p x * spinBlock B x q := by
+  ext i j
+  simp [spinBlock, Matrix.mul_apply, Fintype.sum_prod_type]
+
+/-- If every geometric spin block of M has quaternionic form, then the same is
+true for every geometric spin block of every natural power of M. This is the
+power-closure lemma needed before using Hermiticity to cancel same-coordinate,
+different-spin corner entries. -/
+theorem spinBlock_pow_quaternionForm {X : Type*} [Fintype X] [DecidableEq X]
+    (M : Matrix (X × C2) (X × C2) ℂ)
+    (hM : ∀ p q, SU2QuaternionForm (spinBlock M p q)) :
+    ∀ n p q, SU2QuaternionForm (spinBlock (M ^ n) p q) := by
+  intro n
+  induction n with
+  | zero =>
+      intro p q
+      by_cases hpq : p = q
+      · subst q
+        simpa [spinBlock, Matrix.one_apply] using SU2QuaternionForm_one
+      · simpa [spinBlock, Matrix.one_apply, hpq] using SU2QuaternionForm_zero
+  | succ n ih =>
+      intro p q
+      rw [pow_succ, spinBlock_mul]
+      apply SU2QuaternionForm_sum_finset (s := Finset.univ)
+      intro x hx
+      exact SU2QuaternionForm_mul (ih p x) (hM x q)
+
+
 end EvgenyTheorem
 
