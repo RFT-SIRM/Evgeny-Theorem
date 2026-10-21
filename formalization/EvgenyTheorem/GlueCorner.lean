@@ -226,12 +226,8 @@ theorem sgK_pow_samePoint_spinOffdiag_zero_of_OAnti
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) (c : GCopy) (n : ℕ) (p : Pt m) :
     (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
-  apply sgK_pow_samePoint_spinOffdiag_zero m θ ax o
-  · intro c'
-    exact Hc_hermitian_of_OAnti m θ ax o hanti c'
-  · exact c
-  · exact n
-  · exact p
+  exact sgK_pow_samePoint_spinOffdiag_zero m θ ax o
+    (fun c' => Hc_hermitian_of_OAnti m θ ax o hanti c') c n p
 
 theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
