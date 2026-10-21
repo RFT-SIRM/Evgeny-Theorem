@@ -229,6 +229,65 @@ theorem sgK_pow_samePoint_spinOffdiag_zero_of_OAnti
   exact sgK_pow_samePoint_spinOffdiag_zero m θ ax o
     (fun c' => Hc_hermitian_of_OAnti m θ ax o hanti c') c n p
 
+/-! ### All-power glued-corner vanishing -/
+
+/-- Hermiticity transfers the quaternion-form cancellation to either ordering
+of distinct spin states at the same geometric point. -/
+theorem Hc_pow_samePoint_spinOffdiag_zero_any
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (c : GCopy) (n : ℕ)
+    (p : Pt m) (s t : C2) (hst : s ≠ t) :
+    (Hc m θ ax o c ^ n) (p, s) (p, t) = 0 := by
+  have hH : ∀ c' : GCopy,
+      Matrix.conjTranspose (Hc m θ ax o c') = Hc m θ ax o c' :=
+    fun c' => Hc_hermitian_of_OAnti m θ ax o hanti c'
+  have hpow : Matrix.conjTranspose ((Hc m θ ax o c) ^ n) =
+      (Hc m θ ax o c) ^ n := by
+    rw [Matrix.conjTranspose_pow, hH c]
+  have h01 :
+      (Hc m θ ax o c ^ n) (p, (0 : C2)) (p, (1 : C2)) = 0 :=
+    Hc_pow_samePoint_spinOffdiag_zero m θ ax o hH c n p
+  have h10 :
+      (Hc m θ ax o c ^ n) (p, (1 : C2)) (p, (0 : C2)) = 0 := by
+    have h := congrFun (congrFun hpow (p, (0 : C2))) (p, (1 : C2))
+    have hstar :
+        star ((Hc m θ ax o c ^ n) (p, (1 : C2)) (p, (0 : C2))) =
+          (Hc m θ ax o c ^ n) (p, (0 : C2)) (p, (1 : C2)) := by
+      simpa [Matrix.conjTranspose_apply] using h
+    rw [h01] at hstar
+    exact star_eq_zero.mp hstar
+  fin_cases s <;> fin_cases t <;> simp_all
+
+/-- Under orientation antisymmetry, every natural power of the glued operator
+satisfies the corner-vanishing condition needed by the three-pairing reduction. -/
+theorem sgK_pow_GlueDiag_of_OAnti
+    (m n : ℕ) (hn : n < 2 ^ m)
+    (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    GlueDiag (sgGlue m) (sgK m θ ax o ^ n) := by
+  intro w w' hw hw' hc hσc hne
+  have hc' : w.1 = w'.1 := hc
+  have hσc' : (sgσ m w).1 = (sgσ m w').1 := hσc
+  by_cases hp : w.2.1.1 = w'.2.1.1
+  · have hpt : w.2.1 = w'.2.1 := Subtype.ext hp
+    have hs : w.2.2 ≠ w'.2.2 :=
+      fun h => hne (Prod.ext hc' (Prod.ext hpt h))
+    have e : (sgK m θ ax o ^ n) w w' =
+        (Hc m θ ax o w.1 ^ n) w.2 w'.2 := by
+      rw [sgK, blockK_pow_local]
+      change blockK (fun c' => Hc m θ ax o c' ^ n) w w' = _
+      simp [blockK, hc']
+    rw [e, ← hpt]
+    exact Hc_pow_samePoint_spinOffdiag_zero_any
+      m θ ax o hanti w.1 n w.2.1 w.2.2 w'.2.2 hs
+  · exfalso
+    have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    rw [← hc'] at h2
+    exact hp (gl_partner_inj h1 h2 hσc')
+
 theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
     (hab : a.1.1 = b.1.1) (hs : a.2 ≠ b.2) :
