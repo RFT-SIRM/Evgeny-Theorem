@@ -262,7 +262,7 @@ theorem Hc_pow_samePoint_spinOffdiag_zero_any
 /-- Under orientation antisymmetry, every natural power of the glued operator
 satisfies the corner-vanishing condition needed by the three-pairing reduction. -/
 theorem sgK_pow_GlueDiag_of_OAnti
-    (m n : ℕ) (hn : n < 2 ^ m)
+    (m n : ℕ)
     (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
@@ -500,7 +500,7 @@ theorem trace_three_N_powers_of_OAnti
   apply trace_three_N_powers (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d
   intro w w' hw hw' hcopy hne
-  have hdiag := sgK_pow_GlueDiag_of_OAnti m b hb θ ax o hanti
+  have hdiag := sgK_pow_GlueDiag_of_OAnti m b θ ax o hanti
   by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
   · exact hdiag w w' hw hw' hcopy hpartner hne
   ·
@@ -517,11 +517,12 @@ theorem trace_three_N_powers_of_OAnti
       m b hb θ ax o w w' hw hw' hcoord
 
 
+-- The concrete specialization expands nested finite sums and needs more elaboration time.
+set_option maxHeartbeats 400000 in
 /-- Concrete four-pairing boundary formula for the glued Sierpinski operator.
 Both middle exponents are below the side length, so the all-power spin
 cancellation and the distinct-corner support bound discharge the two required
 corner hypotheses. -/
-set_option maxHeartbeats 400000 in
 theorem trace_four_N_powers_explicit_of_OAnti
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
@@ -543,7 +544,7 @@ theorem trace_four_N_powers_explicit_of_OAnti
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
     intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n hn θ ax o hanti
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
     by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
     · exact hdiag w w' hw hw' hcopy hpartner hne
     · have h1 := (glW_sgσ hw).1
@@ -577,7 +578,7 @@ theorem trace_three_N_word_zero_of_OAnti
       w.1 = w'.1 → w ≠ w' →
       (sgK m θ ax o ^ b) w w' = 0 := by
     intro w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m b hb θ ax o hanti
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m b θ ax o hanti
     by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
     · exact hdiag w w' hw hw' hcopy hpartner hne
     · have h1 := (glW_sgσ hw).1
