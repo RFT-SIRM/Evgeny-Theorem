@@ -167,6 +167,12 @@ def test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity():
             assert row["orbit_size"] == orbit_size
             assert len(row["representative"]) == p
             assert row["representative"].count("K*N") == 3
+            # The corner lemma is available for n < 2**m. Every middle
+            # power required by these unresolved classes is at most 6,
+            # so the geometric bound is valid already at the smallest
+            # relevant level m = 3.
+            assert max(a, b, c) <= 6
+            assert max(a, b, c) < 2**3
         assert sum(by_gap[g]["orbit_size"] for g in classes) == sum(
             value[3] for value in classes.values()
         )
