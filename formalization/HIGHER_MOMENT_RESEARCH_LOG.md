@@ -712,3 +712,24 @@ stratum. The regression test now distinguishes this status from the proven
 conditional vanishing of the three-pairing stratum. Strata with five or more
 `K*N` factors remain uncovered by these generic reductions, and the full
 moment identity and level propagation remain open.
+
+
+## 4ad. Conditional five-pairing trace reduction
+
+The Lean theorem `trace_five_N_powers_zero_of_OAnti` now specializes
+`trace_five_N_powers_zero` under `OAnti (m + 1) o`. It supplies the two
+middle-power corner hypotheses separately using
+`sgK_pow_GlueDiag_of_OAnti` and the distinct-coordinate support bound.
+For the five-pairing stratum at `p ∈ {6,8,10}`, each cyclic K-gap exponent
+is at most `p - 4 ≤ 6`; hence it is below `2^m` for `m ≥ 3`. After cyclic
+rotation and splitting one gap into the two exterior powers, the conditional
+five-N lemma applies to each ordered word in this stratum.
+
+The reduction ledger and its regression test now record
+`vanishes_by_five_N_corner_lemma_under_OAnti` for the complete `r = 5`
+stratum. This status is conditional on orientation antisymmetry and on the
+word-to-gap decomposition; it is not a proof of the full moment identity.
+Strata with six or more `K*N` factors remain outside the current generic
+reductions. The residual identities for `p = 6, 8, 10` remain conjectural
+until the higher-pairing strata, complete boundary collection, and
+level-propagation argument are proved.
