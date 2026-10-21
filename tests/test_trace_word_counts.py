@@ -135,7 +135,7 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
                 note = row["reduction_note"]
                 assert "trace_seven_N_powers_zero" in note
                 assert "conditional vanishing of the r=7 stratum" in note
-                assert "Do not infer the all-level p-moment identity" in note
+                assert "do not infer the all-level p-moment identity" in note
             if r >= 8:
                 note = row["reduction_note"]
                 assert "conditional all-power glued-corner theorem under OAnti" in note
