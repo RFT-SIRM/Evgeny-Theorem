@@ -746,6 +746,268 @@ theorem trace_seven_N_powers_zero {cp : W → ι} (G : GlueData cp)
       ([K ^ h] : List (Matrix W W ℂ))
       (K ^ f) hxs hys hzs (BD_pow K hK f) hkgF)
 
+/-- Eight-pairing boundary formula. Three selected N-K-power-N blocks
+are diagonalized, leaving a two-pairing word whose remaining middle-power
+corner condition is explicit. -/
+theorem trace_eight_N_powers_boundary {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e f g h i : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0)
+    (hkgF : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ f) w w' = 0)
+    (hkgH : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ h) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N *
+      K ^ h * G.N * K ^ i) =
+      ∑ x, if G.g x then
+        (([K ^ i, K ^ a,
+          Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+          K ^ c,
+          Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+          K ^ e,
+          Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+          K ^ g] : List (Matrix W W ℂ)).prod) x x *
+          (K ^ h) (G.σ x) (G.σ x) else 0 := by
+  have hQb : G.N * K ^ b * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ b) (BD_pow K hK b) hkgB
+  have hQd : G.N * K ^ d * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ d) (BD_pow K hK d) hkgD
+  have hQf : G.N * K ^ f * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ f) (BD_pow K hK f) hkgF
+  rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N *
+      K ^ h * G.N * K ^ i =
+      K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e *
+        (G.N * K ^ f * G.N) * K ^ g * G.N * K ^ h * G.N * K ^ i by
+      simp only [Matrix.mul_assoc]]
+  rw [hQb, hQd, hQf]
+  have hxs : ∀ A, A ∈
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e,
+        Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+        K ^ g] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_cons] at hA
+    rcases hA with hA | hA
+    · subst A; exact BD_pow K hK a
+    · rcases hA with hA | hA
+      · subst A; exact BD_diagonal _
+      · rcases hA with hA | hA
+        · subst A; exact BD_pow K hK c
+        · rcases hA with hA | hA
+          · subst A; exact BD_diagonal _
+          · rcases hA with hA | hA
+            · subst A; exact BD_pow K hK e
+            · rcases hA with hA | hA
+              · subst A; exact BD_diagonal _
+              · rcases hA with hA | hA
+                · subst A; exact BD_pow K hK g
+                · simp at hA
+  have hys : ∀ A, A ∈ ([K ^ i] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK i)
+  simpa [List.prod_cons, Matrix.mul_assoc] using
+    (trace_two_N_word G
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e,
+        Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+        K ^ g] : List (Matrix W W ℂ))
+      ([K ^ i] : List (Matrix W W ℂ)) (K ^ h) (BD_pow K hK h) hkgH)
+
+/-- Nine-pairing words vanish conditionally: diagonalize three selected
+N-K-power-N blocks, then apply the generic three-pairing vanishing lemma to
+the remaining three N factors. -/
+theorem trace_nine_N_powers_zero {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e f g h i j : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0)
+    (hkgF : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ f) w w' = 0)
+    (hkgH : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ h) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N *
+      K ^ h * G.N * K ^ i * G.N * K ^ j) = 0 := by
+  have hQb : G.N * K ^ b * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ b) (BD_pow K hK b) hkgB
+  have hQd : G.N * K ^ d * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ d) (BD_pow K hK d) hkgD
+  have hQf : G.N * K ^ f * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ f) (BD_pow K hK f) hkgF
+  rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N *
+      K ^ h * G.N * K ^ i * G.N * K ^ j =
+      K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e *
+        (G.N * K ^ f * G.N) * K ^ g * G.N * K ^ h * G.N *
+        K ^ i * G.N * K ^ j by
+      simp only [Matrix.mul_assoc]]
+  rw [hQb, hQd, hQf]
+  have hxs : ∀ A, A ∈
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e,
+        Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+        K ^ g] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_cons] at hA
+    rcases hA with hA | hA
+    · subst A; exact BD_pow K hK a
+    · rcases hA with hA | hA
+      · subst A; exact BD_diagonal _
+      · rcases hA with hA | hA
+        · subst A; exact BD_pow K hK c
+        · rcases hA with hA | hA
+          · subst A; exact BD_diagonal _
+          · rcases hA with hA | hA
+            · subst A; exact BD_pow K hK e
+            · rcases hA with hA | hA
+              · subst A; exact BD_diagonal _
+              · rcases hA with hA | hA
+                · subst A; exact BD_pow K hK g
+                · simp at hA
+  have hys : ∀ A, A ∈ ([K ^ i] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK i)
+  have hzs : ∀ A, A ∈ ([K ^ j] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK j)
+  simpa [List.prod_cons, Matrix.mul_assoc] using
+    (trace_three_N_word_zero G
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e,
+        Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+        K ^ g] : List (Matrix W W ℂ))
+      ([K ^ i] : List (Matrix W W ℂ))
+      ([K ^ j] : List (Matrix W W ℂ))
+      (K ^ h) hxs hys hzs (BD_pow K hK h) hkgH)
+
+/-- Ten-pairing boundary formula. Four selected N-K-power-N blocks are
+diagonalized, leaving an explicit two-pairing boundary sum. -/
+theorem trace_ten_N_powers_boundary {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e f g h i j k : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0)
+    (hkgF : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ f) w w' = 0)
+    (hkgH : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ h) w w' = 0)
+    (hkgJ : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ j) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N *
+      K ^ h * G.N * K ^ i * G.N * K ^ j * G.N * K ^ k) =
+      ∑ x, if G.g x then
+        (([K ^ k, K ^ a,
+          Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+          K ^ c,
+          Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+          K ^ e,
+          Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+          K ^ g,
+          Matrix.diagonal (fun y => if G.g y then (K ^ h) (G.σ y) (G.σ y) else 0),
+          K ^ i] : List (Matrix W W ℂ)).prod) x x *
+          (K ^ j) (G.σ x) (G.σ x) else 0 := by
+  have hQb : G.N * K ^ b * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ b) (BD_pow K hK b) hkgB
+  have hQd : G.N * K ^ d * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ d) (BD_pow K hK d) hkgD
+  have hQf : G.N * K ^ f * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ f) (BD_pow K hK f) hkgF
+  have hQh : G.N * K ^ h * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ h) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ h) (BD_pow K hK h) hkgH
+  rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N *
+      K ^ h * G.N * K ^ i * G.N * K ^ j * G.N * K ^ k =
+      K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e *
+        (G.N * K ^ f * G.N) * K ^ g *
+        (G.N * K ^ h * G.N) * K ^ i * G.N * K ^ j * G.N * K ^ k by
+      simp only [Matrix.mul_assoc]]
+  rw [hQb, hQd, hQf, hQh]
+  have hxs : ∀ A, A ∈
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e,
+        Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+        K ^ g,
+        Matrix.diagonal (fun y => if G.g y then (K ^ h) (G.σ y) (G.σ y) else 0),
+        K ^ i] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_cons] at hA
+    rcases hA with hA | hA
+    · subst A; exact BD_pow K hK a
+    · rcases hA with hA | hA
+      · subst A; exact BD_diagonal _
+      · rcases hA with hA | hA
+        · subst A; exact BD_pow K hK c
+        · rcases hA with hA | hA
+          · subst A; exact BD_diagonal _
+          · rcases hA with hA | hA
+            · subst A; exact BD_pow K hK e
+            · rcases hA with hA | hA
+              · subst A; exact BD_diagonal _
+              · rcases hA with hA | hA
+                · subst A; exact BD_pow K hK g
+                · rcases hA with hA | hA
+                  · subst A; exact BD_diagonal _
+                  · rcases hA with hA | hA
+                    · subst A; exact BD_pow K hK i
+                    · simp at hA
+  have hys : ∀ A, A ∈ ([K ^ k] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK k)
+  simpa [List.prod_cons, Matrix.mul_assoc] using
+    (trace_two_N_word G
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e,
+        Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0),
+        K ^ g,
+        Matrix.diagonal (fun y => if G.g y then (K ^ h) (G.σ y) (G.σ y) else 0),
+        K ^ i] : List (Matrix W W ℂ))
+      ([K ^ k] : List (Matrix W W ℂ)) (K ^ j) (BD_pow K hK j) hkgJ)
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
