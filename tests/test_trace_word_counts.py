@@ -525,10 +525,9 @@ def test_top_even_stratum_boundary_arithmetic_is_explicitly_conditional():
         .read_text(encoding="utf-8")
     )
     for p, value in expected.items():
-        # p support states contribute (degree K)^p times (partner degree)^p
-        # = 2**(2*p) would be incorrect: there are p K factors and p diagonal
-        # boundary factors in total, each diagonal factor contributes degree 2,
-        # so the product is 2**p per state.
+        # In the top r=p word, the boundary trace has p/2 K-diagonal
+        # factors and p/2 matching corner-diagonal factors. Each contributes
+        # degree 2, so each support state contributes 2**p, not 2**(2*p).
         assert 12 * (2**p) == value
         entry = next(row for row in ledger if row["p"] == p)
         top = next(row for row in entry["strata"] if row["kn_factor_count"] == p)
