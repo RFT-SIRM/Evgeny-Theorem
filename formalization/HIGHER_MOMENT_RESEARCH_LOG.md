@@ -950,3 +950,23 @@ Lean and Python CI passed for documentation commit
 `6791424dc4bad8d71127c257dc6e8e164a8fbc90`; a new source-level proof and its
 CI verification are still needed before this reduction can be treated as
 machine-checked.
+
+
+## 4w. Numerical evaluation of the p=6, r=6 boundary term (conditional calculation)
+
+For the concrete Sierpinski-gasket gluing, the support of `(sgGlue m).g`
+contains six geometric corner endpoints (two per copy) and two spin states
+per endpoint, hence 12 indexed states. At level m >= 1, each outer corner
+has graph degree 2. Under this corner-degree fact, `sgK_diag` makes each
+summand in the p=6 all-pairing boundary expression equal to
+`2^3 * 2^3 = 64`. Summing over the 12 support states gives the boundary
+contribution `12 * 64 = 768`, not zero.
+
+This is a concrete arithmetic evaluation of the identified boundary
+expression, conditional on the support-cardinality and corner-degree facts.
+Those facts and the resulting specialization have not yet been assembled
+into a machine-checked Lean theorem in this branch. Therefore 768 is recorded
+as a derived diagnostic, not as a CI-verified theorem or as a disproof of the
+full residual identity: cancellation against other strata remains logically
+possible and would require a separate weighted identity preserving all orbit
+multiplicities.
