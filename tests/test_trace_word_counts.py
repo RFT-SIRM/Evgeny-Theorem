@@ -104,9 +104,10 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
         assert statuses[0] == "base_K_power"
         assert statuses[1] == "vanishes_by_existing_one_N_lemma"
         assert statuses[2] == "two_N_formula_with_corner_hypothesis"
+        assert statuses[3] == "vanishes_by_three_N_corner_lemma_under_OAnti"
         assert all(
             statuses[r] == "not_covered_by_current_generic_reductions"
-            for r in range(3, p + 1)
+            for r in range(4, p + 1)
         )
 
 def test_three_pairing_classes_split_by_unit_cyclic_gap():
@@ -176,3 +177,20 @@ def test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity():
         assert sum(by_gap[g]["orbit_size"] for g in classes) == sum(
             value[3] for value in classes.values()
         )
+
+
+def test_three_pairing_stratum_is_covered_by_conditional_lean_corner_lemma():
+    """The smallest cyclic gap can be placed in the middle by rotation."""
+    for p in (6, 8, 10):
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 3
+        ]
+        assert rows
+        for row in rows:
+            gaps = row["cyclic_gap_representative"]
+            assert len(gaps) == 3
+            assert sum(gaps) == p - 3
+            middle_exponent = min(gaps) + 1
+            assert middle_exponent <= 3
+            assert middle_exponent < 2**3
