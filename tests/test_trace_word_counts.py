@@ -469,3 +469,37 @@ def test_r3_ledger_records_conditional_corner_proof_not_block_diagonality_guess(
             gaps = item["cyclic_gap_representative"]
             assert len(gaps) == 3 and sum(gaps) == p - 3
             assert min(gaps) + 1 <= 3 < 2**3
+
+
+def test_even_pairing_boundary_strata_are_not_mislabeled_as_zero():
+    """Boundary reduction is not a proof of cancellation for even r strata."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    expected_status = {
+        6: "explicit_six_N_boundary_formula_under_OAnti",
+        8: "explicit_eight_N_boundary_formula_under_OAnti",
+        10: "explicit_ten_N_boundary_formula_under_OAnti",
+    }
+    for entry in ledger:
+        for r, status in expected_status.items():
+            if r > entry["p"]:
+                continue
+            row = next(s for s in entry["strata"] if s["kn_factor_count"] == r)
+            assert row["reduction_status"] == status
+            note = row["reduction_note"]
+            assert (
+                "does not prove cancellation" in note
+                or "not a vanishing claim" in note
+            )
+            inventory_rows = [
+                x for x in word_inventory(entry["p"])["classes"]
+                if x["kn_factor_count"] == r
+            ]
+            assert len(inventory_rows) == row["cyclic_class_count"]
+            assert sum(int(x["orbit_size"]) for x in inventory_rows) == row["word_count"]
