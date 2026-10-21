@@ -40,7 +40,8 @@
         "kn_factor_count": 5,
         "word_count": 6,
         "cyclic_class_count": 1,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "vanishes_by_five_N_corner_lemma_under_OAnti",
+        "reduction_note": "Theorem trace_five_N_powers_zero_of_OAnti applies after cyclic rotation and splitting one cyclic K-gap into the two exterior powers. For p <= 10, every positive gap exponent is at most p-4 <= 6 < 2^m for m >= 3, so the two explicit middle-power corner hypotheses hold under OAnti (m+1) o."
       },
       {
         "kn_factor_count": 6,
@@ -91,7 +92,8 @@
         "kn_factor_count": 5,
         "word_count": 56,
         "cyclic_class_count": 7,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "vanishes_by_five_N_corner_lemma_under_OAnti",
+        "reduction_note": "Theorem trace_five_N_powers_zero_of_OAnti applies after cyclic rotation and splitting one cyclic K-gap into the two exterior powers. For p <= 10, every positive gap exponent is at most p-4 <= 6 < 2^m for m >= 3, so the two explicit middle-power corner hypotheses hold under OAnti (m+1) o."
       },
       {
         "kn_factor_count": 6,
@@ -154,7 +156,8 @@
         "kn_factor_count": 5,
         "word_count": 252,
         "cyclic_class_count": 26,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "vanishes_by_five_N_corner_lemma_under_OAnti",
+        "reduction_note": "Theorem trace_five_N_powers_zero_of_OAnti applies after cyclic rotation and splitting one cyclic K-gap into the two exterior powers. For p <= 10, every positive gap exponent is at most p-4 <= 6 < 2^m for m >= 3, so the two explicit middle-power corner hypotheses hold under OAnti (m+1) o."
       },
       {
         "kn_factor_count": 6,
