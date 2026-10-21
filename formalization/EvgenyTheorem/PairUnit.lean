@@ -69,14 +69,14 @@ theorem pHeO_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
       let U : Matrix C2 C2 ℂ := edgeUnitaryWithAxis m θ ax e
       have hU : SU2QuaternionForm U := by
         dsimp [U]
-        exact edgeUnitaryWithAxis_quaternionForm m θ ax e axisRotation_quaternionForm
+        exact edgeUnitaryWithAxis_quaternionForm m θ ax e (axisRotation_quaternionForm θ)
       have hblock :
           pHeO_spinBlock m θ ax o p q =
             if o p q then -U else -(Matrix.conjTranspose U) := by
         ext i j
         change pHeO m θ ax o p q i j = _
         rw [pHeO_edge_eq m θ ax o hpq hE i j]
-        simp [e, U]
+        simp [e, U, Matrix.conjTranspose_apply]
       rw [hblock]
       by_cases ho : o p q
       · simp [ho]
