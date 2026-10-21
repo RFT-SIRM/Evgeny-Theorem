@@ -444,3 +444,28 @@ def test_eight_to_ten_pairing_strata_have_explicit_conditional_reductions():
                 assert len(exponents) == r
                 assert max(exponents) <= p-r+1
                 assert max(exponents) < 2**3
+
+
+def test_r3_ledger_records_conditional_corner_proof_not_block_diagonality_guess():
+    """All r=3 classes are conditionally covered by the formal all-power corner lemma."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        row = next(s for s in entry["strata"] if s["kn_factor_count"] == 3)
+        assert row["reduction_status"] == "vanishes_by_three_N_corner_lemma_under_OAnti"
+        note = row["reduction_note"]
+        assert "OAnti (m + 1) o" in note
+        assert "sgK_pow_GlueDiag_of_OAnti" in note
+        assert "block diagonality alone" in note or "all-power" in note
+        p = entry["p"]
+        rows = [x for x in word_inventory(p)["classes"] if x["kn_factor_count"] == 3]
+        for item in rows:
+            gaps = item["cyclic_gap_representative"]
+            assert len(gaps) == 3 and sum(gaps) == p - 3
+            assert min(gaps) + 1 <= 3 < 2**3
