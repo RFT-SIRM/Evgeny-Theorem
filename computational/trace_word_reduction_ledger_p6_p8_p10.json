@@ -33,7 +33,8 @@
         "kn_factor_count": 4,
         "word_count": 15,
         "cyclic_class_count": 3,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "explicit_four_N_boundary_formula_under_OAnti",
+        "reduction_note": "Theorem trace_four_N_powers_explicit_of_OAnti applies after cyclic rotation. For p <= 10 and four K*N factors, each cyclic gap exponent is gap+1 <= (p-4)+1 <= 7 < 2^m for m >= 3; supply two such gaps as b,d. This yields the explicit nested boundary sum, not a proved cancellation of the stratum."
       },
       {
         "kn_factor_count": 5,
@@ -83,7 +84,8 @@
         "kn_factor_count": 4,
         "word_count": 70,
         "cyclic_class_count": 10,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "explicit_four_N_boundary_formula_under_OAnti",
+        "reduction_note": "Theorem trace_four_N_powers_explicit_of_OAnti applies after cyclic rotation. For p <= 10 and four K*N factors, each cyclic gap exponent is gap+1 <= (p-4)+1 <= 7 < 2^m for m >= 3; supply two such gaps as b,d. This yields the explicit nested boundary sum, not a proved cancellation of the stratum."
       },
       {
         "kn_factor_count": 5,
@@ -145,7 +147,8 @@
         "kn_factor_count": 4,
         "word_count": 210,
         "cyclic_class_count": 22,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "explicit_four_N_boundary_formula_under_OAnti",
+        "reduction_note": "Theorem trace_four_N_powers_explicit_of_OAnti applies after cyclic rotation. For p <= 10 and four K*N factors, each cyclic gap exponent is gap+1 <= (p-4)+1 <= 7 < 2^m for m >= 3; supply two such gaps as b,d. This yields the explicit nested boundary sum, not a proved cancellation of the stratum."
       },
       {
         "kn_factor_count": 5,
