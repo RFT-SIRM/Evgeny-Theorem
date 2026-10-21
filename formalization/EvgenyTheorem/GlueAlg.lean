@@ -675,6 +675,77 @@ theorem trace_six_N_powers_boundary {cp : W → ι} (G : GlueData cp)
       simp only [Matrix.mul_assoc]]
   rw [hrotate, hQb, hQd, hQf]
 
+/-- Seven-pairing trace words vanish under three explicit corner
+hypotheses. Pairing the first two selected gaps makes two diagonal boundary
+blocks; the remaining three N factors are then handled by the generic
+three-pairing reduction. The hypotheses for the three selected middle powers
+remain explicit. -/
+theorem trace_seven_N_powers_zero {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e f g h : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0)
+    (hkgF : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ f) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N * K ^ h) = 0 := by
+  have hQb : G.N * K ^ b * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ b) (BD_pow K hK b) hkgB
+  have hQd : G.N * K ^ d * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ d) (BD_pow K hK d) hkgD
+  rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N * K ^ h =
+      K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e * G.N * K ^ f * G.N * K ^ g * G.N * K ^ h by
+      simp only [Matrix.mul_assoc]]
+  rw [hQb, hQd]
+  have hxs : ∀ A, A ∈
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_cons] at hA
+    rcases hA with hA | hA
+    · subst A
+      exact BD_pow K hK a
+    · rcases hA with hA | hA
+      · subst A
+        exact BD_diagonal _
+      · rcases hA with hA | hA
+        · subst A
+          exact BD_pow K hK c
+        · rcases hA with hA | hA
+          · subst A
+            exact BD_diagonal _
+          · rcases hA with hA | hA
+            · subst A
+              exact BD_pow K hK e
+            · simp at hA
+  have hys : ∀ A, A ∈ ([K ^ g] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK g)
+  have hzs : ∀ A, A ∈ ([K ^ h] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK h)
+  simpa [List.prod_cons, Matrix.mul_assoc] using
+    (trace_three_N_word_zero G
+      ([K ^ a,
+        Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0),
+        K ^ c,
+        Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0),
+        K ^ e] : List (Matrix W W ℂ))
+      ([K ^ g] : List (Matrix W W ℂ))
+      ([K ^ h] : List (Matrix W W ℂ))
+      (K ^ f) hxs hys hzs (BD_pow K hK f) hkgF)
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
