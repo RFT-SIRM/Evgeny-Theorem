@@ -150,6 +150,25 @@ theorem Hc_pow_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   exact Hc_spinBlock_quaternionForm m θ ax o c p q
 
 
+/-! ### Same-coordinate spin cancellation for powers of a copy -/
+
+/-- If the three copy operators are Hermitian, then every natural power has
+zero same-point, opposite-spin entry. The quaternion-form hypothesis is
+provided concretely by `Hc_spinBlock_quaternionForm`; only Hermiticity remains
+as an explicit operator-level premise. -/
+theorem Hc_pow_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hH : ∀ c : GCopy, Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c)
+    (c : GCopy) (n : ℕ) (p : Pt m) :
+    (Hc m θ ax o c ^ n) (p, (0 : C2)) (p, (1 : C2)) = 0 := by
+  have hform : ∀ p q, SU2QuaternionForm (spinBlock (Hc m θ ax o c) p q) := by
+    intro p q
+    exact Hc_spinBlock_quaternionForm m θ ax o c p q
+  have hpow : Matrix.conjTranspose ((Hc m θ ax o c) ^ n) =
+      (Hc m θ ax o c) ^ n := by
+    rw [Matrix.conjTranspose_pow, hH c]
+  exact spinBlock_pow_diagonal_offdiag_zero (Hc m θ ax o c) hform n p hpow
+
 /-- The block-diagonal operator on three disjoint copies. -/
 noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
