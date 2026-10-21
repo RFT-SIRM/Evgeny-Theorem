@@ -498,6 +498,48 @@ theorem trace_four_N_powers {cp : W → ι} (G : GlueData cp)
     ([K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c] : List (Matrix W W ℂ))
     ([] : List (Matrix W W ℂ)) (K ^ d) (BD_pow K hK d) hkgD)
 
+/-- Explicit nested boundary sum for a four-pairing word. The inner pair
+is expanded using its own glued-corner vanishing hypothesis, while the outer
+pair uses the condition for K^d. Matrix-factor order is preserved throughout. -/
+theorem trace_four_N_powers_explicit {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ e) =
+      ∑ x, if G.g x then
+        (∑ y, if G.g y then
+          ((K ^ e * K ^ a) x y * (K ^ b) (G.σ y) (G.σ y)) * (K ^ c) y x
+          else 0) * (K ^ d) (G.σ x) (G.σ x) else 0 := by
+  have hQ : G.N * K ^ b * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ b) (BD_pow K hK b) hkgB
+  have hentry (x : W) :
+      ((K ^ e * K ^ a) * (G.N * K ^ b * G.N) * K ^ c) x x =
+        ∑ y, if G.g y then
+          ((K ^ e * K ^ a) x y * (K ^ b) (G.σ y) (G.σ y)) * (K ^ c) y x
+          else 0 := by
+    rw [hQ, Matrix.mul_apply]
+    simp [Matrix.mul_diagonal, Matrix.diagonal_apply, mul_assoc]
+  calc
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ e) =
+        ∑ x, if G.g x then
+          ((K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c) x x) *
+            (K ^ d) (G.σ x) (G.σ x) else 0 :=
+      trace_four_N_powers G K hK a b c d e hkgD
+    _ = ∑ x, if G.g x then
+          (∑ y, if G.g y then
+            ((K ^ e * K ^ a) x y * (K ^ b) (G.σ y) (G.σ y)) * (K ^ c) y x
+            else 0) * (K ^ d) (G.σ x) (G.σ x) else 0 := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      by_cases gx : G.g x
+      · simp only [gx, if_pos]
+        rw [hentry x]
+      · simp [gx]
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
