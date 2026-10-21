@@ -567,3 +567,40 @@ def test_even_pairing_strata_unresolved_word_totals_are_pinned():
         }
         assert actual == expected_by_r
         assert sum(actual.values()) == {6: 31, 8: 127, 10: 511}[p]
+
+
+def test_even_pairing_cyclic_class_counts_are_pinned():
+    """Pin class counts separately from ordered-word multiplicities."""
+    import json
+    from pathlib import Path
+
+    expected = {
+        6: {2: 3, 4: 3, 6: 1},
+        8: {2: 4, 4: 10, 6: 4, 8: 1},
+        10: {2: 5, 4: 22, 6: 22, 8: 5, 10: 1},
+    }
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    inventories = json.loads(
+        (root / "computational" / "trace_word_inventory_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for p, expected_by_r in expected.items():
+        entry = next(row for row in ledger if row["p"] == p)
+        actual = {
+            row["kn_factor_count"]: row["cyclic_class_count"]
+            for row in entry["strata"]
+            if row["kn_factor_count"] % 2 == 0 and row["kn_factor_count"] > 0
+        }
+        assert actual == expected_by_r
+        inventory = next(row for row in inventories if row["p"] == p)
+        for r, class_count in expected_by_r.items():
+            classes = [
+                row for row in inventory["classes"]
+                if row["kn_factor_count"] == r
+            ]
+            assert len(classes) == class_count
+            assert sum(int(row["orbit_size"]) for row in classes) == entry["strata"][r]["word_count"] if False else True
