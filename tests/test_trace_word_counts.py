@@ -232,5 +232,10 @@ def test_five_pairing_words_have_two_admissible_middle_power_bounds():
             assert sum(gaps) == p - 5
             exponents = [gap + 1 for gap in gaps]
             assert all(1 <= exponent <= p - 4 for exponent in exponents)
-            assert sum(exponents[i] < 2**3 for i in range(5)) == 5
+            assert sum(exponent < 2**3 for exponent in exponents) == 5
             assert row["representative"].count("K*N") == 5
+        # Preserve the ordered-word orbit multiplicities when classifying
+        # the complete r=5 stratum, not just its canonical representatives.
+        assert sum(row["orbit_size"] for row in rows) == {
+            6: 6, 8: 56, 10: 252
+        }[p]
