@@ -562,3 +562,38 @@ The formal chain is:
 The PR head has successful GitHub Actions evidence: Lean formalization run 178 and Python tests run 247, including both Python 3.11 and 3.12. Links: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39559293076 and https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39559293274.
 
 **Scope boundary:** this closes the concrete same-point spin-off-diagonal corner obligation under the stated hypotheses for the exponents used by the eight listed three-pairing classes. It does not itself derive the full higher-moment boundary formula, collect all ordered trace-word contributions into the final residual identity, or prove the level-propagation step. The all-level residual identities for p = 6, 8, 10 therefore remain conjectural until those separate obligations are machine-checked.
+
+
+## 4z. Conditional four-pairing boundary reduction (PR #8)
+
+**Lean source:** `formalization/EvgenyTheorem/GlueAlg.lean`, theorem
+`trace_four_N_powers`.
+
+For a word with four pairing factors, cyclicity of trace moves the final
+power to the front and groups the outside factors without commuting any
+individual matrices. The theorem then applies the generic two-pairing formula
+to the last remaining pair. In the current interface, the middle power
+`K^d` must satisfy the explicit glued-corner off-diagonal vanishing
+condition. The theorem does not infer that condition from block diagonality.
+
+The resulting identity retains the inner product `G.N * K^b * G.N` inside
+the diagonal entry of the outside product. This is a valid conditional
+boundary reduction, but it is not yet a fully expanded sum over independent
+corner entries: to simplify the inner pair further, the separate corner
+condition for `K^b` must also be supplied and used. Nor does this lemma
+collect all ordered words or prove their multiplicities cancel in the final
+moment defect.
+
+**Verification:** on PR #8 head
+`bd968fc314516794187b441f336dee0084ab8305`, GitHub Actions Lean
+formalization run 188 and Tests run 257 both completed successfully:
+https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39565263648
+and https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39565263685.
+This is compilation/test evidence for that exact commit, not a proof of the
+full higher-moment conjecture.
+
+**Remaining:** establish the required corner hypotheses for each middle
+power arising in the ordered expansions; derive a fully explicit boundary
+formula for the relevant multi-pairing strata; prove the finite base
+transition and the level-propagation step for `p = 6, 8, 10`. The residual
+identity remains conjectural until those obligations are discharged.
