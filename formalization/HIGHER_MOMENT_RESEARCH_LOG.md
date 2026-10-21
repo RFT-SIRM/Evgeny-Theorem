@@ -976,9 +976,10 @@ multiplicities.
 
 For the top even strata r=p, every cyclic gap is one. Under the same
 support-diagonality and corner-degree assumptions recorded in 4w, the
-all-pairing boundary sum has p factors from K and p corresponding diagonal
-corner factors. Each support state contributes
-`2^p`, and the 12 support states therefore contribute `12 * 2^p`.
+all-pairing boundary trace has p/2 diagonal K factors and p/2 matching
+corner-diagonal factors, for p scalar factors in total. Each factor equals 2,
+so each support state contributes `2^p`, and the 12 support states therefore
+contribute `12 * 2^p`.
 The resulting diagnostic values are:
 
 - p=8, r=8: `12 * 2^8 = 3,072`.
