@@ -590,26 +590,26 @@ theorem trace_three_N_word_zero_of_OAnti
         exact hpartner huniq.1
       exact sgK_pow_zero_of_distinct_glued_corner_coords
         m b hb θ ax o w w' hw hw' hcoord
-  have hbd : BD (fun w : Vertex m => w.1) (sgK m θ ax o) := blockK_BD _
-  have hxs : ∀ A, A ∈ ([sgK m θ ax o ^ a] : List (Matrix (Vertex m) (Vertex m) ℂ)) →
-      BD (fun w : Vertex m => w.1) A := by
+  have hbd : BD (fun w : WSG m => w.1) (sgK m θ ax o) := blockK_BD _
+  have hxs : ∀ A, A ∈ ([sgK m θ ax o ^ a] : List (Matrix (WSG m) (WSG m) ℂ)) →
+      BD (fun w : WSG m => w.1) A := by
     intro A hA
     simp only [List.mem_singleton] at hA
     simpa [hA] using (BD_pow (sgK m θ ax o) hbd a)
-  have hys : ∀ A, A ∈ ([sgK m θ ax o ^ c] : List (Matrix (Vertex m) (Vertex m) ℂ)) →
-      BD (fun w : Vertex m => w.1) A := by
+  have hys : ∀ A, A ∈ ([sgK m θ ax o ^ c] : List (Matrix (WSG m) (WSG m) ℂ)) →
+      BD (fun w : WSG m => w.1) A := by
     intro A hA
     simp only [List.mem_singleton] at hA
     simpa [hA] using (BD_pow (sgK m θ ax o) hbd c)
-  have hzs : ∀ A, A ∈ ([sgK m θ ax o ^ d] : List (Matrix (Vertex m) (Vertex m) ℂ)) →
-      BD (fun w : Vertex m => w.1) A := by
+  have hzs : ∀ A, A ∈ ([sgK m θ ax o ^ d] : List (Matrix (WSG m) (WSG m) ℂ)) →
+      BD (fun w : WSG m => w.1) A := by
     intro A hA
     simp only [List.mem_singleton] at hA
     simpa [hA] using (BD_pow (sgK m θ ax o) hbd d)
   simpa using trace_three_N_word_zero (sgGlue m)
-    ([sgK m θ ax o ^ a] : List (Matrix (Vertex m) (Vertex m) ℂ))
-    ([sgK m θ ax o ^ c] : List (Matrix (Vertex m) (Vertex m) ℂ))
-    ([sgK m θ ax o ^ d] : List (Matrix (Vertex m) (Vertex m) ℂ))
+    ([sgK m θ ax o ^ a] : List (Matrix (WSG m) (WSG m) ℂ))
+    ([sgK m θ ax o ^ c] : List (Matrix (WSG m) (WSG m) ℂ))
+    ([sgK m θ ax o ^ d] : List (Matrix (WSG m) (WSG m) ℂ))
     (sgK m θ ax o ^ b) hxs hys hzs (BD_pow (sgK m θ ax o) hbd b) hkg
 
 end EvgenyTheorem
