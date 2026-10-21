@@ -757,3 +757,31 @@ needed corner conditions, preserve the order of factors, and account for the
 complete boundary contribution before the residual moment identities can be
 claimed. The new regression test passed with the Python 3.11 and 3.12 CI jobs;
 the Lean build also passed on the same source state.
+
+## 4p. Arbitrary-power glued-corner condition is now formalized
+
+The current working branch contains
+`sgK_pow_GlueDiag_of_OAnti` in `formalization/EvgenyTheorem/GlueCorner.lean`.
+Under the explicit hypothesis `OAnti (m + 1) o`, it proves
+`GlueDiag (sgGlue m) (sgK m θ ax o ^ n)` for every natural exponent `n`.
+The same-coordinate case is discharged by Hermiticity of each concrete copy
+operator and quaternionic spin-block cancellation for every power; the
+distinct-coordinate case uses the glued-partner injectivity property. This is
+stronger than the coordinate-distance support estimate and supplies the
+spin/copy-resolved corner premise that must not be inferred from block
+diagonality alone.
+
+Consequently, for the listed three-pairing gap classes at p = 6, 8, and 10,
+the conditional ordered reduction `trace_three_N_word_zero` can use its
+middle-power corner premise under `OAnti (m + 1) o`; the canonical gap
+enumeration and orbit multiplicities remain checked by the Python regression
+tests. This resolves the *corner-hypothesis obligation* for those classes
+conditionally. It does not prove the full trace identity or residual recurrence:
+the complete ordered boundary contribution for strata r >= 6, the base
+transition, and level propagation still require proof. The p = 6, 8, 10
+all-level residual identity remains conjectural.
+
+This section supersedes earlier status sentences in Sections 4j–4o that
+describe same-coordinate/different-spin arbitrary-power corner vanishing as
+open. Those sections remain useful as a record of the development and of the
+separate coordinate-support and numerical-convention audits.
