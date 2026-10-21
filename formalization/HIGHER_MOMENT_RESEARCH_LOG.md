@@ -733,3 +733,27 @@ Strata with six or more `K*N` factors remain outside the current generic
 reductions. The residual identities for `p = 6, 8, 10` remain conjectural
 until the higher-pairing strata, complete boundary collection, and
 level-propagation argument are proved.
+
+
+## 4ae. Regression coverage for unresolved higher-pairing strata
+
+The inventory test now checks every ledger stratum with six or more
+`K*N` factors against the generated ordered-word representatives. For each
+such stratum it verifies the exact cyclic-class count, the sum of orbit sizes
+against the ordered-word count, canonical rotation of each representative,
+the number of `K*N` factors, and the cyclic gap tuple and its sum.
+
+The currently unresolved strata are:
+- p = 6: r = 6 (1 ordered word, 1 cyclic class);
+- p = 8: r = 6, 7, 8 (28, 8, and 1 ordered words);
+- p = 10: r = 6, 7, 8, 9, 10 (210, 120, 45, 10, and 1 ordered words).
+
+These checks close a bookkeeping/regression gap only. They do not establish
+that any of these trace contributions vanish, nor do they produce the missing
+boundary formula. In particular, block diagonality of K powers alone is not
+the required glued-corner off-diagonal hypothesis for the middle powers in
+`N * K^b * N`. A mathematical reduction for r >= 6 must state and prove the
+needed corner conditions, preserve the order of factors, and account for the
+complete boundary contribution before the residual moment identities can be
+claimed. The new regression test passed with the Python 3.11 and 3.12 CI jobs;
+the Lean build also passed on the same source state.
