@@ -427,13 +427,18 @@ theorem trace_five_N_powers_zero {cp : W → ι} (G : GlueData cp)
           Matrix.trace ((K ^ a * (G.N * K ^ b * G.N) * K ^ c *
             G.N * K ^ d * G.N * K ^ e * G.N) * K ^ f) := by
               simp only [Matrix.mul_assoc]
-      _ = Matrix.trace (K ^ f * (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
-            G.N * K ^ d * G.N * K ^ e * G.N)) :=
+      _ = Matrix.trace (K ^ f *
+            (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+              G.N * K ^ d * G.N * K ^ e * G.N) :=
+          Matrix.trace_mul_comm _ _
+      _ = Matrix.trace ((K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c) *
+            (G.N * K ^ d * G.N * K ^ e * G.N)) := by
+          simp only [Matrix.mul_assoc]
+      _ = Matrix.trace ((G.N * K ^ d * G.N * K ^ e * G.N) *
+            (K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c) ) :=
           Matrix.trace_mul_comm _ _
       _ = Matrix.trace (G.N * K ^ d * G.N * K ^ e * G.N *
-            (K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c) ) := by
-          simp only [Matrix.mul_assoc]
-          rw [Matrix.trace_mul_comm]
+            (K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c)) := by
           simp only [Matrix.mul_assoc]
   rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
       K ^ d * G.N * K ^ e * G.N * K ^ f =
