@@ -298,3 +298,35 @@ def test_unresolved_high_pairing_strata_keep_exact_gap_classes_and_orbit_weights
                 assert len(gaps) == r
                 assert sum(gaps) == p - r
                 assert row["orbit_size"] > 0
+
+
+def test_full_ledger_strata_match_binomial_word_counts_and_total_expansion():
+    """Every r-stratum must account for exactly binomial(p, r) ordered words."""
+    import json
+    from math import comb
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        p = entry["p"]
+        inventory = word_inventory(p)
+        assert inventory["total_words"] == 2**p
+        assert sum(int(row["orbit_size"]) for row in inventory["classes"]) == 2**p
+        strata = {row["kn_factor_count"]: row for row in entry["strata"]}
+        assert set(strata) == set(range(p + 1))
+        for r in range(p + 1):
+            class_rows = [
+                row for row in inventory["classes"]
+                if row["kn_factor_count"] == r
+            ]
+            assert len(class_rows) == strata[r]["cyclic_class_count"]
+            assert sum(int(row["orbit_size"]) for row in class_rows) == comb(p, r)
+            assert strata[r]["word_count"] == comb(p, r)
+        assert sum(row["word_count"] for row in entry["strata"]) == 2**p
+        assert sum(row["cyclic_class_count"] for row in entry["strata"]) == (
+            inventory["total_cyclic_classes"]
+        )
