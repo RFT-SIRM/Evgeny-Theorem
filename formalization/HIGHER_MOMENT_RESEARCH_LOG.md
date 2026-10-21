@@ -546,3 +546,19 @@ The orbit sizes sum to 2, 16, and 50 factor words respectively across the listed
 This calculation narrows the geometric obligation. Every required exponent is at most 6. For distinct geometric corner coordinates, sgK_pow_zero_of_distinct_glued_corner_coords therefore applies at every level m >= 3, since 6 < 2^m. The remaining same-copy corner condition is the same-coordinate/different-spin entry: exponent 2 is covered by sgK_hu2, while exponents 3, 4, 5, and 6 still require a proof. The generic Hermitian/quaternion-form helper in SU2.lean is only an algebraic endpoint; until the quaternionic block form is shown to be preserved by the concrete Hc powers, it does not discharge these hypotheses.
 
 **Status:** exact combinatorial mapping and multiplicities are recorded and regression-tested; the concrete same-coordinate spin cancellation for powers 3–6 and the full residual theorem remain open.
+
+
+## 4y. Concrete same-point spin cancellation after quaternion-form closure
+
+**Update for PR #8 head `ebfdf002a236d733de6343a7c0ac25099b7a5f9f` (2026-10-21):** the earlier Section 4x statement that same-coordinate spin cancellation for powers 3–6 remained unproved is superseded by the new Lean lemmas in this branch.
+
+The formal chain is:
+- `SU2QuaternionForm` and its multiplication/power closure in `SU2.lean`;
+- `pHeO_spinBlock_quaternionForm` and `Hc_spinBlock_quaternionForm` for the concrete local blocks;
+- `pOpO_hermitian_of_OAnti` and `Hc_hermitian_of_OAnti` under the explicit orientation-antisymmetry hypothesis;
+- `Hc_pow_samePoint_spinOffdiag_zero` and `Hc_pow_samePoint_spinOffdiag_zero_any`;
+- `sgK_pow_GlueDiag_of_OAnti`, transferring the all-natural-powers cancellation to the glued corner condition.
+
+The PR head has successful GitHub Actions evidence: Lean formalization run 178 and Python tests run 247, including both Python 3.11 and 3.12. Links: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39559293076 and https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39559293274.
+
+**Scope boundary:** this closes the concrete same-point spin-off-diagonal corner obligation under the stated hypotheses for the exponents used by the eight listed three-pairing classes. It does not itself derive the full higher-moment boundary formula, collect all ordered trace-word contributions into the final residual identity, or prove the level-propagation step. The all-level residual identities for p = 6, 8, 10 therefore remain conjectural until those separate obligations are machine-checked.
