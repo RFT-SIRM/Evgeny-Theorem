@@ -521,6 +521,7 @@ theorem trace_three_N_powers_of_OAnti
 Both middle exponents are below the side length, so the all-power spin
 cancellation and the distinct-corner support bound discharge the two required
 corner hypotheses. -/
+set_option maxHeartbeats 400000 in
 theorem trace_four_N_powers_explicit_of_OAnti
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
