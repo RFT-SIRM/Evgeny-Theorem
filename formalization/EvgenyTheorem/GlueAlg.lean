@@ -457,18 +457,22 @@ theorem trace_five_N_powers_zero {cp : W → ι} (G : GlueData cp)
       ([K ^ f, K ^ a, G.N * K ^ b * G.N, K ^ c] :
         List (Matrix W W ℂ)) → BD cp A := by
     intro A hA
-    simp only [List.mem_cons, List.mem_singleton] at hA
-    rcases hA with hA | hA | hA | hA
+    simp only [List.mem_cons] at hA
+    rcases hA with hA | hA
     · subst A
       exact BD_pow K hK f
-    · subst A
-      exact BD_pow K hK a
-    · subst A
-      exact hQ
-    · subst A
-      exact BD_pow K hK c
+    · rcases hA with hA | hA
+      · subst A
+        exact BD_pow K hK a
+      · rcases hA with hA | hA
+        · subst A
+          exact hQ
+        · rcases hA with hA | hA
+          · subst A
+            exact BD_pow K hK c
+          · simp at hA
   have hbd_d : BD cp (K ^ d) := BD_pow K hK d
-  simpa only [Matrix.mul_assoc] using (trace_three_N_word_zero G
+  simpa [List.prod_cons, Matrix.mul_assoc] using (trace_three_N_word_zero G
     ([] : List (Matrix W W ℂ))
     ([K ^ e] : List (Matrix W W ℂ))
     ([K ^ f, K ^ a, G.N * K ^ b * G.N, K ^ c] :
