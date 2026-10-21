@@ -429,7 +429,7 @@ theorem trace_five_N_powers_zero {cp : W → ι} (G : GlueData cp)
               simp only [Matrix.mul_assoc]
       _ = Matrix.trace (K ^ f *
             (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
-              G.N * K ^ d * G.N * K ^ e * G.N) :=
+              G.N * K ^ d * G.N * K ^ e * G.N)) :=
           Matrix.trace_mul_comm _ _
       _ = Matrix.trace ((K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c) *
             (G.N * K ^ d * G.N * K ^ e * G.N)) := by
