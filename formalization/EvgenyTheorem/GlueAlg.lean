@@ -622,6 +622,59 @@ theorem trace_four_N_powers_explicit {cp : W → ι} (G : GlueData cp)
         rw [hentry x]
       · simp [gx]
 
+/-- Six-pairing boundary reduction. Pairing consecutive N factors turns each
+`N * K^n * N` into a diagonal boundary factor, provided the corresponding
+corner-vanishing hypothesis is supplied. Cyclicity preserves the order of the
+three boundary factors and the intervening powers; this is a boundary formula,
+not a claim that the six-pairing stratum vanishes. -/
+theorem trace_six_N_powers_boundary {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e f g : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0)
+    (hkgF : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ f) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g) =
+    Matrix.trace (K ^ g * K ^ a *
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) *
+      K ^ c *
+      Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0) *
+      K ^ e *
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0)) := by
+  have hQb : G.N * K ^ b * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ b) (BD_pow K hK b) hkgB
+  have hQd : G.N * K ^ d * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ d) (BD_pow K hK d) hkgD
+  have hQf : G.N * K ^ f * G.N =
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0) :=
+    Q_eq_diag G (K ^ f) (BD_pow K hK f) hkgF
+  have hrotate :
+      Matrix.trace (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e * (G.N * K ^ f * G.N) * K ^ g) =
+      Matrix.trace (K ^ g * K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e * (G.N * K ^ f * G.N)) := by
+    calc
+      Matrix.trace ((K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+          (G.N * K ^ d * G.N) * K ^ e * (G.N * K ^ f * G.N)) * K ^ g) =
+          Matrix.trace (K ^ g *
+            (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+              (G.N * K ^ d * G.N) * K ^ e * (G.N * K ^ f * G.N)) ) :=
+        Matrix.trace_mul_comm _ _
+      _ = Matrix.trace (K ^ g * K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+          (G.N * K ^ d * G.N) * K ^ e * (G.N * K ^ f * G.N)) := by
+        simp only [Matrix.mul_assoc]
+  rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f * G.N * K ^ g =
+      K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+        (G.N * K ^ d * G.N) * K ^ e * (G.N * K ^ f * G.N) * K ^ g by
+      simp only [Matrix.mul_assoc]]
+  rw [hrotate, hQb, hQd, hQf]
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
