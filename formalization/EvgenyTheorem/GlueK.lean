@@ -195,7 +195,8 @@ theorem pOpO_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   change star (pHeO m θ ax o y.1.1 x.1.1 y.2 x.2) =
     pHeO m θ ax o x.1.1 y.1.1 x.2 y.2
   by_cases hpq : x.1.1 = y.1.1
-  · rw [hpq]
+  · have hxy : x.1 = y.1 := Subtype.ext hpq
+    rw [hxy]
     simp [pHeO_diag]
   · have hp : x.1.1 ∈ vertexOrder m := List.mem_toFinset.mp x.1.2
     have hq : y.1.1 ∈ vertexOrder m := List.mem_toFinset.mp y.1.2
