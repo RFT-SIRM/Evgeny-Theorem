@@ -644,3 +644,33 @@ This head removes the unused bound hypothesis from
 These results verify compilation and regression tests for this source state.
 They do not prove the final residual identities or level propagation for
 moments 6, 8, and 10; those obligations remain open.
+
+
+## 4aa. Three-pairing class coverage from the concrete Lean theorem
+
+The current `GlueCorner.lean` contains `trace_three_N_powers_of_OAnti`. Under `OAnti (m + 1) o`, it proves
+that an ordered three-`N` trace word vanishes whenever its middle power
+exponent `b` satisfies `b < 2^m`. The proof obtains the required
+corner hypothesis from the same-coordinate spin cancellation and the
+distinct-geometric-corner support bound.
+
+For the eight target gap classes recorded in the combinatorial regression
+test, the middle-power exponents are respectively:
+- p = 6: 2;
+- p = 8: 2 and 3;
+- p = 10: 2, 5, 3, 4, and 3.
+
+Thus each target middle exponent is at most 5 and is strictly below
+`2^m` for every `m >= 3`. Subject to the theorem's explicit orientation-
+antisymmetry hypothesis, the generic Lean theorem therefore covers the
+three-pairing trace words represented by these classes. This is a conditional
+formal result, not a proof that orientation antisymmetry holds for every
+input, and not a proof of the full moment identity.
+
+The inventory regression test independently checks the gap-to-exponent
+mapping and orbit multiplicities (2, 16, and 50 represented words for the
+listed classes at p = 6, 8, and 10). It remains necessary to connect this
+class-level coverage to the complete ordered expansion and its coefficients,
+then discharge the remaining higher-pairing strata and prove the level-
+propagation argument. The all-level residual identities for p = 6, 8, 10
+remain open.
