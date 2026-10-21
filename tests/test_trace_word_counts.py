@@ -503,3 +503,42 @@ def test_even_pairing_boundary_strata_are_not_mislabeled_as_zero():
             ]
             assert len(inventory_rows) == row["cyclic_class_count"]
             assert sum(int(x["orbit_size"]) for x in inventory_rows) == row["word_count"]
+
+
+def test_top_even_stratum_boundary_arithmetic_is_explicitly_conditional():
+    """Under 12 support states and corner degree 2, the all-pairing term is 12*2**p.
+
+    This checks the arithmetic recorded in the research log; it does not assert
+    that the full p-moment residual vanishes or that Lean has proved the
+    geometric support/degree premises.
+    """
+    import json
+    from pathlib import Path
+
+    expected = {6: 768, 8: 3072, 10: 12288}
+    root = Path(__file__).resolve().parents[1]
+    log = (root / "formalization" / "HIGHER_MOMENT_RESEARCH_LOG.md").read_text(
+        encoding="utf-8"
+    )
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for p, value in expected.items():
+        # p support states contribute (degree K)^p times (partner degree)^p
+        # = 2**(2*p) would be incorrect: there are p K factors and p diagonal
+        # boundary factors in total, each diagonal factor contributes degree 2,
+        # so the product is 2**p per state.
+        assert 12 * (2**p) == value
+        entry = next(row for row in ledger if row["p"] == p)
+        top = next(row for row in entry["strata"] if row["kn_factor_count"] == p)
+        assert top["word_count"] == 1
+        assert top["cyclic_class_count"] == 1
+        assert top["reduction_status"] == (
+            "explicit_six_N_boundary_formula_under_OAnti"
+            if p == 6
+            else "explicit_eight_N_boundary_formula_under_OAnti"
+            if p == 8
+            else "explicit_ten_N_boundary_formula_under_OAnti"
+        )
+        assert "not a vanishing claim" in log or "not zero" in log
