@@ -123,6 +123,22 @@ noncomputable def Hc (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Poi
   | .B => fun x y => pHeO m θ ax (oBo m o) x.1.1 y.1.1 x.2 y.2
   | .C => fun x y => pHeO m θ ax (oCo m o) x.1.1 y.1.1 x.2 y.2
 
+/-- Every local spin block of each copy operator has quaternionic form.
+This is the concrete input needed to apply the abstract spin-block power lemma. -/
+theorem Hc_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (c : GCopy) (p q : Pt m) :
+    SU2QuaternionForm (spinBlock (Hc m θ ax o c) p q) := by
+  cases c with
+  | A =>
+      simpa [spinBlock, Hc, pHeO_spinBlock] using
+        (pHeO_spinBlock_quaternionForm m θ ax o p.1 q.1)
+  | B =>
+      simpa [spinBlock, Hc, pHeO_spinBlock] using
+        (pHeO_spinBlock_quaternionForm m θ ax (oBo m o) p.1 q.1)
+  | C =>
+      simpa [spinBlock, Hc, pHeO_spinBlock] using
+        (pHeO_spinBlock_quaternionForm m θ ax (oCo m o) p.1 q.1)
+
 /-- The block-diagonal operator on three disjoint copies. -/
 noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
