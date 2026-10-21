@@ -282,7 +282,7 @@ theorem sgK_pow_GlueDiag_of_OAnti
     rw [e]
     have hzero := Hc_pow_samePoint_spinOffdiag_zero_any
       m θ ax o hanti w.1 n w.2.1 w.2.2 w'.2.2 hs
-    simpa [hpt] using hzero
+    simpa only [← hpt] using hzero
   · exfalso
     have h1 := (glW_sgσ hw).1
     have h2 := (glW_sgσ hw').1
