@@ -487,27 +487,23 @@ theorem trace_four_N_powers {cp : W → ι} (G : GlueData cp)
   have hQ : BD cp (G.N * K ^ b * G.N) := by
     rw [Q_eq_diag G (K ^ b) hbdB hkgB]
     exact BD_diagonal _
-  have hxs : ∀ A, A ∈
-      ([K ^ a, G.N * K ^ b * G.N, K ^ c] : List (Matrix W W ℂ)) → BD cp A := by
-    intro A hA
-    simp only [List.mem_cons, List.mem_singleton] at hA
-    rcases hA with hA | hA | hA
-    · subst A
-      exact BD_pow K hK a
-    · subst A
-      exact hQ
-    · subst A
-      exact BD_pow K hK c
-  have hys : ∀ A, A ∈ ([K ^ e] : List (Matrix W W ℂ)) → BD cp A := by
-    intro A hA
-    simp only [List.mem_singleton] at hA
-    subst A
-    exact BD_pow K hK e
-  have hformula := trace_two_N_word G
-    ([K ^ a, G.N * K ^ b * G.N, K ^ c] : List (Matrix W W ℂ))
-    ([K ^ e] : List (Matrix W W ℂ)) (K ^ d)
-    hxs hys (BD_pow K hK d) hkgD
-  simpa [List.prod_cons, Matrix.mul_assoc] using hformula
+  have hrot :
+      Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ e) =
+      Matrix.trace ((K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c) *
+        G.N * K ^ d * G.N) := by
+    calc
+      _ = Matrix.trace ((K ^ a * (G.N * K ^ b * G.N) * K ^ c * G.N * K ^ d * G.N) * K ^ e) := by
+        simp only [Matrix.mul_assoc]
+      _ = Matrix.trace (K ^ e *
+          (K ^ a * (G.N * K ^ b * G.N) * K ^ c * G.N * K ^ d * G.N)) :=
+        Matrix.trace_mul_comm _ _
+      _ = Matrix.trace ((K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c) *
+          G.N * K ^ d * G.N) := by
+        simp only [Matrix.mul_assoc]
+  rw [hrot]
+  exact trace_two_N_word G
+    ([K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c] : List (Matrix W W ℂ))
+    ([] : List (Matrix W W ℂ)) (K ^ d) (BD_pow K hK d) hkgD
 
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
