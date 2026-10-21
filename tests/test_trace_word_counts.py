@@ -575,9 +575,9 @@ def test_even_pairing_cyclic_class_counts_are_pinned():
     from pathlib import Path
 
     expected = {
-        6: {2: 3, 4: 3, 6: 1},
-        8: {2: 4, 4: 10, 6: 4, 8: 1},
-        10: {2: 5, 4: 22, 6: 22, 8: 5, 10: 1},
+        6: {2: (3, 15), 4: (3, 15), 6: (1, 1)},
+        8: {2: (4, 28), 4: (10, 70), 6: (4, 28), 8: (1, 1)},
+        10: {2: (5, 45), 4: (22, 210), 6: (22, 210), 8: (5, 45), 10: (1, 1)},
     }
     root = Path(__file__).resolve().parents[1]
     ledger = json.loads(
@@ -590,17 +590,14 @@ def test_even_pairing_cyclic_class_counts_are_pinned():
     )
     for p, expected_by_r in expected.items():
         entry = next(row for row in ledger if row["p"] == p)
-        actual = {
-            row["kn_factor_count"]: row["cyclic_class_count"]
-            for row in entry["strata"]
-            if row["kn_factor_count"] % 2 == 0 and row["kn_factor_count"] > 0
-        }
-        assert actual == expected_by_r
         inventory = next(row for row in inventories if row["p"] == p)
-        for r, class_count in expected_by_r.items():
+        ledger_by_r = {row["kn_factor_count"]: row for row in entry["strata"]}
+        for r, (class_count, word_count) in expected_by_r.items():
             classes = [
                 row for row in inventory["classes"]
                 if row["kn_factor_count"] == r
             ]
             assert len(classes) == class_count
-            assert sum(int(row["orbit_size"]) for row in classes) == entry["strata"][r]["word_count"] if False else True
+            assert sum(int(row["orbit_size"]) for row in classes) == word_count
+            assert ledger_by_r[r]["cyclic_class_count"] == class_count
+            assert ledger_by_r[r]["word_count"] == word_count
