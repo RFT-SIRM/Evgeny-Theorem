@@ -206,14 +206,31 @@ K powers kept as block-diagonal exterior factors.
 | 8 | 7 | 5 | (1,1,3), (1,2,2) |
 | 10 | 12 | 7 | (1,1,5), (1,4,2), (1,2,4), (1,3,3), (2,2,3) |
 
-This split is checked against the generator by
-`test_three_pairing_classes_split_by_unit_cyclic_gap`. It certifies the
-classification and exact cyclic representatives, not the matrix-trace theorem
-itself. For each remaining tuple, every gap is positive, so the middle powers
-between N factors are at least K^2. The existing hypothesis on K does not imply
-the needed corner-vanishing condition for these powers. The next mathematical
-obligation is to prove or refute those specific higher-power conditions from
-the concrete graph/operator definitions, rather than assume them.
+This split is checked against the exact ordered-word generator by
+`test_three_pairing_classes_split_by_unit_gap_and_positive_gap_cases` and
+`test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity`.
+The latter ties each canonical gap tuple to an actual canonical ordered word,
+its three `K*N` factors, the middle exponents (gap + 1), and the exact orbit
+weight.
+
+**Updated resolution under an explicit hypothesis.** The concrete operator
+argument is now formalized in `GlueCorner.lean`: orientation antisymmetry
+makes each copy operator Hermitian; quaternionic spin-block closure then gives
+same-point, opposite-spin vanishing for every natural power; and
+`sgK_pow_GlueDiag_of_OAnti` transfers this to the glued operator. Therefore
+the middle-power corner condition is proved for every exponent under
+`OAnti (m + 1) o`, rather than inferred from block diagonality. For each
+remaining tuple, rotate the cyclic word so that its smallest gap is the middle
+power. Since the three nonnegative gaps sum to p - 3, this exponent is at most
+`floor((p - 3)/3) + 1 <= 3 < 2^m` for p in {6,8,10} and m >= 3. The existing
+conditional Lean reduction `trace_three_N_word_zero_of_OAnti` then applies.
+The five tuples listed above are thus conditionally covered; their exact
+representatives and orbit multiplicities remain regression-tested.
+
+This resolves the r=3 gap-class obligation **under the stated orientation
+antisymmetry hypothesis**. It does not resolve the separate even-stratum
+boundary sums for r=6,8,10, the finite base transition, or level propagation.
+No unconditional all-level p-moment identity is claimed.
 
 ## 4g. Support-by-distance reduction and the remaining spin obstruction
 
