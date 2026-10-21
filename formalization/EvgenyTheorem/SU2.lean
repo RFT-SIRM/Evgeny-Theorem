@@ -320,7 +320,8 @@ theorem spinBlock_mul {X : Type*} [Fintype X]
     spinBlock (A * B) p q = ∑ x : X, spinBlock A p x * spinBlock B x q := by
   classical
   ext i j
-  simp [spinBlock, Matrix.mul_apply, Fintype.sum_prod_type, Fin.sum_univ_two]
+  simp [spinBlock, Matrix.mul_apply, Fintype.sum_prod_type, Fin.sum_univ_two,
+    Matrix.sum_apply]
 
 /-- If every geometric spin block of M has quaternionic form, then the same is
 true for every geometric spin block of every natural power of M. This is the
@@ -336,8 +337,20 @@ theorem spinBlock_pow_quaternionForm {X : Type*} [Fintype X] [DecidableEq X]
       intro p q
       by_cases hpq : p = q
       · subst q
-        simpa [spinBlock, Matrix.one_apply, Prod.ext_iff] using SU2QuaternionForm_one
-      · simpa [spinBlock, Matrix.one_apply, Prod.ext_iff, hpq] using SU2QuaternionForm_zero
+        have hblock :
+            spinBlock (1 : Matrix (X × C2) (X × C2) ℂ) p p =
+              (1 : Matrix C2 C2 ℂ) := by
+          ext i j
+          simp [spinBlock, Matrix.one_apply, Prod.ext_iff]
+        rw [hblock]
+        exact SU2QuaternionForm_one
+      · have hblock :
+            spinBlock (1 : Matrix (X × C2) (X × C2) ℂ) p q =
+              (0 : Matrix C2 C2 ℂ) := by
+          ext i j
+          simp [spinBlock, Matrix.one_apply, Prod.ext_iff, hpq]
+        rw [hblock]
+        exact SU2QuaternionForm_zero
   | succ n ih =>
       intro p q
       rw [pow_succ, spinBlock_mul]
