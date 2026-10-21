@@ -922,4 +922,31 @@ This is a proof target and an algebraic diagnostic, not yet a committed Lean
 lemma or a CI-verified conclusion. In particular, it does not establish the
 full p=6 residual identity: any required cancellation with other strata would
 need a separate identity preserving the ordered-word multiplicities.
+## 4v. p=6 boundary: diagonal support is available from existing corner lemmas
 
+The diagonal-support premise identified in Section 4u follows from existing
+formalized facts for the concrete operator when `1 ≤ m`: `sgK_hkg` makes
+`sgK w w' = 0` for distinct glued states in the same copy, and `blockK_BD`
+makes the entry zero when the copy indices differ. Thus the restriction of
+`K = sgK m θ ax o` to the support of `(sgGlue m).g` is diagonal; this is a
+consequence of the existing lemmas, not an additional geometric conjecture.
+
+Algebraically, with
+`D = diagonal (fun w => if (sgGlue m).g w then
+  K ((sgGlue m).σ w) ((sgGlue m).σ w) else 0)`,
+expanding the trace and using that support-diagonality forces the three
+indices to coincide gives
+`trace (K * D * K * D * K * D) =
+ ∑ w, if (sgGlue m).g w then
+   (K w w)^3 * (K ((sgGlue m).σ w) ((sgGlue m).σ w))^3 else 0`.
+By `sgK_diag`, each diagonal K entry is the degree of its underlying local
+point. This identifies the p=6, r=6 term as a degree-weighted boundary sum,
+not a term that vanishes by the corner hypotheses alone.
+
+The equality above has been derived from the definitions and existing lemmas
+as an algebraic proof target, but has **not** yet been added as a Lean theorem.
+No numerical value or cancellation with other strata is claimed. The current
+Lean and Python CI passed for documentation commit
+`6791424dc4bad8d71127c257dc6e8e164a8fbc90`; a new source-level proof and its
+CI verification are still needed before this reduction can be treated as
+machine-checked.
