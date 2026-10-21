@@ -195,3 +195,22 @@ def test_three_pairing_stratum_is_covered_by_conditional_lean_corner_lemma():
             middle_exponent = min(gaps) + 1
             assert middle_exponent <= 3
             assert middle_exponent < 2**3
+
+
+def test_four_pairing_stratum_fits_explicit_boundary_formula_bounds():
+    """For p<=10 and m>=3, every four-N cyclic word has admissible b,d."""
+    for p in (6, 8, 10):
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 4
+        ]
+        for row in rows:
+            gaps = row["cyclic_gap_representative"]
+            assert len(gaps) == 4
+            assert sum(gaps) == p - 4
+            exponents = [gap + 1 for gap in gaps]
+            assert all(1 <= exponent <= p - 3 for exponent in exponents)
+            # The explicit Lean theorem needs two selected exponents below 2**m;
+            # here all four satisfy this for the minimal relevant m=3.
+            assert all(exponent < 2**3 for exponent in exponents)
+            assert row["representative"].count("K*N") == 4
