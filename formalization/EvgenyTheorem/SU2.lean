@@ -206,12 +206,12 @@ theorem SU2QuaternionForm_add {A B : Matrix C2 C2 ℂ}
   rcases hB with ⟨hB01, hB00⟩
   constructor <;>
     simp [SU2QuaternionForm, Matrix.add_apply, hA01, hA00,
-      hB01, hB00, star_add]
+      hB01, hB00, star_add] <;> ring
 
 /-- Quaternionic block form is preserved by conjugate transpose. -/
 theorem SU2QuaternionForm_conjTranspose {M : Matrix C2 C2 ℂ}
     (hM : SU2QuaternionForm M) :
-    SU2QuaternionForm Mᴴ := by
+    SU2QuaternionForm (Matrix.conjTranspose M) := by
   rcases hM with ⟨h01, h00⟩
   constructor <;>
     simp [SU2QuaternionForm, Matrix.conjTranspose_apply,
