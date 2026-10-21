@@ -174,6 +174,21 @@ noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Po
     [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
   blockK (Hc m θ ax o)
 
+/-! ### Transfer of copy-level cancellation to the glued index set -/
+
+/-- Same-point opposite-spin entries also vanish in every power of the
+three-copy block operator, provided each copy operator is Hermitian. -/
+theorem sgK_pow_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hH : ∀ c : GCopy, Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c)
+    (c : GCopy) (n : ℕ) (p : Pt m) :
+    (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
+  rw [sgK, blockK_pow]
+  change (blockK (fun c' => Hc m θ ax o c' ^ n))
+      (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0
+  simp only [blockK, if_pos rfl]
+  exact Hc_pow_samePoint_spinOffdiag_zero m θ ax o hH c n p
+
 /-- Generic evaluation of one copy's contribution. -/
 theorem copy_gen (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (oo : Point → Point → Prop) [DecidableRel oo]
     (c : GCopy) (P : Point → Prop) [DecidablePred P] (un : Point → Point)
