@@ -970,3 +970,23 @@ as a derived diagnostic, not as a CI-verified theorem or as a disproof of the
 full residual identity: cancellation against other strata remains logically
 possible and would require a separate weighted identity preserving all orbit
 multiplicities.
+
+
+## 4x. Same all-pairing arithmetic for p=8 and p=10 (conditional)
+
+For the top even strata r=p, every cyclic gap is one. Under the same
+support-diagonality and corner-degree assumptions recorded in 4w, the
+all-pairing boundary sum has p factors from K and p corresponding diagonal
+corner factors. Each support state contributes
+`2^p`, and the 12 support states therefore contribute `12 * 2^p`.
+The resulting diagnostic values are:
+
+- p=8, r=8: `12 * 2^8 = 3,072`.
+- p=10, r=10: `12 * 2^10 = 12,288`.
+
+These are conditional evaluations of the all-pairing boundary terms, not
+machine-checked Lean theorems. They show that the top even stratum itself
+does not vanish under the stated degree assumptions. They do not rule out
+cancellation with lower-r strata in the full p=8 or p=10 residual identity;
+that requires the complete weighted sum over all ordered representatives
+and their orbit multiplicities. No such cross-stratum cancellation is claimed.
