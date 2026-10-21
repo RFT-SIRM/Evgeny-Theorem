@@ -196,6 +196,43 @@ theorem oanti_C (m : ℕ) (o : Point → Point → Prop) (hanti : OAnti (m + 1) 
     fun h => hpq (GCopy.shift_inj m GCopy.C h)
   exact hanti _ _ (GCopy.shift_mem m GCopy.C hp) (GCopy.shift_mem m GCopy.C hq) hne
 
+/-! ### Hermiticity of the concrete copy operators -/
+
+/-- Antisymmetry at level m + 1 descends to each copy orientation, so each
+concrete copy operator is Hermitian. This discharges the operator-level premise
+used by the all-powers spin-block cancellation lemma. -/
+theorem Hc_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (c : GCopy) :
+    Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c := by
+  cases c with
+  | A =>
+      change Matrix.conjTranspose (pOpO m θ ax o) = pOpO m θ ax o
+      exact pOpO_hermitian_of_OAnti m θ ax o (oanti_A m o hanti)
+  | B =>
+      change Matrix.conjTranspose (pOpO m θ ax (oBo m o)) =
+        pOpO m θ ax (oBo m o)
+      exact pOpO_hermitian_of_OAnti m θ ax (oBo m o) (oanti_B m o hanti)
+  | C =>
+      change Matrix.conjTranspose (pOpO m θ ax (oCo m o)) =
+        pOpO m θ ax (oCo m o)
+      exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (oanti_C m o hanti)
+
+/-- For every natural power, the same-point opposite-spin entry in a glued
+copy vanishes under the original level's orientation-antisymmetry hypothesis.
+This combines concrete Hermiticity with quaternionic spin-block closure. -/
+theorem sgK_pow_samePoint_spinOffdiag_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (c : GCopy) (n : ℕ) (p : Pt m) :
+    (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
+  apply sgK_pow_samePoint_spinOffdiag_zero m θ ax o
+  · intro c'
+    exact Hc_hermitian_of_OAnti m θ ax o hanti c'
+  · exact c
+  · exact n
+  · exact p
+
 theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
     (hab : a.1.1 = b.1.1) (hs : a.2 ≠ b.2) :
