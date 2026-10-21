@@ -198,6 +198,25 @@ theorem SU2QuaternionForm_neg {M : Matrix C2 C2 ℂ}
   rcases hM with ⟨h01, h00⟩
   constructor <;> simp [SU2QuaternionForm, h01, h00, star_neg, Matrix.neg_apply]
 
+/-- Quaternionic block form is closed under addition. -/
+theorem SU2QuaternionForm_add {A B : Matrix C2 C2 ℂ}
+    (hA : SU2QuaternionForm A) (hB : SU2QuaternionForm B) :
+    SU2QuaternionForm (A + B) := by
+  rcases hA with ⟨hA01, hA00⟩
+  rcases hB with ⟨hB01, hB00⟩
+  constructor <;>
+    simp [SU2QuaternionForm, Matrix.add_apply, hA01, hA00,
+      hB01, hB00, star_add]
+
+/-- Quaternionic block form is preserved by conjugate transpose. -/
+theorem SU2QuaternionForm_conjTranspose {M : Matrix C2 C2 ℂ}
+    (hM : SU2QuaternionForm M) :
+    SU2QuaternionForm Mᴴ := by
+  rcases hM with ⟨h01, h00⟩
+  constructor <;>
+    simp [SU2QuaternionForm, Matrix.conjTranspose_apply,
+      h01, h00, star_neg, star_star]
+
 theorem SU2QuaternionForm_mul {A B : Matrix C2 C2 ℂ}
     (hA : SU2QuaternionForm A) (hB : SU2QuaternionForm B) :
     SU2QuaternionForm (A * B) := by
