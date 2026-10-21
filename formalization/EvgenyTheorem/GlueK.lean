@@ -130,14 +130,14 @@ theorem Hc_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     SU2QuaternionForm (spinBlock (Hc m θ ax o c) p q) := by
   cases c with
   | A =>
-      simpa [spinBlock, Hc, pHeO_spinBlock] using
-        (pHeO_spinBlock_quaternionForm m θ ax o p.1 q.1)
+      change SU2QuaternionForm (pHeO_spinBlock m θ ax o p.1 q.1)
+      exact pHeO_spinBlock_quaternionForm m θ ax o p.1 q.1
   | B =>
-      simpa [spinBlock, Hc, pHeO_spinBlock] using
-        (pHeO_spinBlock_quaternionForm m θ ax (oBo m o) p.1 q.1)
+      change SU2QuaternionForm (pHeO_spinBlock m θ ax (oBo m o) p.1 q.1)
+      exact pHeO_spinBlock_quaternionForm m θ ax (oBo m o) p.1 q.1
   | C =>
-      simpa [spinBlock, Hc, pHeO_spinBlock] using
-        (pHeO_spinBlock_quaternionForm m θ ax (oCo m o) p.1 q.1)
+      change SU2QuaternionForm (pHeO_spinBlock m θ ax (oCo m o) p.1 q.1)
+      exact pHeO_spinBlock_quaternionForm m θ ax (oCo m o) p.1 q.1
 
 /-- The block-diagonal operator on three disjoint copies. -/
 noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
