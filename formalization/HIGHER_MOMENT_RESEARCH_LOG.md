@@ -785,3 +785,28 @@ This section supersedes earlier status sentences in Sections 4j–4o that
 describe same-coordinate/different-spin arbitrary-power corner vanishing as
 open. Those sections remain useful as a record of the development and of the
 separate coordinate-support and numerical-convention audits.
+
+## 4q. Six-pairing boundary formula (conditional; cancellation not proved)
+
+Added `trace_six_N_powers_boundary` in `formalization/EvgenyTheorem/GlueAlg.lean`.
+For an ordered word with six pairing factors, it groups the word into three
+`N * K^n * N` blocks and uses the explicit corner hypotheses for their three
+middle powers. Under these hypotheses, each block is replaced by its diagonal
+boundary matrix, and the trace is reduced to a trace of the three diagonal
+boundary factors separated by the original intervening powers of `K`.
+No commutation of the intervening powers is assumed.
+
+For p = 6, 8, 10 and r = 6, the cyclic gap exponents are at most
+`p - r + 1 <= 5 < 2^m` for m >= 3. Thus the conditional all-power corner
+lemma `sgK_pow_GlueDiag_of_OAnti` supplies the three corner premises under
+`OAnti (m + 1) o`. The reduction ledger now marks r = 6 as
+`explicit_six_N_boundary_formula_under_OAnti`, preserving its ordered-word
+counts and orbit multiplicities: (p=6: 1 word / 1 cyclic class), (p=8: 28 /
+4), (p=10: 210 / 22). Regression tests enforce this classification and do
+not assert that the resulting boundary trace cancels.
+
+This advances the explicit boundary reduction by one pairing stratum, but
+does not resolve the r = 6 contribution to the residual identity. Strata
+r >= 7 still lack a generic ordered multi-pairing reduction in this branch.
+The base transition and level propagation also remain unproved; the p = 6, 8,
+10 all-level residual identity remains conjectural.
