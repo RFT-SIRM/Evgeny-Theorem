@@ -111,9 +111,10 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
         assert statuses[3] == "vanishes_by_three_N_corner_lemma_under_OAnti"
         assert statuses[4] == "explicit_four_N_boundary_formula_under_OAnti"
         assert statuses[5] == "vanishes_by_five_N_corner_lemma_under_OAnti"
+        assert statuses[6] == "explicit_six_N_boundary_formula_under_OAnti"
         assert all(
             statuses[r] == "not_covered_by_current_generic_reductions"
-            for r in range(6, p + 1)
+            for r in range(7, p + 1)
         )
         for row in entry["strata"]:
             r = row["kn_factor_count"]
@@ -123,7 +124,12 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
             ]
             assert len(inventory_rows) == row["cyclic_class_count"]
             assert sum(int(item["orbit_size"]) for item in inventory_rows) == row["word_count"]
-            if r >= 6:
+            if r == 6:
+                note = row["reduction_note"]
+                assert "trace_six_N_powers_boundary" in note
+                assert "does not prove cancellation or vanishing" in note
+                assert "Do not infer the p-moment identity" in note
+            if r >= 7:
                 note = row["reduction_note"]
                 assert "conditional all-power glued-corner theorem under OAnti" in note
                 assert "multi-pairing trace reduction" in note
@@ -330,3 +336,30 @@ def test_full_ledger_strata_match_binomial_word_counts_and_total_expansion():
         assert sum(row["cyclic_class_count"] for row in entry["strata"]) == (
             inventory["cyclic_classes"]
         )
+
+
+def test_six_pairing_stratum_has_explicit_conditional_boundary_formula():
+    """Six N factors have a formula, not an asserted cancellation."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    expected = {6: (1, 1), 8: (28, 4), 10: (210, 22)}
+    for entry in ledger:
+        p = entry["p"]
+        row = next(s for s in entry["strata"] if s["kn_factor_count"] == 6)
+        assert (row["word_count"], row["cyclic_class_count"]) == expected[p]
+        assert row["reduction_status"] == "explicit_six_N_boundary_formula_under_OAnti"
+        assert "does not prove cancellation or vanishing" in row["reduction_note"]
+        rows = [x for x in word_inventory(p)["classes"] if x["kn_factor_count"] == 6]
+        assert len(rows) == row["cyclic_class_count"]
+        assert sum(int(x["orbit_size"]) for x in rows) == row["word_count"]
+        for item in rows:
+            exponents = [gap + 1 for gap in item["cyclic_gap_representative"]]
+            assert len(exponents) == 6
+            assert max(exponents) <= 5
+            assert max(exponents) < 2**3
