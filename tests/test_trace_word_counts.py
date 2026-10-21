@@ -105,9 +105,10 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
         assert statuses[1] == "vanishes_by_existing_one_N_lemma"
         assert statuses[2] == "two_N_formula_with_corner_hypothesis"
         assert statuses[3] == "vanishes_by_three_N_corner_lemma_under_OAnti"
+        assert statuses[4] == "explicit_four_N_boundary_formula_under_OAnti"
         assert all(
             statuses[r] == "not_covered_by_current_generic_reductions"
-            for r in range(4, p + 1)
+            for r in range(5, p + 1)
         )
 
 def test_three_pairing_classes_split_by_unit_cyclic_gap():
