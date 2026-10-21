@@ -197,7 +197,7 @@ theorem pOpO_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   by_cases hpq : x.1.1 = y.1.1
   · have hxy : x.1 = y.1 := Subtype.ext hpq
     rw [hxy]
-    simp [pHeO_diag]
+    simp [pHeO_diag, eq_comm]
   · have hp : x.1.1 ∈ vertexOrder m := List.mem_toFinset.mp x.1.2
     have hq : y.1.1 ∈ vertexOrder m := List.mem_toFinset.mp y.1.2
     by_cases hE : EdgeB m x.1.1.1 x.1.1.2 y.1.1.1 y.1.1.2 = true
