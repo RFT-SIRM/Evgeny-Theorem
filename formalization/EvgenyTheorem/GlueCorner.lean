@@ -314,7 +314,7 @@ theorem trace_three_N_powers_of_OAnti
       intro hsame
       have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
       have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-        simpa [hc, hsame] using h2
+        simpa [hcopy, hsame] using h2
       have huniq := gl_unique m h1' h2'
       exact hpartner huniq.1
     exact sgK_pow_zero_of_distinct_glued_corner_coords
