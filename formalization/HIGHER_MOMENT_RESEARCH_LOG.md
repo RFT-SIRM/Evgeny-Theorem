@@ -810,3 +810,21 @@ does not resolve the r = 6 contribution to the residual identity. Strata
 r >= 7 still lack a generic ordered multi-pairing reduction in this branch.
 The base transition and level propagation also remain unproved; the p = 6, 8,
 10 all-level residual identity remains conjectural.
+
+## 4r. Conditional seven-pairing vanishing
+
+Added `trace_seven_N_powers_zero` in `formalization/EvgenyTheorem/GlueAlg.lean`.
+The proof turns two selected `N * K^n * N` subwords into diagonal boundary
+blocks and then applies `trace_three_N_word_zero` to the three remaining
+pairing factors. The corner premises for the three selected middle powers are
+explicit; under `OAnti (m + 1) o`, they are discharged by the all-power
+`sgK_pow_GlueDiag_of_OAnti` theorem.
+
+For p = 8 and 10, every exponent in the r = 7 stratum is at most
+`p - r + 1 <= 4 < 2^m` for m >= 3. The ledger now records conditional
+vanishing for r = 7, preserving counts and orbit multiplicities (p=8: 8
+ordered words / 1 cyclic class; p=10: 120 / 12). Python regression tests check
+these values and the conditional status. This closes the r = 7 reduction
+obligation under the stated orientation hypothesis; r = 6 remains an explicit
+boundary formula, while r >= 8 still need further reductions. The residual
+identity and its level propagation remain conjectural.
