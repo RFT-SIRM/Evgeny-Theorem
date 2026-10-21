@@ -195,15 +195,16 @@ theorem pOpO_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   change star (pHeO m θ ax o y.1.1 x.1.1 y.2 x.2) =
     pHeO m θ ax o x.1.1 y.1.1 x.2 y.2
   by_cases hpq : x.1.1 = y.1.1
-  · subst y
+  · have hxy : x.1 = y.1 := Subtype.ext hpq
+    cases hxy
     simp [pHeO_diag]
-  · have hp : x.1.1 ∈ vertexOrder m := x.1.2
-    have hq : y.1.1 ∈ vertexOrder m := y.1.2
+  · have hp : x.1.1 ∈ vertexOrder m := List.mem_toFinset.mp x.1.2
+    have hq : y.1.1 ∈ vertexOrder m := List.mem_toFinset.mp y.1.2
     by_cases hE : EdgeB m x.1.1.1 x.1.1.2 y.1.1.1 y.1.1.2 = true
     · have hE' : EdgeB m y.1.1.1 y.1.1.2 x.1.1.1 x.1.1.2 = true := by
         rw [EdgeB_symm m]
         exact hE
-      rw [pHeO_edge_eq m θ ax o hpq hE, pHeO_edge_eq m θ ax o hpq.symm hE']
+      rw [pHeO_edge_eq m θ ax o hpq hE, pHeO_edge_eq m θ ax o (Ne.symm hpq) hE']
       have hor := hanti x.1.1 y.1.1 hp hq hpq
       have hswap := edgeU_swap m θ ax x.1.1 y.1.1
       rw [hswap]
@@ -218,25 +219,8 @@ theorem pOpO_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
         rw [EdgeB_symm m]
         exact hE
       rw [pHeO_zero_of_not_edge m θ ax o hpq hE,
-        pHeO_zero_of_not_edge m θ ax o hpq.symm hE']
+        pHeO_zero_of_not_edge m θ ax o (Ne.symm hpq) hE']
       simp
-
-/-- All three copies are Hermitian when the original orientation is
-antisymmetric; the B and C cases use the transported orientation lemmas. -/
-theorem Hc_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o] (hanti : OAnti (m + 1) o) :
-    ∀ c : GCopy, Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c := by
-  intro c
-  cases c with
-  | A =>
-      change Matrix.conjTranspose (pOpO m θ ax o) = pOpO m θ ax o
-      exact pOpO_hermitian_of_OAnti m θ ax o (oanti_A m o hanti)
-  | B =>
-      change Matrix.conjTranspose (pOpO m θ ax (oBo m o)) = pOpO m θ ax (oBo m o)
-      exact pOpO_hermitian_of_OAnti m θ ax (oBo m o) (oanti_B m o hanti)
-  | C =>
-      change Matrix.conjTranspose (pOpO m θ ax (oCo m o)) = pOpO m θ ax (oCo m o)
-      exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (oanti_C m o hanti)
 
 /-! ### Same-coordinate spin cancellation for powers of a copy -/
 
