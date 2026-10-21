@@ -141,7 +141,7 @@ def test_three_pairing_classes_split_by_unit_cyclic_gap_and_positive_gap_cases()
         )
         assert len(covered) == covered_count
         assert positive_gap == sorted(unresolved_gaps)
-        assert len(covered) + len(unresolved) == len(rows)
+        assert len(covered) + len(positive_gap) == len(rows)
 
 def test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity():
     """Each K*N contributes its own leading K, so power exponents are gap + 1."""
