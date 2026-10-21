@@ -898,3 +898,28 @@ the concrete `sgK`/`Hc` definitions and `OAnti`. Do not assume the
 boundary trace vanishes; either prove the needed identity or preserve it as a
 nonzero/unresolved contribution. The p=8 and p=10 boundary sums then require
 the same analysis with their full orbit weights.
+
+## 4u. p=6 all-pairing boundary: diagonal-support reduction target
+
+A direct algebraic inspection of the p=6, r=6 specialization of
+`trace_six_N_powers_boundary` identifies the residual expression as
+`trace (K * D * K * D * K * D)`, where
+`D = diagonal (fun w => if G.g w then K (G.σ w) (G.σ w) else 0)`.
+This is not, by itself, a zero formula.
+
+For the concrete glued operator, the next reduction to formalize is that K
+has no off-diagonal entries between distinct points in the support of G.g:
+different copies are separated by block diagonality, and distinct glued
+corners in the same copy are handled by `sgK_hkg`. If this premise is
+established with the exact hypotheses and the cyclic product is expanded,
+the boundary trace reduces to
+`∑ w, if G.g w then (K w w)^3 * (K (G.σ w) (G.σ w))^3 else 0`.
+Using `sgK_diag`, this is a sum of products of corner degrees, rather than
+an automatic cancellation. The involution and corner-degree facts must still
+be applied to determine its exact value and prove nonvanishing in Lean.
+
+This is a proof target and an algebraic diagnostic, not yet a committed Lean
+lemma or a CI-verified conclusion. In particular, it does not establish the
+full p=6 residual identity: any required cancellation with other strata would
+need a separate identity preserving the ordered-word multiplicities.
+
