@@ -249,7 +249,9 @@ theorem su2Rotation_pauliZ_quaternionForm (θ : ℝ) :
   constructor <;>
     simp [SU2QuaternionForm, su2Rotation, pauliZ, Matrix.smul_apply,
       Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
-      Complex.conj_ofReal, Complex.I_mul_ofReal] <;> ring
+      ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg,
+      Complex.ofReal_neg] <;> ring
 
 
 
