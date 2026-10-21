@@ -307,8 +307,18 @@ theorem trace_three_N_powers_of_OAnti
   have hdiag := sgK_pow_GlueDiag_of_OAnti m b hb θ ax o hanti
   by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
   · exact hdiag w w' hw hw' hcopy hpartner hne
-  · exact (BD_pow (sgK m θ ax o) (blockK_BD _) b)
-      (sgσ m w) (sgσ m w') hpartner
+  ·
+    have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+      intro hsame
+      have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+      have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+        simpa [hc, hsame] using h2
+      have huniq := gl_unique m h1' h2'
+      exact hpartner huniq.1
+    exact sgK_pow_zero_of_distinct_glued_corner_coords
+      m b hb θ ax o w w' hw hw' hcoord
 
 theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
