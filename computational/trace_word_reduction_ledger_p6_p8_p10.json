@@ -48,7 +48,7 @@
         "word_count": 1,
         "cyclic_class_count": 1,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       }
     ]
   },
@@ -101,21 +101,21 @@
         "word_count": 28,
         "cyclic_class_count": 4,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       },
       {
         "kn_factor_count": 7,
         "word_count": 8,
         "cyclic_class_count": 1,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       },
       {
         "kn_factor_count": 8,
         "word_count": 1,
         "cyclic_class_count": 1,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       }
     ]
   },
@@ -168,35 +168,35 @@
         "word_count": 210,
         "cyclic_class_count": 22,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       },
       {
         "kn_factor_count": 7,
         "word_count": 120,
         "cyclic_class_count": 12,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       },
       {
         "kn_factor_count": 8,
         "word_count": 45,
         "cyclic_class_count": 5,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       },
       {
         "kn_factor_count": 9,
         "word_count": 10,
         "cyclic_class_count": 1,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       },
       {
         "kn_factor_count": 10,
         "word_count": 1,
         "cyclic_class_count": 1,
         "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved. The current generic Lean reductions cover at most five pairing factors. A proof needs a trace-word reduction for this N-count plus explicit glued-corner off-diagonal hypotheses for every middle power used to diagonalize N*K^b*N; block diagonality alone does not imply those hypotheses. The complete ordered boundary contribution and its orbit multiplicities must still be collected before claiming the p-moment identity."
+        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
       }
     ]
   }
