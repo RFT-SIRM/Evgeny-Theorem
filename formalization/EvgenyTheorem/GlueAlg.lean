@@ -467,6 +467,48 @@ theorem trace_KQKQ {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd :
   · intro h
     exact absurd (Finset.mem_univ a) h
 
+/-- Four-pairing boundary formula. The first pair of pairing matrices is
+collapsed to the diagonal matrix N*K^b*N; the remaining pair is then handled
+by the general two-pairing formula. Both middle powers carry explicit
+corner-vanishing hypotheses, so no such property is inferred from block
+diagonality alone. -/
+theorem trace_four_N_powers {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e : ℕ)
+    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ e) =
+      ∑ x, if G.g x then
+        (K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c) x x *
+          (K ^ d) (G.σ x) (G.σ x) else 0 := by
+  have hbdB : BD cp (K ^ b) := BD_pow K hK b
+  have hQ : BD cp (G.N * K ^ b * G.N) := by
+    rw [Q_eq_diag G (K ^ b) hbdB hkgB]
+    exact BD_diagonal _
+  have hxs : ∀ A, A ∈
+      ([K ^ a, G.N * K ^ b * G.N, K ^ c] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_cons, List.mem_singleton] at hA
+    rcases hA with hA | hA | hA
+    · subst A
+      exact BD_pow K hK a
+    · subst A
+      exact hQ
+    · subst A
+      exact BD_pow K hK c
+  have hys : ∀ A, A ∈ ([K ^ e] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    subst A
+    exact BD_pow K hK e
+  have hformula := trace_two_N_word G
+    ([K ^ a, G.N * K ^ b * G.N, K ^ c] : List (Matrix W W ℂ))
+    ([K ^ e] : List (Matrix W W ℂ)) (K ^ d)
+    hxs hys (BD_pow K hK d) hkgD
+  simpa [List.prod_cons, Matrix.mul_assoc] using hformula
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
