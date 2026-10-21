@@ -462,7 +462,7 @@ def test_r3_ledger_records_conditional_corner_proof_not_block_diagonality_guess(
         note = row["reduction_note"]
         assert "OAnti (m + 1) o" in note
         assert "sgK_pow_GlueDiag_of_OAnti" in note
-        assert "block diagonality alone" in note or "all-power" in note
+        assert "every natural power" in note or "block diagonality alone" in note
         p = entry["p"]
         rows = [x for x in word_inventory(p)["classes"] if x["kn_factor_count"] == 3]
         for item in rows:
