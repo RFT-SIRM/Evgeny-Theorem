@@ -76,7 +76,9 @@ theorem pHeO_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
         ext i j
         change pHeO m θ ax o p q i j = _
         rw [pHeO_edge_eq m θ ax o hpq hE i j]
-        simp [e, U, Matrix.conjTranspose_apply]
+        by_cases ho : o p q
+        · simp [ho, e, U]
+        · simp [ho, e, U, Matrix.conjTranspose_apply]
       rw [hblock]
       by_cases ho : o p q
       · simp [ho]
