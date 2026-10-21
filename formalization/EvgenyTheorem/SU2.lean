@@ -361,5 +361,38 @@ theorem spinBlock_pow_quaternionForm {X : Type*} [Fintype X] [DecidableEq X]
       exact SU2QuaternionForm_mul (ih p x) (hM x q)
 
 
+/-- Conjugate transpose of a full operator induces conjugate transpose
+of its spin block, with the geometric indices reversed. -/
+theorem spinBlock_conjTranspose {X : Type*}
+    (M : Matrix (X × C2) (X × C2) ℂ) (p q : X) :
+    spinBlock (Matrix.conjTranspose M) p q =
+      Matrix.conjTranspose (spinBlock M q p) := by
+  ext i j
+  simp [spinBlock, Matrix.conjTranspose_apply]
+
+/-- A diagonal spin block of a Hermitian full operator is Hermitian. -/
+theorem spinBlock_diagonal_hermitian {X : Type*}
+    (M : Matrix (X × C2) (X × C2) ℂ) (p : X)
+    (hM : Matrix.conjTranspose M = M) :
+    Matrix.conjTranspose (spinBlock M p p) = spinBlock M p p := by
+  have hblock := spinBlock_conjTranspose M p p
+  rw [← hblock, hM]
+
+/-- Under quaternion-form closure and Hermiticity of a power, the
+same-coordinate off-diagonal spin entry vanishes. The concrete operator still
+has to discharge both hypotheses; this lemma does not assume that it does so
+automatically. -/
+theorem spinBlock_pow_diagonal_offdiag_zero {X : Type*}
+    [Fintype X] [DecidableEq X]
+    (M : Matrix (X × C2) (X × C2) ℂ)
+    (hM : ∀ p q, SU2QuaternionForm (spinBlock M p q))
+    (n : ℕ) (p : X)
+    (hpow : Matrix.conjTranspose (M ^ n) = M ^ n) :
+    spinBlock (M ^ n) p p (0 : C2) (1 : C2) = 0 := by
+  have hform := spinBlock_pow_quaternionForm M hM n p p
+  have hherm := spinBlock_diagonal_hermitian (M ^ n) p hpow
+  exact quaternionForm_hermitian_offdiag_zero hform.1 hherm
+
+
 end EvgenyTheorem
 
