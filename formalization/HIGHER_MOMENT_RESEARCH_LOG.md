@@ -628,3 +628,19 @@ Its hypotheses separately state the corner-vanishing requirements for
 `K^b` and `K^d`. This is a verified local reduction only; it does not
 establish the multiplicity cancellation or all-level residual identity for
 `p = 6, 8, 10`.
+
+
+### Verification after Lean linter and elaboration-budget fix
+
+On PR #8 head `2bbdac62ef45458113d63637570a5253141c3172` (2026-10-21),
+the Lean formalization workflow completed successfully (run 197) and the
+Tests workflow completed successfully (run 266, Python 3.11 and 3.12):
+- https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39573201940
+- https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39573201947
+
+This head removes the unused bound hypothesis from
+`sgK_pow_GlueDiag_of_OAnti` and fixes the placement of the local
+`maxHeartbeats` option for the explicit four-pairing specialization.
+These results verify compilation and regression tests for this source state.
+They do not prove the final residual identities or level propagation for
+moments 6, 8, and 10; those obligations remain open.
