@@ -26,7 +26,8 @@
         "kn_factor_count": 3,
         "word_count": 20,
         "cyclic_class_count": 4,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "vanishes_by_three_N_corner_lemma_under_OAnti",
+        "reduction_note": "Lean theorem trace_three_N_word_zero_of_OAnti applies after cyclic rotation: choose the smallest of the three cyclic K-gaps, giving middle exponent min(gap)+1 <= 3 < 2^3 for p <= 10 and m >= 3. Conditional on OAnti (m+1) o."
       },
       {
         "kn_factor_count": 4,
@@ -75,7 +76,8 @@
         "kn_factor_count": 3,
         "word_count": 56,
         "cyclic_class_count": 7,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "vanishes_by_three_N_corner_lemma_under_OAnti",
+        "reduction_note": "Lean theorem trace_three_N_word_zero_of_OAnti applies after cyclic rotation: choose the smallest of the three cyclic K-gaps, giving middle exponent min(gap)+1 <= 3 < 2^3 for p <= 10 and m >= 3. Conditional on OAnti (m+1) o."
       },
       {
         "kn_factor_count": 4,
@@ -136,7 +138,8 @@
         "kn_factor_count": 3,
         "word_count": 120,
         "cyclic_class_count": 12,
-        "reduction_status": "not_covered_by_current_generic_reductions"
+        "reduction_status": "vanishes_by_three_N_corner_lemma_under_OAnti",
+        "reduction_note": "Lean theorem trace_three_N_word_zero_of_OAnti applies after cyclic rotation: choose the smallest of the three cyclic K-gaps, giving middle exponent min(gap)+1 <= 3 < 2^3 for p <= 10 and m >= 3. Conditional on OAnti (m+1) o."
       },
       {
         "kn_factor_count": 4,
