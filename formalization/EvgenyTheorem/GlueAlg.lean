@@ -494,9 +494,9 @@ theorem trace_four_N_powers {cp : W → ι} (G : GlueData cp)
           G.N * K ^ d * G.N) := by
         simp only [Matrix.mul_assoc]
   rw [hrot]
-  exact trace_two_N_word G
+  simpa [List.prod_cons] using (trace_two_N_word G
     ([K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c] : List (Matrix W W ℂ))
-    ([] : List (Matrix W W ℂ)) (K ^ d) (BD_pow K hK d) hkgD
+    ([] : List (Matrix W W ℂ)) (K ^ d) (BD_pow K hK d) hkgD)
 
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
