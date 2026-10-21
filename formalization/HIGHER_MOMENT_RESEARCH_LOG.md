@@ -597,3 +597,17 @@ power arising in the ordered expansions; derive a fully explicit boundary
 formula for the relevant multi-pairing strata; prove the finite base
 transition and the level-propagation step for `p = 6, 8, 10`. The residual
 identity remains conjectural until those obligations are discharged.
+
+
+### Verification addendum for the report commit
+
+The report update itself is on PR head
+`1b08908090cbaacc27e5131f125ce06ec52f7a41`. Both required workflows
+completed successfully on that exact head:
+- Lean formalization, run 189: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39566107825
+- Tests, run 258 (Python 3.11 and 3.12, including slow convergence tests):
+  https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39566107585
+
+Thus the source and research-log update are verified together. The mathematical
+scope boundary in Section 4z remains unchanged: the full residual identity
+and level propagation have not yet been proved.
