@@ -397,6 +397,75 @@ theorem trace_three_N_word_zero {cp : W → ι} (G : GlueData cp)
     exact BD_mul (BD_mul hleft hQ) (BD_list_prod ys hys)
   exact trace_BD_N G hprod
 
+
+/-- Five-pairing trace words vanish when two selected middle powers satisfy
+the glued-corner condition. Pairing the first two N factors makes
+`N * K^b * N` block diagonal; the remaining three N factors then vanish
+by `trace_three_N_word_zero` using the independent corner condition for
+`K^d`. No all-power corner assumption is hidden in this statement. -/
+theorem trace_five_N_powers_zero {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (hK : BD cp K)
+    (a b c d e f : ℕ)
+    (hkg_b : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ b) w w' = 0)
+    (hkg_d : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
+      (K ^ d) w w' = 0) :
+    Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f) = 0 := by
+  have hbd_b : BD cp (K ^ b) := BD_pow K hK b
+  have hQ : BD cp (G.N * K ^ b * G.N) := by
+    rw [Q_eq_diag G (K ^ b) hbd_b hkg_b]
+    exact BD_diagonal _
+  have hrotate :
+      Matrix.trace (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+          G.N * K ^ d * G.N * K ^ e * G.N * K ^ f) =
+        Matrix.trace (G.N * K ^ d * G.N * K ^ e * G.N *
+          (K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c)) := by
+    calc
+      Matrix.trace (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+          G.N * K ^ d * G.N * K ^ e * G.N * K ^ f) =
+          Matrix.trace ((K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+            G.N * K ^ d * G.N * K ^ e * G.N) * K ^ f) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace (K ^ f * (K ^ a * (G.N * K ^ b * G.N) * K ^ c *
+            G.N * K ^ d * G.N * K ^ e * G.N)) :=
+          Matrix.trace_mul_comm _ _
+      _ = Matrix.trace (G.N * K ^ d * G.N * K ^ e * G.N *
+            (K ^ f * K ^ a * (G.N * K ^ b * G.N) * K ^ c) ) := by
+          simp only [Matrix.mul_assoc]
+          rw [Matrix.trace_mul_comm]
+          simp only [Matrix.mul_assoc]
+  rw [show K ^ a * G.N * K ^ b * G.N * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f =
+      K ^ a * (G.N * K ^ b * G.N) * K ^ c * G.N *
+      K ^ d * G.N * K ^ e * G.N * K ^ f by
+        simp only [Matrix.mul_assoc]]
+  rw [hrotate]
+  have hxs : ∀ A, A ∈ ([] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp at hA
+  have hys : ∀ A, A ∈ ([K ^ e] : List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow K hK e)
+  have hzs : ∀ A, A ∈
+      ([K ^ f, K ^ a, G.N * K ^ b * G.N, K ^ c] :
+        List (Matrix W W ℂ)) → BD cp A := by
+    intro A hA
+    simp only [List.mem_cons, List.mem_singleton] at hA
+    rcases hA with hA | hA | hA | hA
+    · simpa [hA] using (BD_pow K hK f)
+    · simpa [hA] using (BD_pow K hK a)
+    · simpa [hA] using hQ
+    · simpa [hA] using (BD_pow K hK c)
+  have hbd_d : BD cp (K ^ d) := BD_pow K hK d
+  simpa using (trace_three_N_word_zero G
+    ([] : List (Matrix W W ℂ))
+    ([K ^ e] : List (Matrix W W ℂ))
+    ([K ^ f, K ^ a, G.N * K ^ b * G.N, K ^ c] :
+      List (Matrix W W ℂ))
+    (K ^ d) hxs hys hzs hbd_d hkg_d)
+
 theorem trace_XNXN {cp : W → ι} (G : GlueData cp) {X : Matrix W W ℂ} (hX : BD cp X)
     (hu : GlueDiag G X) :
     Matrix.trace (X * G.N * X * G.N) =
