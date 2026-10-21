@@ -693,3 +693,22 @@ still leaves all strata with four or more `K*N` factors explicitly uncovered
 by the current generic reductions. This classification is conditional on the
 orientation-antisymmetry hypothesis and does not prove the full moment identity
 or the level-propagation step.
+
+
+## 4ac. Four-pairing stratum classified by explicit boundary expansion
+
+The reduction ledger now marks the full `kn_factor_count = 4` stratum as
+`explicit_four_N_boundary_formula_under_OAnti`, rather than as an unqualified
+vanishing result. Any cyclic word with four `K*N` factors has four positive
+K-exponents between consecutive N factors; their sum is p. For p <= 10, each
+such exponent is at most p - 3 <= 7, hence below `2^m` for m >= 3. By cyclic
+rotation and splitting one cyclic gap into the two outside powers, the word
+fits `trace_four_N_powers_explicit_of_OAnti` with the two required middle
+exponents below the geometric bound. Under `OAnti (m + 1) o`, Lean therefore
+provides the explicit nested boundary sum.
+
+This is a boundary-formula reduction, not cancellation of the four-pairing
+stratum. The regression test now distinguishes this status from the proven
+conditional vanishing of the three-pairing stratum. Strata with five or more
+`K*N` factors remain uncovered by these generic reductions, and the full
+moment identity and level propagation remain open.
