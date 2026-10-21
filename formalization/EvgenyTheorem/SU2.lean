@@ -273,10 +273,24 @@ theorem su2Rotation_pauliZ_quaternionForm (θ : ℝ) :
       Complex.ofReal_neg] <;> ring
 
 
-
-
-
-
+/-- Finite sums preserve quaternionic spin-block form. This is the algebraic
+closure step needed when a block of a matrix product is expanded over its
+intermediate geometric vertices. -/
+theorem SU2QuaternionForm_sum_finset {ι : Type*} (s : Finset ι)
+    (f : ι → Matrix C2 C2 ℂ)
+    (hf : ∀ i ∈ s, SU2QuaternionForm (f i)) :
+    SU2QuaternionForm (∑ i ∈ s, f i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simpa using SU2QuaternionForm_zero
+  | @insert a s ha ih =>
+      rw [Finset.sum_insert ha]
+      apply SU2QuaternionForm_add
+      · exact hf a (Finset.mem_insert_self a s)
+      · apply ih
+        intro i hi
+        exact hf i (Finset.mem_insert_of_mem hi)
 
 
 end EvgenyTheorem
