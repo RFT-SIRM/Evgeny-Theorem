@@ -541,3 +541,29 @@ def test_top_even_stratum_boundary_arithmetic_is_explicitly_conditional():
             else "explicit_ten_N_boundary_formula_under_OAnti"
         )
         assert "not a vanishing claim" in log or "not zero" in log
+
+
+def test_even_pairing_strata_unresolved_word_totals_are_pinned():
+    """The remaining even-r strata retain these ordered-word multiplicities."""
+    import json
+    from pathlib import Path
+
+    expected = {
+        6: {2: 15, 4: 15, 6: 1},
+        8: {2: 28, 4: 70, 6: 28, 8: 1},
+        10: {2: 45, 4: 210, 6: 210, 8: 45, 10: 1},
+    }
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for p, expected_by_r in expected.items():
+        entry = next(row for row in ledger if row["p"] == p)
+        actual = {
+            row["kn_factor_count"]: row["word_count"]
+            for row in entry["strata"]
+            if row["kn_factor_count"] % 2 == 0 and row["kn_factor_count"] > 0
+        }
+        assert actual == expected_by_r
+        assert sum(actual.values()) == {6: 31, 8: 127, 10: 511}[p]
