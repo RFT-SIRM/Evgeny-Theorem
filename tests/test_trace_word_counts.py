@@ -111,6 +111,10 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
             statuses[r] == "not_covered_by_current_generic_reductions"
             for r in range(6, p + 1)
         )
+        for row in entry["strata"]:
+            if row["kn_factor_count"] >= 6:
+                assert "explicit glued-corner off-diagonal hypotheses" in row["reduction_note"]
+                assert "orbit multiplicities" in row["reduction_note"]
 
 def test_three_pairing_classes_split_by_unit_cyclic_gap_and_positive_gap_cases():
     """A zero K-gap means a K**N factor pair with middle power K^1."""
