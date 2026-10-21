@@ -176,6 +176,36 @@ noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Po
 
 /-- Powers of a block-diagonal matrix are computed independently in each block.
 This local copy avoids a dependency cycle with the trace-splitting module. -/
+theorem blockK_mul_local {ι X : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype X] [DecidableEq X] (H G : ι → Matrix X X ℂ) :
+    blockK H * blockK G = blockK (fun c => H c * G c) := by
+  ext w w'
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
+  by_cases hc : w.1 = w'.1
+  · have e : blockK (fun c => H c * G c) w w' =
+        (H w.1 * G w.1) w.2 w'.2 := by
+      simp [blockK, hc]
+    rw [e, Matrix.mul_apply, Finset.sum_eq_single w.1]
+    · refine Finset.sum_congr rfl (fun y _ => ?_)
+      simp [blockK, hc]
+    · intro c _ hne
+      refine Finset.sum_eq_zero (fun y _ => ?_)
+      have : w.1 ≠ c := fun h => hne h.symm
+      simp [blockK, this]
+    · intro h
+      exact absurd (Finset.mem_univ _) h
+  · have e : blockK (fun c => H c * G c) w w' = 0 := by
+      simp [blockK, hc]
+    rw [e]
+    refine Finset.sum_eq_zero (fun c _ => ?_)
+    refine Finset.sum_eq_zero (fun y _ => ?_)
+    by_cases h1 : w.1 = c
+    · have : c ≠ w'.1 := fun h => hc (h1.trans h)
+      simp [blockK, this]
+    · simp [blockK, h1]
+
+/-- Powers of a block-diagonal matrix are computed independently in each block.
+This local copy avoids a dependency cycle with the trace-splitting module. -/
 theorem blockK_pow_local {ι X : Type*} [Fintype ι] [DecidableEq ι]
     [Fintype X] [DecidableEq X] (H : ι → Matrix X X ℂ) (n : ℕ) :
     blockK H ^ n = blockK (fun c => H c ^ n) := by
@@ -185,7 +215,7 @@ theorem blockK_pow_local {ι X : Type*} [Fintype ι] [DecidableEq ι]
       by_cases hij : i = j <;> by_cases hxy : x = y <;>
         simp [blockK, hij, hxy]
   | succ n ih =>
-      rw [pow_succ, ih, blockK_mul]
+      rw [pow_succ, ih, blockK_mul_local]
       exact congrArg blockK (funext fun c => by rw [pow_succ])
 
 /-! ### Transfer of copy-level cancellation to the glued index set -/
