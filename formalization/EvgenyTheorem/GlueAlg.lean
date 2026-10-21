@@ -467,26 +467,19 @@ theorem trace_KQKQ {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd :
   · intro h
     exact absurd (Finset.mem_univ a) h
 
-/-- Four-pairing boundary formula. The first pair of pairing matrices is
-collapsed to the diagonal matrix N*K^b*N; the remaining pair is then handled
-by the general two-pairing formula. Both middle powers carry explicit
-corner-vanishing hypotheses, so no such property is inferred from block
-diagonality alone. -/
+/-- Four-pairing boundary formula. The outermost pair of pairing matrices
+is handled by the general two-pairing formula, retaining the ordered product
+between them. The required corner-vanishing hypothesis is explicit for the
+middle power K^d; it is not inferred from block diagonality alone. -/
 theorem trace_four_N_powers {cp : W → ι} (G : GlueData cp)
     (K : Matrix W W ℂ) (hK : BD cp K)
     (a b c d e : ℕ)
-    (hkgB : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
-      (K ^ b) w w' = 0)
     (hkgD : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' →
       (K ^ d) w w' = 0) :
     Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ e) =
       ∑ x, if G.g x then
         (K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c) x x *
           (K ^ d) (G.σ x) (G.σ x) else 0 := by
-  have hbdB : BD cp (K ^ b) := BD_pow K hK b
-  have hQ : BD cp (G.N * K ^ b * G.N) := by
-    rw [Q_eq_diag G (K ^ b) hbdB hkgB]
-    exact BD_diagonal _
   have hrot :
       Matrix.trace (K ^ a * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ e) =
       Matrix.trace ((K ^ e * K ^ a * (G.N * K ^ b * G.N) * K ^ c) *
