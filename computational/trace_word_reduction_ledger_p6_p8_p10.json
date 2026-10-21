@@ -114,8 +114,8 @@
         "kn_factor_count": 8,
         "word_count": 1,
         "cyclic_class_count": 1,
-        "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
+        "reduction_status": "explicit_eight_N_boundary_formula_under_OAnti",
+        "reduction_note": "Theorem trace_eight_N_powers_boundary diagonalizes three selected N*K^n*N blocks and applies trace_two_N_word to the remaining two N factors. Under OAnti (m+1) o, the all-power glued-corner theorem supplies the four required middle-power corner hypotheses: for p <= 10, r=8 exponents are at most p-r+1 <= 3 < 2^m for m >= 3. The result is an explicit ordered boundary sum, not a vanishing claim. Exact orbit multiplicities are retained. Do not infer the p-moment identity from this formula alone."
       }
     ]
   },
@@ -181,22 +181,22 @@
         "kn_factor_count": 8,
         "word_count": 45,
         "cyclic_class_count": 5,
-        "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
+        "reduction_status": "explicit_eight_N_boundary_formula_under_OAnti",
+        "reduction_note": "Theorem trace_eight_N_powers_boundary diagonalizes three selected N*K^n*N blocks and applies trace_two_N_word to the remaining two N factors. Under OAnti (m+1) o, the all-power glued-corner theorem supplies the four required middle-power corner hypotheses: for p <= 10, r=8 exponents are at most p-r+1 <= 3 < 2^m for m >= 3. The result is an explicit ordered boundary sum, not a vanishing claim. Exact orbit multiplicities are retained. Do not infer the p-moment identity from this formula alone."
       },
       {
         "kn_factor_count": 9,
         "word_count": 10,
         "cyclic_class_count": 1,
-        "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
+        "reduction_status": "vanishes_by_nine_N_corner_lemma_under_OAnti",
+        "reduction_note": "Theorem trace_nine_N_powers_zero diagonalizes three selected N*K^n*N blocks, then applies trace_three_N_word_zero to the remaining three N factors. Under OAnti (m+1) o, the all-power glued-corner theorem supplies all four required middle-power corner hypotheses; for p=10 and r=9, every exponent is at most p-r+1 <= 2 < 2^m for m >= 3. This is conditional vanishing of the r=9 stratum, with exact orbit multiplicities retained. Stratum r=10 has a separate boundary formula. Do not infer the all-level p-moment identity from this result alone."
       },
       {
         "kn_factor_count": 10,
         "word_count": 1,
         "cyclic_class_count": 1,
-        "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
+        "reduction_status": "explicit_ten_N_boundary_formula_under_OAnti",
+        "reduction_note": "Theorem trace_ten_N_powers_boundary diagonalizes four selected N*K^n*N blocks and applies trace_two_N_word to the remaining two N factors. Under OAnti (m+1) o, the all-power glued-corner theorem supplies the five required middle-power corner hypotheses; for p=10 and r=10, every exponent is at most p-r+1 = 1 < 2^m for m >= 3. The result is an explicit ordered boundary sum, not a vanishing claim. Exact orbit multiplicities are retained. Do not infer the p-moment identity from this formula alone."
       }
     ]
   }
