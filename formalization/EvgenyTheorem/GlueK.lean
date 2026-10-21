@@ -139,6 +139,17 @@ theorem Hc_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
       change SU2QuaternionForm (pHeO_spinBlock m θ ax (oCo m o) p.1 q.1)
       exact pHeO_spinBlock_quaternionForm m θ ax (oCo m o) p.1 q.1
 
+/-- Every spin block of every natural power of a copy operator has
+quaternionic form. This specializes the generic power-closure lemma to the
+three concrete operators used by the gluing construction. -/
+theorem Hc_pow_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (c : GCopy) :
+    ∀ n p q, SU2QuaternionForm (spinBlock ((Hc m θ ax o c) ^ n) p q) := by
+  apply spinBlock_pow_quaternionForm
+  intro p q
+  exact Hc_spinBlock_quaternionForm m θ ax o c p q
+
+
 /-- The block-diagonal operator on three disjoint copies. -/
 noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
