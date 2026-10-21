@@ -614,4 +614,41 @@ theorem trace_three_N_word_zero_of_OAnti
     ([sgK m θ ax o ^ d] : List (Matrix (WSG m) (WSG m) ℂ))
     (sgK m θ ax o ^ b) hxs hys hzs (BD_pow (sgK m θ ax o) hbd b) hkg
 
+
+/-- Five-pairing specialization under orientation antisymmetry. The two
+middle-power corner conditions are discharged separately using the geometric
+bound; this is a conditional vanishing theorem, not an unconditional
+all-pairing cancellation claim. -/
+theorem trace_five_N_powers_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (hb : b < 2 ^ m) (hd : d < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N * sgK m θ ax o ^ f) = 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+    · exact hdiag w w' hw hw' hcopy hpartner hne
+    · have h1 := (glW_sgσ hw).1
+      have h2 := (glW_sgσ hw').1
+      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+        intro hsame
+        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+          simpa [hcopy, hsame] using h2
+        have huniq := gl_unique m h1' h2'
+        exact hpartner huniq.1
+      exact sgK_pow_zero_of_distinct_glued_corner_coords
+        m n hn θ ax o w w' hw hw' hcoord
+  exact trace_five_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f (hkg b hb) (hkg d hd)
+
+
 end EvgenyTheorem
