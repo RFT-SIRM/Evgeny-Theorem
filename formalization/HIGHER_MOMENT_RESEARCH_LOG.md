@@ -828,3 +828,31 @@ these values and the conditional status. This closes the r = 7 reduction
 obligation under the stated orientation hypothesis; r = 6 remains an explicit
 boundary formula, while r >= 8 still need further reductions. The residual
 identity and its level propagation remain conjectural.
+
+## 4s. Conditional reductions for eight, nine, and ten pairings
+
+Added three ordered-word reductions in `formalization/EvgenyTheorem/GlueAlg.lean`:
+
+- `trace_eight_N_powers_boundary`: diagonalizes three selected
+  `N * K^n * N` blocks and reduces the remaining two N factors to an
+  explicit boundary sum.
+- `trace_nine_N_powers_zero`: diagonalizes three selected blocks and applies
+  `trace_three_N_word_zero` to the remaining three N factors, giving
+  conditional vanishing.
+- `trace_ten_N_powers_boundary`: diagonalizes four selected blocks and
+  reduces the remaining two N factors to an explicit boundary sum.
+
+Each theorem states its middle-power corner hypotheses explicitly. Under
+`OAnti (m + 1) o`, `sgK_pow_GlueDiag_of_OAnti` supplies those hypotheses
+for the p=8,10 strata because the relevant exponents are bounded by
+`p-r+1` and are strictly less than `2^m` for m >= 3. The even-stratum
+boundary formulas are not labelled as vanishing. The ledger and regression
+tests preserve exact word counts and cyclic-orbit weights: r=8 has (p=8:
+1 word / 1 class; p=10: 45 / 5), r=9 has (p=10: 10 / 1), and r=10 has
+(p=10: 1 / 1).
+
+This extends the ordered reductions through r=10 for the finite p=6,8,10
+inventory, but does not by itself evaluate/cancel the r=8 or r=10 boundary
+sums. The r=6 boundary sum also remains unevaluated. Thus the complete
+residual identity, finite base transition, and level propagation are still
+open; no all-level moment identity is claimed.
