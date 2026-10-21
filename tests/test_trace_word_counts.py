@@ -214,3 +214,20 @@ def test_four_pairing_stratum_fits_explicit_boundary_formula_bounds():
             # here all four satisfy this for the minimal relevant m=3.
             assert all(exponent < 2**3 for exponent in exponents)
             assert row["representative"].count("K*N") == 4
+
+
+def test_five_pairing_words_have_two_admissible_middle_power_bounds():
+    """For p<=10, any two gap exponents in the five-N stratum are < 2**3."""
+    for p in (6, 8, 10):
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 5
+        ]
+        for row in rows:
+            gaps = row["cyclic_gap_representative"]
+            assert len(gaps) == 5
+            assert sum(gaps) == p - 5
+            exponents = [gap + 1 for gap in gaps]
+            assert all(1 <= exponent <= p - 4 for exponent in exponents)
+            assert sum(exponents[i] < 2**3 for i in range(5)) == 5
+            assert row["representative"].count("K*N") == 5
