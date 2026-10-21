@@ -611,3 +611,20 @@ completed successfully on that exact head:
 Thus the source and research-log update are verified together. The mathematical
 scope boundary in Section 4z remains unchanged: the full residual identity
 and level propagation have not yet been proved.
+
+
+### Latest verification — explicit four-pairing expansion
+
+The explicit nested-sum theorem `trace_four_N_powers_explicit` was added to
+`formalization/EvgenyTheorem/GlueAlg.lean` at PR head
+`3a09e814bc7c8b73ee2debed3d3fe45d1b75ce1c`. Both required workflows completed
+successfully on that exact commit:
+- Lean formalization, run 191: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39568637413
+- Tests, run 260 (Python 3.11 and 3.12, including slow convergence tests):
+  https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39568637588
+
+The new lemma expands the inner `N * K^b * N` term into a nested finite sum.
+Its hypotheses separately state the corner-vanishing requirements for
+`K^b` and `K^d`. This is a verified local reduction only; it does not
+establish the multiplicity cancellation or all-level residual identity for
+`p = 6, 8, 10`.
