@@ -150,6 +150,41 @@ theorem Hc_pow_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   exact Hc_spinBlock_quaternionForm m θ ax o c p q
 
 
+/-! ### Concrete second-power cancellation under orientation antisymmetry -/
+
+/-- The second power of each copy has zero same-point opposite-spin entry.
+Unlike the all-powers statement below, this uses the already established
+explicit diagonal formula for the square of the point operator. -/
+theorem Hc_sq_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : ∀ c : GCopy, OAnti m
+      (match c with
+       | .A => o
+       | .B => oBo m o
+       | .C => oCo m o))
+    (c : GCopy) (p : Pt m) :
+    (Hc m θ ax o c ^ 2) (p, (0 : C2)) (p, (1 : C2)) = 0 := by
+  have hdiag : (Hc m θ ax o c * Hc m θ ax o c)
+      (p, (0 : C2)) (p, (1 : C2)) = 0 := by
+    cases c with
+    | A =>
+        change (pOpO m θ ax o * pOpO m θ ax o)
+          (p, (0 : C2)) (p, (1 : C2)) = 0
+        have h := pOpO_sq_diag m θ ax o (hanti .A) p (0 : C2) (1 : C2)
+        simpa using h
+    | B =>
+        change (pOpO m θ ax (oBo m o) * pOpO m θ ax (oBo m o))
+          (p, (0 : C2)) (p, (1 : C2)) = 0
+        have h := pOpO_sq_diag m θ ax (oBo m o) (hanti .B) p (0 : C2) (1 : C2)
+        simpa using h
+    | C =>
+        change (pOpO m θ ax (oCo m o) * pOpO m θ ax (oCo m o))
+          (p, (0 : C2)) (p, (1 : C2)) = 0
+        have h := pOpO_sq_diag m θ ax (oCo m o) (hanti .C) p (0 : C2) (1 : C2)
+        simpa using h
+  rw [pow_two]
+  exact hdiag
+
 /-! ### Same-coordinate spin cancellation for powers of a copy -/
 
 /-- If the three copy operators are Hermitian, then every natural power has
