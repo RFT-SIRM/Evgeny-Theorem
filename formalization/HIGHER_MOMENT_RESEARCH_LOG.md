@@ -674,3 +674,22 @@ class-level coverage to the complete ordered expansion and its coefficients,
 then discharge the remaining higher-pairing strata and prove the level-
 propagation argument. The all-level residual identities for p = 6, 8, 10
 remain open.
+
+
+## 4ab. Reduction-ledger classification of the full three-pairing stratum
+
+The computational reduction ledger now marks the entire `kn_factor_count = 3`
+stratum for p = 6, 8, 10 as `vanishes_by_three_N_corner_lemma_under_OAnti`.
+This is justified conditionally by cyclic rotation: if the three cyclic K-gaps
+are nonnegative and sum to p - 3 <= 7, their minimum is at most 2. Rotate the
+word so that this gap is the middle gap between adjacent N factors. Since each
+`K*N` contributes one leading K, the middle power is `min(gap) + 1 <= 3`,
+which is less than `2^m` for every m >= 3. The Lean theorem
+`trace_three_N_word_zero_of_OAnti` then applies under `OAnti (m + 1) o`.
+
+A regression test checks this bound for every cyclic class with exactly three
+`K*N` factors, not just the eight previously highlighted gap tuples. The ledger
+still leaves all strata with four or more `K*N` factors explicitly uncovered
+by the current generic reductions. This classification is conditional on the
+orientation-antisymmetry hypothesis and does not prove the full moment identity
+or the level-propagation step.
