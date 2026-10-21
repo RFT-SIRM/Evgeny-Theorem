@@ -314,7 +314,7 @@ def test_full_ledger_strata_match_binomial_word_counts_and_total_expansion():
     for entry in ledger:
         p = entry["p"]
         inventory = word_inventory(p)
-        assert inventory["total_words"] == 2**p
+        assert inventory["all_factor_words"] == 2**p
         assert sum(int(row["orbit_size"]) for row in inventory["classes"]) == 2**p
         strata = {row["kn_factor_count"]: row for row in entry["strata"]}
         assert set(strata) == set(range(p + 1))
@@ -328,5 +328,5 @@ def test_full_ledger_strata_match_binomial_word_counts_and_total_expansion():
             assert strata[r]["word_count"] == comb(p, r)
         assert sum(row["word_count"] for row in entry["strata"]) == 2**p
         assert sum(row["cyclic_class_count"] for row in entry["strata"]) == (
-            inventory["total_cyclic_classes"]
+            inventory["cyclic_classes"]
         )
