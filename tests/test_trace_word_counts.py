@@ -120,7 +120,7 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
                 assert "explicit glued-corner off-diagonal hypotheses" in row["reduction_note"]
                 assert "orbit multiplicities" in row["reduction_note"]
 
-def test_three_pairing_classes_split_by_unit_cyclic_gap_and_positive_gap_cases():
+def test_three_pairing_classes_split_by_unit_gap_and_positive_gap_cases():
     """A zero K-gap means a K**N factor pair with middle power K^1."""
     # The positive-gap tuples were formerly unresolved; the conditional Lean
     # corner lemma now covers them after cyclic rotation.
@@ -129,7 +129,7 @@ def test_three_pairing_classes_split_by_unit_cyclic_gap_and_positive_gap_cases()
         8: (5, [(1, 1, 3), (1, 2, 2)]),
         10: (7, [(1, 1, 5), (1, 4, 2), (1, 2, 4), (1, 3, 3), (2, 2, 3)]),
     }
-    for p, (covered_count, unresolved_gaps) in expected.items():
+    for p, (covered_count, positive_gap_classes) in expected.items():
         rows = [
             row for row in word_inventory(p)["classes"]
             if row["kn_factor_count"] == 3
@@ -144,7 +144,7 @@ def test_three_pairing_classes_split_by_unit_cyclic_gap_and_positive_gap_cases()
             if 0 not in row["cyclic_gap_representative"]
         )
         assert len(covered) == covered_count
-        assert positive_gap == sorted(unresolved_gaps)
+        assert positive_gap == sorted(positive_gap_classes)
         assert len(covered) + len(positive_gap) == len(rows)
 
 def test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity():
