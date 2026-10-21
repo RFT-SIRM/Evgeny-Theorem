@@ -107,8 +107,8 @@
         "kn_factor_count": 7,
         "word_count": 8,
         "cyclic_class_count": 1,
-        "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
+        "reduction_status": "vanishes_by_seven_N_corner_lemma_under_OAnti",
+        "reduction_note": "Theorem trace_seven_N_powers_zero applies after cyclic rotation: select three of the seven cyclic gaps, convert two N*K^b*N blocks to diagonal boundary factors using the first two corner hypotheses, and apply trace_three_N_word_zero to the remaining three N factors using the third. For p <= 10 and r = 7, every gap exponent (gap + 1) is at most p - r + 1 <= 4 < 2^m for m >= 3, so all three hypotheses follow from sgK_pow_GlueDiag_of_OAnti under OAnti (m+1) o. This is conditional vanishing of the r=7 stratum. Strata r >= 8 still require further reduction; do not infer the all-level p-moment identity from this result alone."
       },
       {
         "kn_factor_count": 8,
@@ -174,8 +174,8 @@
         "kn_factor_count": 7,
         "word_count": 120,
         "cyclic_class_count": 12,
-        "reduction_status": "not_covered_by_current_generic_reductions",
-        "reduction_note": "Unresolved: current generic trace-word reductions cover at most five pairing factors, so the full ordered boundary contribution for this N-count is not yet derived. For p <= 10 and m >= 3, every cyclic gap exponent (gap + 1) is at most p - r + 1 <= 5 < 2^m; the existing conditional all-power glued-corner theorem under OAnti therefore supplies the individual middle-power corner hypotheses. The remaining gap is a multi-pairing trace reduction that preserves factor order and collects the complete boundary contribution with exact orbit multiplicities. Do not infer the p-moment identity from block diagonality or counts alone."
+        "reduction_status": "vanishes_by_seven_N_corner_lemma_under_OAnti",
+        "reduction_note": "Theorem trace_seven_N_powers_zero applies after cyclic rotation: select three of the seven cyclic gaps, convert two N*K^b*N blocks to diagonal boundary factors using the first two corner hypotheses, and apply trace_three_N_word_zero to the remaining three N factors using the third. For p <= 10 and r = 7, every gap exponent (gap + 1) is at most p - r + 1 <= 4 < 2^m for m >= 3, so all three hypotheses follow from sgK_pow_GlueDiag_of_OAnti under OAnti (m+1) o. This is conditional vanishing of the r=7 stratum. Strata r >= 8 still require further reduction; do not infer the all-level p-moment identity from this result alone."
       },
       {
         "kn_factor_count": 8,
