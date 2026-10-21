@@ -293,5 +293,18 @@ theorem SU2QuaternionForm_sum_finset {ι : Type*} (s : Finset ι)
         exact hf i (Finset.mem_insert_of_mem hi)
 
 
+/-- A finite sum of products preserves quaternionic spin-block form when
+both factors in every summand have that form. This packages the closure step
+used when expanding a block of a matrix product over intermediate vertices. -/
+theorem SU2QuaternionForm_sum_mul {ι : Type*} (s : Finset ι)
+    (A B : ι → Matrix C2 C2 ℂ)
+    (hA : ∀ i ∈ s, SU2QuaternionForm (A i))
+    (hB : ∀ i ∈ s, SU2QuaternionForm (B i)) :
+    SU2QuaternionForm (∑ i ∈ s, A i * B i) := by
+  apply SU2QuaternionForm_sum_finset
+  intro i hi
+  exact SU2QuaternionForm_mul (hA i hi) (hB i hi)
+
+
 end EvgenyTheorem
 
