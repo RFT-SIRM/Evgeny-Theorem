@@ -153,3 +153,44 @@ def gap_composition_inventory(p: int, r: int) -> dict[str, object]:
         "expected_word_count": comb(p, r),
         "classes": rows,
     }
+
+
+def reversal_gap_inventory(p: int, r: int) -> dict[str, object]:
+    """Group cyclic gap classes with their reversals as a candidate symmetry quotient.
+
+    This is combinatorial bookkeeping only. It does not assert that the corresponding
+    matrix traces are equal; that requires a separate algebraic argument.
+    """
+    inventory = gap_composition_inventory(p, r)
+    rows = inventory["classes"]
+    grouped: dict[tuple[int, ...], list[dict[str, object]]] = {}
+    for row in rows:
+        gaps = tuple(int(x) for x in row["gaps"])
+        reverse = tuple(reversed(gaps))
+        reverse_canonical = min(
+            reverse[i:] + reverse[:i] for i in range(len(reverse))
+        )
+        key = min(gaps, reverse_canonical)
+        grouped.setdefault(key, []).append(row)
+    reversal_classes = [
+        {
+            "representative": list(key),
+            "cyclic_gap_representatives": [
+                list(tuple(int(x) for x in row["gaps"]))
+                for row in sorted(group, key=lambda item: tuple(item["gaps"]))
+            ],
+            "cyclic_class_count": len(group),
+            "word_weight": sum(int(row["word_orbit_weight"]) for row in group),
+        }
+        for key, group in sorted(grouped.items())
+    ]
+    return {
+        "p": p,
+        "r": r,
+        "cyclic_gap_class_count": int(inventory["cyclic_gap_classes"]),
+        "reversal_class_count": len(reversal_classes),
+        "word_weight_total": sum(int(row["word_weight"]) for row in reversal_classes),
+        "expected_word_count": comb(p, r),
+        "classes": reversal_classes,
+    }
+
