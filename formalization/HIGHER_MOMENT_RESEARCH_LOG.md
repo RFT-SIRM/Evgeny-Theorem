@@ -1313,3 +1313,11 @@ For the target degrees this gives:
 - p=10: every middle exponent is at most 5; it suffices that m >= 3.
 
 These are sufficient level thresholds for the six-N boundary reduction only. They do not show that the six-N contribution vanishes, nor that it cancels the other even strata. For levels below these thresholds, the generic boundary theorem remains conditional on the individual corner premises.
+## 4ah. Eight-N wrapper: exact degree thresholds
+
+`trace_eight_N_powers_boundary_of_OAnti` has four middle exponents b,d,f,h. For a gap tuple with r=8 and total degree p, the eight nonnegative gaps sum to p-8, so each middle exponent is at most p-7. Hence all eight-N words satisfy the wrapper's distance bounds when p-7 < 2^m.
+
+- p=8: each middle exponent is 1; it suffices that m >= 1.
+- p=10: each middle exponent is at most 3; it suffices that m >= 2.
+
+Together with the r=6 wrapper, this supplies conditional boundary reductions for the r=6 layer in degrees 6,8,10 and the r=8 layer in degrees 8,10, at the stated levels. It still does not supply an r=10 wrapper, and none of these reductions prove cancellation between the even strata.
