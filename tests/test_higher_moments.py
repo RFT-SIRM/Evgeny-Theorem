@@ -285,3 +285,20 @@ def test_exact_residual_transition_level_six_at_theta_pi(
     assert deltas[6] == expected_delta6
     assert residuals[5] == expected_residual
     assert residuals[6] == expected_residual
+
+
+@pytest.mark.parametrize("power,coefficient,constant", [
+    (6, -37008, -2640),
+    (8, -3704832, -138752),
+    (10, -278153280, -2253760),
+])
+def test_exact_pi_angle_candidate_formula_levels_three_to_six(
+    power, coefficient, constant
+):
+    """Check the candidate affine-in-3^m formula on exact levels 3..6 only."""
+    for level in range(3, 7):
+        delta = (
+            _exact_sparse_trace_power_pi(level, power, False)
+            - _exact_sparse_trace_power_pi(level, power, True)
+        )
+        assert delta == coefficient * (3 ** (level - 3)) + constant
