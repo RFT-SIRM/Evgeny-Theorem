@@ -603,3 +603,42 @@ def test_even_pairing_cyclic_class_counts_are_pinned():
             assert ledger_by_r[r]["cyclic_class_count"] == class_count
             assert ledger_by_r[r]["word_count"] == word_count
 
+
+
+def test_two_pairing_gap_classes_match_boundary_power_exponents():
+    """The r=2 necklace gaps determine the middle power in trace_two_N_powers."""
+    expected = {
+        6: {
+            (0, 4): (1, 5, 6),
+            (1, 3): (2, 4, 6),
+            (2, 2): (3, 3, 3),
+        },
+        8: {
+            (0, 6): (1, 7, 8),
+            (1, 5): (2, 6, 8),
+            (2, 4): (3, 5, 8),
+            (3, 3): (4, 4, 4),
+        },
+        10: {
+            (0, 8): (1, 9, 10),
+            (1, 7): (2, 8, 10),
+            (2, 6): (3, 7, 10),
+            (3, 5): (4, 6, 10),
+            (4, 4): (5, 5, 5),
+        },
+    }
+    for p, expected_rows in expected.items():
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 2
+        ]
+        actual = {}
+        for row in rows:
+            gaps = tuple(row["cyclic_gap_representative"])
+            assert len(gaps) == 2 and sum(gaps) == p - 2
+            a, b = (gaps[0] + 1, gaps[1] + 1)
+            actual[gaps] = (a, b, row["orbit_size"])
+            assert a + b == p
+            assert row["representative"].count("K*N") == 2
+        assert actual == expected_rows
+        assert sum(weight for _a, _b, weight in actual.values()) == p * (p - 1) // 2
