@@ -211,3 +211,35 @@ def reversal_gap_pairing_report(p: int, r: int) -> dict[str, object]:
         "expected_word_count": int(inventory["expected_word_count"]),
     }
 
+
+def reversal_word_inventory(p: int) -> dict[str, object]:
+    """Group binary cyclic word classes by reversal, without assuming trace equality."""
+    inventory = word_inventory(p)
+    grouped: dict[tuple[str, ...], list[dict[str, object]]] = {}
+    for row in inventory["classes"]:
+        word = tuple(str(x) for x in row["representative"])
+        reverse = tuple(reversed(word))
+        reverse_canonical = canonical_rotation(reverse)
+        key = min(word, reverse_canonical)
+        grouped.setdefault(key, []).append(row)
+    classes = []
+    for key, members in sorted(grouped.items()):
+        classes.append({
+            "representative": list(key),
+            "cyclic_representatives": [
+                list(tuple(str(x) for x in row["representative"]))
+                for row in sorted(members, key=lambda row: tuple(row["representative"]))
+            ],
+            "cyclic_class_count": len(members),
+            "word_weight": sum(int(row["orbit_size"]) for row in members),
+            "kn_factor_count": sum(1 for x in key if x == "K*N"),
+        })
+    return {
+        "p": p,
+        "cyclic_class_count": len(inventory["classes"]),
+        "reversal_class_count": len(classes),
+        "word_weight_total": sum(int(row["word_weight"]) for row in classes),
+        "expected_word_count": 2**p,
+        "classes": classes,
+    }
+
