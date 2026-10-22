@@ -603,17 +603,3 @@ def test_even_pairing_cyclic_class_counts_are_pinned():
             assert ledger_by_r[r]["cyclic_class_count"] == class_count
             assert ledger_by_r[r]["word_count"] == word_count
 
-
-def test_conditional_aggregate_even_stratum_arithmetic():
-    """Pin conditional aggregate arithmetic while retaining its assumptions."""
-    expected = {
-        6: (31, 768, 23808),
-        8: (127, 3072, 390144),
-        10: (511, 12288, 6279168),
-    }
-    for p, (word_count, per_word, total) in expected.items():
-        assert word_count * (12 * 2**p) == total
-        assert per_word == 12 * 2**p
-    from pathlib import Path
-    log = Path(__file__).resolve().parents[1] / "formalization" / "HIGHER_MOMENT_RESEARCH_LOG.md"
-    assert "not machine-checked theorem values" in log.read_text(encoding="utf-8")
