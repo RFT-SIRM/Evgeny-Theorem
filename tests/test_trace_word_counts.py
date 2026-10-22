@@ -860,7 +860,7 @@ def test_adjoint_factor_word_inventory_is_stratumwise_involution():
             r = row["r"]
             cyclic, fixed_classes, paired_orbits, fixed_weight = expected[p][r]
             assert row["word_count"] == comb(p, r)
-            assert row["image_word_count"] == comb(p, r)
+            assert row["image_word_count"] == cyclic
             assert row["cyclic_class_count"] == cyclic
             assert row["fixed_cyclic_class_count"] == fixed_classes
             assert row["paired_orbit_count"] == paired_orbits
