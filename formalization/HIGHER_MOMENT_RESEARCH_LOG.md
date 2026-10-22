@@ -1052,3 +1052,21 @@ The proof obligation is unchanged: derive the weighted cancellation among the
 remaining even-pairing boundary strata for arbitrary level and angle. The
 current finite tests provide further evidence, but do not discharge that
 obligation.
+
+
+## Candidate closed forms at the special angle θ = π
+
+The exact residual data suggest the following compact formulas, restricted to
+the special angle θ = π and levels m ≥ 3:
+
+- H⁶: Δ_m(π) = −37008 · 3^(m−3) − 2640.
+- H⁸: Δ_m(π) = −3704832 · 3^(m−3) − 138752.
+- H¹⁰: Δ_m(π) = −278153280 · 3^(m−3) − 2253760.
+
+These are obtained by solving the first-order recurrence
+Δ_m − 3Δ_(m−1) = R, using the exact residuals R = 5280, 277504,
+4507520 observed from m = 4 onward. The added exact-integer regression
+checks verify these formulas only at m = 3, 4, 5, 6. They are therefore
+finite-data-supported candidates, not a proof of the recurrence for all
+m. In particular, they do not provide the missing all-angle formulas for
+H⁶, H⁸, or H¹⁰.
