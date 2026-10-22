@@ -3,6 +3,7 @@ import Mathlib.Data.Complex.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Tactic.NoncommRing
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Omega
 
 namespace EvgenyTheorem
 
