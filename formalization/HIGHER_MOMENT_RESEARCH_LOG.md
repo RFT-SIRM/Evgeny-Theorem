@@ -1208,3 +1208,13 @@ the ordered-word/cyclic-class indexing and the orbit-size multiplicity lemma
 before attempting any operator-level cancellation. Until those lemmas compile,
 this section is a precise proof obligation, not a Lean theorem or a claimed
 proof of the moment recurrence.
+
+## 4aa. The two-pairing layer is the base case for boundary-sum comparison
+
+The next useful reduction is to separate the lowest even layer from the genuinely nested ones. For a word with exactly two occurrences of K*N, let the two cyclic K-gaps be g1,g2 >= 0, with g1+g2=p-2. The corresponding powers between successive N factors are g1+1 and g2+1, because each selected K*N contributes its own leading K.
+
+By cyclicity and trace_two_N_word, the ordered word has a boundary expression in which one diagonal factor is (K^(g1+1))_{sigma(x),sigma(x)} and the complementary outside K powers combine to K^(p-g1-1); the trace is summed over glued x. The exact instance should always be obtained from trace_two_N_word, not by commuting N through K.
+
+For p=6,8,10, the r=2 class counts are respectively 3, 4, and 5, while the ordered-word multiplicities are binomial(p,2)=15,28,45. Their cyclic gap representatives are already recorded in trace_word_inventory_p6_p8_p10.json; each representative's orbit size is its weight. This layer is therefore the simplest place to define a concrete B_{p,2} in Lean and verify that the gap encoding agrees with the generic two-N theorem.
+
+This does not by itself yield the required cancellation: B_{p,2} must be compared with the r=4 and higher even boundary sums. The higher layers contain products of several diagonal boundary factors separated by K powers, so their comparison requires additional structure (for example, a common endpoint-sum identity), not just the orbit-count lemma. No such identity is asserted here.
