@@ -1105,3 +1105,27 @@ boundary expressions can be nonzero individually, and their weighted
 cancellation in the full moment difference remains unproved. In particular,
 the formulas at θ = π remain finite-data-supported conjectures, not all-level
 theorems.
+
+## 4y. Concrete consequence: the top strata force cross-stratum accounting
+
+The all-pairing diagnostics in Sections 4w and 4x imply a useful constraint on
+any proposed proof strategy. Under the stated support-diagonality and corner
+degree assumptions, the top strata contribute respectively 768, 3,072, and
+12,288 for p = 6, 8, and 10. Therefore a proof cannot close by declaring every
+even stratum zero separately. If the target trace identity is correct, its
+boundary bookkeeping must either (i) exhibit an exact cancellation of each
+top-stratum term against lower even strata with the correct ordered-word
+multiplicities, or (ii) show that the hypotheses used in the diagnostic do not
+hold for the particular comparison being evaluated. The latter must be
+demonstrated explicitly; it cannot be silently assumed.
+
+For the next formal step, retain the boundary terms as named quantities rather
+than simplify them to zero. For each p, define B_{p,r} to be the sum of the
+boundary expression for the r-pairing stratum over canonical cyclic
+representatives, weighted by their rotation-orbit sizes. The required
+closure obligation is then a finite, explicit identity among the B_{p,r}
+(and the all-K term) for p = 6, 8, and 10. The Python inventory already
+supplies the representatives and orbit weights; the missing mathematical
+content is the operator-level evaluation of these weighted boundary sums.
+This notation is a proof plan only: no B_{p,r} cancellation theorem is claimed
+by this section, and no new Lean theorem or CI result is implied.
