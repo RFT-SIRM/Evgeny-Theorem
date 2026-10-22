@@ -1321,3 +1321,10 @@ These are sufficient level thresholds for the six-N boundary reduction only. The
 - p=10: each middle exponent is at most 3; it suffices that m >= 2.
 
 Together with the r=6 wrapper, this supplies conditional boundary reductions for the r=6 layer in degrees 6,8,10 and the r=8 layer in degrees 8,10, at the stated levels. It still does not supply an r=10 wrapper, and none of these reductions prove cancellation between the even strata.
+## 4ai. Ten-N wrapper and uniform degree thresholds
+
+The new `trace_ten_N_powers_boundary_of_OAnti` discharges the five corner premises for the r=10 boundary theorem when b,d,f,h,j < 2^m. In a degree-p word with ten N factors, the ten gaps sum to p-10, so each middle exponent is at most p-9.
+
+For the target p=10, all gaps are zero and all five middle exponents are 1; the sufficient bound is 1 < 2^m, i.e. m >= 1. The wrapper therefore covers the unique r=10 word at degree ten at every positive level, conditional on its underlying geometric distance lemma and successful Lean compilation.
+
+At this point wrappers have been authored for r=6,8,10. This is a source-level milestone only: current visible Actions results do not include these latest wrapper commits, so compilation remains unverified. More importantly, even successful compilation would only establish the boundary reductions. The main remaining theorem is still the exact cancellation/axis-independence identity across all even strata.
