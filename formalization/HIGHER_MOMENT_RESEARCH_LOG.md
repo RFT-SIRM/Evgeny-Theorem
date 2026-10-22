@@ -1213,7 +1213,7 @@ proof of the moment recurrence.
 
 The next useful reduction is to separate the lowest even layer from the genuinely nested ones. For a word with exactly two occurrences of K*N, let the two cyclic K-gaps be g1,g2 >= 0, with g1+g2=p-2. The corresponding powers between successive N factors are g1+1 and g2+1, because each selected K*N contributes its own leading K.
 
-By cyclicity and trace_two_N_word, the ordered word has a boundary expression in which one diagonal factor is (K^(g1+1))_{sigma(x),sigma(x)} and the complementary outside K powers combine to K^(p-g1-1); the trace is summed over glued x. The exact instance should always be obtained from trace_two_N_word, not by commuting N through K.
+Write the cyclic word as K^(g1+1) * N * K^(g2+1) * N, with g1+g2=p-2. This has total K-degree p and is the specialization (a,b,c)=(g1+1,g2+1,0) of trace_two_N_powers. Its boundary expression is exactly the sum over glued x of (K^(g1+1))(x,x) times (K^(g2+1))(sigma(x),sigma(x)), assuming the required corner-vanishing hypothesis for the middle power K^(g2+1). The order of the two gaps can be exchanged by choosing the other cyclic representative; no commutation of N through K is used.
 
 For p=6,8,10, the r=2 class counts are respectively 3, 4, and 5, while the ordered-word multiplicities are binomial(p,2)=15,28,45. Their cyclic gap representatives are already recorded in trace_word_inventory_p6_p8_p10.json; each representative's orbit size is its weight. This layer is therefore the simplest place to define a concrete B_{p,2} in Lean and verify that the gap encoding agrees with the generic two-N theorem.
 
