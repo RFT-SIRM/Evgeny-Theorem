@@ -377,13 +377,26 @@ def adjoint_factor_word_inventory(p: int) -> dict[str, object]:
     by_r = []
     for r in range(p + 1):
         stratum = [w for w in words if w.count("K*N") == r]
-        fixed = sum(image[w] == canonical_rotation(w) for w in stratum)
+        cyclic_representatives = sorted({canonical_rotation(w) for w in stratum})
+        fixed_representatives = [
+            rep for rep in cyclic_representatives if image[rep] == rep
+        ]
+        orbit_weights = {
+            rep: sum(1 for w in stratum if canonical_rotation(w) == rep)
+            for rep in cyclic_representatives
+        }
+        fixed = sum(orbit_weights[rep] for rep in fixed_representatives)
         image_keys = {canonical_rotation(image[w]) for w in stratum}
         by_r.append({
             "r": r,
             "word_count": len(stratum),
             "expected_word_count": comb(p, r),
+            "cyclic_class_count": len(cyclic_representatives),
             "image_word_count": len(image_keys),
+            "fixed_cyclic_class_count": len(fixed_representatives),
+            "paired_orbit_count": (len(cyclic_representatives) - len(fixed_representatives)) // 2,
+            "fixed_word_weight": fixed,
+            "paired_word_weight": len(stratum) - fixed,
             "fixed_canonical_word_count": fixed,
             "preserves_stratum": all(image[w].count("K*N") == r for w in stratum),
             "involution_on_cyclic_classes": all(
