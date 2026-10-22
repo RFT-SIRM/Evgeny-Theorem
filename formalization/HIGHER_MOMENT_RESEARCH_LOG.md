@@ -1388,3 +1388,27 @@ The weight sum remains exactly (2^p) for each p, and every reversal group contai
 
 Mathematical caveat: trace cyclicity identifies rotations. It does not, by itself, identify a word with its reversal. To use this quotient to reduce the operator calculation, one must prove a reversal identity for the actual factors K and K*N (for example, via a suitable transpose/dagger relation and the hypotheses on N). Until that is established, the 13/30/78 values are counts of candidate symmetry classes, not counts of distinct trace values. The cross-stratum cancellation identity and the all-level defect recurrence remain open.
 
+## 4am. Reversal classes resolved by KN-count strata
+
+The full-word reversal census has now been stratified by the number r of (KN) factors. This is more useful than the global 13/30/78 totals because the trace expansion and the boundary formulas are organized by r. The exact values below are computed from binary words and cyclic orbit weights; each stratum total is checked against (inom{p}{r}).
+
+| p | r | cyclic classes | reversal classes | paired reversal orbits | fixed weight | paired weight |
+|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 2 | 3 | 3 | 0 | 15 | 0 |
+| 6 | 3 | 4 | 3 | 1 | 8 | 12 |
+| 6 | 4 | 3 | 3 | 0 | 15 | 0 |
+| 8 | 2 | 4 | 4 | 0 | 28 | 0 |
+| 8 | 3 | 7 | 5 | 2 | 24 | 32 |
+| 8 | 4 | 10 | 8 | 2 | 38 | 32 |
+| 8 | 5 | 7 | 5 | 2 | 24 | 32 |
+| 8 | 6 | 4 | 4 | 0 | 28 | 0 |
+| 10 | 2 | 5 | 5 | 0 | 45 | 0 |
+| 10 | 3 | 12 | 8 | 4 | 40 | 80 |
+| 10 | 4 | 22 | 16 | 6 | 90 | 120 |
+| 10 | 5 | 26 | 16 | 10 | 52 | 200 |
+| 10 | 6 | 22 | 16 | 6 | 90 | 120 |
+| 10 | 7 | 12 | 8 | 4 | 40 | 80 |
+| 10 | 8 | 5 | 5 | 0 | 45 | 0 |
+
+The census is symmetric under (r\leftrightarrow p-r), as expected for complementing the binary factor labels. For even r-strata, this identifies exactly which strata contain nontrivial reversal pairs. The combinatorics is now pinned by tests; it still does not establish equality of traces within reversal pairs. Since transpose reverses products but also transposes each factor, a proof must explicitly relate (K^T) and ((KN)^T) to the factors in the original word. No such identity is inferred from cyclicity alone.
+
