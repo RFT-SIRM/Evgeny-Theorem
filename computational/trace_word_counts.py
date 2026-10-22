@@ -116,3 +116,40 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+def weak_compositions(total: int, parts: int) -> list[tuple[int, ...]]:
+    """Return all ordered weak compositions of total into a positive parts count."""
+    if total < 0 or parts < 1:
+        raise ValueError("total must be nonnegative and parts must be positive")
+    if parts == 1:
+        return [(total,)]
+    out: list[tuple[int, ...]] = []
+    for first in range(total + 1):
+        out.extend((first,) + rest for rest in weak_compositions(total - first, parts - 1))
+    return out
+
+
+def gap_composition_inventory(p: int, r: int) -> dict[str, object]:
+    """Index r-marked cyclic words by ordered K-gaps, with exact rotation weights."""
+    if not (1 <= r <= p):
+        raise ValueError("require 1 <= r <= p")
+    gaps = weak_compositions(p - r, r)
+    canonical = lambda g: min(g[i:] + g[:i] for i in range(r))
+    classes: dict[tuple[int, ...], set[tuple[int, ...]]] = {}
+    for g in gaps:
+        classes.setdefault(canonical(g), set()).add(g)
+    rows = [
+        {"gaps": list(rep), "gap_orbit_size": len(members),
+         "word_orbit_weight": (p // r) * len(members)}
+        for rep, members in sorted(classes.items())
+    ]
+    return {
+        "p": p,
+        "r": r,
+        "ordered_gap_tuples": len(gaps),
+        "cyclic_gap_classes": len(rows),
+        "word_weight_total": sum(int(row["word_orbit_weight"]) for row in rows),
+        "expected_word_count": comb(p, r),
+        "classes": rows,
+    }
