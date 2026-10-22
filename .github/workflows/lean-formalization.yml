@@ -2,7 +2,7 @@ name: Lean formalization
 
 on:
   push:
-    branches: [main]
+    branches: [main, moment-6-8-10]
     paths:
       - "formalization/**/*.lean"
       - "lakefile.toml"
