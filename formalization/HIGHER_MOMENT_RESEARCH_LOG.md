@@ -1270,3 +1270,19 @@ The finite inventory/test suite now checks the counts and weights for every even
 ### Implementation correction: compute the orbit ratio after multiplying
 
 The exact class weight is (p * gap_orbit_size) / r, not (p // r) * gap_orbit_size. The latter incorrectly truncates p/r when r does not divide p (for example p=6,r=4). Since a gap orbit size is r divided by its rotational stabilizer, the product p * gap_orbit_size is divisible by r, so integer division after multiplication is exact. The inventory implementation now uses (p * len(members)) // r, and a new regression test compares the multiset of gap-derived word weights with the actual binary-necklace orbit weights class by class for every p in {6,8,10} and every 1 <= r <= p. Workflow status for this test commit has not yet appeared, so it should be treated as added but not CI-verified.
+
+## 4ae. Six-N boundary kernel from the existing Lean theorem
+
+The existing `trace_six_N_powers_boundary` gives a concrete kernel for r=6, rather than an unspecified E. Let a six-gap tuple g=(g1,...,g6) satisfy gi >= 0 and sum gi=p-6. Choose the cyclic word
+
+  K^(g1+1) N K^(g2+1) N K^(g3+1) N K^(g4+1) N K^(g5+1) N K^(g6+1) N.
+
+Instantiate `trace_six_N_powers_boundary` with (a,b,c,d,e,f,g)=(g1+1,g2+1,g3+1,g4+1,g5+1,g6+1,0). The theorem reduces the trace to
+
+  trace( K^(g1+1) * D_(g2+1) * K^(g3+1) * D_(g4+1) * K^(g5+1) * D_(g6+1) ),
+
+where D_q is the diagonal matrix with entries (K^q)(sigma(y),sigma(y)) on glued indices and zero elsewhere. This instantiation requires the three explicit corner-vanishing hypotheses for the powers K^(g2+1), K^(g4+1), and K^(g6+1). Those hypotheses must be discharged from the available `GlueDiag`/OAnti lemmas for each concrete tuple; they must not be dropped from the statement.
+
+Thus the six-N layer is a trace of three K-power blocks alternating with three diagonal boundary blocks. Its weighted sum is (p/6) times the sum of this kernel over all ordered six-gap tuples summing to p-6, provided cyclic invariance is established for the chosen kernel. This makes B_(6,6) at p=6 the single tuple (0,0,0,0,0,0), with kernel trace(K D_1 K D_1 K D_1); for p=8 and p=10 the same formula ranges over 7 and 84 ordered tuples respectively.
+
+This is an explicit operator-level target, but not yet the cancellation identity: the alternating diagonal kernels for r=6 must still be compared with the r=2, r=4, and, for p>=8, r=8 and higher layers.
