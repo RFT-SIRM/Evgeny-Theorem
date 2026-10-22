@@ -1302,3 +1302,14 @@ This audit corrects the proof plan: the six-N kernel written in §4ae is a valid
 The stronger lemma proposed above must not be stated for arbitrary q without a distance hypothesis: powers of a graph adjacency operator can connect distinct corners once q reaches their graph distance. The plausible geometric route is instead to prove that distinct corners in one gasket copy have graph distance at least 2^m, then derive the needed zero entry for q < 2^m by induction on matrix powers (or by a path-expansion lemma).
 
 For fixed moment degree p in the intended large-level regime 2^m > p, every selected exponent q <= p is below this distance threshold, so the six-N corner hypotheses may follow. This is only a proof strategy until the corner-distance theorem and the power-entry lemma are formalized. It also leaves small levels with 2^m <= p to be handled separately; do not silently claim the boundary formula for those levels.
+## 4ag. Exact level thresholds for applying the six-N boundary theorem
+
+For an r=6 gap tuple in degree p, each selected middle exponent is gi+1 and the gap sum is p-6. Consequently gi+1 <= p-5, not merely <= p. Thus the new `trace_six_N_powers_boundary_of_OAnti` applies uniformly to every r=6 word of total degree p as soon as p-5 < 2^m.
+
+For the target degrees this gives:
+
+- p=6: all middle exponents equal 1; the bound requires 1 < 2^m, hence m >= 1.
+- p=8: every middle exponent is at most 3; it suffices that m >= 2.
+- p=10: every middle exponent is at most 5; it suffices that m >= 3.
+
+These are sufficient level thresholds for the six-N boundary reduction only. They do not show that the six-N contribution vanishes, nor that it cancels the other even strata. For levels below these thresholds, the generic boundary theorem remains conditional on the individual corner premises.
