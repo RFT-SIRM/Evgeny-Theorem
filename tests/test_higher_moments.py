@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from moments.moments import raw_trace_diff_H4
 from operators.operators import build_su2_bundle
