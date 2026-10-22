@@ -35,6 +35,7 @@ def test_theta_pi_higher_moments_exact_levels_one_through_six():
         # Independently exercise the public transition helper at level six.
         assert residual_at_pi(6, power) == expected_residuals[power][-1]
 
+
 def test_exact_sparse_certificate_matches_candidate_closed_forms_at_pi():
     """Cross-check candidate formulas with the independent sparse implementation.
 
@@ -51,6 +52,7 @@ def test_exact_sparse_certificate_matches_candidate_closed_forms_at_pi():
                 coefficient * (3 ** (level - 3)) + constant
             )
 
+
 def test_exact_sparse_h6_candidate_at_level_seven():
     """Extend the exact theta=pi H^6 candidate check one level further.
 
@@ -60,3 +62,20 @@ def test_exact_sparse_h6_candidate_at_level_seven():
     coefficient, constant = (-37008, -2640)
     assert delta_at_pi(level, 6) == coefficient * (3 ** (level - 3)) + constant
     assert residual_at_pi(level, 6) == 5280
+
+
+def test_exact_sparse_h8_h10_candidates_at_level_seven():
+    """Stress-test the theta=pi H^8/H^10 candidates at level seven exactly.
+
+    These assertions are finite exact-arithmetic checks only; passing them
+    cannot replace the missing all-level, all-angle boundary cancellation.
+    """
+    level = 7
+    candidates = {
+        8: (-3704832, -138752, 277504),
+        10: (-278153280, -2253760, 4507520),
+    }
+    for power, (coefficient, constant, residual) in candidates.items():
+        expected = coefficient * (3 ** (level - 3)) + constant
+        assert delta_at_pi(level, power) == expected
+        assert residual_at_pi(level, power) == residual
