@@ -1374,3 +1374,17 @@ Exact results (fixed classes, paired orbits, fixed word weight, paired word weig
 
 The total weight in each row agrees with \(\binom{p}{r}\). Nontrivial reversal pairs occur only at (p,r)=(8,4),(10,4),(10,6) in this census. If an independently proved trace-reversal identity is available for the model, these pairs could reduce the number of distinct algebraic cases; without it they must remain separate. In particular, this census does not itself prove the cross-stratum cancellation needed for the all-level recurrence.
 
+## 4al. Full binary-word reversal quotient
+
+The reversal grouping was extended from individual even-r gap inventories to all binary factor words of lengths p=6,8,10. This groups cyclic necklace classes under word reversal, preserving the exact size of each rotation orbit. The result is a smaller combinatorial census, but it does not assert equality of the corresponding operator traces.
+
+| p | all words | cyclic classes | classes after reversal pairing |
+|---:|---:|---:|---:|
+| 6 | 64 | 14 | 13 |
+| 8 | 256 | 36 | 30 |
+| 10 | 1024 | 108 | 78 |
+
+The weight sum remains exactly (2^p) for each p, and every reversal group contains either one or two cyclic classes. This provides a whole-expansion inventory to complement the even-stratum gap census.
+
+Mathematical caveat: trace cyclicity identifies rotations. It does not, by itself, identify a word with its reversal. To use this quotient to reduce the operator calculation, one must prove a reversal identity for the actual factors K and K*N (for example, via a suitable transpose/dagger relation and the hypotheses on N). Until that is established, the 13/30/78 values are counts of candidate symmetry classes, not counts of distinct trace values. The cross-stratum cancellation identity and the all-level defect recurrence remain open.
+
