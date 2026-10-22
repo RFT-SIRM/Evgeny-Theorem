@@ -1,19 +1,19 @@
 import EvgenyTheorem.GlueCorner
+import EvgenyTheorem.GlueCornerCube
 
-/-!
+/-
 # Trace splitting and the defect recursion over arbitrary orientations
 
 * `trace_blockK_pow4`: `tr (blockK H)^4 = Σ_c tr (H c)^4`.
 * `cornerTerm`: the three glued-corner sums of `glueRHS`.
 * `trace4_split`: `tr (H_{m+1})^4 = Σ_c tr (Hc c)^4 + cornerTerm`.
-* `defectO`: trace defect for an arbitrary orientation.
-* `defectO_succ`: `D(m+1,o) = D(m,o) + D(m,oBo o) + D(m,oCo o)`, assuming that the corner data
-  of `K` do not depend on the axis function (`hcorner`, the remaining geometric fact).
+* `defectO_succ`: `D(m+1,o) = D(m,o) + D(m,oBo o) + D(m,oCo o)`, assuming corner data.
 -/
 
 namespace EvgenyTheorem
 
 open Matrix
+
 
 section Block
 
@@ -253,5 +253,23 @@ theorem defectO_succ (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
     cornerTerm_congr m (sgK m θ ax o) (sgK m θ ax' o) hcorner, sum_gcopy, sum_gcopy,
     hA ax, hA ax', hB ax, hB ax', hC ax, hC ax']
   ring
+
+
+/-- The defect recursion with its corner premise discharged by the geometric
+corner calculation. This is the unconditional orientation-recursion theorem
+under the stated orientation-antisymmetry and axis-periodicity assumptions. -/
+theorem defectO_succ_of_OAnti (m : ℕ) (hm : 1 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hax1' : ∀ k, ax' (3 ^ m + k) = ax' k)
+    (hax2' : ∀ k, ax' (2 * 3 ^ m + k) = ax' k) :
+    defectO (m + 1) θ ax ax' o =
+      defectO m θ ax ax' o +
+        defectO m θ ax ax' (oBo m o) +
+        defectO m θ ax ax' (oCo m o) := by
+  exact defectO_succ m hm θ ax ax' o hanti hax1 hax2 hax1' hax2'
+    (sgK_corner_data m θ ax ax' o hanti)
 
 end EvgenyTheorem
