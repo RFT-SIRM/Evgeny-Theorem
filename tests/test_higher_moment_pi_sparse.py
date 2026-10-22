@@ -50,3 +50,13 @@ def test_exact_sparse_certificate_matches_candidate_closed_forms_at_pi():
             assert delta_at_pi(level, power) == (
                 coefficient * (3 ** (level - 3)) + constant
             )
+
+def test_exact_sparse_h6_candidate_at_level_seven():
+    """Extend the exact theta=pi H^6 candidate check one level further.
+
+    This remains a finite regression check; it is not an all-level proof.
+    """
+    level = 7
+    coefficient, constant = (-37008, -2640)
+    assert delta_at_pi(level, 6) == coefficient * (3 ** (level - 3)) + constant
+    assert residual_at_pi(level, 6) == 5280
