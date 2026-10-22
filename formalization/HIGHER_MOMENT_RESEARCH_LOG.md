@@ -1231,3 +1231,18 @@ By `trace_two_N_powers`, the cyclic word with gaps (a-1,p-a-1) has boundary cont
 The factor p/2 is valid because each unequal pair {a,p-a} appears twice in the ordered sum and each equal pair appears once. This is a combinatorial identity, not a cancellation claim. The orbit totals it reproduces are 15, 28, and 45 for p=6, 8, and 10.
 
 Equivalently, the lowest even stratum is now reduced to a single weighted sum of products of diagonal entries of complementary powers of K. The unresolved step is to express the r=4, r=6, ... boundary strata in a compatible form and prove that their sum cancels the axis-dependent part of this expression. The current Lean theorem supplies each E_a once its hypotheses are met; it does not yet prove the global cross-stratum identity.
+## 4ac. Explicit r=4 boundary kernel and finite indexing target
+
+The next stratum is r=4. For a cyclic gap tuple (g1,g2,g3,g4), with each gi >= 0 and sum gi=p-4, the corresponding word is cyclically represented by
+
+  K^(g1+1) * N * K^(g2+1) * N * K^(g3+1) * N * K^(g4+1) * N.
+
+Applying `trace_four_N_powers_explicit` after cyclic rotation gives the boundary kernel
+
+  sum_{x:g(x)} [ sum_{y:g(y)} ((K^(g4+1) * K^(g1+1))(x,y) * (K^(g2+1))(sigma(y),sigma(y))) * (K^(g3+1))(y,x) ] * (K^(g4+1))(sigma(x),sigma(x)),
+
+with the exponents aligned to the theorem arguments (a,b,c,d,e)=(g1+1,g2+1,g3+1,g4+1,0) after rotating the word so that the final outside exponent is zero. If a different cyclic representative is used, the same theorem must be instantiated with that representative's ordered gaps; the factors must not be commuted.
+
+For fixed p, the r=4 cyclic classes are necklaces of four nonnegative gaps summing to p-4, modulo cyclic rotation. Their orbit size is the number of distinct rotations of the gap tuple, and it supplies the exact multiplicity in B_{p,4}. The inventory already gives 3, 5, and 14 classes for p=6, 8, and 10 respectively (their weighted totals must be binomial(p,4)=15,70,210).
+
+This gives a concrete finite target for implementation: generate each canonical four-gap tuple, retain its rotation-orbit size, instantiate the four-N boundary formula with the corresponding ordered exponents, and sum. The remaining proof is then an equality of these explicit double endpoint sums with the r=2 and higher even-stratum kernels. The formula itself does not imply that this equality holds.
