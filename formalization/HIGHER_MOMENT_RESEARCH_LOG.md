@@ -1129,3 +1129,28 @@ supplies the representatives and orbit weights; the missing mathematical
 content is the operator-level evaluation of these weighted boundary sums.
 This notation is a proof plan only: no B_{p,r} cancellation theorem is claimed
 by this section, and no new Lean theorem or CI result is implied.
+
+
+## Exact level-seven extension (2026-10-22)
+
+The exact sparse Gaussian-integer regression has now been extended to level
+7 for all three even powers. The tests assert the candidate special-angle
+formula and its residual directly against `delta_at_pi` and
+`residual_at_pi`, which recompute the traces from the sparse operator rather
+than substituting the candidate formula into itself.
+
+| p | exact Δ₇(π) checked | exact R₇(π) checked |
+|---:|---:|---:|
+| 6 | -3,000,288 | 5,280 |
+| 8 | -300,230,144 | 277,504 |
+| 10 | -22,532,669,440 | 4,507,520 |
+
+Both Python CI matrix jobs (3.11 and 3.12), including the slow-test stage, and
+the Lean formalization build passed for the code commit
+`e47287354d62d44c9857afc71f06a3ae583ec98e`.
+
+This adds one more exact finite-level checkpoint for the `θ = π` candidates.
+It still does not establish their validity for all levels, nor the desired
+all-angle identity. The unresolved proof obligation remains the weighted
+cancellation of the nonzero even-pairing boundary strata; the new tests do
+not discharge it.
