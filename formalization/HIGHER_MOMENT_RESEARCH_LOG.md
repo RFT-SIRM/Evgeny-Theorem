@@ -1257,3 +1257,12 @@ where the sum is over all ordered four-tuples of nonnegative gaps. Reason: an r-
 This gives a direct computational indexing set without needing a separate canonical-necklace representative in the formula. The number of ordered tuples is binomial(p-1,3), namely 10, 35, and 84 for p=6, 8, and 10; the prefactor p/4 restores the original word multiplicities, giving total weights binomial(p,4)=15, 70, and 210. This is the r=4 analogue of B_{p,2}=(p/2) sum_{a=1}^{p-1} E_a.
 
 Important: this identity only reorganizes multiplicities. It does not assert that E is equal across tuples, nor that B_{p,4} cancels B_{p,2}.
+## 4ad. General weighted gap formula for every stratum
+
+The r=2 and r=4 prefactors are instances of one exact orbit identity. Fix 1 <= r <= p and let E(g1,...,gr) be the trace contribution assigned to the cyclic word with gap tuple g, where gi >= 0 and sum gi=p-r. Assume E is invariant under cyclic rotation of g, as it is when it is obtained from a trace and the corresponding word is cyclically rotated. Then
+
+  B_{p,r} = (p/r) * sum_{g1+...+gr=p-r, gi>=0} E(g1,...,gr).
+
+Proof of the multiplicity factor: a gap tuple has r positions, while its binary word has p positions. If the tuple has rotational stabilizer of size s, its gap orbit has size r/s and the corresponding binary-word orbit has size p/s. Their ratio is p/r. Thus weighting cyclic word classes by their word-orbit sizes is exactly p/r times summing the rotation-invariant E over all ordered gap tuples. This argument also handles periodic tuples; no assumption of a full orbit is needed.
+
+The finite inventory/test suite now checks the counts and weights for every even stratum relevant to p=6,8,10. This resolves the indexing and multiplicity issue uniformly. It does not resolve the operator identity: each E still depends on the ordered gap tuple through products of K powers and diagonal boundary factors. The remaining theorem is the axis-independence of the sum over all even r after substituting the appropriate boundary kernel for each r.
