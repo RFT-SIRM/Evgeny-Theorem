@@ -4,15 +4,33 @@ from computational.higher_moment_pi_certificate import (
 )
 
 
-def test_theta_pi_higher_moments_level_six_direct_sparse_calculation():
-    """Direct level-six values agree with the finite-data candidate recurrence."""
-    expected = {
-        6: (-1_001_856, 5_280),
-        8: (-100_169_216, 277_504),
-        10: (-7_512_392_320, 4_507_520),
+def test_theta_pi_higher_moments_exact_levels_one_through_six():
+    """Exact Gaussian-integer calculation matches the full finite regression."""
+    expected_deltas = {
+        6: [-6744, -14976, -39648, -113664, -335712, -1001856],
+        8: [-547552, -1373696, -3843584, -11253248, -33482240, -100169216],
+        10: [
+            -32992520,
+            -94971520,
+            -280407040,
+            -836713600,
+            -2505633280,
+            -7512392320,
+        ],
     }
-    for power, (delta6, stable_residual) in expected.items():
-        assert delta_at_pi(6, power) == delta6
-        # This only checks the computed m=6 transition; it does not prove
-        # that the residual is constant at arbitrary levels or angles.
-        assert residual_at_pi(6, power) == stable_residual
+    expected_residuals = {
+        6: [5256, 5280, 5280, 5280, 5280],
+        8: [268960, 277504, 277504, 277504, 277504],
+        10: [4006040, 4507520, 4507520, 4507520, 4507520],
+    }
+
+    for power in (6, 8, 10):
+        deltas = [delta_at_pi(level, power) for level in range(1, 7)]
+        assert deltas == expected_deltas[power]
+        residuals = [
+            deltas[level - 1] - 3 * deltas[level - 2]
+            for level in range(2, 7)
+        ]
+        assert residuals == expected_residuals[power]
+        # Independently exercise the public transition helper at level six.
+        assert residual_at_pi(6, power) == expected_residuals[power][-1]
