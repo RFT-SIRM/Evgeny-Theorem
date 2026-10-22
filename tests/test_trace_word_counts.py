@@ -642,3 +642,29 @@ def test_two_pairing_gap_classes_match_boundary_power_exponents():
             assert row["representative"].count("K*N") == 2
         assert actual == expected_rows
         assert sum(weight for _a, _b, weight in actual.values()) == p * (p - 1) // 2
+
+
+def test_gap_composition_inventory_matches_even_stratum_multiplicities():
+    from math import comb
+    from computational.trace_word_counts import gap_composition_inventory
+
+    expected = {
+        (6, 2): (5, 3, 15),
+        (6, 4): (10, 3, 15),
+        (6, 6): (1, 1, 1),
+        (8, 2): (7, 4, 28),
+        (8, 4): (35, 10, 70),
+        (8, 6): (21, 4, 28),
+        (8, 8): (1, 1, 1),
+        (10, 2): (9, 5, 45),
+        (10, 4): (84, 22, 210),
+        (10, 6): (126, 22, 210),
+        (10, 8): (36, 5, 45),
+        (10, 10): (1, 1, 1),
+    }
+    for (p, r), (ordered, classes, total) in expected.items():
+        got = gap_composition_inventory(p, r)
+        assert got["ordered_gap_tuples"] == ordered
+        assert got["cyclic_gap_classes"] == classes
+        assert got["word_weight_total"] == total == comb(p, r)
+        assert all(row["word_orbit_weight"] > 0 for row in got["classes"])
