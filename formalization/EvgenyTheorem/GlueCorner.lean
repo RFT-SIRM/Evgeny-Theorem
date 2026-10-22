@@ -659,6 +659,9 @@ theorem trace_five_N_powers_zero_of_OAnti
 end EvgenyTheorem
 
 
+namespace EvgenyTheorem
+
+
 /-- Six-pairing boundary reduction for the concrete glued operator.
 The three corner hypotheses are discharged from orientation antisymmetry
 and the geometric distance bound, provided b, d, f are below the side length.
@@ -817,3 +820,5 @@ theorem trace_ten_N_powers_boundary_of_OAnti
   exact trace_ten_N_powers_boundary (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f g h i j k
     (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh) (hkg j hj)
+
+end EvgenyTheorem
