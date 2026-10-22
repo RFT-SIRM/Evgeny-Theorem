@@ -993,3 +993,38 @@ cancellation with lower-r strata in the full p=8 or p=10 residual identity;
 that requires the complete weighted sum over all ordered representatives
 and their orbit multiplicities. No such cross-stratum cancellation is claimed.
 
+
+
+## Exact finite calculation checkpoint: theta = pi, H6/H8/H10
+
+The branch `moment-6-8-10` now includes a sparse matrix-power calculation over
+Gaussian integers ℤ[i]. At θ = π, the operator entries are exact integers
+or Gaussian integers, so these trace differences are not floating-point
+approximations. The Python tests compute Δ_m^{(p)} = Tr(H_C^p) - Tr(H_{C'}^p)
+independently for levels m = 1,...,5:
+
+| m | Δ(H⁶) | Δ(H⁸) | Δ(H¹⁰) |
+|---:|---:|---:|---:|
+| 1 | -6,744 | -547,552 | -32,992,520 |
+| 2 | -14,976 | -1,373,696 | -94,971,520 |
+| 3 | -39,648 | -3,843,584 | -280,407,040 |
+| 4 | -113,664 | -11,253,248 | -836,713,600 |
+| 5 | -335,712 | -33,482,240 | -2,505,633,280 |
+
+For R_m^{(p)} = Δ_m^{(p)} - 3Δ_{m-1}^{(p)}, the exact sequences for
+m = 2,...,5 are:
+
+- H⁶: 5,256; 5,280; 5,280; 5,280.
+- H⁸: 268,960; 277,504; 277,504; 277,504.
+- H¹⁰: 4,006,040; 4,507,520; 4,507,520; 4,507,520.
+
+Thus the exact finite computations establish stabilization of these residuals
+from m = 3 through m = 5 at θ = π for the concrete matrices in this
+repository. This is evidence for a recurrence, not a proof for all m or all
+angles. The all-level analytic cancellation of the remaining even boundary
+strata is still open, and the H⁶/H⁸/H¹⁰ closed forms are not
+claimed as proved.
+
+Verification at commit `5b260c1ab203ca39754cd2585f9195ccc9843a1d`:
+- Lean formalization build: passed.
+- Python test suite, including fast and slow tests, on Python 3.11 and 3.12: passed.
