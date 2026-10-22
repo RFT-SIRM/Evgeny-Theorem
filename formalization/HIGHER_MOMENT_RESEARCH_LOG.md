@@ -1286,3 +1286,14 @@ where D_q is the diagonal matrix with entries (K^q)(sigma(y),sigma(y)) on glued 
 Thus the six-N layer is a trace of three K-power blocks alternating with three diagonal boundary blocks. Its weighted sum is (p/6) times the sum of this kernel over all ordered six-gap tuples summing to p-6, provided cyclic invariance is established for the chosen kernel. This makes B_(6,6) at p=6 the single tuple (0,0,0,0,0,0), with kernel trace(K D_1 K D_1 K D_1); for p=8 and p=10 the same formula ranges over 7 and 84 ordered tuples respectively.
 
 This is an explicit operator-level target, but not yet the cancellation identity: the alternating diagonal kernels for r=6 must still be compared with the r=2, r=4, and, for p>=8, r=8 and higher layers.
+## 4af. Hypothesis audit: `GlueDiag` does not discharge the six-N corner premises
+
+A crucial distinction surfaced when matching the generic six-N theorem to the gasket-specific lemmas. `trace_six_N_powers_boundary` requires, for each selected exponent q=b,d,f, the condition
+
+  ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → (K^q) w w' = 0.
+
+By contrast, `sgK_pow_GlueDiag_of_OAnti` proves `GlueDiag (sgGlue m) (sgK^q)`, whose definition has the additional premise `cp (σ w) = cp (σ w')`. This is strictly weaker: it does not cover pairs of distinct glued corners whose partners lie in different copies. Therefore it is not valid to claim that the three hkg premises in the six-N theorem follow directly from `sgK_pow_GlueDiag_of_OAnti`.
+
+The exact next Lean obligation is a stronger corner-off-diagonal lemma: under `OAnti (m+1) o`, prove `(sgK m θ ax o ^ q) w w' = 0` for distinct glued w,w' in the same copy, with no equality assumption on the copy labels of their partners. The case q=1 is `sgK_hkg`; the needed q>1 result is not supplied by the current GlueDiag theorem. Any proof must use the geometry of distinct gasket corners and the structure of powers, or derive an alternative boundary theorem whose hypotheses genuinely match `GlueDiag`.
+
+This audit corrects the proof plan: the six-N kernel written in §4ae is a valid specialization of the generic theorem only once these stronger premises are established. Until then, it is a conditional reduction, not an instantiated gasket theorem.
