@@ -836,19 +836,37 @@ def test_adjoint_factor_word_inventory_is_stratumwise_involution():
     from math import comb
     from computational.trace_word_counts import adjoint_factor_word_inventory
 
-    expected_fixed = {
-        6: {0: 1, 1: 6, 2: 15, 3: 8, 4: 15, 5: 6, 6: 1},
-        8: {0: 1, 1: 8, 2: 28, 3: 24, 4: 38, 5: 24, 6: 28, 7: 8, 8: 1},
-        10: {0: 1, 1: 10, 2: 45, 3: 40, 4: 90, 5: 52, 6: 90, 7: 40, 8: 45, 9: 10, 10: 1},
+    expected = {
+        6: {
+            0: (1, 1, 0, 1), 1: (1, 1, 0, 6), 2: (3, 3, 0, 15),
+            3: (4, 2, 1, 8), 4: (3, 3, 0, 15), 5: (1, 1, 0, 6), 6: (1, 1, 0, 1),
+        },
+        8: {
+            0: (1, 1, 0, 1), 1: (1, 1, 0, 8), 2: (4, 4, 0, 28),
+            3: (7, 3, 2, 24), 4: (10, 6, 2, 38), 5: (7, 3, 2, 24),
+            6: (4, 4, 0, 28), 7: (1, 1, 0, 8), 8: (1, 1, 0, 1),
+        },
+        10: {
+            0: (1, 1, 0, 1), 1: (1, 1, 0, 10), 2: (5, 5, 0, 45),
+            3: (12, 4, 4, 40), 4: (22, 10, 6, 90), 5: (26, 6, 10, 52),
+            6: (22, 10, 6, 90), 7: (12, 4, 4, 40), 8: (5, 5, 0, 45),
+            9: (1, 1, 0, 10), 10: (1, 1, 0, 1),
+        },
     }
     for p, fixed_counts in expected_fixed.items():
         report = adjoint_factor_word_inventory(p)
         assert report["is_combinatorial_involution"]
         for row in report["strata"]:
             r = row["r"]
+            cyclic, fixed_classes, paired_orbits, fixed_weight = expected[p][r]
             assert row["word_count"] == comb(p, r)
             assert row["image_word_count"] == comb(p, r)
+            assert row["cyclic_class_count"] == cyclic
+            assert row["fixed_cyclic_class_count"] == fixed_classes
+            assert row["paired_orbit_count"] == paired_orbits
+            assert row["fixed_word_weight"] == fixed_weight
+            assert row["paired_word_weight"] == comb(p, r) - fixed_weight
             assert row["preserves_stratum"]
             assert row["involution_on_cyclic_classes"]
-            assert row["fixed_canonical_word_count"] == fixed_counts[r]
+            assert row["fixed_canonical_word_count"] == fixed_weight
 
