@@ -207,5 +207,6 @@ def test_exact_residual_stabilizes_from_level_three_at_theta_pi(power, expected_
         - _exact_sparse_trace_power_pi(level, power, True)
         for level in range(1, 6)
     ]
-    residuals = [deltas[m - 1] - 3 * deltas[m - 2] for m in range(1, 5)]
+    residuals = [deltas[level - 1] - 3 * deltas[level - 2]
+                 for level in range(2, 6)]
     assert residuals[1:] == [expected_residual] * 3
