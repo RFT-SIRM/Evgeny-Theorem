@@ -243,3 +243,37 @@ def reversal_word_inventory(p: int) -> dict[str, object]:
         "classes": classes,
     }
 
+
+def reversal_word_strata_inventory(p: int) -> dict[str, object]:
+    """Report reversal classes and exact weights separately for each KN-count stratum."""
+    inventory = reversal_word_inventory(p)
+    rows = []
+    for r in range(p + 1):
+        classes = [
+            item for item in inventory["classes"]
+            if int(item["kn_factor_count"]) == r
+        ]
+        fixed = [item for item in classes if int(item["cyclic_class_count"]) == 1]
+        paired = [item for item in classes if int(item["cyclic_class_count"]) == 2]
+        fixed_weight = sum(int(item["word_weight"]) for item in fixed)
+        paired_weight = sum(int(item["word_weight"]) for item in paired)
+        rows.append({
+            "kn_factor_count": r,
+            "cyclic_class_count": sum(int(item["cyclic_class_count"]) for item in classes),
+            "reversal_class_count": len(classes),
+            "fixed_class_count": len(fixed),
+            "paired_orbit_count": len(paired),
+            "fixed_word_weight": fixed_weight,
+            "paired_word_weight": paired_weight,
+            "word_weight_total": fixed_weight + paired_weight,
+            "expected_word_count": comb(p, r),
+        })
+        assert fixed_weight + paired_weight == comb(p, r)
+    return {
+        "p": p,
+        "strata": rows,
+        "cyclic_class_count": int(inventory["cyclic_class_count"]),
+        "reversal_class_count": int(inventory["reversal_class_count"]),
+        "word_weight_total": int(inventory["word_weight_total"]),
+    }
+
