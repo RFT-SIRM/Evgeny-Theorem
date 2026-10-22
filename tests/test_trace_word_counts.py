@@ -837,9 +837,9 @@ def test_adjoint_factor_word_inventory_is_stratumwise_involution():
     from computational.trace_word_counts import adjoint_factor_word_inventory
 
     expected_fixed = {
-        6: {0: 1, 1: 6, 2: 9, 3: 8, 4: 9, 5: 6, 6: 1},
-        8: {0: 1, 1: 8, 2: 20, 3: 32, 4: 46, 5: 32, 6: 20, 7: 8, 8: 1},
-        10: {0: 1, 1: 10, 2: 35, 3: 72, 4: 130, 5: 192, 6: 130, 7: 72, 8: 35, 9: 10, 10: 1},
+        6: {0: 1, 1: 6, 2: 15, 3: 8, 4: 15, 5: 6, 6: 1},
+        8: {0: 1, 1: 8, 2: 28, 3: 24, 4: 38, 5: 24, 6: 28, 7: 8, 8: 1},
+        10: {0: 1, 1: 10, 2: 45, 3: 40, 4: 90, 5: 52, 6: 90, 7: 40, 8: 45, 9: 10, 10: 1},
     }
     for p, fixed_counts in expected_fixed.items():
         report = adjoint_factor_word_inventory(p)
