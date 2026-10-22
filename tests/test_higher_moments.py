@@ -302,3 +302,18 @@ def test_exact_pi_angle_candidate_formula_levels_three_to_six(
             - _exact_sparse_trace_power_pi(level, power, True)
         )
         assert delta == coefficient * (3 ** (level - 3)) + constant
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_residual_transition_r5_r6_extended_angle_grid(power):
+    """Check the next-level residual transition across an independent angle grid."""
+    for theta in np.linspace(0.11, 2 * np.pi - 0.11,  nine := 9):
+        deltas = {
+            level: raw_trace_diff(level, float(theta), power)
+            for level in (4, 5, 6)
+        }
+        residual5 = deltas[5] - 3 * deltas[4]
+        residual6 = deltas[6] - 3 * deltas[5]
+        assert np.isclose(
+            residual5, residual6, rtol=3e-9, atol=3e-4
+        ), (power, float(theta), residual5, residual6)
