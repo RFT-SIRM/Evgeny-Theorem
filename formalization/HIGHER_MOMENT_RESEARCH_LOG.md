@@ -992,3 +992,32 @@ does not vanish under the stated degree assumptions. They do not rule out
 cancellation with lower-r strata in the full p=8 or p=10 residual identity;
 that requires the complete weighted sum over all ordered representatives
 and their orbit multiplicities. No such cross-stratum cancellation is claimed.
+
+## 4y. Aggregate even-stratum diagnostic under uniform corner degree
+
+The earlier top-stratum calculation can be extended to a conditional aggregate
+check, provided the same support-diagonality argument applies to every even
+stratum's boundary formula and every supported corner has degree 2. In a word
+with p total K/N factors and r N factors, the boundary reduction distributes
+the remaining K-power exponents across the intervening K factors and the r
+corner-diagonal factors. Their total exponent is p. On the 12-state glue
+support, the resulting contribution per ordered word is therefore
+`12 * 2^p`, under these assumptions.
+
+The inventory has 31 even-r ordered words for p=6, 127 for p=8, and 511 for
+p=10 (summing r=2,4,...,p). Multiplying by the conditional per-word values
+gives aggregate even-stratum diagnostics:
+
+- p=6: `31 * 12 * 2^6 = 23,808`.
+- p=8: `127 * 12 * 2^8 = 390,144`.
+- p=10: `511 * 12 * 2^10 = 6,279,168`.
+
+These totals are **not** machine-checked theorem values. They depend on
+extending the support-diagonal evaluation uniformly to all even-r boundary
+formulas, not merely the top stratum. The existing regression suite verifies
+the word counts and arithmetic only. If the intended residual identity
+requires these even strata to cancel, the positive conditional totals expose
+the precise missing step: either a premise in this uniform evaluation is
+inapplicable to some lower stratum, or the claimed cancellation must involve
+terms/signs not represented by the current positive boundary simplification.
+No full moment identity is inferred here.
