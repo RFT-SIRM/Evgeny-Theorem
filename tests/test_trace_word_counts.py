@@ -1,4 +1,8 @@
-from computational.trace_word_counts import canonical_rotation, word_inventory
+from computational.trace_word_counts import (
+    canonical_rotation,
+    cyclic_gap_representative,
+    word_inventory,
+)
 
 
 def test_exact_binary_word_and_cyclic_class_counts():
@@ -104,19 +108,61 @@ def test_reduction_ledger_matches_inventory_and_marks_unresolved_strata():
         assert statuses[0] == "base_K_power"
         assert statuses[1] == "vanishes_by_existing_one_N_lemma"
         assert statuses[2] == "two_N_formula_with_corner_hypothesis"
-        assert all(
-            statuses[r] == "not_covered_by_current_generic_reductions"
-            for r in range(3, p + 1)
-        )
+        assert statuses[3] == "vanishes_by_three_N_corner_lemma_under_OAnti"
+        assert statuses[4] == "explicit_four_N_boundary_formula_under_OAnti"
+        assert statuses[5] == "vanishes_by_five_N_corner_lemma_under_OAnti"
+        assert statuses[6] == "explicit_six_N_boundary_formula_under_OAnti"
+        if p >= 8:
+            assert statuses[7] == "vanishes_by_seven_N_corner_lemma_under_OAnti"
+        if p >= 8:
+            assert statuses[8] == "explicit_eight_N_boundary_formula_under_OAnti"
+        if p == 10:
+            assert statuses[9] == "vanishes_by_nine_N_corner_lemma_under_OAnti"
+            assert statuses[10] == "explicit_ten_N_boundary_formula_under_OAnti"
+        for row in entry["strata"]:
+            r = row["kn_factor_count"]
+            inventory_rows = [
+                item for item in inventory["classes"]
+                if item["kn_factor_count"] == r
+            ]
+            assert len(inventory_rows) == row["cyclic_class_count"]
+            assert sum(int(item["orbit_size"]) for item in inventory_rows) == row["word_count"]
+            if r == 6:
+                note = row["reduction_note"]
+                assert "trace_six_N_powers_boundary" in note
+                assert "does not prove cancellation or vanishing" in note
+                assert "Do not infer the p-moment identity" in note
+            if r == 7:
+                note = row["reduction_note"]
+                assert "trace_seven_N_powers_zero" in note
+                assert "conditional vanishing of the r=7 stratum" in note
+                assert "do not infer the all-level p-moment identity" in note
+            if r == 8:
+                note = row["reduction_note"]
+                assert "trace_eight_N_powers_boundary" in note
+                assert "not a vanishing claim" in note
+                assert "Do not infer the p-moment identity" in note
+            if r == 9:
+                note = row["reduction_note"]
+                assert "trace_nine_N_powers_zero" in note
+                assert "conditional vanishing of the r=9 stratum" in note
+                assert "Do not infer the all-level p-moment identity" in note
+            if r == 10:
+                note = row["reduction_note"]
+                assert "trace_ten_N_powers_boundary" in note
+                assert "not a vanishing claim" in note
+                assert "Do not infer the p-moment identity" in note
 
-def test_three_pairing_classes_split_by_unit_cyclic_gap():
+def test_three_pairing_classes_split_by_unit_gap_and_positive_gap_cases():
     """A zero K-gap means a K**N factor pair with middle power K^1."""
+    # The positive-gap tuples were formerly unresolved; the conditional Lean
+    # corner lemma now covers them after cyclic rotation.
     expected = {
         6: (3, [(1, 1, 1)]),
         8: (5, [(1, 1, 3), (1, 2, 2)]),
         10: (7, [(1, 1, 5), (1, 4, 2), (1, 2, 4), (1, 3, 3), (2, 2, 3)]),
     }
-    for p, (covered_count, unresolved_gaps) in expected.items():
+    for p, (covered_count, positive_gap_classes) in expected.items():
         rows = [
             row for row in word_inventory(p)["classes"]
             if row["kn_factor_count"] == 3
@@ -125,12 +171,434 @@ def test_three_pairing_classes_split_by_unit_cyclic_gap():
             row for row in rows
             if 0 in row["cyclic_gap_representative"]
         ]
-        unresolved = sorted(
+        positive_gap = sorted(
             tuple(row["cyclic_gap_representative"])
             for row in rows
             if 0 not in row["cyclic_gap_representative"]
         )
         assert len(covered) == covered_count
-        assert unresolved == sorted(unresolved_gaps)
-        assert len(covered) + len(unresolved) == len(rows)
+        assert positive_gap == sorted(positive_gap_classes)
+        assert len(covered) + len(positive_gap) == len(rows)
 
+def test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity():
+    """Each K*N contributes its own leading K, so power exponents are gap + 1."""
+    expected = {
+        6: {
+            (1, 1, 1): (2, 2, 2, 2),
+        },
+        8: {
+            (1, 1, 3): (2, 2, 4, 8),
+            (1, 2, 2): (2, 3, 3, 8),
+        },
+        10: {
+            (1, 1, 5): (2, 2, 6, 10),
+            (1, 4, 2): (2, 5, 3, 10),
+            (1, 2, 4): (2, 3, 5, 10),
+            (1, 3, 3): (2, 4, 4, 10),
+            (2, 2, 3): (3, 3, 4, 10),
+        },
+    }
+    for p, classes in expected.items():
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 3
+        ]
+        by_gap = {
+            tuple(row["cyclic_gap_representative"]): row
+            for row in rows
+        }
+        for gaps, (a, b, c, orbit_size) in classes.items():
+            row = by_gap[gaps]
+            representative = tuple(row["representative"])
+            # Tie each gap class to the actual ordered word representative,
+            # not only to a tuple generated by the inventory.
+            assert canonical_rotation(representative) == representative
+            assert cyclic_gap_representative(representative) == gaps
+            assert representative.count("K*N") == 3
+            assert (gaps[0] + 1, gaps[1] + 1, gaps[2] + 1) == (a, b, c)
+            assert row["orbit_size"] == orbit_size
+            assert len(row["representative"]) == p
+            assert row["representative"].count("K*N") == 3
+            # The corner lemma is available for n < 2**m. Every middle
+            # power required by these unresolved classes is at most 6,
+            # so the geometric bound is valid already at the smallest
+            # relevant level m = 3.
+            assert max(a, b, c) <= 6
+            assert max(a, b, c) < 2**3
+        assert sum(by_gap[g]["orbit_size"] for g in classes) == sum(
+            value[3] for value in classes.values()
+        )
+
+
+def test_three_pairing_stratum_is_covered_by_conditional_lean_corner_lemma():
+    """The smallest cyclic gap can be placed in the middle by rotation."""
+    for p in (6, 8, 10):
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 3
+        ]
+        assert rows
+        for row in rows:
+            gaps = row["cyclic_gap_representative"]
+            assert len(gaps) == 3
+            assert sum(gaps) == p - 3
+            middle_exponent = min(gaps) + 1
+            assert middle_exponent <= 3
+            assert middle_exponent < 2**3
+
+
+def test_four_pairing_stratum_fits_explicit_boundary_formula_bounds():
+    """For p<=10 and m>=3, every four-N cyclic word has admissible b,d."""
+    for p in (6, 8, 10):
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 4
+        ]
+        for row in rows:
+            gaps = row["cyclic_gap_representative"]
+            assert len(gaps) == 4
+            assert sum(gaps) == p - 4
+            exponents = [gap + 1 for gap in gaps]
+            assert all(1 <= exponent <= p - 3 for exponent in exponents)
+            # The explicit Lean theorem needs two selected exponents below 2**m;
+            # here all four satisfy this for the minimal relevant m=3.
+            assert all(exponent < 2**3 for exponent in exponents)
+            assert row["representative"].count("K*N") == 4
+
+
+def test_five_pairing_words_have_two_admissible_middle_power_bounds():
+    """For p<=10, any two gap exponents in the five-N stratum are < 2**3."""
+    for p in (6, 8, 10):
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 5
+        ]
+        for row in rows:
+            gaps = row["cyclic_gap_representative"]
+            assert len(gaps) == 5
+            assert sum(gaps) == p - 5
+            exponents = [gap + 1 for gap in gaps]
+            assert all(1 <= exponent <= p - 4 for exponent in exponents)
+            assert sum(exponent < 2**3 for exponent in exponents) == 5
+            assert row["representative"].count("K*N") == 5
+        # Preserve the ordered-word orbit multiplicities when classifying
+        # the complete r=5 stratum, not just its canonical representatives.
+        assert sum(row["orbit_size"] for row in rows) == {
+            6: 6, 8: 56, 10: 252
+        }[p]
+
+
+def test_unresolved_high_pairing_strata_keep_exact_gap_classes_and_orbit_weights():
+    """Keep unresolved r>=6 classes tied to ordered representatives and multiplicities."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        p = entry["p"]
+        inventory = word_inventory(p)
+        for stratum in entry["strata"]:
+            r = stratum["kn_factor_count"]
+            if r < 6:
+                continue
+            rows = [
+                row for row in inventory["classes"]
+                if row["kn_factor_count"] == r
+            ]
+            assert len(rows) == stratum["cyclic_class_count"]
+            assert sum(int(row["orbit_size"]) for row in rows) == stratum["word_count"]
+            for row in rows:
+                representative = tuple(row["representative"])
+                gaps = tuple(row["cyclic_gap_representative"])
+                assert len(representative) == p
+                assert canonical_rotation(representative) == representative
+                assert representative.count("K*N") == r
+                assert cyclic_gap_representative(representative) == gaps
+                assert len(gaps) == r
+                assert sum(gaps) == p - r
+                assert row["orbit_size"] > 0
+
+
+def test_full_ledger_strata_match_binomial_word_counts_and_total_expansion():
+    """Every r-stratum must account for exactly binomial(p, r) ordered words."""
+    import json
+    from math import comb
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        p = entry["p"]
+        inventory = word_inventory(p)
+        assert inventory["all_factor_words"] == 2**p
+        assert sum(int(row["orbit_size"]) for row in inventory["classes"]) == 2**p
+        strata = {row["kn_factor_count"]: row for row in entry["strata"]}
+        assert set(strata) == set(range(p + 1))
+        for r in range(p + 1):
+            class_rows = [
+                row for row in inventory["classes"]
+                if row["kn_factor_count"] == r
+            ]
+            assert len(class_rows) == strata[r]["cyclic_class_count"]
+            assert sum(int(row["orbit_size"]) for row in class_rows) == comb(p, r)
+            assert strata[r]["word_count"] == comb(p, r)
+        assert sum(row["word_count"] for row in entry["strata"]) == 2**p
+        assert sum(row["cyclic_class_count"] for row in entry["strata"]) == (
+            inventory["cyclic_classes"]
+        )
+
+
+def test_six_pairing_stratum_has_explicit_conditional_boundary_formula():
+    """Six N factors have a formula, not an asserted cancellation."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    expected = {6: (1, 1), 8: (28, 4), 10: (210, 22)}
+    for entry in ledger:
+        p = entry["p"]
+        row = next(s for s in entry["strata"] if s["kn_factor_count"] == 6)
+        assert (row["word_count"], row["cyclic_class_count"]) == expected[p]
+        assert row["reduction_status"] == "explicit_six_N_boundary_formula_under_OAnti"
+        assert "does not prove cancellation or vanishing" in row["reduction_note"]
+        rows = [x for x in word_inventory(p)["classes"] if x["kn_factor_count"] == 6]
+        assert len(rows) == row["cyclic_class_count"]
+        assert sum(int(x["orbit_size"]) for x in rows) == row["word_count"]
+        for item in rows:
+            exponents = [gap + 1 for gap in item["cyclic_gap_representative"]]
+            assert len(exponents) == 6
+            assert max(exponents) <= 5
+            assert max(exponents) < 2**3
+
+
+def test_seven_pairing_stratum_has_conditional_vanishing_reduction():
+    """The seven-N trace reduction is conditional and preserves orbit weights."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    expected = {8: (8, 1), 10: (120, 12)}
+    for entry in ledger:
+        p = entry["p"]
+        if p < 7:
+            continue
+        row = next(s for s in entry["strata"] if s["kn_factor_count"] == 7)
+        assert (row["word_count"], row["cyclic_class_count"]) == expected[p]
+        assert row["reduction_status"] == "vanishes_by_seven_N_corner_lemma_under_OAnti"
+        rows = [x for x in word_inventory(p)["classes"] if x["kn_factor_count"] == 7]
+        assert len(rows) == row["cyclic_class_count"]
+        assert sum(int(x["orbit_size"]) for x in rows) == row["word_count"]
+        for item in rows:
+            exponents = [gap + 1 for gap in item["cyclic_gap_representative"]]
+            assert len(exponents) == 7
+            assert max(exponents) <= 4
+            assert max(exponents) < 2**3
+
+
+def test_eight_to_ten_pairing_strata_have_explicit_conditional_reductions():
+    """Check exact word weights without overstating boundary formulas."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    expected = {
+        (8, 8): (1, 1, "explicit_eight_N_boundary_formula_under_OAnti"),
+        (10, 8): (45, 5, "explicit_eight_N_boundary_formula_under_OAnti"),
+        (10, 9): (10, 1, "vanishes_by_nine_N_corner_lemma_under_OAnti"),
+        (10, 10): (1, 1, "explicit_ten_N_boundary_formula_under_OAnti"),
+    }
+    for entry in ledger:
+        p = entry["p"]
+        inventory = word_inventory(p)
+        for row in entry["strata"]:
+            r = row["kn_factor_count"]
+            if (p, r) not in expected:
+                continue
+            words, classes, status = expected[(p, r)]
+            assert (row["word_count"], row["cyclic_class_count"]) == (words, classes)
+            assert row["reduction_status"] == status
+            rows = [x for x in inventory["classes"] if x["kn_factor_count"] == r]
+            assert len(rows) == classes
+            assert sum(int(x["orbit_size"]) for x in rows) == words
+            for item in rows:
+                exponents = [gap + 1 for gap in item["cyclic_gap_representative"]]
+                assert len(exponents) == r
+                assert max(exponents) <= p-r+1
+                assert max(exponents) < 2**3
+
+
+def test_r3_ledger_records_conditional_corner_proof_not_block_diagonality_guess():
+    """All r=3 classes are conditionally covered by the formal all-power corner lemma."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for entry in ledger:
+        row = next(s for s in entry["strata"] if s["kn_factor_count"] == 3)
+        assert row["reduction_status"] == "vanishes_by_three_N_corner_lemma_under_OAnti"
+        note = row["reduction_note"]
+        assert "OAnti (m + 1) o" in note
+        assert "sgK_pow_GlueDiag_of_OAnti" in note
+        assert "every natural power" in note or "block diagonality alone" in note
+        p = entry["p"]
+        rows = [x for x in word_inventory(p)["classes"] if x["kn_factor_count"] == 3]
+        for item in rows:
+            gaps = item["cyclic_gap_representative"]
+            assert len(gaps) == 3 and sum(gaps) == p - 3
+            assert min(gaps) + 1 <= 3 < 2**3
+
+
+def test_even_pairing_boundary_strata_are_not_mislabeled_as_zero():
+    """Boundary reduction is not a proof of cancellation for even r strata."""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    expected_status = {
+        6: "explicit_six_N_boundary_formula_under_OAnti",
+        8: "explicit_eight_N_boundary_formula_under_OAnti",
+        10: "explicit_ten_N_boundary_formula_under_OAnti",
+    }
+    for entry in ledger:
+        for r, status in expected_status.items():
+            if r > entry["p"]:
+                continue
+            row = next(s for s in entry["strata"] if s["kn_factor_count"] == r)
+            assert row["reduction_status"] == status
+            note = row["reduction_note"]
+            assert (
+                "does not prove cancellation" in note
+                or "not a vanishing claim" in note
+            )
+            inventory_rows = [
+                x for x in word_inventory(entry["p"])["classes"]
+                if x["kn_factor_count"] == r
+            ]
+            assert len(inventory_rows) == row["cyclic_class_count"]
+            assert sum(int(x["orbit_size"]) for x in inventory_rows) == row["word_count"]
+
+
+def test_top_even_stratum_boundary_arithmetic_is_explicitly_conditional():
+    """Check conditional top-stratum arithmetic, not the full residual identity.
+
+    Given 12 support states and the stated degree-2 assumptions, the boundary
+    expression has p scalar factors of value 2 per state. This test checks
+    arithmetic and ledger metadata only; it does not prove those geometric
+    premises in Lean or assert that the full p-moment residual vanishes.
+    """
+    import json
+    from pathlib import Path
+
+    expected = {6: 768, 8: 3072, 10: 12288}
+    root = Path(__file__).resolve().parents[1]
+    log = (root / "formalization" / "HIGHER_MOMENT_RESEARCH_LOG.md").read_text(
+        encoding="utf-8"
+    )
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for p, value in expected.items():
+        # There are p scalar factors total: p/2 intervening K factors and
+        # p/2 corner-diagonal factors. Under the stated assumptions each
+        # equals 2, so one support state contributes 2**p.
+        assert 12 * (2**p) == value
+        entry = next(row for row in ledger if row["p"] == p)
+        top = next(row for row in entry["strata"] if row["kn_factor_count"] == p)
+        assert top["word_count"] == 1
+        assert top["cyclic_class_count"] == 1
+        assert top["reduction_status"] == (
+            "explicit_six_N_boundary_formula_under_OAnti"
+            if p == 6
+            else "explicit_eight_N_boundary_formula_under_OAnti"
+            if p == 8
+            else "explicit_ten_N_boundary_formula_under_OAnti"
+        )
+        assert "not a vanishing claim" in log or "not zero" in log
+
+
+def test_even_pairing_strata_unresolved_word_totals_are_pinned():
+    """The remaining even-r strata retain these ordered-word multiplicities."""
+    import json
+    from pathlib import Path
+
+    expected = {
+        6: {2: 15, 4: 15, 6: 1},
+        8: {2: 28, 4: 70, 6: 28, 8: 1},
+        10: {2: 45, 4: 210, 6: 210, 8: 45, 10: 1},
+    }
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for p, expected_by_r in expected.items():
+        entry = next(row for row in ledger if row["p"] == p)
+        actual = {
+            row["kn_factor_count"]: row["word_count"]
+            for row in entry["strata"]
+            if row["kn_factor_count"] % 2 == 0 and row["kn_factor_count"] > 0
+        }
+        assert actual == expected_by_r
+        assert sum(actual.values()) == {6: 31, 8: 127, 10: 511}[p]
+
+
+def test_even_pairing_cyclic_class_counts_are_pinned():
+    """Pin class counts separately from ordered-word multiplicities."""
+    import json
+    from pathlib import Path
+
+    expected = {
+        6: {2: (3, 15), 4: (3, 15), 6: (1, 1)},
+        8: {2: (4, 28), 4: (10, 70), 6: (4, 28), 8: (1, 1)},
+        10: {2: (5, 45), 4: (22, 210), 6: (22, 210), 8: (5, 45), 10: (1, 1)},
+    }
+    root = Path(__file__).resolve().parents[1]
+    ledger = json.loads(
+        (root / "computational" / "trace_word_reduction_ledger_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    inventories = json.loads(
+        (root / "computational" / "trace_word_inventory_p6_p8_p10.json")
+        .read_text(encoding="utf-8")
+    )
+    for p, expected_by_r in expected.items():
+        entry = next(row for row in ledger if row["p"] == p)
+        inventory = next(row for row in inventories if row["p"] == p)
+        ledger_by_r = {row["kn_factor_count"]: row for row in entry["strata"]}
+        for r, (class_count, word_count) in expected_by_r.items():
+            classes = [
+                row for row in inventory["classes"]
+                if row["kn_factor_count"] == r
+            ]
+            assert len(classes) == class_count
+            assert sum(int(row["orbit_size"]) for row in classes) == word_count
+            assert ledger_by_r[r]["cyclic_class_count"] == class_count
+            assert ledger_by_r[r]["word_count"] == word_count

@@ -41,6 +41,57 @@ theorem pHeO_edge_eq (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Poi
   unfold pHeO
   rw [if_neg hpq, if_pos hE]
 
+/-- The spin-indexed 2×2 block of the point operator. -/
+noncomputable def pHeO_spinBlock (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (p q : Point) :
+    Matrix C2 C2 ℂ :=
+  fun i j => pHeO m θ ax o p q i j
+
+/-- Every local spin block of the point operator has quaternionic form.
+Diagonal blocks are real scalar multiples of the identity; edge blocks are
+a signed edge unitary or its conjugate transpose; non-edges vanish. -/
+theorem pHeO_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (p q : Point) :
+    SU2QuaternionForm (pHeO_spinBlock m θ ax o p q) := by
+  by_cases hpq : p = q
+  · subst q
+    have hreal : star (((pdeg m p : ℕ) : ℂ)) = ((pdeg m p : ℕ) : ℂ) := by
+      simp
+    have hdiag :
+        pHeO_spinBlock m θ ax o p p =
+          (((pdeg m p : ℕ) : ℂ) • (1 : Matrix C2 C2 ℂ)) := by
+      ext i j
+      simp [pHeO_spinBlock, pHeO_diag, Matrix.smul_apply, Matrix.one_apply]
+    rw [hdiag]
+    exact SU2QuaternionForm_smul_one hreal
+  · by_cases hE : EdgeB m p.1 p.2 q.1 q.2 = true
+    · let e : Point × Point := if p ≤ q then (p, q) else (q, p)
+      let U : Matrix C2 C2 ℂ := edgeUnitaryWithAxis m θ ax e
+      have hU : SU2QuaternionForm U := by
+        dsimp [U]
+        exact edgeUnitaryWithAxis_quaternionForm m θ ax e (axisRotation_quaternionForm θ)
+      have hblock :
+          pHeO_spinBlock m θ ax o p q =
+            if o p q then -U else -(Matrix.conjTranspose U) := by
+        ext i j
+        change pHeO m θ ax o p q i j = _
+        rw [pHeO_edge_eq m θ ax o hpq hE i j]
+        by_cases ho : o p q
+        · simp [ho, e, U]
+        · simp [ho, e, U, Matrix.conjTranspose_apply]
+      rw [hblock]
+      by_cases ho : o p q
+      · simp [ho]
+        exact SU2QuaternionForm_neg hU
+      · simp [ho]
+        exact SU2QuaternionForm_neg (SU2QuaternionForm_conjTranspose hU)
+    · have hzero :
+        pHeO_spinBlock m θ ax o p q = 0 := by
+        ext i j
+        exact pHeO_zero_of_not_edge m θ ax o hpq hE i j
+      rw [hzero]
+      exact SU2QuaternionForm_zero
+
 open Classical in
 /-- For an antisymmetric orientation, the two blocks of an edge multiply to the identity. -/
 theorem pHeO_edge_mul (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]

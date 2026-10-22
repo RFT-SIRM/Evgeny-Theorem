@@ -196,6 +196,100 @@ theorem oanti_C (m : ℕ) (o : Point → Point → Prop) (hanti : OAnti (m + 1) 
     fun h => hpq (GCopy.shift_inj m GCopy.C h)
   exact hanti _ _ (GCopy.shift_mem m GCopy.C hp) (GCopy.shift_mem m GCopy.C hq) hne
 
+/-! ### Hermiticity of the concrete copy operators -/
+
+/-- Antisymmetry at level m + 1 descends to each copy orientation, so each
+concrete copy operator is Hermitian. This discharges the operator-level premise
+used by the all-powers spin-block cancellation lemma. -/
+theorem Hc_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (c : GCopy) :
+    Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c := by
+  cases c with
+  | A =>
+      change Matrix.conjTranspose (pOpO m θ ax o) = pOpO m θ ax o
+      exact pOpO_hermitian_of_OAnti m θ ax o (oanti_A m o hanti)
+  | B =>
+      change Matrix.conjTranspose (pOpO m θ ax (oBo m o)) =
+        pOpO m θ ax (oBo m o)
+      exact pOpO_hermitian_of_OAnti m θ ax (oBo m o) (oanti_B m o hanti)
+  | C =>
+      change Matrix.conjTranspose (pOpO m θ ax (oCo m o)) =
+        pOpO m θ ax (oCo m o)
+      exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (oanti_C m o hanti)
+
+/-- For every natural power, the same-point opposite-spin entry in a glued
+copy vanishes under the original level's orientation-antisymmetry hypothesis.
+This combines concrete Hermiticity with quaternionic spin-block closure. -/
+theorem sgK_pow_samePoint_spinOffdiag_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (c : GCopy) (n : ℕ) (p : Pt m) :
+    (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
+  exact sgK_pow_samePoint_spinOffdiag_zero m θ ax o
+    (fun c' => Hc_hermitian_of_OAnti m θ ax o hanti c') c n p
+
+/-! ### All-power glued-corner vanishing -/
+
+/-- Hermiticity transfers the quaternion-form cancellation to either ordering
+of distinct spin states at the same geometric point. -/
+theorem Hc_pow_samePoint_spinOffdiag_zero_any
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (c : GCopy) (n : ℕ)
+    (p : Pt m) (s t : C2) (hst : s ≠ t) :
+    (Hc m θ ax o c ^ n) (p, s) (p, t) = 0 := by
+  have hH : ∀ c' : GCopy,
+      Matrix.conjTranspose (Hc m θ ax o c') = Hc m θ ax o c' :=
+    fun c' => Hc_hermitian_of_OAnti m θ ax o hanti c'
+  have hpow : Matrix.conjTranspose ((Hc m θ ax o c) ^ n) =
+      (Hc m θ ax o c) ^ n := by
+    rw [Matrix.conjTranspose_pow, hH c]
+  have h01 :
+      (Hc m θ ax o c ^ n) (p, (0 : C2)) (p, (1 : C2)) = 0 :=
+    Hc_pow_samePoint_spinOffdiag_zero m θ ax o hH c n p
+  have h10 :
+      (Hc m θ ax o c ^ n) (p, (1 : C2)) (p, (0 : C2)) = 0 := by
+    have h := congrFun (congrFun hpow (p, (0 : C2))) (p, (1 : C2))
+    have hstar :
+        star ((Hc m θ ax o c ^ n) (p, (1 : C2)) (p, (0 : C2))) =
+          (Hc m θ ax o c ^ n) (p, (0 : C2)) (p, (1 : C2)) := by
+      simpa [Matrix.conjTranspose_apply] using h
+    rw [h01] at hstar
+    exact star_eq_zero.mp hstar
+  fin_cases s <;> fin_cases t <;> simp_all
+
+/-- Under orientation antisymmetry, every natural power of the glued operator
+satisfies the corner-vanishing condition needed by the three-pairing reduction. -/
+theorem sgK_pow_GlueDiag_of_OAnti
+    (m n : ℕ)
+    (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    GlueDiag (sgGlue m) (sgK m θ ax o ^ n) := by
+  intro w w' hw hw' hc hσc hne
+  have hc' : w.1 = w'.1 := hc
+  have hσc' : (sgσ m w).1 = (sgσ m w').1 := hσc
+  by_cases hp : w.2.1.1 = w'.2.1.1
+  · have hpt : w.2.1 = w'.2.1 := Subtype.ext hp
+    have hs : w.2.2 ≠ w'.2.2 :=
+      fun h => hne (Prod.ext hc' (Prod.ext hpt h))
+    have e : (sgK m θ ax o ^ n) w w' =
+        (Hc m θ ax o w.1 ^ n) w.2 w'.2 := by
+      rw [sgK, blockK_pow_local]
+      change blockK (fun c' => Hc m θ ax o c' ^ n) w w' = _
+      simp [blockK, hc']
+    rw [e]
+    have hzero := Hc_pow_samePoint_spinOffdiag_zero_any
+      m θ ax o hanti w.1 n w.2.1 w.2.2 w'.2.2 hs
+    have hsecond : (w.2.1, w'.2.2) = w'.2 := Prod.ext hpt rfl
+    simpa only [hsecond] using hzero
+  · exfalso
+    have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    rw [← hc'] at h2
+    exact hp (gl_partner_inj h1 h2 hσc')
+
 theorem Hc_sq_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (hanti : OAnti (m + 1) o) (c : GCopy) (a b : Pt m × C2)
     (hab : a.1.1 = b.1.1) (hs : a.2 ≠ b.2) :
@@ -240,13 +334,18 @@ theorem pOpO_trace4_glue_final (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ →
 /-!
 ### Higher-power support boundary
 
-The corner lemmas above establish one-step off-diagonal vanishing (`sgK_hkg`)
-and the required second-power statement (`sgK_hu2`). They do not imply
-corner vanishing for arbitrary powers. In particular, a proof for `K ^ n`
-must analyze the intermediate-state sum in `Matrix.mul_apply` and preserve
-both coordinate and spin indices. The higher-moment research log records the
-remaining support lemma as an open obligation; no arbitrary-power claim is
-made here.
+The arbitrary-power glued-corner condition is now proved separately above by
+`sgK_pow_GlueDiag_of_OAnti`: under `OAnti (m + 1) o`, every natural power
+`sgK ^ n` satisfies `GlueDiag (sgGlue m)`. Its same-coordinate case uses
+Hermiticity and quaternionic spin-block cancellation; its distinct-coordinate
+case follows from the glued-partner injectivity argument. Thus the corner
+hypothesis needed by the conditional three-pairing reduction is available for
+every exponent under the stated orientation hypothesis.
+
+The coordinate-support lemmas below are a different tool: they bound where
+entries of `sgK ^ n` can be nonzero, but do not replace the stronger
+spin-resolved `GlueDiag` theorem. The full higher-moment boundary formula and
+the all-level residual recurrence remain separate open obligations.
 -/
 
 /-! ### Generic coordinate support for powers (induction scaffold)
@@ -391,5 +490,170 @@ theorem sgK_pow_zero_of_distinct_glued_corner_coords
     exact Or.inr (Or.inr (Or.inl (by omega)))
   · apply sgK_pow_entry_zero_of_coord_gap
     exact Or.inr (Or.inr (Or.inr (by omega)))
+
+/-- Under orientation antisymmetry, the glued corner lemma supplies the
+middle-power hypothesis required to annihilate every ordered three-pairing
+trace word whose middle exponent is below the geometric bound. -/
+theorem trace_three_N_powers_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d) = 0 := by
+  apply trace_three_N_powers (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d
+  intro w w' hw hw' hcopy hne
+  have hdiag := sgK_pow_GlueDiag_of_OAnti m b θ ax o hanti
+  by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+  · exact hdiag w w' hw hw' hcopy hpartner hne
+  ·
+    have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+      intro hsame
+      have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+      have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+        simpa [hcopy, hsame] using h2
+      have huniq := gl_unique m h1' h2'
+      exact hpartner huniq.1
+    exact sgK_pow_zero_of_distinct_glued_corner_coords
+      m b hb θ ax o w w' hw hw' hcoord
+
+
+-- The concrete specialization expands nested finite sums and needs more elaboration time.
+set_option maxHeartbeats 400000 in
+/-- Concrete four-pairing boundary formula for the glued Sierpinski operator.
+Both middle exponents are below the side length, so the all-power spin
+cancellation and the distinct-corner support bound discharge the two required
+corner hypotheses. -/
+theorem trace_four_N_powers_explicit_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e : ℕ) (hb : b < 2 ^ m) (hd : d < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N * sgK m θ ax o ^ e) =
+      ∑ x, if (sgGlue m).g x then
+        (∑ y, if (sgGlue m).g y then
+          ((sgK m θ ax o ^ e * sgK m θ ax o ^ a) x y *
+            (sgK m θ ax o ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+            (sgK m θ ax o ^ c) y x
+          else 0) *
+          (sgK m θ ax o ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+    · exact hdiag w w' hw hw' hcopy hpartner hne
+    · have h1 := (glW_sgσ hw).1
+      have h2 := (glW_sgσ hw').1
+      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+        intro hsame
+        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+          simpa [hcopy, hsame] using h2
+        have huniq := gl_unique m h1' h2'
+        exact hpartner huniq.1
+      exact sgK_pow_zero_of_distinct_glued_corner_coords
+        m n hn θ ax o w w' hw hw' hcoord
+  exact trace_four_N_powers_explicit (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e (hkg b hb) (hkg d hd)
+
+
+/-- Three-pairing specialization: if the middle power is below the side
+length, the three-N trace stratum vanishes. The corner condition is obtained
+from the all-power spin cancellation and the distinct glued-corner support
+bound, rather than assumed separately. -/
+theorem trace_three_N_word_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d) = 0 := by
+  have hkg : ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' →
+      (sgK m θ ax o ^ b) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m b θ ax o hanti
+    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+    · exact hdiag w w' hw hw' hcopy hpartner hne
+    · have h1 := (glW_sgσ hw).1
+      have h2 := (glW_sgσ hw').1
+      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+        intro hsame
+        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+          simpa [hcopy, hsame] using h2
+        have huniq := gl_unique m h1' h2'
+        exact hpartner huniq.1
+      exact sgK_pow_zero_of_distinct_glued_corner_coords
+        m b hb θ ax o w w' hw hw' hcoord
+  have hbd : BD (fun w : WSG m => w.1) (sgK m θ ax o) := blockK_BD _
+  have hxs : ∀ A, A ∈ ([sgK m θ ax o ^ a] : List (Matrix (WSG m) (WSG m) ℂ)) →
+      BD (fun w : WSG m => w.1) A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow (sgK m θ ax o) hbd a)
+  have hys : ∀ A, A ∈ ([sgK m θ ax o ^ c] : List (Matrix (WSG m) (WSG m) ℂ)) →
+      BD (fun w : WSG m => w.1) A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow (sgK m θ ax o) hbd c)
+  have hzs : ∀ A, A ∈ ([sgK m θ ax o ^ d] : List (Matrix (WSG m) (WSG m) ℂ)) →
+      BD (fun w : WSG m => w.1) A := by
+    intro A hA
+    simp only [List.mem_singleton] at hA
+    simpa [hA] using (BD_pow (sgK m θ ax o) hbd d)
+  simpa using trace_three_N_word_zero (sgGlue m)
+    ([sgK m θ ax o ^ a] : List (Matrix (WSG m) (WSG m) ℂ))
+    ([sgK m θ ax o ^ c] : List (Matrix (WSG m) (WSG m) ℂ))
+    ([sgK m θ ax o ^ d] : List (Matrix (WSG m) (WSG m) ℂ))
+    (sgK m θ ax o ^ b) hxs hys hzs (BD_pow (sgK m θ ax o) hbd b) hkg
+
+
+/-- Five-pairing specialization under orientation antisymmetry. The two
+middle-power corner conditions are discharged separately using the geometric
+bound; this is a conditional vanishing theorem, not an unconditional
+all-pairing cancellation claim. -/
+theorem trace_five_N_powers_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (hb : b < 2 ^ m) (hd : d < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N * sgK m θ ax o ^ f) = 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+    · exact hdiag w w' hw hw' hcopy hpartner hne
+    · have h1 := (glW_sgσ hw).1
+      have h2 := (glW_sgσ hw').1
+      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+        intro hsame
+        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+          simpa [hcopy, hsame] using h2
+        have huniq := gl_unique m h1' h2'
+        exact hpartner huniq.1
+      exact sgK_pow_zero_of_distinct_glued_corner_coords
+        m n hn θ ax o w w' hw hw' hcoord
+  exact trace_five_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f (hkg b hb) (hkg d hd)
+
 
 end EvgenyTheorem

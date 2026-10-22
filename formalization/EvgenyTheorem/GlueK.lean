@@ -123,10 +123,187 @@ noncomputable def Hc (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Poi
   | .B => fun x y => pHeO m θ ax (oBo m o) x.1.1 y.1.1 x.2 y.2
   | .C => fun x y => pHeO m θ ax (oCo m o) x.1.1 y.1.1 x.2 y.2
 
+/-- Every local spin block of each copy operator has quaternionic form.
+This is the concrete input needed to apply the abstract spin-block power lemma. -/
+theorem Hc_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (c : GCopy) (p q : Pt m) :
+    SU2QuaternionForm (spinBlock (Hc m θ ax o c) p q) := by
+  cases c with
+  | A =>
+      change SU2QuaternionForm (pHeO_spinBlock m θ ax o p.1 q.1)
+      exact pHeO_spinBlock_quaternionForm m θ ax o p.1 q.1
+  | B =>
+      change SU2QuaternionForm (pHeO_spinBlock m θ ax (oBo m o) p.1 q.1)
+      exact pHeO_spinBlock_quaternionForm m θ ax (oBo m o) p.1 q.1
+  | C =>
+      change SU2QuaternionForm (pHeO_spinBlock m θ ax (oCo m o) p.1 q.1)
+      exact pHeO_spinBlock_quaternionForm m θ ax (oCo m o) p.1 q.1
+
+/-- Every spin block of every natural power of a copy operator has
+quaternionic form. This specializes the generic power-closure lemma to the
+three concrete operators used by the gluing construction. -/
+theorem Hc_pow_spinBlock_quaternionForm (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (c : GCopy) :
+    ∀ n p q, SU2QuaternionForm (spinBlock ((Hc m θ ax o c) ^ n) p q) := by
+  apply spinBlock_pow_quaternionForm
+  intro p q
+  exact Hc_spinBlock_quaternionForm m θ ax o c p q
+
+
+/-! ### Concrete second-power cancellation under orientation antisymmetry -/
+
+/-- The second power of each copy has zero same-point opposite-spin entry.
+Unlike the all-powers statement below, this uses the already established
+explicit diagonal formula for the square of the point operator. -/
+theorem Hc_sq_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : ∀ c : GCopy, OAnti m
+      (match c with
+       | .A => o
+       | .B => oBo m o
+       | .C => oCo m o))
+    (c : GCopy) (p : Pt m) :
+    (Hc m θ ax o c ^ 2) (p, (0 : C2)) (p, (1 : C2)) = 0 := by
+  have hdiag : (Hc m θ ax o c * Hc m θ ax o c)
+      (p, (0 : C2)) (p, (1 : C2)) = 0 := by
+    cases c with
+    | A =>
+        change (pOpO m θ ax o * pOpO m θ ax o)
+          (p, (0 : C2)) (p, (1 : C2)) = 0
+        have h := pOpO_sq_diag m θ ax o (hanti .A) p (0 : C2) (1 : C2)
+        simpa using h
+    | B =>
+        change (pOpO m θ ax (oBo m o) * pOpO m θ ax (oBo m o))
+          (p, (0 : C2)) (p, (1 : C2)) = 0
+        have h := pOpO_sq_diag m θ ax (oBo m o) (hanti .B) p (0 : C2) (1 : C2)
+        simpa using h
+    | C =>
+        change (pOpO m θ ax (oCo m o) * pOpO m θ ax (oCo m o))
+          (p, (0 : C2)) (p, (1 : C2)) = 0
+        have h := pOpO_sq_diag m θ ax (oCo m o) (hanti .C) p (0 : C2) (1 : C2)
+        simpa using h
+  rw [pow_two]
+  exact hdiag
+
+/-! ### Hermiticity of the copy operators -/
+
+/-- An orientation-antisymmetric point operator is Hermitian. -/
+theorem pOpO_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] (hanti : OAnti m o) :
+    Matrix.conjTranspose (pOpO m θ ax o) = pOpO m θ ax o := by
+  ext x y
+  change star (pHeO m θ ax o y.1.1 x.1.1 y.2 x.2) =
+    pHeO m θ ax o x.1.1 y.1.1 x.2 y.2
+  by_cases hpq : x.1.1 = y.1.1
+  · have hxy : x.1 = y.1 := Subtype.ext hpq
+    rw [hxy]
+    by_cases hspin : x.2 = y.2 <;> simp [pHeO_diag, hspin, eq_comm]
+  · have hp : x.1.1 ∈ vertexOrder m := List.mem_toFinset.mp x.1.2
+    have hq : y.1.1 ∈ vertexOrder m := List.mem_toFinset.mp y.1.2
+    by_cases hE : EdgeB m x.1.1.1 x.1.1.2 y.1.1.1 y.1.1.2 = true
+    · have hE' : EdgeB m y.1.1.1 y.1.1.2 x.1.1.1 x.1.1.2 = true := by
+        rw [EdgeB_symm m]
+        exact hE
+      rw [pHeO_edge_eq m θ ax o hpq hE, pHeO_edge_eq m θ ax o (Ne.symm hpq) hE']
+      have hor := hanti x.1.1 y.1.1 hp hq hpq
+      have hswap := edgeU_swap m θ ax x.1.1 y.1.1
+      rw [hswap]
+      by_cases ho : o x.1.1 y.1.1
+      · have hnot : ¬ o y.1.1 x.1.1 := (hor.mp ho)
+        simp [ho, hnot, Matrix.conjTranspose_apply]
+      · have hrev : o y.1.1 x.1.1 := by
+          by_contra hn
+          exact ho ((hor.mpr hn))
+        simp [ho, hrev, Matrix.conjTranspose_apply]
+    · have hE' : ¬ EdgeB m y.1.1.1 y.1.1.2 x.1.1.1 x.1.1.2 = true := by
+        rw [EdgeB_symm m]
+        exact hE
+      rw [pHeO_zero_of_not_edge m θ ax o hpq hE,
+        pHeO_zero_of_not_edge m θ ax o (Ne.symm hpq) hE']
+      simp
+
+/-! ### Same-coordinate spin cancellation for powers of a copy -/
+
+/-- If the three copy operators are Hermitian, then every natural power has
+zero same-point, opposite-spin entry. The quaternion-form hypothesis is
+provided concretely by `Hc_spinBlock_quaternionForm`; only Hermiticity remains
+as an explicit operator-level premise. -/
+theorem Hc_pow_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hH : ∀ c : GCopy, Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c)
+    (c : GCopy) (n : ℕ) (p : Pt m) :
+    (Hc m θ ax o c ^ n) (p, (0 : C2)) (p, (1 : C2)) = 0 := by
+  have hform : ∀ p q, SU2QuaternionForm (spinBlock (Hc m θ ax o c) p q) := by
+    intro p q
+    exact Hc_spinBlock_quaternionForm m θ ax o c p q
+  have hpow : Matrix.conjTranspose ((Hc m θ ax o c) ^ n) =
+      (Hc m θ ax o c) ^ n := by
+    rw [Matrix.conjTranspose_pow, hH c]
+  exact spinBlock_pow_diagonal_offdiag_zero (Hc m θ ax o c) hform n p hpow
+
 /-- The block-diagonal operator on three disjoint copies. -/
 noncomputable def sgK (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] : Matrix (WSG m) (WSG m) ℂ :=
   blockK (Hc m θ ax o)
+
+/-- Powers of a block-diagonal matrix are computed independently in each block.
+This local copy avoids a dependency cycle with the trace-splitting module. -/
+theorem blockK_mul_local {ι X : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype X] [DecidableEq X] (H G : ι → Matrix X X ℂ) :
+    blockK H * blockK G = blockK (fun c => H c * G c) := by
+  ext w w'
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
+  by_cases hc : w.1 = w'.1
+  · have e : blockK (fun c => H c * G c) w w' =
+        (H w.1 * G w.1) w.2 w'.2 := by
+      simp [blockK, hc]
+    rw [e, Matrix.mul_apply, Finset.sum_eq_single w.1]
+    · refine Finset.sum_congr rfl (fun y _ => ?_)
+      simp [blockK, hc]
+    · intro c _ hne
+      refine Finset.sum_eq_zero (fun y _ => ?_)
+      have : w.1 ≠ c := fun h => hne h.symm
+      simp [blockK, this]
+    · intro h
+      exact absurd (Finset.mem_univ _) h
+  · have e : blockK (fun c => H c * G c) w w' = 0 := by
+      simp [blockK, hc]
+    rw [e]
+    refine Finset.sum_eq_zero (fun c _ => ?_)
+    refine Finset.sum_eq_zero (fun y _ => ?_)
+    by_cases h1 : w.1 = c
+    · have : c ≠ w'.1 := fun h => hc (h1.trans h)
+      simp [blockK, this]
+    · simp [blockK, h1]
+
+/-- Powers of a block-diagonal matrix are computed independently in each block.
+This local copy avoids a dependency cycle with the trace-splitting module. -/
+theorem blockK_pow_local {ι X : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype X] [DecidableEq X] (H : ι → Matrix X X ℂ) (n : ℕ) :
+    blockK H ^ n = blockK (fun c => H c ^ n) := by
+  induction n with
+  | zero =>
+      ext ⟨i, x⟩ ⟨j, y⟩
+      by_cases hij : i = j <;> by_cases hxy : x = y <;>
+        simp [blockK, hij, hxy]
+  | succ n ih =>
+      rw [pow_succ, ih, blockK_mul_local]
+      exact congrArg blockK (funext fun c => by rw [pow_succ])
+
+/-! ### Transfer of copy-level cancellation to the glued index set -/
+
+/-- Same-point opposite-spin entries also vanish in every power of the
+three-copy block operator, provided each copy operator is Hermitian. -/
+theorem sgK_pow_samePoint_spinOffdiag_zero (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hH : ∀ c : GCopy, Matrix.conjTranspose (Hc m θ ax o c) = Hc m θ ax o c)
+    (c : GCopy) (n : ℕ) (p : Pt m) :
+    (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
+  rw [sgK, blockK_pow_local]
+  change (blockK (fun c' => Hc m θ ax o c' ^ n))
+      (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0
+  simp only [blockK, if_pos rfl]
+  exact Hc_pow_samePoint_spinOffdiag_zero m θ ax o hH c n p
 
 /-- Generic evaluation of one copy's contribution. -/
 theorem copy_gen (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (oo : Point → Point → Prop) [DecidableRel oo]

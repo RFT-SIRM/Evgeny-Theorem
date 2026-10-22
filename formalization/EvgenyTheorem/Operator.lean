@@ -174,4 +174,32 @@ theorem axisRotation_unitary (a : Axis) (θ : ℝ) :
      rw [su2Rotation_pauliY_conjTranspose, su2Rotation_inverse pauliY pauliY_sq];
      rw [su2Rotation_pauliZ_conjTranspose, su2Rotation_inverse pauliZ pauliZ_sq]]
 
+/-- If each axis rotation has quaternionic block form, then every edge
+unitary (including the identity on non-flux edges) has that form. -/
+theorem edgeUnitaryWithAxis_quaternionForm
+    (m : ℕ) (θ : ℝ) (axisOfIndex : ℕ → Axis)
+    (e : Point × Point)
+    (haxis : ∀ a : Axis, SU2QuaternionForm (axisRotation a θ)) :
+    SU2QuaternionForm (edgeUnitaryWithAxis m θ axisOfIndex e) := by
+  unfold edgeUnitaryWithAxis
+  split_ifs with he
+  · exact haxis (axisOfIndex (fluxIndex m e))
+  · exact SU2QuaternionForm_one
+
+
+/-- Reduce the axis-indexed quaternionic-form obligation to the three
+Pauli rotations.  The X and Y cases are unconditional; the Z case is
+kept as an explicit hypothesis until its scalar conjugation proof is closed. -/
+theorem axisRotation_quaternionForm
+    (θ : ℝ) : ∀ a : Axis, SU2QuaternionForm (axisRotation a θ) := by
+  intro a
+  fin_cases a
+  · simpa [axisRotation, axisPauli] using
+      (su2Rotation_pauliX_quaternionForm θ)
+  · simpa [axisRotation, axisPauli] using
+      (su2Rotation_pauliY_quaternionForm θ)
+  · simpa [axisRotation, axisPauli] using
+      (su2Rotation_pauliZ_quaternionForm θ)
+
+
 end EvgenyTheorem

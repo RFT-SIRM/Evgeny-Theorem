@@ -145,3 +145,254 @@ theorem su2Rotation_pauliZ_conjTranspose (θ : ℝ) :
 end EvgenyTheorem
 
 
+
+namespace EvgenyTheorem
+
+/-- A Hermitian matrix in quaternionic SU(2) block form has zero
+off-diagonal entry. This is an algebraic helper for the corner-spin
+argument; it does not assert that concrete powers satisfy the form. -/
+theorem quaternionForm_hermitian_offdiag_zero
+    {M : Matrix C2 C2 ℂ}
+    (hform : M (1 : C2) (0 : C2) = - star (M (0 : C2) (1 : C2)))
+    (hH : Matrix.conjTranspose M = M) :
+    M (0 : C2) (1 : C2) = 0 := by
+  have h := congrFun (congrFun hH (0 : C2)) (1 : C2)
+  have h01 : star (M (1 : C2) (0 : C2)) = M (0 : C2) (1 : C2) := by
+    simpa [Matrix.conjTranspose_apply] using h
+  rw [hform] at h01
+  simp only [star_neg, star_star] at h01
+  have hz : M (0 : C2) (1 : C2) + M (0 : C2) (1 : C2) = 0 := by
+    calc
+      M (0 : C2) (1 : C2) + M (0 : C2) (1 : C2) =
+          (-M (0 : C2) (1 : C2)) + M (0 : C2) (1 : C2) :=
+        congrArg (fun z : ℂ => z + M (0 : C2) (1 : C2)) h01.symm
+      _ = 0 := neg_add_cancel _
+  have hzero : (2 : ℂ) * M (0 : C2) (1 : C2) = 0 := by
+    calc
+      (2 : ℂ) * M (0 : C2) (1 : C2) =
+          M (0 : C2) (1 : C2) + M (0 : C2) (1 : C2) := by ring
+      _ = 0 := hz
+  exact (mul_eq_zero.mp hzero).resolve_left (by norm_num)
+end EvgenyTheorem
+
+namespace EvgenyTheorem
+
+/-- Quaternionic SU(2) block form: the lower-left entry is minus the
+conjugate of the upper-right entry, and the diagonal entries are conjugates. -/
+def SU2QuaternionForm (M : Matrix C2 C2 ℂ) : Prop :=
+  M (1 : C2) (0 : C2) = - star (M (0 : C2) (1 : C2)) ∧
+  M (1 : C2) (1 : C2) = star (M (0 : C2) (0 : C2))
+
+theorem SU2QuaternionForm_zero : SU2QuaternionForm (0 : Matrix C2 C2 ℂ) := by
+  constructor <;> simp [SU2QuaternionForm]
+
+theorem SU2QuaternionForm_one : SU2QuaternionForm (1 : Matrix C2 C2 ℂ) := by
+  constructor <;> simp [SU2QuaternionForm, Matrix.one_apply]
+
+theorem SU2QuaternionForm_smul_one {c : ℂ} (hc : star c = c) :
+    SU2QuaternionForm (c • (1 : Matrix C2 C2 ℂ)) := by
+  constructor <;> simp [SU2QuaternionForm, Matrix.smul_apply, Matrix.one_apply, hc]
+
+theorem SU2QuaternionForm_neg {M : Matrix C2 C2 ℂ}
+    (hM : SU2QuaternionForm M) : SU2QuaternionForm (-M) := by
+  rcases hM with ⟨h01, h00⟩
+  constructor <;> simp [SU2QuaternionForm, h01, h00, star_neg, Matrix.neg_apply]
+
+/-- Quaternionic block form is closed under addition. -/
+theorem SU2QuaternionForm_add {A B : Matrix C2 C2 ℂ}
+    (hA : SU2QuaternionForm A) (hB : SU2QuaternionForm B) :
+    SU2QuaternionForm (A + B) := by
+  rcases hA with ⟨hA01, hA00⟩
+  rcases hB with ⟨hB01, hB00⟩
+  constructor <;>
+    simp [SU2QuaternionForm, Matrix.add_apply, hA01, hA00,
+      hB01, hB00, star_add] <;> ring
+
+/-- Quaternionic block form is preserved by conjugate transpose. -/
+theorem SU2QuaternionForm_conjTranspose {M : Matrix C2 C2 ℂ}
+    (hM : SU2QuaternionForm M) :
+    SU2QuaternionForm (Matrix.conjTranspose M) := by
+  rcases hM with ⟨h01, h00⟩
+  constructor <;>
+    simp [SU2QuaternionForm, Matrix.conjTranspose_apply,
+      h01, h00, star_neg, star_star]
+
+theorem SU2QuaternionForm_mul {A B : Matrix C2 C2 ℂ}
+    (hA : SU2QuaternionForm A) (hB : SU2QuaternionForm B) :
+    SU2QuaternionForm (A * B) := by
+  rcases hA with ⟨ha01, ha00⟩
+  rcases hB with ⟨hb01, hb00⟩
+  constructor <;>
+    simp [SU2QuaternionForm, Matrix.mul_apply, Fin.sum_univ_two,
+      ha01, ha00, hb01, hb00, star_mul, star_neg, star_star] <;> ring
+
+
+/-- The Pauli-X rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliX_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliX θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliX, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg,
+      Complex.ofReal_neg] <;> ring
+
+
+
+/-- Every natural power preserves the quaternionic SU(2) block form. -/
+theorem SU2QuaternionForm_pow {M : Matrix C2 C2 ℂ}
+    (hM : SU2QuaternionForm M) (n : ℕ) :
+    SU2QuaternionForm (M ^ n) := by
+  induction n with
+  | zero =>
+      simpa using SU2QuaternionForm_one
+  | succ n ih =>
+      rw [pow_succ]
+      exact SU2QuaternionForm_mul ih hM
+
+
+/-- The Pauli-Y rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliY_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliY θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliY, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg,
+      Complex.ofReal_neg] <;> ring
+
+
+/-- The Pauli-Z rotation has the quaternionic 2×2 block form. -/
+theorem su2Rotation_pauliZ_quaternionForm (θ : ℝ) :
+    SU2QuaternionForm (su2Rotation pauliZ θ) := by
+  constructor <;>
+    simp [SU2QuaternionForm, su2Rotation, pauliZ, Matrix.smul_apply,
+      Matrix.sub_apply, Matrix.one_apply, Complex.star_def,
+      ← Complex.cos_conj, ← Complex.sin_conj, Complex.conj_ofReal,
+      map_ofNat, neg_div, Complex.cos_neg, Complex.sin_neg,
+      Complex.ofReal_neg] <;> ring
+
+
+/-- Finite sums preserve quaternionic spin-block form. This is the algebraic
+closure step needed when a block of a matrix product is expanded over its
+intermediate geometric vertices. -/
+theorem SU2QuaternionForm_sum_finset {ι : Type*} (s : Finset ι)
+    (f : ι → Matrix C2 C2 ℂ)
+    (hf : ∀ i ∈ s, SU2QuaternionForm (f i)) :
+    SU2QuaternionForm (∑ i ∈ s, f i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simpa using SU2QuaternionForm_zero
+  | @insert a s ha ih =>
+      rw [Finset.sum_insert ha]
+      apply SU2QuaternionForm_add
+      · exact hf a (Finset.mem_insert_self a s)
+      · apply ih
+        intro i hi
+        exact hf i (Finset.mem_insert_of_mem hi)
+
+
+/-- A finite sum of products preserves quaternionic spin-block form when
+both factors in every summand have that form. This packages the closure step
+used when expanding a block of a matrix product over intermediate vertices. -/
+theorem SU2QuaternionForm_sum_mul {ι : Type*} (s : Finset ι)
+    (A B : ι → Matrix C2 C2 ℂ)
+    (hA : ∀ i ∈ s, SU2QuaternionForm (A i))
+    (hB : ∀ i ∈ s, SU2QuaternionForm (B i)) :
+    SU2QuaternionForm (∑ i ∈ s, A i * B i) := by
+  apply SU2QuaternionForm_sum_finset
+  intro i hi
+  exact SU2QuaternionForm_mul (hA i hi) (hB i hi)
+
+
+/-- Extract the 2×2 spin block at geometric indices p and q from a matrix
+whose state space is a product of geometric vertices and spin indices. -/
+def spinBlock {X : Type*} (M : Matrix (X × C2) (X × C2) ℂ) (p q : X) :
+    Matrix C2 C2 ℂ :=
+  fun i j => M (p, i) (q, j)
+
+/-- The spin block of a product is the sum over intermediate geometric vertices
+of the products of the corresponding spin blocks. The spin index remains inside
+each 2×2 matrix product, so no matrix factors are reordered. -/
+theorem spinBlock_mul {X : Type*} [Fintype X]
+    (A B : Matrix (X × C2) (X × C2) ℂ) (p q : X) :
+    spinBlock (A * B) p q = ∑ x : X, spinBlock A p x * spinBlock B x q := by
+  classical
+  ext i j
+  simp [spinBlock, Matrix.mul_apply, Fintype.sum_prod_type, Fin.sum_univ_two,
+    Matrix.sum_apply]
+
+/-- If every geometric spin block of M has quaternionic form, then the same is
+true for every geometric spin block of every natural power of M. This is the
+power-closure lemma needed before using Hermiticity to cancel same-coordinate,
+different-spin corner entries. -/
+theorem spinBlock_pow_quaternionForm {X : Type*} [Fintype X] [DecidableEq X]
+    (M : Matrix (X × C2) (X × C2) ℂ)
+    (hM : ∀ p q, SU2QuaternionForm (spinBlock M p q)) :
+    ∀ n p q, SU2QuaternionForm (spinBlock (M ^ n) p q) := by
+  intro n
+  induction n with
+  | zero =>
+      intro p q
+      by_cases hpq : p = q
+      · subst q
+        have hblock :
+            spinBlock (1 : Matrix (X × C2) (X × C2) ℂ) p p =
+              (1 : Matrix C2 C2 ℂ) := by
+          ext i j
+          simp [spinBlock, Matrix.one_apply, Prod.ext_iff]
+        simp only [pow_zero]
+        rw [hblock]
+        exact SU2QuaternionForm_one
+      · have hblock :
+            spinBlock (1 : Matrix (X × C2) (X × C2) ℂ) p q =
+              (0 : Matrix C2 C2 ℂ) := by
+          ext i j
+          simp [spinBlock, Matrix.one_apply, Prod.ext_iff, hpq]
+        simp only [pow_zero]
+        rw [hblock]
+        exact SU2QuaternionForm_zero
+  | succ n ih =>
+      intro p q
+      rw [pow_succ, spinBlock_mul]
+      apply SU2QuaternionForm_sum_finset (s := Finset.univ)
+      intro x hx
+      exact SU2QuaternionForm_mul (ih p x) (hM x q)
+
+
+/-- Conjugate transpose of a full operator induces conjugate transpose
+of its spin block, with the geometric indices reversed. -/
+theorem spinBlock_conjTranspose {X : Type*}
+    (M : Matrix (X × C2) (X × C2) ℂ) (p q : X) :
+    spinBlock (Matrix.conjTranspose M) p q =
+      Matrix.conjTranspose (spinBlock M q p) := by
+  ext i j
+  simp [spinBlock, Matrix.conjTranspose_apply]
+
+/-- A diagonal spin block of a Hermitian full operator is Hermitian. -/
+theorem spinBlock_diagonal_hermitian {X : Type*}
+    (M : Matrix (X × C2) (X × C2) ℂ) (p : X)
+    (hM : Matrix.conjTranspose M = M) :
+    Matrix.conjTranspose (spinBlock M p p) = spinBlock M p p := by
+  have hblock := spinBlock_conjTranspose M p p
+  rw [← hblock, hM]
+
+/-- Under quaternion-form closure and Hermiticity of a power, the
+same-coordinate off-diagonal spin entry vanishes. The concrete operator still
+has to discharge both hypotheses; this lemma does not assume that it does so
+automatically. -/
+theorem spinBlock_pow_diagonal_offdiag_zero {X : Type*}
+    [Fintype X] [DecidableEq X]
+    (M : Matrix (X × C2) (X × C2) ℂ)
+    (hM : ∀ p q, SU2QuaternionForm (spinBlock M p q))
+    (n : ℕ) (p : X)
+    (hpow : Matrix.conjTranspose (M ^ n) = M ^ n) :
+    spinBlock (M ^ n) p p (0 : C2) (1 : C2) = 0 := by
+  have hform := spinBlock_pow_quaternionForm M hM n p p
+  have hherm := spinBlock_diagonal_hermitian (M ^ n) p hpow
+  exact quaternionForm_hermitian_offdiag_zero hform.1 hherm
+
+
+end EvgenyTheorem
+

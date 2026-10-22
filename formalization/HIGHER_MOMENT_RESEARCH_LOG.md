@@ -206,14 +206,31 @@ K powers kept as block-diagonal exterior factors.
 | 8 | 7 | 5 | (1,1,3), (1,2,2) |
 | 10 | 12 | 7 | (1,1,5), (1,4,2), (1,2,4), (1,3,3), (2,2,3) |
 
-This split is checked against the generator by
-`test_three_pairing_classes_split_by_unit_cyclic_gap`. It certifies the
-classification and exact cyclic representatives, not the matrix-trace theorem
-itself. For each remaining tuple, every gap is positive, so the middle powers
-between N factors are at least K^2. The existing hypothesis on K does not imply
-the needed corner-vanishing condition for these powers. The next mathematical
-obligation is to prove or refute those specific higher-power conditions from
-the concrete graph/operator definitions, rather than assume them.
+This split is checked against the exact ordered-word generator by
+`test_three_pairing_classes_split_by_unit_gap_and_positive_gap_cases` and
+`test_three_pairing_gap_tuple_maps_to_middle_power_and_orbit_multiplicity`.
+The latter ties each canonical gap tuple to an actual canonical ordered word,
+its three `K*N` factors, the middle exponents (gap + 1), and the exact orbit
+weight.
+
+**Updated resolution under an explicit hypothesis.** The concrete operator
+argument is now formalized in `GlueCorner.lean`: orientation antisymmetry
+makes each copy operator Hermitian; quaternionic spin-block closure then gives
+same-point, opposite-spin vanishing for every natural power; and
+`sgK_pow_GlueDiag_of_OAnti` transfers this to the glued operator. Therefore
+the middle-power corner condition is proved for every exponent under
+`OAnti (m + 1) o`, rather than inferred from block diagonality. For each
+remaining tuple, rotate the cyclic word so that its smallest gap is the middle
+power. Since the three nonnegative gaps sum to p - 3, this exponent is at most
+`floor((p - 3)/3) + 1 <= 3 < 2^m` for p in {6,8,10} and m >= 3. The existing
+conditional Lean reduction `trace_three_N_word_zero_of_OAnti` then applies.
+The five tuples listed above are thus conditionally covered; their exact
+representatives and orbit multiplicities remain regression-tested.
+
+This resolves the r=3 gap-class obligation **under the stated orientation
+antisymmetry hypothesis**. It does not resolve the separate even-stratum
+boundary sums for r=6,8,10, the finite base transition, or level propagation.
+No unconditional all-level p-moment identity is claimed.
 
 ## 4g. Support-by-distance reduction and the remaining spin obstruction
 
@@ -525,3 +542,453 @@ The script `computational/corner_power_report.py` now reports the spin-off-diago
 Run the diagnostic from the repository root for each selected level, angle, and axis mode, preserving the JSON output as an artifact. Inspect the maximum `spin_offdiag_abs` over all three outer corners and powers (1\le n\le9). Any nonzero value beyond a justified numerical tolerance is a counterexample to the proposed blanket cancellation for that configuration; near-zero output is only evidence and must be followed by an exact proof.
 
 The Lean proof target remains an identity for the intermediate-state sum of `(sgK m θ ax o ^ n) w w'` when the geometric coordinates agree and the spin states differ. Its assumptions must state any required orientation and axis conditions explicitly. Until that theorem is proved, the conditional trace reduction remains the supported result, and the level-independent residual conjecture for (p\in\{6,8,10\}) remains unproved.
+
+## 4x. Exact middle-power map for the remaining three-pairing classes
+
+The cyclic-gap tuple counts the K factors *between* consecutive K*N factors. Since each K*N factor itself contributes one leading K, a gap entry a corresponds to a power exponent a + 1 in the word written cyclically as K^a N K^b N K^c N after combining adjacent K factors. The exact unresolved classes and orbit multiplicities from the committed inventory are:
+
+| Moment p | Canonical gap tuple | Actual middle-power exponents | Orbit size |
+|---:|---|---|---:|
+| 6 | (1,1,1) | (2,2,2) | 2 |
+| 8 | (1,1,3) | (2,2,4) | 8 |
+| 8 | (1,2,2) | (2,3,3) | 8 |
+| 10 | (1,1,5) | (2,2,6) | 10 |
+| 10 | (1,4,2) | (2,5,3) | 10 |
+| 10 | (1,2,4) | (2,3,5) | 10 |
+| 10 | (1,3,3) | (2,4,4) | 10 |
+| 10 | (2,2,3) | (3,3,4) | 10 |
+
+The orbit sizes sum to 2, 16, and 50 factor words respectively across the listed target classes; these multiplicities must be retained when collecting cyclic trace contributions. A regression test now checks this gap-to-exponent map and the orbit sizes against the generated inventory.
+
+This calculation narrows the geometric obligation. Every required exponent is at most 6. For distinct geometric corner coordinates, sgK_pow_zero_of_distinct_glued_corner_coords therefore applies at every level m >= 3, since 6 < 2^m. The remaining same-copy corner condition is the same-coordinate/different-spin entry: exponent 2 is covered by sgK_hu2, while exponents 3, 4, 5, and 6 still require a proof. The generic Hermitian/quaternion-form helper in SU2.lean is only an algebraic endpoint; until the quaternionic block form is shown to be preserved by the concrete Hc powers, it does not discharge these hypotheses.
+
+**Status:** exact combinatorial mapping and multiplicities are recorded and regression-tested; the concrete same-coordinate spin cancellation for powers 3–6 and the full residual theorem remain open.
+
+
+## 4y. Concrete same-point spin cancellation after quaternion-form closure
+
+**Update for PR #8 head `ebfdf002a236d733de6343a7c0ac25099b7a5f9f` (2026-10-21):** the earlier Section 4x statement that same-coordinate spin cancellation for powers 3–6 remained unproved is superseded by the new Lean lemmas in this branch.
+
+The formal chain is:
+- `SU2QuaternionForm` and its multiplication/power closure in `SU2.lean`;
+- `pHeO_spinBlock_quaternionForm` and `Hc_spinBlock_quaternionForm` for the concrete local blocks;
+- `pOpO_hermitian_of_OAnti` and `Hc_hermitian_of_OAnti` under the explicit orientation-antisymmetry hypothesis;
+- `Hc_pow_samePoint_spinOffdiag_zero` and `Hc_pow_samePoint_spinOffdiag_zero_any`;
+- `sgK_pow_GlueDiag_of_OAnti`, transferring the all-natural-powers cancellation to the glued corner condition.
+
+The PR head has successful GitHub Actions evidence: Lean formalization run 178 and Python tests run 247, including both Python 3.11 and 3.12. Links: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39559293076 and https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39559293274.
+
+**Scope boundary:** this closes the concrete same-point spin-off-diagonal corner obligation under the stated hypotheses for the exponents used by the eight listed three-pairing classes. It does not itself derive the full higher-moment boundary formula, collect all ordered trace-word contributions into the final residual identity, or prove the level-propagation step. The all-level residual identities for p = 6, 8, 10 therefore remain conjectural until those separate obligations are machine-checked.
+
+
+## 4z. Conditional four-pairing boundary reduction (PR #8)
+
+**Lean source:** `formalization/EvgenyTheorem/GlueAlg.lean`, theorem
+`trace_four_N_powers`.
+
+For a word with four pairing factors, cyclicity of trace moves the final
+power to the front and groups the outside factors without commuting any
+individual matrices. The theorem then applies the generic two-pairing formula
+to the last remaining pair. In the current interface, the middle power
+`K^d` must satisfy the explicit glued-corner off-diagonal vanishing
+condition. The theorem does not infer that condition from block diagonality.
+
+The resulting identity retains the inner product `G.N * K^b * G.N` inside
+the diagonal entry of the outside product. This is a valid conditional
+boundary reduction, but it is not yet a fully expanded sum over independent
+corner entries: to simplify the inner pair further, the separate corner
+condition for `K^b` must also be supplied and used. Nor does this lemma
+collect all ordered words or prove their multiplicities cancel in the final
+moment defect.
+
+**Verification:** on PR #8 head
+`bd968fc314516794187b441f336dee0084ab8305`, GitHub Actions Lean
+formalization run 188 and Tests run 257 both completed successfully:
+https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39565263648
+and https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39565263685.
+This is compilation/test evidence for that exact commit, not a proof of the
+full higher-moment conjecture.
+
+**Remaining:** establish the required corner hypotheses for each middle
+power arising in the ordered expansions; derive a fully explicit boundary
+formula for the relevant multi-pairing strata; prove the finite base
+transition and the level-propagation step for `p = 6, 8, 10`. The residual
+identity remains conjectural until those obligations are discharged.
+
+
+### Verification addendum for the report commit
+
+The report update itself is on PR head
+`1b08908090cbaacc27e5131f125ce06ec52f7a41`. Both required workflows
+completed successfully on that exact head:
+- Lean formalization, run 189: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39566107825
+- Tests, run 258 (Python 3.11 and 3.12, including slow convergence tests):
+  https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39566107585
+
+Thus the source and research-log update are verified together. The mathematical
+scope boundary in Section 4z remains unchanged: the full residual identity
+and level propagation have not yet been proved.
+
+
+### Latest verification — explicit four-pairing expansion
+
+The explicit nested-sum theorem `trace_four_N_powers_explicit` was added to
+`formalization/EvgenyTheorem/GlueAlg.lean` at PR head
+`3a09e814bc7c8b73ee2debed3d3fe45d1b75ce1c`. Both required workflows completed
+successfully on that exact commit:
+- Lean formalization, run 191: https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39568637413
+- Tests, run 260 (Python 3.11 and 3.12, including slow convergence tests):
+  https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39568637588
+
+The new lemma expands the inner `N * K^b * N` term into a nested finite sum.
+Its hypotheses separately state the corner-vanishing requirements for
+`K^b` and `K^d`. This is a verified local reduction only; it does not
+establish the multiplicity cancellation or all-level residual identity for
+`p = 6, 8, 10`.
+
+
+### Verification after Lean linter and elaboration-budget fix
+
+On PR #8 head `2bbdac62ef45458113d63637570a5253141c3172` (2026-10-21),
+the Lean formalization workflow completed successfully (run 197) and the
+Tests workflow completed successfully (run 266, Python 3.11 and 3.12):
+- https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39573201940
+- https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/39573201947
+
+This head removes the unused bound hypothesis from
+`sgK_pow_GlueDiag_of_OAnti` and fixes the placement of the local
+`maxHeartbeats` option for the explicit four-pairing specialization.
+These results verify compilation and regression tests for this source state.
+They do not prove the final residual identities or level propagation for
+moments 6, 8, and 10; those obligations remain open.
+
+
+## 4aa. Three-pairing class coverage from the concrete Lean theorem
+
+The current `GlueCorner.lean` contains `trace_three_N_powers_of_OAnti`. Under `OAnti (m + 1) o`, it proves
+that an ordered three-`N` trace word vanishes whenever its middle power
+exponent `b` satisfies `b < 2^m`. The proof obtains the required
+corner hypothesis from the same-coordinate spin cancellation and the
+distinct-geometric-corner support bound.
+
+For the eight target gap classes recorded in the combinatorial regression
+test, the middle-power exponents are respectively:
+- p = 6: 2;
+- p = 8: 2 and 3;
+- p = 10: 2, 5, 3, 4, and 3.
+
+Thus each target middle exponent is at most 5 and is strictly below
+`2^m` for every `m >= 3`. Subject to the theorem's explicit orientation-
+antisymmetry hypothesis, the generic Lean theorem therefore covers the
+three-pairing trace words represented by these classes. This is a conditional
+formal result, not a proof that orientation antisymmetry holds for every
+input, and not a proof of the full moment identity.
+
+The inventory regression test independently checks the gap-to-exponent
+mapping and orbit multiplicities (2, 16, and 50 represented words for the
+listed classes at p = 6, 8, and 10). It remains necessary to connect this
+class-level coverage to the complete ordered expansion and its coefficients,
+then discharge the remaining higher-pairing strata and prove the level-
+propagation argument. The all-level residual identities for p = 6, 8, 10
+remain open.
+
+
+## 4ab. Reduction-ledger classification of the full three-pairing stratum
+
+The computational reduction ledger now marks the entire `kn_factor_count = 3`
+stratum for p = 6, 8, 10 as `vanishes_by_three_N_corner_lemma_under_OAnti`.
+This is justified conditionally by cyclic rotation: if the three cyclic K-gaps
+are nonnegative and sum to p - 3 <= 7, their minimum is at most 2. Rotate the
+word so that this gap is the middle gap between adjacent N factors. Since each
+`K*N` contributes one leading K, the middle power is `min(gap) + 1 <= 3`,
+which is less than `2^m` for every m >= 3. The Lean theorem
+`trace_three_N_word_zero_of_OAnti` then applies under `OAnti (m + 1) o`.
+
+A regression test checks this bound for every cyclic class with exactly three
+`K*N` factors, not just the eight previously highlighted gap tuples. The ledger
+still leaves all strata with four or more `K*N` factors explicitly uncovered
+by the current generic reductions. This classification is conditional on the
+orientation-antisymmetry hypothesis and does not prove the full moment identity
+or the level-propagation step.
+
+
+## 4ac. Four-pairing stratum classified by explicit boundary expansion
+
+The reduction ledger now marks the full `kn_factor_count = 4` stratum as
+`explicit_four_N_boundary_formula_under_OAnti`, rather than as an unqualified
+vanishing result. Any cyclic word with four `K*N` factors has four positive
+K-exponents between consecutive N factors; their sum is p. For p <= 10, each
+such exponent is at most p - 3 <= 7, hence below `2^m` for m >= 3. By cyclic
+rotation and splitting one cyclic gap into the two outside powers, the word
+fits `trace_four_N_powers_explicit_of_OAnti` with the two required middle
+exponents below the geometric bound. Under `OAnti (m + 1) o`, Lean therefore
+provides the explicit nested boundary sum.
+
+This is a boundary-formula reduction, not cancellation of the four-pairing
+stratum. The regression test now distinguishes this status from the proven
+conditional vanishing of the three-pairing stratum. Strata with five or more
+`K*N` factors remain uncovered by these generic reductions, and the full
+moment identity and level propagation remain open.
+
+
+## 4ad. Conditional five-pairing trace reduction
+
+The Lean theorem `trace_five_N_powers_zero_of_OAnti` now specializes
+`trace_five_N_powers_zero` under `OAnti (m + 1) o`. It supplies the two
+middle-power corner hypotheses separately using
+`sgK_pow_GlueDiag_of_OAnti` and the distinct-coordinate support bound.
+For the five-pairing stratum at `p ∈ {6,8,10}`, each cyclic K-gap exponent
+is at most `p - 4 ≤ 6`; hence it is below `2^m` for `m ≥ 3`. After cyclic
+rotation and splitting one gap into the two exterior powers, the conditional
+five-N lemma applies to each ordered word in this stratum.
+
+The reduction ledger and its regression test now record
+`vanishes_by_five_N_corner_lemma_under_OAnti` for the complete `r = 5`
+stratum. This status is conditional on orientation antisymmetry and on the
+word-to-gap decomposition; it is not a proof of the full moment identity.
+Strata with six or more `K*N` factors remain outside the current generic
+reductions. The residual identities for `p = 6, 8, 10` remain conjectural
+until the higher-pairing strata, complete boundary collection, and
+level-propagation argument are proved.
+
+
+## 4ae. Regression coverage for unresolved higher-pairing strata
+
+The inventory test now checks every ledger stratum with six or more
+`K*N` factors against the generated ordered-word representatives. For each
+such stratum it verifies the exact cyclic-class count, the sum of orbit sizes
+against the ordered-word count, canonical rotation of each representative,
+the number of `K*N` factors, and the cyclic gap tuple and its sum.
+
+The currently unresolved strata are:
+- p = 6: r = 6 (1 ordered word, 1 cyclic class);
+- p = 8: r = 6, 7, 8 (28, 8, and 1 ordered words);
+- p = 10: r = 6, 7, 8, 9, 10 (210, 120, 45, 10, and 1 ordered words).
+
+These checks close a bookkeeping/regression gap only. They do not establish
+that any of these trace contributions vanish, nor do they produce the missing
+boundary formula. In particular, block diagonality of K powers alone is not
+the required glued-corner off-diagonal hypothesis for the middle powers in
+`N * K^b * N`. A mathematical reduction for r >= 6 must state and prove the
+needed corner conditions, preserve the order of factors, and account for the
+complete boundary contribution before the residual moment identities can be
+claimed. The new regression test passed with the Python 3.11 and 3.12 CI jobs;
+the Lean build also passed on the same source state.
+
+## 4p. Arbitrary-power glued-corner condition is now formalized
+
+The current working branch contains
+`sgK_pow_GlueDiag_of_OAnti` in `formalization/EvgenyTheorem/GlueCorner.lean`.
+Under the explicit hypothesis `OAnti (m + 1) o`, it proves
+`GlueDiag (sgGlue m) (sgK m θ ax o ^ n)` for every natural exponent `n`.
+The same-coordinate case is discharged by Hermiticity of each concrete copy
+operator and quaternionic spin-block cancellation for every power; the
+distinct-coordinate case uses the glued-partner injectivity property. This is
+stronger than the coordinate-distance support estimate and supplies the
+spin/copy-resolved corner premise that must not be inferred from block
+diagonality alone.
+
+Consequently, for the listed three-pairing gap classes at p = 6, 8, and 10,
+the conditional ordered reduction `trace_three_N_word_zero` can use its
+middle-power corner premise under `OAnti (m + 1) o`; the canonical gap
+enumeration and orbit multiplicities remain checked by the Python regression
+tests. This resolves the *corner-hypothesis obligation* for those classes
+conditionally. It does not prove the full trace identity or residual recurrence:
+the complete ordered boundary contribution for strata r >= 6, the base
+transition, and level propagation still require proof. The p = 6, 8, 10
+all-level residual identity remains conjectural.
+
+This section supersedes earlier status sentences in Sections 4j–4o that
+describe same-coordinate/different-spin arbitrary-power corner vanishing as
+open. Those sections remain useful as a record of the development and of the
+separate coordinate-support and numerical-convention audits.
+
+## 4q. Six-pairing boundary formula (conditional; cancellation not proved)
+
+Added `trace_six_N_powers_boundary` in `formalization/EvgenyTheorem/GlueAlg.lean`.
+For an ordered word with six pairing factors, it groups the word into three
+`N * K^n * N` blocks and uses the explicit corner hypotheses for their three
+middle powers. Under these hypotheses, each block is replaced by its diagonal
+boundary matrix, and the trace is reduced to a trace of the three diagonal
+boundary factors separated by the original intervening powers of `K`.
+No commutation of the intervening powers is assumed.
+
+For p = 6, 8, 10 and r = 6, the cyclic gap exponents are at most
+`p - r + 1 <= 5 < 2^m` for m >= 3. Thus the conditional all-power corner
+lemma `sgK_pow_GlueDiag_of_OAnti` supplies the three corner premises under
+`OAnti (m + 1) o`. The reduction ledger now marks r = 6 as
+`explicit_six_N_boundary_formula_under_OAnti`, preserving its ordered-word
+counts and orbit multiplicities: (p=6: 1 word / 1 cyclic class), (p=8: 28 /
+4), (p=10: 210 / 22). Regression tests enforce this classification and do
+not assert that the resulting boundary trace cancels.
+
+This advances the explicit boundary reduction by one pairing stratum, but
+does not resolve the r = 6 contribution to the residual identity. Strata
+r >= 7 still lack a generic ordered multi-pairing reduction in this branch.
+The base transition and level propagation also remain unproved; the p = 6, 8,
+10 all-level residual identity remains conjectural.
+
+## 4r. Conditional seven-pairing vanishing
+
+Added `trace_seven_N_powers_zero` in `formalization/EvgenyTheorem/GlueAlg.lean`.
+The proof turns two selected `N * K^n * N` subwords into diagonal boundary
+blocks and then applies `trace_three_N_word_zero` to the three remaining
+pairing factors. The corner premises for the three selected middle powers are
+explicit; under `OAnti (m + 1) o`, they are discharged by the all-power
+`sgK_pow_GlueDiag_of_OAnti` theorem.
+
+For p = 8 and 10, every exponent in the r = 7 stratum is at most
+`p - r + 1 <= 4 < 2^m` for m >= 3. The ledger now records conditional
+vanishing for r = 7, preserving counts and orbit multiplicities (p=8: 8
+ordered words / 1 cyclic class; p=10: 120 / 12). Python regression tests check
+these values and the conditional status. This closes the r = 7 reduction
+obligation under the stated orientation hypothesis; r = 6 remains an explicit
+boundary formula, while r >= 8 still need further reductions. The residual
+identity and its level propagation remain conjectural.
+
+## 4s. Conditional reductions for eight, nine, and ten pairings
+
+Added three ordered-word reductions in `formalization/EvgenyTheorem/GlueAlg.lean`:
+
+- `trace_eight_N_powers_boundary`: diagonalizes three selected
+  `N * K^n * N` blocks and reduces the remaining two N factors to an
+  explicit boundary sum.
+- `trace_nine_N_powers_zero`: diagonalizes three selected blocks and applies
+  `trace_three_N_word_zero` to the remaining three N factors, giving
+  conditional vanishing.
+- `trace_ten_N_powers_boundary`: diagonalizes four selected blocks and
+  reduces the remaining two N factors to an explicit boundary sum.
+
+Each theorem states its middle-power corner hypotheses explicitly. Under
+`OAnti (m + 1) o`, `sgK_pow_GlueDiag_of_OAnti` supplies those hypotheses
+for the p=8,10 strata because the relevant exponents are bounded by
+`p-r+1` and are strictly less than `2^m` for m >= 3. The even-stratum
+boundary formulas are not labelled as vanishing. The ledger and regression
+tests preserve exact word counts and cyclic-orbit weights: r=8 has (p=8:
+1 word / 1 class; p=10: 45 / 5), r=9 has (p=10: 10 / 1), and r=10 has
+(p=10: 1 / 1).
+
+This extends the ordered reductions through r=10 for the finite p=6,8,10
+inventory, but does not by itself evaluate/cancel the r=8 or r=10 boundary
+sums. The r=6 boundary sum also remains unevaluated. Thus the complete
+residual identity, finite base transition, and level propagation are still
+open; no all-level moment identity is claimed.
+
+## 4t. First obstruction to finishing: even-stratum boundary cancellation
+
+The finite inventory and Lean reductions now separate two logically different
+tasks: (1) reducing an ordered trace word to a boundary expression, and
+(2) proving that expression cancels. The current theorems establish the first
+task for r=6,8,10, not the second. Added a regression test that prevents the
+ledger from relabelling any of these even strata as zero without a new proof.
+
+The smallest diagnostic case is p=6, r=6: its stratum has one ordered word
+and one cyclic class, with orbit weight one. Thus there is no cancellation
+between distinct cyclic classes inside this stratum. If the r=6 contribution
+is required to vanish separately, its single boundary trace must itself be
+shown zero from additional structure of the concrete operator. Alternatively,
+a proof of the full residual identity may establish cancellation against other
+r-strata, but that cross-stratum identity must be stated and proved explicitly.
+The present corner-diagonalization lemmas alone do not decide between these
+possibilities.
+
+Next mathematical target: specialize `trace_six_N_powers_boundary` to the
+p=6 all-pairing word and simplify its three diagonal boundary factors using
+the concrete `sgK`/`Hc` definitions and `OAnti`. Do not assume the
+boundary trace vanishes; either prove the needed identity or preserve it as a
+nonzero/unresolved contribution. The p=8 and p=10 boundary sums then require
+the same analysis with their full orbit weights.
+
+## 4u. p=6 all-pairing boundary: diagonal-support reduction target
+
+A direct algebraic inspection of the p=6, r=6 specialization of
+`trace_six_N_powers_boundary` identifies the residual expression as
+`trace (K * D * K * D * K * D)`, where
+`D = diagonal (fun w => if G.g w then K (G.σ w) (G.σ w) else 0)`.
+This is not, by itself, a zero formula.
+
+For the concrete glued operator, the next reduction to formalize is that K
+has no off-diagonal entries between distinct points in the support of G.g:
+different copies are separated by block diagonality, and distinct glued
+corners in the same copy are handled by `sgK_hkg`. If this premise is
+established with the exact hypotheses and the cyclic product is expanded,
+the boundary trace reduces to
+`∑ w, if G.g w then (K w w)^3 * (K (G.σ w) (G.σ w))^3 else 0`.
+Using `sgK_diag`, this is a sum of products of corner degrees, rather than
+an automatic cancellation. The involution and corner-degree facts must still
+be applied to determine its exact value and prove nonvanishing in Lean.
+
+This is a proof target and an algebraic diagnostic, not yet a committed Lean
+lemma or a CI-verified conclusion. In particular, it does not establish the
+full p=6 residual identity: any required cancellation with other strata would
+need a separate identity preserving the ordered-word multiplicities.
+## 4v. p=6 boundary: diagonal support is available from existing corner lemmas
+
+The diagonal-support premise identified in Section 4u follows from existing
+formalized facts for the concrete operator when `1 ≤ m`: `sgK_hkg` makes
+`sgK w w' = 0` for distinct glued states in the same copy, and `blockK_BD`
+makes the entry zero when the copy indices differ. Thus the restriction of
+`K = sgK m θ ax o` to the support of `(sgGlue m).g` is diagonal; this is a
+consequence of the existing lemmas, not an additional geometric conjecture.
+
+Algebraically, with
+`D = diagonal (fun w => if (sgGlue m).g w then
+  K ((sgGlue m).σ w) ((sgGlue m).σ w) else 0)`,
+expanding the trace and using that support-diagonality forces the three
+indices to coincide gives
+`trace (K * D * K * D * K * D) =
+ ∑ w, if (sgGlue m).g w then
+   (K w w)^3 * (K ((sgGlue m).σ w) ((sgGlue m).σ w))^3 else 0`.
+By `sgK_diag`, each diagonal K entry is the degree of its underlying local
+point. This identifies the p=6, r=6 term as a degree-weighted boundary sum,
+not a term that vanishes by the corner hypotheses alone.
+
+The equality above has been derived from the definitions and existing lemmas
+as an algebraic proof target, but has **not** yet been added as a Lean theorem.
+No numerical value or cancellation with other strata is claimed. The current
+Lean and Python CI passed for documentation commit
+`6791424dc4bad8d71127c257dc6e8e164a8fbc90`; a new source-level proof and its
+CI verification are still needed before this reduction can be treated as
+machine-checked.
+
+
+## 4w. Numerical evaluation of the p=6, r=6 boundary term (conditional calculation)
+
+For the concrete Sierpinski-gasket gluing, the support of `(sgGlue m).g`
+contains six geometric corner endpoints (two per copy) and two spin states
+per endpoint, hence 12 indexed states. At level m >= 1, each outer corner
+has graph degree 2. Under this corner-degree fact, `sgK_diag` makes each
+summand in the p=6 all-pairing boundary expression equal to
+`2^3 * 2^3 = 64`. Summing over the 12 support states gives the boundary
+contribution `12 * 64 = 768`, not zero.
+
+This is a concrete arithmetic evaluation of the identified boundary
+expression, conditional on the support-cardinality and corner-degree facts.
+Those facts and the resulting specialization have not yet been assembled
+into a machine-checked Lean theorem in this branch. Therefore 768 is recorded
+as a derived diagnostic, not as a CI-verified theorem or as a disproof of the
+full residual identity: cancellation against other strata remains logically
+possible and would require a separate weighted identity preserving all orbit
+multiplicities.
+
+
+## 4x. Same all-pairing arithmetic for p=8 and p=10 (conditional)
+
+For the top even strata r=p, the boundary formula contains p/2 corner-diagonal
+factors and p/2 intervening K factors. Under the same support-diagonality and
+corner-degree assumptions recorded in 4w, each of these p factors contributes
+2 to each summand. Thus each support state contributes `2^p`, and the 12
+support states contribute `12 * 2^p`. The conditional diagnostic values are:
+
+- p=8, r=8: `12 * 2^8 = 3,072`.
+- p=10, r=10: `12 * 2^10 = 12,288`.
+
+This count includes both the corner-diagonal factors and the intervening K
+factors; it does not count only the `N*K*N` blocks.
+
+These are conditional evaluations of the all-pairing boundary terms, not
+machine-checked Lean theorems. They show that the top even stratum itself
+does not vanish under the stated degree assumptions. They do not rule out
+cancellation with lower-r strata in the full p=8 or p=10 residual identity;
+that requires the complete weighted sum over all ordered representatives
+and their orbit multiplicities. No such cross-stratum cancellation is claimed.
