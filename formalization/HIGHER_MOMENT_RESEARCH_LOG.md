@@ -1328,3 +1328,26 @@ The new `trace_ten_N_powers_boundary_of_OAnti` discharges the five corner premis
 For the target p=10, all gaps are zero and all five middle exponents are 1; the sufficient bound is 1 < 2^m, i.e. m >= 1. The wrapper therefore covers the unique r=10 word at degree ten at every positive level, conditional on its underlying geometric distance lemma and successful Lean compilation.
 
 At this point wrappers have been authored for r=6,8,10. This is a source-level milestone only: current visible Actions results do not include these latest wrapper commits, so compilation remains unverified. More importantly, even successful compilation would only establish the boundary reductions. The main remaining theorem is still the exact cancellation/axis-independence identity across all even strata.
+
+## 4aj. CI verification after namespace repair; remaining theorem stated precisely
+
+Commit `832674619617357e2a7d0c3e8822920388fd141d` repairs the namespace around the concrete (r=6,8,10) boundary wrappers in `GlueCorner.lean`. Both GitHub Actions workflows completed successfully on that exact commit:
+
+- Lean formalization, push: run `39831944688` — success.
+- Python tests, push: run `39831944779` — success.
+- The corresponding pull-request runs `39831954958` (Lean) and `39831955466` (Python) also succeeded.
+
+Thus the current wrappers compile and the Python regression suite passes. This is a verified source/CI milestone, not a proof of the higher-moment recurrence.
+
+### Exact remaining mathematical obligation
+
+For each (p\in\{6,8,10\}), the word expansion of ((K+KN)^p) has already been partitioned by the number (r) of (KN) factors, with exact cyclic-orbit multiplicities. Odd strata are handled by the existing conditional vanishing lemmas; the even strata (r=2,4,6) (and (r=8) for (p=8,10), (r=10) for (p=10)) reduce to boundary kernels under the stated corner hypotheses.
+
+What is still missing is an identity between the **weighted sums of those even-stratum boundary kernels** that yields the desired axis-independence / defect recursion. The (r=6,8,10) wrappers only expose the kernels; they do not make them zero and do not compare them with lower even strata. No all-level theorem
+[
+\Delta_m^{(p)}(\theta)=3\Delta_{m-1}^{(p)}(\theta)+C_p(\theta)
+]
+for (p=6,8,10) has been proved by the work recorded here.
+
+Finite exact data at (\theta=\pi) supports a stable residual from level (m\ge3) in the tested range, but that is evidence for a conjecture, not a proof for general (\theta\) or all levels. Do not promote the finite regression to a theorem. The next proof step must derive the cross-stratum kernel identity (or find a counterexample); adding more individual boundary wrappers is not a substitute.
+
