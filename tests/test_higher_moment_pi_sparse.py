@@ -65,17 +65,24 @@ def test_exact_sparse_h6_candidate_at_level_seven():
 
 
 def test_exact_sparse_h8_h10_candidates_at_level_seven():
-    """Stress-test the theta=pi H^8/H^10 candidates at level seven exactly.
+    """Pin exact level-seven values as well as checking the candidate formulas.
 
     These assertions are finite exact-arithmetic checks only; passing them
     cannot replace the missing all-level, all-angle boundary cancellation.
     """
     level = 7
     candidates = {
-        8: (-3704832, -138752, 277504),
-        10: (-278153280, -2253760, 4507520),
+        8: (-3704832, -138752, 277504, -300230144),
+        10: (-278153280, -2253760, 4507520, -22532669440),
     }
-    for power, (coefficient, constant, residual) in candidates.items():
+    for power, (coefficient, constant, residual, exact_delta) in candidates.items():
         expected = coefficient * (3 ** (level - 3)) + constant
-        assert delta_at_pi(level, power) == expected
+        assert delta_at_pi(level, power) == exact_delta
+        assert exact_delta == expected
         assert residual_at_pi(level, power) == residual
+
+
+def test_exact_sparse_h6_level_seven_value_is_pinned():
+    """Pin the exact integer result rather than only checking a formula."""
+    assert delta_at_pi(7, 6) == -3000288
+    assert residual_at_pi(7, 6) == 5280
