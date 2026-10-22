@@ -716,3 +716,30 @@ def test_reversal_gap_inventory_preserves_exact_even_stratum_weights():
         assert got["cyclic_gap_class_count"] >= got["reversal_class_count"]
         assert all(row["cyclic_class_count"] in (1, 2) for row in got["classes"])
 
+
+def test_reversal_pairing_report_pins_fixed_and_paired_weights():
+    from math import comb
+    from computational.trace_word_counts import reversal_gap_pairing_report
+
+    expected = {
+        (6, 2): (3, 0, 15, 0),
+        (6, 4): (3, 0, 15, 0),
+        (6, 6): (1, 0, 1, 0),
+        (8, 2): (4, 0, 28, 0),
+        (8, 4): (6, 2, 38, 32),
+        (8, 6): (4, 0, 28, 0),
+        (8, 8): (1, 0, 1, 0),
+        (10, 2): (5, 0, 45, 0),
+        (10, 4): (10, 6, 90, 120),
+        (10, 6): (10, 6, 90, 120),
+        (10, 8): (5, 0, 45, 0),
+        (10, 10): (1, 0, 1, 0),
+    }
+    for (p, r), (fixed_n, paired_n, fixed_w, paired_w) in expected.items():
+        report = reversal_gap_pairing_report(p, r)
+        assert report["fixed_cyclic_class_count"] == fixed_n
+        assert report["paired_orbit_count"] == paired_n
+        assert report["fixed_word_weight"] == fixed_w
+        assert report["paired_word_weight"] == paired_w
+        assert report["total_word_weight"] == fixed_w + paired_w == comb(p, r)
+
