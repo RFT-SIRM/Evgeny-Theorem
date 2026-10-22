@@ -689,3 +689,30 @@ def test_gap_orbit_weights_match_binary_necklace_orbits_class_by_class():
                 f"p={p}, r={r}: gap-orbit weights {gap_weights} "
                 f"do not match binary-word orbit weights {binary_weights}"
             )
+
+
+def test_reversal_gap_inventory_preserves_exact_even_stratum_weights():
+    from math import comb
+    from computational.trace_word_counts import reversal_gap_inventory
+
+    expected = {
+        (6, 2): (3, 15),
+        (6, 4): (3, 15),
+        (6, 6): (1, 1),
+        (8, 2): (4, 28),
+        (8, 4): (8, 70),
+        (8, 6): (4, 28),
+        (8, 8): (1, 1),
+        (10, 2): (5, 45),
+        (10, 4): (16, 210),
+        (10, 6): (16, 210),
+        (10, 8): (5, 45),
+        (10, 10): (1, 1),
+    }
+    for (p, r), (classes, total) in expected.items():
+        got = reversal_gap_inventory(p, r)
+        assert got["reversal_class_count"] == classes
+        assert got["word_weight_total"] == total == comb(p, r)
+        assert got["cyclic_gap_class_count"] >= got["reversal_class_count"]
+        assert all(row["cyclic_class_count"] in (1, 2) for row in got["classes"])
+
