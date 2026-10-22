@@ -34,3 +34,19 @@ def test_theta_pi_higher_moments_exact_levels_one_through_six():
         assert residuals == expected_residuals[power]
         # Independently exercise the public transition helper at level six.
         assert residual_at_pi(6, power) == expected_residuals[power][-1]
+
+def test_exact_sparse_certificate_matches_candidate_closed_forms_at_pi():
+    """Cross-check candidate formulas with the independent sparse implementation.
+
+    This certifies only levels 3..6; it deliberately makes no all-level claim.
+    """
+    candidates = {
+        6: (-37008, -2640),
+        8: (-3704832, -138752),
+        10: (-278153280, -2253760),
+    }
+    for power, (coefficient, constant) in candidates.items():
+        for level in range(3, 7):
+            assert delta_at_pi(level, power) == (
+                coefficient * (3 ** (level - 3)) + constant
+            )
