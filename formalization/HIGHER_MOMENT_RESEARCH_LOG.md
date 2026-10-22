@@ -1154,3 +1154,57 @@ It still does not establish their validity for all levels, nor the desired
 all-angle identity. The unresolved proof obligation remains the weighted
 cancellation of the nonzero even-pairing boundary strata; the new tests do
 not discharge it.
+
+
+## 4z. Exact bookkeeping target for the even strata
+
+The cancellation claim should be stated as axis-independence of the *total*
+boundary correction, not as vanishing of each stratum. This distinction is
+necessary because the top-stratum diagnostics in Sections 4w--4x are nonzero.
+
+Fix an even power p in {6, 8, 10}. Write an ordered word as a binary word
+u of length p, where 1 marks a selected K*N factor and 0 marks a K factor.
+Let r(u) be the number of 1s. For each cyclic class [u], let o(u) be its
+rotation-orbit size (the number of distinct rotations, not p divided by an
+assumed generic stabilizer). Let E_{p,r,[u]}(ax) denote the boundary expression
+obtained by applying the already formalized N-boundary reduction to that
+ordered word for axis function ax; for a word in a class this expression is
+read after the corresponding cyclic rotation of the trace. Define the weighted
+stratum quantity
+
+  B_{p,r}(ax) = sum_{[u] : r(u)=r} o(u) * E_{p,r,[u]}(ax).
+
+This definition is a bookkeeping specification; E is intentionally left as
+the output of the relevant boundary theorem, rather than silently replacing
+it by zero. The orbit weight ensures that the sum is over the original
+ordered expansion with multiplicity. The combinatorial sanity check is
+  sum_{[u] : r(u)=r} o(u) = binomial(p,r),
+which must hold for every p and r. In particular the complete word counts
+are 64, 256, and 1024 for p=6, 8, and 10 respectively.
+
+The already established odd-stratum vanishing lemmas remove odd r under their
+stated OAnti and exponent hypotheses. The r=0 term is the unglued K^p trace.
+Consequently the remaining correction has the schematic form
+
+  F_p(ax) = B_{p,2}(ax) + B_{p,4}(ax) + ... + B_{p,p}(ax),
+
+with the precise E expressions determined class-by-class by the existing
+four-, six-, eight-, and ten-N boundary formulas. The required recurrence
+closure is the identity
+
+  F_p(ax) = F_p(ax')
+
+for admissible axis functions ax, ax' (equivalently, the difference of these
+weighted sums is zero). It is *not* justified to assert B_{p,r}=0 separately.
+For p=6 the target is B_{6,2}+B_{6,4}+B_{6,6} axis-independent; for p=8
+it is B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}; for p=10 it is
+B_{10,2}+B_{10,4}+B_{10,6}+B_{10,8}+B_{10,10}.
+
+The present Lean development proves reductions of individual ordered words to
+boundary expressions and proves the degree-four axis-independence argument,
+but does not yet define these B quantities or prove the displayed higher-power
+axis-independence identities. The next formal implementation should introduce
+the ordered-word/cyclic-class indexing and the orbit-size multiplicity lemma
+before attempting any operator-level cancellation. Until those lemmas compile,
+this section is a precise proof obligation, not a Lean theorem or a claimed
+proof of the moment recurrence.
