@@ -329,3 +329,71 @@ def expanded_operator_word_inventory(p: int) -> dict[str, object]:
         "strata": by_r,
     }
 
+
+def _factor_word_from_circular_expansion(word: tuple[str, ...]) -> tuple[str, ...]:
+    """Recover K / K*N tiles from a circular K/N word whose every N follows K."""
+    if not word:
+        raise ValueError("expanded word must be nonempty")
+    if any(letter not in ("K", "N") for letter in word):
+        raise ValueError("expanded word may contain only K and N")
+    n = len(word)
+    if any(word[i] == "N" and word[(i - 1) % n] != "K" for i in range(n)):
+        raise ValueError("every N must be preceded cyclically by K")
+    if "N" not in word:
+        return ("K",) * n
+    # Start immediately after an N, i.e. at a tile boundary.
+    start = (word.index("N") + 1) % n
+    rotated = word[start:] + word[:start]
+    factors: list[str] = []
+    i = 0
+    while i < n:
+        if rotated[i] != "K":
+            raise ValueError("invalid circular tile boundary")
+        if i + 1 < n and rotated[i + 1] == "N":
+            factors.append("K*N")
+            i += 2
+        else:
+            factors.append("K")
+            i += 1
+    return canonical_rotation(tuple(factors))
+
+
+def adjoint_factor_word_inventory(p: int) -> dict[str, object]:
+    """Compute the factor-word permutation induced by reversing expanded K/N words.
+
+    This is a combinatorial map only. For Hermitian K,N, the associated matrix
+    trace is conjugated under reversal; equality requires an additional
+    reality/symmetry argument and is not asserted here.
+    """
+    words = list(product(FACTOR_CHOICES, repeat=p))
+    image: dict[tuple[str, ...], tuple[str, ...]] = {}
+    for factors in words:
+        expanded = tuple(
+            letter for factor in factors
+            for letter in (("K", "N") if factor == "K*N" else ("K",))
+        )
+        reversed_expanded = tuple(reversed(expanded))
+        image[factors] = _factor_word_from_circular_expansion(reversed_expanded)
+    by_r = []
+    for r in range(p + 1):
+        stratum = [w for w in words if w.count("K*N") == r]
+        fixed = sum(image[w] == canonical_rotation(w) for w in stratum)
+        image_keys = {canonical_rotation(image[w]) for w in stratum}
+        by_r.append({
+            "r": r,
+            "word_count": len(stratum),
+            "expected_word_count": comb(p, r),
+            "image_word_count": len(image_keys),
+            "fixed_canonical_word_count": fixed,
+            "preserves_stratum": all(image[w].count("K*N") == r for w in stratum),
+            "involution_on_cyclic_classes": all(
+                canonical_rotation(image[image[w]]) == canonical_rotation(w)
+                for w in stratum
+            ),
+        })
+        assert len(stratum) == comb(p, r)
+        assert by_r[-1]["preserves_stratum"]
+        assert by_r[-1]["involution_on_cyclic_classes"]
+        assert len(image_keys) == len({canonical_rotation(w) for w in stratum})
+    return {"p": p, "strata": by_r, "is_combinatorial_involution": True}
+
