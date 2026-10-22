@@ -1239,9 +1239,9 @@ The next stratum is r=4. For a cyclic gap tuple (g1,g2,g3,g4), with each gi >= 0
 
 Applying `trace_four_N_powers_explicit` after cyclic rotation gives the boundary kernel
 
-  sum_{x:g(x)} [ sum_{y:g(y)} ((K^(g4+1) * K^(g1+1))(x,y) * (K^(g2+1))(sigma(y),sigma(y))) * (K^(g3+1))(y,x) ] * (K^(g4+1))(sigma(x),sigma(x)),
+  sum_{x:g(x)} [ sum_{y:g(y)} ((K^(g1+1))(x,y) * (K^(g2+1))(sigma(y),sigma(y))) * (K^(g3+1))(y,x) ] * (K^(g4+1))(sigma(x),sigma(x)),
 
-with the exponents aligned to the theorem arguments (a,b,c,d,e)=(g1+1,g2+1,g3+1,g4+1,0) after rotating the word so that the final outside exponent is zero. If a different cyclic representative is used, the same theorem must be instantiated with that representative's ordered gaps; the factors must not be commuted.
+with the exponents aligned to the theorem arguments (a,b,c,d,e)=(g1+1,g2+1,g3+1,g4+1,0) after rotating the word so that the final outside exponent is zero. In particular, the first matrix factor in the inner sum is K^(g1+1), since e=0; there is no extra K^(g4+1) factor on its left. If a different cyclic representative is used, the same theorem must be instantiated with that representative's ordered gaps; the factors must not be commuted.
 
 For fixed p, the r=4 cyclic classes are necklaces of four nonnegative gaps summing to p-4, modulo cyclic rotation. Their orbit size is the number of distinct rotations of the gap tuple, and it supplies the exact multiplicity in B_{p,4}. The inventory already gives 3, 5, and 14 classes for p=6, 8, and 10 respectively (their weighted totals must be binomial(p,4)=15,70,210).
 
