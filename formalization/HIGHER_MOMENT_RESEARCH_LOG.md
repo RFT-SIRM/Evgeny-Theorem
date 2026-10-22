@@ -1351,3 +1351,26 @@ for (p=6,8,10) has been proved by the work recorded here.
 
 Finite exact data at (\theta=\pi) supports a stable residual from level (m\ge3) in the tested range, but that is evidence for a conjecture, not a proof for general (\theta\) or all levels. Do not promote the finite regression to a theorem. The next proof step must derive the cross-stratum kernel identity (or find a counterexample); adding more individual boundary wrappers is not a substitute.
 
+## 4ak. Reversal pairing census for even strata
+
+The combinatorial reversal quotient was refined into a fixed-vs-paired census. For each cyclic gap class, reverse the gap tuple, canonicalize by cyclic rotation, and pair the two cyclic classes if they differ. This is still a combinatorial partition only: no equality of the associated matrix traces is assumed.
+
+Exact results (fixed classes, paired orbits, fixed word weight, paired word weight):
+
+| p | r | fixed | paired | fixed weight | paired weight | total |
+|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 2 | 3 | 0 | 15 | 0 | 15 |
+| 6 | 4 | 3 | 0 | 15 | 0 | 15 |
+| 6 | 6 | 1 | 0 | 1 | 0 | 1 |
+| 8 | 2 | 4 | 0 | 28 | 0 | 28 |
+| 8 | 4 | 6 | 2 | 38 | 32 | 70 |
+| 8 | 6 | 4 | 0 | 28 | 0 | 28 |
+| 8 | 8 | 1 | 0 | 1 | 0 | 1 |
+| 10 | 2 | 5 | 0 | 45 | 0 | 45 |
+| 10 | 4 | 10 | 6 | 90 | 120 | 210 |
+| 10 | 6 | 10 | 6 | 90 | 120 | 210 |
+| 10 | 8 | 5 | 0 | 45 | 0 | 45 |
+| 10 | 10 | 1 | 0 | 1 | 0 | 1 |
+
+The total weight in each row agrees with \(\binom{p}{r}\). Nontrivial reversal pairs occur only at (p,r)=(8,4),(10,4),(10,6) in this census. If an independently proved trace-reversal identity is available for the model, these pairs could reduce the number of distinct algebraic cases; without it they must remain separate. In particular, this census does not itself prove the cross-stratum cancellation needed for the all-level recurrence.
+
