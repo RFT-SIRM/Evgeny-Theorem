@@ -210,3 +210,17 @@ def test_exact_residual_stabilizes_from_level_three_at_theta_pi(power, expected_
     residuals = [deltas[level - 1] - 3 * deltas[level - 2]
                  for level in range(2, 6)]
     assert residuals[1:] == [expected_residual] * 3
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_finite_residual_transition_on_dense_angle_grid(power):
+    """Numerically stress-test R3=R4; this is not an all-angle proof."""
+    for theta in np.linspace(0.05, 2 * np.pi - 0.05, 17):
+        d2 = raw_trace_diff(2, float(theta), power)
+        d3 = raw_trace_diff(3, float(theta), power)
+        d4 = raw_trace_diff(4, float(theta), power)
+        r3 = d3 - 3 * d2
+        r4 = d4 - 3 * d3
+        assert np.isclose(r3, r4, rtol=3e-10, atol=3e-5), (
+            power, float(theta), r3, r4
+        )
