@@ -1,29 +1,52 @@
 #!/usr/bin/env python3
-"""Finite-level trace-defect regression at theta=pi using sparse matrix powers.
+"""Exact finite-level trace-defect regression at theta=pi.
 
-At theta=pi the SU(2) edge rotations are Gaussian-integer matrices. Sparse
-multiplication keeps level 6 practical; all reported traces are checked to be
-integer-valued and within the exactly representable integer range of float64.
-This is a finite-level certificate, not an all-level proof.
+All matrix entries are Gaussian integers, represented as pairs of Python
+integers. Sparse row dictionaries therefore perform every multiplication and
+addition exactly; no floating-point arithmetic is used. This is a finite
+certificate, not an all-level proof.
 """
 from __future__ import annotations
 
-import numpy as np
-from scipy.sparse import lil_matrix
-
 from graph.sg_graph import sg_tree_graph_with_faces
 
-
-I2 = np.array([[1, 0], [0, 1]], dtype=complex)
-PAULI = (
-    np.array([[0, 1], [1, 0]], dtype=complex),
-    np.array([[0, -1j], [1j, 0]], dtype=complex),
-    np.array([[1, 0], [0, -1]], dtype=complex),
-)
+Gaussian = tuple[int, int]
+ZERO: Gaussian = (0, 0)
+ONE: Gaussian = (1, 0)
 
 
-def operator_at_pi(level: int, commuting: bool):
-    """Build the repository's SU(2) operator as a sparse matrix."""
+def add(a: Gaussian, b: Gaussian) -> Gaussian:
+    return (a[0] + b[0], a[1] + b[1])
+
+
+def neg(a: Gaussian) -> Gaussian:
+    return (-a[0], -a[1])
+
+
+def mul(a: Gaussian, b: Gaussian) -> Gaussian:
+    return (a[0] * b[0] - a[1] * b[1],
+            a[0] * b[1] + a[1] * b[0])
+
+
+def dagger2(u: tuple[tuple[Gaussian, Gaussian],
+                     tuple[Gaussian, Gaussian]]):
+    return (( (u[0][0][0], -u[0][0][1]),
+              (u[1][0][0], -u[1][0][1]) ),
+            ( (u[0][1][0], -u[0][1][1]),
+              (u[1][1][0], -u[1][1][1]) ))
+
+
+def edge_rotation(axis: int):
+    """Return -i sigma_axis as a 2x2 Gaussian-integer matrix."""
+    if axis == 0:
+        return ((ZERO, (0, -1)), ((0, -1), ZERO))
+    if axis == 1:
+        return ((ZERO, (-1, 0)), (ONE, ZERO))
+    return (((0, -1), ZERO), (ZERO, (0, 1)))
+
+
+def operator_at_pi(level: int, commuting: bool) -> list[dict[int, Gaussian]]:
+    """Build the exact sparse 2|V| by 2|V| operator."""
     vertices, edges, faces = sg_tree_graph_with_faces(level)
     n = len(vertices)
     degree = [0] * n
@@ -31,39 +54,75 @@ def operator_at_pi(level: int, commuting: bool):
         degree[a] += 1
         degree[b] += 1
 
-    edge_rotation = {tuple(sorted(e)): I2 for e in edges}
+    rotations = {tuple(sorted(e)): ((ONE, ZERO), (ZERO, ONE)) for e in edges}
     for i, (a, b, _c) in enumerate(faces):
-        axis = 2 if commuting else i % 3
-        edge_rotation[tuple(sorted((a, b)))] = -1j * PAULI[axis]
+        rotations[tuple(sorted((a, b)))] = edge_rotation(2 if commuting else i % 3)
 
-    H = lil_matrix((2 * n, 2 * n), dtype=complex)
+    size = 2 * n
+    rows: list[dict[int, Gaussian]] = [dict() for _ in range(size)]
+
+    def put(r: int, c: int, z: Gaussian) -> None:
+        if z == ZERO:
+            return
+        value = add(rows[r].get(c, ZERO), z)
+        if value == ZERO:
+            rows[r].pop(c, None)
+        else:
+            rows[r][c] = value
+
     for v, d in enumerate(degree):
-        H[2*v:2*v+2, 2*v:2*v+2] = d * I2
+        put(2 * v, 2 * v, (d, 0))
+        put(2 * v + 1, 2 * v + 1, (d, 0))
+
     for a, b in edges:
         a, b = sorted((a, b))
-        U = edge_rotation[(a, b)]
-        H[2*a:2*a+2, 2*b:2*b+2] += -U
-        H[2*b:2*b+2, 2*a:2*a+2] += -U.conj().T
-    return H.tocsr()
+        u = rotations[(a, b)]
+        # H_ab = -U; H_ba = -U^*.
+        for i in range(2):
+            for j in range(2):
+                put(2 * a + i, 2 * b + j, neg(u[i][j]))
+                z = u[j][i]
+                put(2 * b + i, 2 * a + j, (-z[0], z[1]))
+    return rows
+
+
+def sparse_product(a: list[dict[int, Gaussian]],
+                   b: list[dict[int, Gaussian]]) -> list[dict[int, Gaussian]]:
+    """Exact sparse matrix product over Z[i]."""
+    out: list[dict[int, Gaussian]] = []
+    for row in a:
+        accum: dict[int, Gaussian] = {}
+        for k, x in row.items():
+            for j, y in b[k].items():
+                z = mul(x, y)
+                value = add(accum.get(j, ZERO), z)
+                if value == ZERO:
+                    accum.pop(j, None)
+                else:
+                    accum[j] = value
+        out.append(accum)
+    return out
 
 
 def raw_trace_at_pi(level: int, power: int, commuting: bool) -> int:
-    """Return Tr(H^power), validating integer-valued sparse arithmetic."""
+    """Return Tr(H^power) using exact Gaussian-integer sparse arithmetic."""
     if power < 1:
         raise ValueError("power must be positive")
-    H = operator_at_pi(level, commuting)
-    Hp = H.copy()
+    h = operator_at_pi(level, commuting)
+    hp = h
     for _ in range(1, power):
-        Hp = Hp @ H
-        Hp.eliminate_zeros()
-    tr = Hp.diagonal().sum()
-    nearest = round(float(tr.real))
-    if (abs(float(tr.imag)) > 0 or float(tr.real) != nearest
-            or abs(nearest) >= 2**53):
+        hp = sparse_product(hp, h)
+    real = 0
+    imag = 0
+    for i, row in enumerate(hp):
+        z = row.get(i, ZERO)
+        real += z[0]
+        imag += z[1]
+    if imag != 0:
         raise ArithmeticError(
-            f"trace not safely integral at level={level}, p={power}: {tr}"
+            f"trace has nonzero imaginary part at level={level}, p={power}: {imag}"
         )
-    return int(nearest)
+    return real
 
 
 def delta_at_pi(level: int, power: int) -> int:
@@ -77,7 +136,7 @@ def residual_at_pi(level: int, power: int) -> int:
 
 
 def certificate() -> dict[int, dict[str, list[int]]]:
-    """Finite-level regression for p=6,8,10 and levels 1..6."""
+    """Exact finite-level regression for p=6,8,10 and levels 1..6."""
     result = {}
     for p in (6, 8, 10):
         deltas = [delta_at_pi(m, p) for m in range(1, 7)]
