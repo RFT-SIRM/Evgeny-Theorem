@@ -668,3 +668,24 @@ def test_gap_composition_inventory_matches_even_stratum_multiplicities():
         assert got["cyclic_gap_classes"] == classes
         assert got["word_weight_total"] == total == comb(p, r)
         assert all(row["word_orbit_weight"] > 0 for row in got["classes"])
+
+
+def test_gap_orbit_weights_match_binary_necklace_orbits_class_by_class():
+    from computational.trace_word_counts import gap_composition_inventory
+
+    for p in (6, 8, 10):
+        words = word_inventory(p)["classes"]
+        for r in range(1, p + 1):
+            binary_weights = sorted(
+                int(row["orbit_size"])
+                for row in words
+                if int(row["kn_factor_count"]) == r
+            )
+            gap_weights = sorted(
+                int(row["word_orbit_weight"])
+                for row in gap_composition_inventory(p, r)["classes"]
+            )
+            assert gap_weights == binary_weights, (
+                f"p={p}, r={r}: gap-orbit weights {gap_weights} "
+                f"do not match binary-word orbit weights {binary_weights}"
+            )
