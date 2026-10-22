@@ -1412,3 +1412,37 @@ The full-word reversal census has now been stratified by the number r of (KN) fa
 
 The census is symmetric under (r\leftrightarrow p-r), as expected for complementing the binary factor labels. For even r-strata, this identifies exactly which strata contain nontrivial reversal pairs. The combinatorics is now pinned by tests; it still does not establish equality of traces within reversal pairs. Since transpose reverses products but also transposes each factor, a proof must explicitly relate (K^T) and ((KN)^T) to the factors in the original word. No such identity is inferred from cyclicity alone.
 
+## 4an. Expanded operator words after substituting each KN as K·N
+
+The previous inventory treats each chosen factor as either (K) or the compound factor (KN). For the boundary analysis, expand each compound factor explicitly as two letters (K,N). A factor word with p slots and r occurrences of (KN) becomes a matrix word of length p+r containing exactly p copies of K and r copies of N.
+
+Grouping these expanded words under cyclic rotation and reversal gives the following exact census for 1 ≤ r ≤ p−1:
+
+| p | r | expanded length p+r | reversal classes | factor-word weight |
+|---:|---:|---:|---:|---:|
+| 6 | 1 | 7 | 1 | 6 |
+| 6 | 2 | 8 | 3 | 15 |
+| 6 | 3 | 9 | 3 | 20 |
+| 6 | 4 | 10 | 3 | 15 |
+| 6 | 5 | 11 | 1 | 6 |
+| 8 | 1 | 9 | 1 | 8 |
+| 8 | 2 | 10 | 4 | 28 |
+| 8 | 3 | 11 | 5 | 56 |
+| 8 | 4 | 12 | 8 | 70 |
+| 8 | 5 | 13 | 5 | 56 |
+| 8 | 6 | 14 | 4 | 28 |
+| 8 | 7 | 15 | 1 | 8 |
+| 10 | 1 | 11 | 1 | 10 |
+| 10 | 2 | 12 | 5 | 45 |
+| 10 | 3 | 13 | 8 | 120 |
+| 10 | 4 | 14 | 16 | 210 |
+| 10 | 5 | 15 | 16 | 252 |
+| 10 | 6 | 16 | 16 | 210 |
+| 10 | 7 | 17 | 8 | 120 |
+| 10 | 8 | 18 | 5 | 45 |
+| 10 | 9 | 19 | 1 | 10 |
+
+Every stratum preserves the original factor-word weight (inom{p}{r}); all strata together sum to (2^p). This is a more operator-faithful inventory because it exposes the interleaving of K and N instead of treating KN as an indivisible symbol.
+
+Important caveat: the reversal quotient remains a symbolic candidate quotient. In the concrete model, the established Hermiticity statement is for the **conjugate transpose** of the copy operator. It does not automatically imply a plain-transpose identity for each K and N letter, nor does it prove equality of traces for all reversed expanded words. The next formal step must derive the appropriate adjoint relation for the glued operator and pairing matrix, then use cyclicity to identify exactly which expanded-word traces are equal. The cross-stratum cancellation and all-level recurrence remain unproved.
+
