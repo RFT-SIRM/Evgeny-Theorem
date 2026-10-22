@@ -246,3 +246,18 @@ def test_finite_residual_stabilization_levels_three_to_five_angle_grid(power):
                           rtol=5e-10, atol=5e-5), (
             power, float(theta), residuals
         )
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_residual_transition_through_level_six_angle_grid(power):
+    """Extend the numerical recurrence check to R5=R6 at several angles."""
+    for theta in (0.23, 0.91, np.pi / 2, 2.4, np.pi):
+        deltas = {
+            level: raw_trace_diff(level, float(theta), power)
+            for level in (4, 5, 6)
+        }
+        r5 = deltas[5] - 3 * deltas[4]
+        r6 = deltas[6] - 3 * deltas[5]
+        assert np.isclose(r5, r6, rtol=2e-9, atol=2e-4), (
+            power, float(theta), r5, r6
+        )
