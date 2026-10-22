@@ -1070,3 +1070,38 @@ checks verify these formulas only at m = 3, 4, 5, 6. They are therefore
 finite-data-supported candidates, not a proof of the recurrence for all
 m. In particular, they do not provide the missing all-angle formulas for
 H⁶, H⁸, or H¹⁰.
+
+
+## Exact-arithmetic regression refresh (2026-10-22)
+
+The sparse finite-level certificate now uses Python-integer Gaussian arithmetic
+through every matrix product, rather than complex floating-point sparse
+multiplication followed by an integer-valuedness check. The regression test
+checks the full delta sequence for levels 1--6 and the five residuals for
+levels 2--6, for each of p = 6, 8, 10.
+
+| m | Δ(H⁶) | Δ(H⁸) | Δ(H¹⁰) |
+|---:|---:|---:|---:|
+| 1 | -6,744 | -547,552 | -32,992,520 |
+| 2 | -14,976 | -1,373,696 | -94,971,520 |
+| 3 | -39,648 | -3,843,584 | -280,407,040 |
+| 4 | -113,664 | -11,253,248 | -836,713,600 |
+| 5 | -335,712 | -33,482,240 | -2,505,633,280 |
+| 6 | -1,001,856 | -100,169,216 | -7,512,392,320 |
+
+The residual sequences for m = 2,...,6 are:
+
+- H⁶: 5,256; 5,280; 5,280; 5,280; 5,280.
+- H⁸: 268,960; 277,504; 277,504; 277,504; 277,504.
+- H¹⁰: 4,006,040; 4,507,520; 4,507,520; 4,507,520; 4,507,520.
+
+CI at commit `95e65dd4539e291be672c28b3152816da2e2fd9f`:
+- Python tests on Python 3.11 and 3.12: passed.
+- Lean formalization build: passed.
+
+This closes the exact finite-data checkpoint through level 6. It does not
+close the proof obligation identified in Sections 4t--4x: even-stratum
+boundary expressions can be nonzero individually, and their weighted
+cancellation in the full moment difference remains unproved. In particular,
+the formulas at θ = π remain finite-data-supported conjectures, not all-level
+theorems.
