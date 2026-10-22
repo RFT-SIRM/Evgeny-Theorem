@@ -1218,3 +1218,16 @@ Write the cyclic word as K^(g1+1) * N * K^(g2+1) * N, with g1+g2=p-2. This has t
 For p=6,8,10, the r=2 class counts are respectively 3, 4, and 5, while the ordered-word multiplicities are binomial(p,2)=15,28,45. Their cyclic gap representatives are already recorded in trace_word_inventory_p6_p8_p10.json; each representative's orbit size is its weight. This layer is therefore the simplest place to define a concrete B_{p,2} in Lean and verify that the gap encoding agrees with the generic two-N theorem.
 
 This does not by itself yield the required cancellation: B_{p,2} must be compared with the r=4 and higher even boundary sums. The higher layers contain products of several diagonal boundary factors separated by K powers, so their comparison requires additional structure (for example, a common endpoint-sum identity), not just the orbit-count lemma. No such identity is asserted here.
+## 4ab. Closed weighted formula for the two-N stratum
+
+The r=2 orbit bookkeeping can be collapsed into a single gap sum. Define, for 1 <= a <= p-1,
+
+  E_a := sum_{x : G.g(x)} (K^a)(x,x) * (K^(p-a))(sigma(x),sigma(x)).
+
+By `trace_two_N_powers`, the cyclic word with gaps (a-1,p-a-1) has boundary contribution E_a, whenever the corner-vanishing premise for K^(p-a) is available. The cyclic gap classes are unordered pairs {a,p-a}: for a != p-a the class orbit has size p, while for a=p-a its orbit has size p/2. Therefore the orbit-weighted sum over the r=2 classes is exactly
+
+  B_{p,2} = (p/2) * sum_{a=1}^{p-1} E_a.
+
+The factor p/2 is valid because each unequal pair {a,p-a} appears twice in the ordered sum and each equal pair appears once. This is a combinatorial identity, not a cancellation claim. The orbit totals it reproduces are 15, 28, and 45 for p=6, 8, and 10.
+
+Equivalently, the lowest even stratum is now reduced to a single weighted sum of products of diagonal entries of complementary powers of K. The unresolved step is to express the r=4, r=6, ... boundary strata in a compatible form and prove that their sum cancels the axis-dependent part of this expression. The current Lean theorem supplies each E_a once its hypotheses are met; it does not yet prove the global cross-stratum identity.
