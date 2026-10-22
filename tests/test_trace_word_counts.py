@@ -831,3 +831,24 @@ def test_expanded_operator_word_inventory_preserves_stratum_weights():
             assert row["factor_word_weight"] == comb(p, r)
             assert row["expected_factor_word_count"] == comb(p, r)
 
+
+def test_adjoint_factor_word_inventory_is_stratumwise_involution():
+    from math import comb
+    from computational.trace_word_counts import adjoint_factor_word_inventory
+
+    expected_fixed = {
+        6: {0: 1, 1: 6, 2: 9, 3: 8, 4: 9, 5: 6, 6: 1},
+        8: {0: 1, 1: 8, 2: 20, 3: 32, 4: 46, 5: 32, 6: 20, 7: 8, 8: 1},
+        10: {0: 1, 1: 10, 2: 35, 3: 72, 4: 130, 5: 192, 6: 130, 7: 72, 8: 35, 9: 10, 10: 1},
+    }
+    for p, fixed_counts in expected_fixed.items():
+        report = adjoint_factor_word_inventory(p)
+        assert report["is_combinatorial_involution"]
+        for row in report["strata"]:
+            r = row["r"]
+            assert row["word_count"] == comb(p, r)
+            assert row["image_word_count"] == comb(p, r)
+            assert row["preserves_stratum"]
+            assert row["involution_on_cyclic_classes"]
+            assert row["fixed_canonical_word_count"] == fixed_counts[r]
+
