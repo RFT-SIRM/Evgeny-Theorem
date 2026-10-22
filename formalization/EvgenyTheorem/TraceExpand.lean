@@ -120,7 +120,7 @@ theorem affine_recurrence_closed_form
     (n : ℕ) :
     delta (n + 3) =
       (3 : ℂ) ^ n * delta 3 +
-        (∑ i in Finset.range n, (3 : ℂ) ^ i) * C := by
+        (∑ i ∈ Finset.range n, (3 : ℂ) ^ i) * C := by
   induction n with
   | zero =>
       simp
