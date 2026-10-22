@@ -974,16 +974,16 @@ multiplicities.
 
 ## 4x. Same all-pairing arithmetic for p=8 and p=10 (conditional)
 
-For the top even strata r=p, every cyclic gap is one. Under the same
-support-diagonality and corner-degree assumptions recorded in 4w, the
-all-pairing boundary trace has p/2 diagonal K factors and p/2 matching
-corner-diagonal factors, for p scalar factors in total. Each factor equals 2,
-so each support state contributes `2^p`, and the 12 support states therefore
-contribute `12 * 2^p`.
-The resulting diagnostic values are:
+For the top even strata r=p, each adjacent `N*K*N` block contributes one
+corner-diagonal factor. There are p/2 such factors, each equal to 2 under the
+same assumptions recorded in 4w. Thus each support state contributes
+`2^(p/2)`, and the 12 support states contribute `12 * 2^(p/2)`.
+The corrected diagnostic values are:
 
-- p=8, r=8: `12 * 2^8 = 3,072`.
-- p=10, r=10: `12 * 2^10 = 12,288`.
+- p=8, r=8: `12 * 2^4 = 192`.
+- p=10, r=10: `12 * 2^5 = 384`.
+
+The previous `12 * 2^p` values overcounted the number of diagonal factors.
 
 These are conditional evaluations of the all-pairing boundary terms, not
 machine-checked Lean theorems. They show that the top even stratum itself
