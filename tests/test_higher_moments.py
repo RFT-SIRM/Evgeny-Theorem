@@ -261,3 +261,24 @@ def test_residual_transition_through_level_six_angle_grid(power):
         assert np.isclose(r5, r6, rtol=2e-9, atol=2e-4), (
             power, float(theta), r5, r6
         )
+
+
+@pytest.mark.parametrize("power,expected_residual", [
+    (6, 5280),
+    (8, 277504),
+    (10, 4507520),
+])
+def test_exact_residual_transition_level_six_at_theta_pi(power, expected_residual):
+    """Exact Gaussian-integer check of R6=R5, without floating-point tolerances."""
+    deltas = {}
+    for level in range(1, 7):
+        deltas[level] = (
+            _exact_sparse_trace_power_pi(level, power, False)
+            - _exact_sparse_trace_power_pi(level, power, True)
+        )
+    residuals = {
+        level: deltas[level] - 3 * deltas[level - 1]
+        for level in range(2, 7)
+    }
+    assert residuals[5] == expected_residual
+    assert residuals[6] == expected_residual
