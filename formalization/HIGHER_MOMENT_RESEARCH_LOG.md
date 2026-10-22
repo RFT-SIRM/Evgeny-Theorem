@@ -1246,3 +1246,14 @@ with the exponents aligned to the theorem arguments (a,b,c,d,e)=(g1+1,g2+1,g3+1,
 For fixed p, the r=4 cyclic classes are necklaces of four nonnegative gaps summing to p-4, modulo cyclic rotation. Their orbit size is the number of distinct rotations of the gap tuple, and it supplies the exact multiplicity in B_{p,4}. The inventory already gives 3, 5, and 14 classes for p=6, 8, and 10 respectively (their weighted totals must be binomial(p,4)=15,70,210).
 
 This gives a concrete finite target for implementation: generate each canonical four-gap tuple, retain its rotation-orbit size, instantiate the four-N boundary formula with the corresponding ordered exponents, and sum. The remaining proof is then an equality of these explicit double endpoint sums with the r=2 and higher even-stratum kernels. The formula itself does not imply that this equality holds.
+### Ordered-gap summation formula for B_{p,4}
+
+Let E(g1,g2,g3,g4) be the four-N boundary kernel above. The sum over cyclic classes weighted by the original binary-word orbit size can be rewritten as
+
+  B_{p,4} = (p/4) * sum_{g1+g2+g3+g4=p-4, gi>=0} E(g1,g2,g3,g4),
+
+where the sum is over all ordered four-tuples of nonnegative gaps. Reason: an r-marked binary word has a cyclic orbit p/r times the size of the corresponding gap-tuple rotation orbit. Thus for r=4, the word-orbit weight is p/4 times the gap-orbit weight. Since E is invariant under cyclic rotation of the word by trace cyclicity, summing once over all ordered gap tuples is equivalent to summing each gap necklace with its gap-orbit size.
+
+This gives a direct computational indexing set without needing a separate canonical-necklace representative in the formula. The number of ordered tuples is binomial(p-1,3), namely 10, 35, and 84 for p=6, 8, and 10; the prefactor p/4 restores the original word multiplicities, giving total weights binomial(p,4)=15, 70, and 210. This is the r=4 analogue of B_{p,2}=(p/2) sum_{a=1}^{p-1} E_a.
+
+Important: this identity only reorganizes multiplicities. It does not assert that E is equal across tuples, nor that B_{p,4} cancels B_{p,2}.
