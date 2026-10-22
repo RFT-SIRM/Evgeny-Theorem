@@ -767,3 +767,44 @@ def test_full_word_reversal_inventory_preserves_necklace_weights():
                 factor == "K*N" for factor in row["representative"]
             )
 
+
+def test_full_word_reversal_strata_inventory_matches_binomial_weights():
+    from math import comb
+    from computational.trace_word_counts import reversal_word_strata_inventory
+
+    expected = {
+        6: {
+            2: (3, 3, 0, 15, 0),
+            3: (4, 3, 1, 8, 12),
+            4: (3, 3, 0, 15, 0),
+        },
+        8: {
+            2: (4, 4, 0, 28, 0),
+            3: (7, 5, 2, 24, 32),
+            4: (10, 8, 2, 38, 32),
+            5: (7, 5, 2, 24, 32),
+            6: (4, 4, 0, 28, 0),
+        },
+        10: {
+            2: (5, 5, 0, 45, 0),
+            3: (12, 8, 4, 40, 80),
+            4: (22, 16, 6, 90, 120),
+            5: (26, 16, 10, 52, 200),
+            6: (22, 16, 6, 90, 120),
+            7: (12, 8, 4, 40, 80),
+            8: (5, 5, 0, 45, 0),
+        },
+    }
+    for p, strata_expected in expected.items():
+        report = reversal_word_strata_inventory(p)
+        by_r = {row["kn_factor_count"]: row for row in report["strata"]}
+        assert report["word_weight_total"] == 2**p
+        for r, (cyclic, reversal, pairs, fixed_weight, paired_weight) in strata_expected.items():
+            row = by_r[r]
+            assert row["cyclic_class_count"] == cyclic
+            assert row["reversal_class_count"] == reversal
+            assert row["paired_orbit_count"] == pairs
+            assert row["fixed_word_weight"] == fixed_weight
+            assert row["paired_word_weight"] == paired_weight
+            assert row["word_weight_total"] == comb(p, r)
+
