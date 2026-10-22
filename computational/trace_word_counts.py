@@ -194,3 +194,20 @@ def reversal_gap_inventory(p: int, r: int) -> dict[str, object]:
         "classes": reversal_classes,
     }
 
+
+def reversal_gap_pairing_report(p: int, r: int) -> dict[str, object]:
+    """Separate reversal-fixed cyclic gap classes from two-class reversal pairs."""
+    inventory = reversal_gap_inventory(p, r)
+    fixed = [row for row in inventory["classes"] if int(row["cyclic_class_count"]) == 1]
+    paired = [row for row in inventory["classes"] if int(row["cyclic_class_count"]) == 2]
+    return {
+        "p": p,
+        "r": r,
+        "fixed_cyclic_class_count": len(fixed),
+        "paired_orbit_count": len(paired),
+        "fixed_word_weight": sum(int(row["word_weight"]) for row in fixed),
+        "paired_word_weight": sum(int(row["word_weight"]) for row in paired),
+        "total_word_weight": int(inventory["word_weight_total"]),
+        "expected_word_count": int(inventory["expected_word_count"]),
+    }
+
