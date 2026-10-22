@@ -1446,3 +1446,31 @@ Every stratum preserves the original factor-word weight (inom{p}{r}); all strat
 
 Important caveat: the reversal quotient remains a symbolic candidate quotient. In the concrete model, the established Hermiticity statement is for the **conjugate transpose** of the copy operator. It does not automatically imply a plain-transpose identity for each K and N letter, nor does it prove equality of traces for all reversed expanded words. The next formal step must derive the appropriate adjoint relation for the glued operator and pairing matrix, then use cyclicity to identify exactly which expanded-word traces are equal. The cross-stratum cancellation and all-level recurrence remain unproved.
 
+## 4ao. Adjoint reversal induces an involution on cyclic factor words
+
+A useful distinction emerged between reversing the expanded matrix word and reversing the original two-choice factor word. A factor word of length p is expanded by replacing each (KN) tile with (K,N). Reversing the expanded circular word still admits a (K) / (KN) tiling after choosing a cyclic boundary, so it induces a map on cyclic factor classes. The implementation now constructs this map explicitly and checks that it preserves r and is an involution on cyclic classes for p=6,8,10.
+
+The exact census below gives (cyclic classes, fixed cyclic classes, paired orbits, fixed factor-word weight):
+
+| p | r | cyclic classes | fixed classes | paired orbits | fixed weight | paired weight |
+|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 2 | 3 | 3 | 0 | 15 | 0 |
+| 6 | 3 | 4 | 2 | 1 | 8 | 12 |
+| 6 | 4 | 3 | 3 | 0 | 15 | 0 |
+| 8 | 2 | 4 | 4 | 0 | 28 | 0 |
+| 8 | 3 | 7 | 3 | 2 | 24 | 32 |
+| 8 | 4 | 10 | 6 | 2 | 38 | 32 |
+| 8 | 5 | 7 | 3 | 2 | 24 | 32 |
+| 8 | 6 | 4 | 4 | 0 | 28 | 0 |
+| 10 | 2 | 5 | 5 | 0 | 45 | 0 |
+| 10 | 3 | 12 | 4 | 4 | 40 | 80 |
+| 10 | 4 | 22 | 10 | 6 | 90 | 120 |
+| 10 | 5 | 26 | 6 | 10 | 52 | 200 |
+| 10 | 6 | 22 | 10 | 6 | 90 | 120 |
+| 10 | 7 | 12 | 4 | 4 | 40 | 80 |
+| 10 | 8 | 5 | 5 | 0 | 45 | 0 |
+
+Fixed and paired weights sum to (inom{p}{r}) in every row. The strata r=0,1,p−1,p have only fixed classes and are omitted from the table.
+
+This gives the correct combinatorial partner for the adjoint relation: if the concrete matrices K and N are Hermitian, then the trace of an expanded product is conjugated when the order of all K/N letters is reversed. The retiling map therefore pairs factor-word contributions by complex conjugation, not necessarily by equality. Consequently the full weighted expansion is real, and any paired orbit contributes twice the real part of one representative trace. This does not yet prove that individual traces are real or that the cross-stratum boundary contributions cancel. Those remain separate obligations for the recurrence proof.
+
