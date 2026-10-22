@@ -9,6 +9,7 @@ on:
       - "lean-toolchain"
       - "lake-manifest.json"
       - ".github/workflows/lean-formalization.yml"
+      - "tests/test_higher_moments.py"
   pull_request:
     branches: [main]
     paths:
@@ -17,6 +18,7 @@ on:
       - "lean-toolchain"
       - "lake-manifest.json"
       - ".github/workflows/lean-formalization.yml"
+      - "tests/test_higher_moments.py"
   workflow_dispatch:
 
 jobs:
