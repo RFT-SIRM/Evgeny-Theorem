@@ -108,4 +108,28 @@ theorem trace_orderedWordExpansion {n : Type*} [Fintype n] [DecidableEq n]
   rw [← sum_orderedWordExpansion A B p]
   exact trace_sum_list (orderedWordExpansion A B p)
 
+
+
+/-- Iterating a level-three affine recurrence gives an exact closed form.
+The finite sum is the geometric correction term; no assumption about the
+origin of the recurrence is built into this lemma. -/
+theorem affine_recurrence_closed_form
+    (delta : ℕ → ℂ) (C : ℂ)
+    (hrec : ∀ m, 3 ≤ m → delta m = 3 * delta (m - 1) + C)
+    (n : ℕ) :
+    delta (n + 3) =
+      (3 : ℂ) ^ n * delta 3 +
+        (∑ i in Finset.range n, (3 : ℂ) ^ i) * C := by
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      have hstep := hrec (n + 4) (by omega)
+      have hindex : n + 4 - 1 = n + 3 := by omega
+      rw [hindex] at hstep
+      rw [show n + 1 + 3 = n + 4 by omega, hstep, ih]
+      rw [Finset.sum_range_succ]
+      simp only [pow_succ]
+      ring
+
 end EvgenyTheorem
