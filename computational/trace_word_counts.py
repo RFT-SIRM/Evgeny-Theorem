@@ -277,3 +277,55 @@ def reversal_word_strata_inventory(p: int) -> dict[str, object]:
         "word_weight_total": int(inventory["word_weight_total"]),
     }
 
+
+def expanded_operator_word_inventory(p: int) -> dict[str, object]:
+    """Count expanded K/N words underlying (K + K*N)^p.
+
+    Each chosen factor K contributes the letter K; each chosen factor K*N
+    contributes K,N. Cyclic/reversal classes here are purely symbolic. They
+    become trace identities only after proving the needed transpose or
+    conjugate-transpose hypotheses for the concrete operators.
+    """
+    base = word_inventory(p)
+    by_r: list[dict[str, object]] = []
+    total_factor_words = 0
+    for r in range(p + 1):
+        grouped: dict[tuple[str, ...], dict[str, object]] = {}
+        for row in base["classes"]:
+            rep = tuple(str(x) for x in row["representative"])
+            if sum(x == "K*N" for x in rep) != r:
+                continue
+            expanded = tuple(letter for factor in rep for letter in (("K", "N") if factor == "K*N" else ("K",)))
+            cyc = canonical_rotation(expanded)
+            rev = canonical_rotation(tuple(reversed(expanded)))
+            key = min(cyc, rev)
+            entry = grouped.setdefault(key, {
+                "representative": list(key),
+                "cyclic_expanded_words": [],
+                "factor_word_weight": 0,
+                "cyclic_factor_class_count": 0,
+            })
+            entry["cyclic_expanded_words"].append(list(cyc))
+            entry["factor_word_weight"] = int(entry["factor_word_weight"]) + int(row["orbit_size"])
+            entry["cyclic_factor_class_count"] = int(entry["cyclic_factor_class_count"]) + 1
+        expected = comb(p, r)
+        weight = sum(int(item["factor_word_weight"]) for item in grouped.values())
+        by_r.append({
+            "r": r,
+            "expanded_length": p + r,
+            "expanded_K_count": p,
+            "expanded_N_count": r,
+            "reversal_class_count": len(grouped),
+            "factor_word_weight": weight,
+            "expected_factor_word_count": expected,
+            "classes": [grouped[k] for k in sorted(grouped)],
+        })
+        assert weight == expected
+        total_factor_words += weight
+    return {
+        "p": p,
+        "factor_word_count": total_factor_words,
+        "expected_factor_word_count": 2**p,
+        "strata": by_r,
+    }
+
