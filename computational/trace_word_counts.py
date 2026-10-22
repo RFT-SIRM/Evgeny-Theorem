@@ -141,7 +141,7 @@ def gap_composition_inventory(p: int, r: int) -> dict[str, object]:
         classes.setdefault(canonical(g), set()).add(g)
     rows = [
         {"gaps": list(rep), "gap_orbit_size": len(members),
-         "word_orbit_weight": (p // r) * len(members)}
+         "word_orbit_weight": (p * len(members)) // r}
         for rep, members in sorted(classes.items())
     ]
     return {
