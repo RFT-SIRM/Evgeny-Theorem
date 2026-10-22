@@ -51,3 +51,24 @@ def test_h10_theta_pi_over_2_current_convention():
         assert np.isclose(actual, value, rtol=1e-11, atol=1e-5), (
             level, actual, value
         )
+
+
+def test_higher_moment_residuals_at_theta_pi_levels_2_to_5():
+    """Recompute R_m = Delta_m - 3 Delta_(m-1) from operator matrices."""
+    expected = {
+        6: [5256.0, 5280.0, 5280.0, 5280.0],
+        8: [268960.0, 277504.0, 277504.0, 277504.0],
+        10: [4006040.0, 4507520.0, 4507520.0, 4507520.0],
+    }
+    for power, residuals in expected.items():
+        deltas = {
+            level: raw_trace_diff(level, np.pi, power)
+            for level in range(1, 6)
+        }
+        actual = [
+            deltas[level] - 3 * deltas[level - 1]
+            for level in range(2, 6)
+        ]
+        assert np.allclose(actual, residuals, rtol=1e-11, atol=1e-5), (
+            power, actual, residuals
+        )
