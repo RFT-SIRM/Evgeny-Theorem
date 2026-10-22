@@ -224,3 +224,25 @@ def test_finite_residual_transition_on_dense_angle_grid(power):
         assert np.isclose(r3, r4, rtol=3e-10, atol=3e-5), (
             power, float(theta), r3, r4
         )
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_finite_residual_stabilization_levels_three_to_five_angle_grid(power):
+    """Numerically check R3=R4=R5 on a fixed non-singular angle grid."""
+    for theta in np.linspace(0.07, 2 * np.pi - 0.07, 11):
+        deltas = {
+            level: raw_trace_diff(level, float(theta), power)
+            for level in (2, 3, 4, 5)
+        }
+        residuals = {
+            level: deltas[level] - 3 * deltas[level - 1]
+            for level in (3, 4, 5)
+        }
+        assert np.isclose(residuals[3], residuals[4],
+                          rtol=5e-10, atol=5e-5), (
+            power, float(theta), residuals
+        )
+        assert np.isclose(residuals[4], residuals[5],
+                          rtol=5e-10, atol=5e-5), (
+            power, float(theta), residuals
+        )
