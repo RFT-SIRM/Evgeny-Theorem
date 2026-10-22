@@ -743,3 +743,27 @@ def test_reversal_pairing_report_pins_fixed_and_paired_weights():
         assert report["paired_word_weight"] == paired_w
         assert report["total_word_weight"] == fixed_w + paired_w == comb(p, r)
 
+
+def test_full_word_reversal_inventory_preserves_necklace_weights():
+    from computational.trace_word_counts import reversal_word_inventory
+
+    expected = {
+        6: (14, 13, 64),
+        8: (36, 30, 256),
+        10: (108, 78, 1024),
+    }
+    for p, (cyclic_count, reversal_count, total_words) in expected.items():
+        report = reversal_word_inventory(p)
+        assert report["cyclic_class_count"] == cyclic_count
+        assert report["reversal_class_count"] == reversal_count
+        assert report["word_weight_total"] == total_words == 2**p
+        assert all(
+            row["cyclic_class_count"] in (1, 2)
+            for row in report["classes"]
+        )
+        for row in report["classes"]:
+            assert row["word_weight"] > 0
+            assert row["kn_factor_count"] == sum(
+                factor == "K*N" for factor in row["representative"]
+            )
+
