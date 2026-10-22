@@ -506,11 +506,12 @@ def test_even_pairing_boundary_strata_are_not_mislabeled_as_zero():
 
 
 def test_top_even_stratum_boundary_arithmetic_is_explicitly_conditional():
-    """Under 12 support states and corner degree 2, the all-pairing term is 12*2**p.
+    """Check conditional top-stratum arithmetic, not the full residual identity.
 
-    This checks the arithmetic recorded in the research log; it does not assert
-    that the full p-moment residual vanishes or that Lean has proved the
-    geometric support/degree premises.
+    Given 12 support states and the stated degree-2 assumptions, the boundary
+    expression has p scalar factors of value 2 per state. This test checks
+    arithmetic and ledger metadata only; it does not prove those geometric
+    premises in Lean or assert that the full p-moment residual vanishes.
     """
     import json
     from pathlib import Path
@@ -525,9 +526,9 @@ def test_top_even_stratum_boundary_arithmetic_is_explicitly_conditional():
         .read_text(encoding="utf-8")
     )
     for p, value in expected.items():
-        # In the top r=p word, the boundary trace has p/2 K-diagonal
-        # factors and p/2 matching corner-diagonal factors. Each contributes
-        # degree 2, so each support state contributes 2**p, not 2**(2*p).
+        # There are p scalar factors total: p/2 intervening K factors and
+        # p/2 corner-diagonal factors. Under the stated assumptions each
+        # equals 2, so one support state contributes 2**p.
         assert 12 * (2**p) == value
         entry = next(row for row in ledger if row["p"] == p)
         top = next(row for row in entry["strata"] if row["kn_factor_count"] == p)
