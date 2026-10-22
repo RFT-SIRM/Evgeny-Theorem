@@ -86,3 +86,125 @@ def test_finite_base_transition_R3_equals_R4(power, theta):
     assert np.isclose(r3, r4, rtol=2e-10, atol=2e-6), (
         power, theta, r3, r4
     )
+
+
+def _gaussian_add(a, b):
+    return (a[0] + b[0], a[1] + b[1])
+
+
+def _gaussian_mul(a, b):
+    return (a[0] * b[0] - a[1] * b[1],
+            a[0] * b[1] + a[1] * b[0])
+
+
+def _gaussian_neg(a):
+    return (-a[0], -a[1])
+
+
+def _gaussian_conj(a):
+    return (a[0], -a[1])
+
+
+def _exact_sparse_operator_pi(level, commuting):
+    """Build H(theta=pi) with exact Gaussian-integer entries."""
+    from graph.sg_graph import sg_tree_graph_with_faces
+
+    vertices, edges, faces = sg_tree_graph_with_faces(level)
+    n = len(vertices)
+    degree = [0] * n
+    for a, b in edges:
+        degree[a] += 1
+        degree[b] += 1
+
+    zero, one = (0, 0), (1, 0)
+    identity = [[one, zero], [zero, one]]
+    pauli = [
+        [[zero, one], [one, zero]],
+        [[zero, (0, -1)], [(0, 1), zero]],
+        [[one, zero], [zero, (-1, 0)]],
+    ]
+    edge_blocks = {tuple(sorted(edge)): identity for edge in edges}
+    for index, (a, b, _c) in enumerate(faces):
+        axis = 2 if commuting else index % 3
+        # U = -i sigma_axis; all entries are Gaussian integers.
+        edge_blocks[tuple(sorted((a, b)))] = [
+            [(entry[1], -entry[0]) for entry in row]
+            for row in pauli[axis]
+        ]
+
+    matrix = {}
+    for vertex in range(n):
+        for spin in range(2):
+            matrix[(2 * vertex + spin, 2 * vertex + spin)] = (degree[vertex], 0)
+    for (a, b), block in edge_blocks.items():
+        for i in range(2):
+            for j in range(2):
+                value = _gaussian_neg(block[i][j])
+                if value != zero:
+                    key = (2 * a + i, 2 * b + j)
+                    matrix[key] = _gaussian_add(matrix.get(key, zero), value)
+                value = _gaussian_neg(_gaussian_conj(block[j][i]))
+                if value != zero:
+                    key = (2 * b + i, 2 * a + j)
+                    matrix[key] = _gaussian_add(matrix.get(key, zero), value)
+    return {key: value for key, value in matrix.items() if value != zero}, 2 * n
+
+
+def _exact_sparse_product(left, right):
+    """Sparse matrix product over Z[i], with arbitrary-precision integers."""
+    right_rows = {}
+    for (i, j), value in right.items():
+        right_rows.setdefault(i, []).append((j, value))
+    product = {}
+    zero = (0, 0)
+    for (i, k), a in left.items():
+        for j, b in right_rows.get(k, ()):
+            key = (i, j)
+            product[key] = _gaussian_add(
+                product.get(key, zero), _gaussian_mul(a, b)
+            )
+    return {key: value for key, value in product.items() if value != zero}
+
+
+def _exact_sparse_trace_power_pi(level, power, commuting):
+    matrix, dimension = _exact_sparse_operator_pi(level, commuting)
+    result = {(i, i): (1, 0) for i in range(dimension)}
+    for _ in range(power):
+        result = _exact_sparse_product(result, matrix)
+    trace = (0, 0)
+    for i in range(dimension):
+        trace = _gaussian_add(trace, result.get((i, i), (0, 0)))
+    assert trace[1] == 0
+    return trace[0]
+
+
+@pytest.mark.parametrize("power,expected", [
+    (6, [-6744, -14976, -39648, -113664, -335712]),
+    (8, [-547552, -1373696, -3843584, -11253248, -33482240]),
+    (10, [-32992520, -94971520, -280407040, -836713600, -2505633280]),
+])
+def test_exact_gaussian_integer_trace_defects_at_theta_pi(power, expected):
+    """Exact sparse arithmetic certificate for Delta_m^(p)(pi), levels 1..5."""
+    actual = []
+    for level in range(1, 6):
+        actual.append(
+            _exact_sparse_trace_power_pi(level, power, False)
+            - _exact_sparse_trace_power_pi(level, power, True)
+        )
+    assert actual == expected
+
+
+@pytest.mark.parametrize("power,expected_residual", [
+    (6, 5280),
+    (8, 277504),
+    (10, 4507520),
+])
+def test_exact_residual_stabilizes_from_level_three_at_theta_pi(power, expected_residual):
+    """Prove the finite pi-angle transition by exact integer arithmetic."""
+    deltas = [
+        _exact_sparse_trace_power_pi(level, power, False)
+        - _exact_sparse_trace_power_pi(level, power, True)
+        for level in range(1, 6)
+    ]
+    residuals = [deltas[m - 1] - 3 * deltas[m - 2] for m in range(1, 5)]
+    assert residuals[1:] == [expected_residual] * 3
