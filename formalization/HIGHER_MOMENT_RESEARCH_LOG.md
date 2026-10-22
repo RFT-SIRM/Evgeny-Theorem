@@ -1028,3 +1028,27 @@ claimed as proved.
 Verification at commit `5b260c1ab203ca39754cd2585f9195ccc9843a1d`:
 - Lean formalization build: passed.
 - Python test suite, including fast and slow tests, on Python 3.11 and 3.12: passed.
+
+
+## Finite-level extension: checking the next transition
+
+The regression suite has also been extended beyond levels 1--5. For each
+$p \in \{6,8,10\}$ it checks, on a fixed five-angle set, the numerical
+identity
+\[
+R_5^{(p)}(\theta)=R_6^{(p)}(\theta),\qquad
+R_m^{(p)}(\theta)=\Delta_m^{(p)}(\theta)-3\Delta_{m-1}^{(p)}(\theta).
+\]
+Separate grid tests check $R_3=R_4=R_5$ over 11 angles, and $R_3=R_4$ over
+a 17-angle grid. These are finite numerical stress tests with explicit
+floating-point tolerances; they are not proofs for a continuum of angles or
+all levels.
+
+CI verification at commit `65cc18d9b36f4ed1f14f4145c1c3ba9525b1e266`:
+- Lean formalization: passed.
+- Python test workflow: passed.
+
+The proof obligation is unchanged: derive the weighted cancellation among the
+remaining even-pairing boundary strata for arbitrary level and angle. The
+current finite tests provide further evidence, but do not discharge that
+obligation.
