@@ -808,3 +808,26 @@ def test_full_word_reversal_strata_inventory_matches_binomial_weights():
             assert row["paired_word_weight"] == paired_weight
             assert row["word_weight_total"] == comb(p, r)
 
+
+def test_expanded_operator_word_inventory_preserves_stratum_weights():
+    from math import comb
+    from computational.trace_word_counts import expanded_operator_word_inventory
+
+    expected_classes = {
+        6: {1: 1, 2: 3, 3: 3, 4: 3, 5: 1},
+        8: {1: 1, 2: 4, 3: 5, 4: 8, 5: 5, 6: 4, 7: 1},
+        10: {1: 1, 2: 5, 3: 8, 4: 16, 5: 16, 6: 16, 7: 8, 8: 5, 9: 1},
+    }
+    for p, strata_expected in expected_classes.items():
+        report = expanded_operator_word_inventory(p)
+        assert report["factor_word_count"] == report["expected_factor_word_count"] == 2**p
+        by_r = {row["r"]: row for row in report["strata"]}
+        for r, class_count in strata_expected.items():
+            row = by_r[r]
+            assert row["expanded_length"] == p + r
+            assert row["expanded_K_count"] == p
+            assert row["expanded_N_count"] == r
+            assert row["reversal_class_count"] == class_count
+            assert row["factor_word_weight"] == comb(p, r)
+            assert row["expected_factor_word_count"] == comb(p, r)
+
