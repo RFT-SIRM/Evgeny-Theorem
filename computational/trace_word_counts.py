@@ -9,6 +9,7 @@ term vanishes or that distinct classes have equal contributions.
 from __future__ import annotations
 
 from itertools import product
+from math import comb
 import json
 
 FACTOR_CHOICES = ("K", "K*N")
@@ -96,6 +97,20 @@ def main() -> None:
         assert sum(int(v) for v in row["factor_words_by_KN_count"].values()) == 2**p
         assert sum(int(v) for v in row["class_orbit_size_counts"].values()) == row["cyclic_classes"]
         assert sum(int(r["orbit_size"]) for r in row["classes"]) == 2**p
+
+        # Check the multiplicity identity stratum by stratum, not only globally:
+        # each cyclic class contributes its number of distinct rotations, so
+        # periodic words are weighted correctly rather than by a blanket factor p.
+        for r in range(p + 1):
+            classes_r = [
+                item for item in row["classes"]
+                if int(item["kn_factor_count"]) == r
+            ]
+            weighted_count = sum(int(item["orbit_size"]) for item in classes_r)
+            assert weighted_count == comb(p, r), (
+                f"p={p}, r={r}: orbit-weighted count {weighted_count} "
+                f"does not equal binomial({p}, {r})={comb(p, r)}"
+            )
     print(json.dumps(result, indent=2))
 
 
