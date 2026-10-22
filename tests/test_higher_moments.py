@@ -201,7 +201,7 @@ def test_exact_gaussian_integer_trace_defects_at_theta_pi(power, expected):
     (10, 4507520),
 ])
 def test_exact_residual_stabilizes_from_level_three_at_theta_pi(power, expected_residual):
-    """Prove the finite pi-angle transition by exact integer arithmetic."""
+    """Check the finite pi-angle transition by exact integer arithmetic."""
     deltas = [
         _exact_sparse_trace_power_pi(level, power, False)
         - _exact_sparse_trace_power_pi(level, power, True)
