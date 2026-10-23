@@ -1487,7 +1487,7 @@ same gluing support and diagonal-degree hypotheses are used on both sides.
 
 This sharpens the p=6 target. Writing the nontrivial even boundary contribution
 as `B_{6,2}+B_{6,4}+B_{6,6}`, the next identity to prove is not
-`B_{6,6}=0), which is false under the stated hypotheses. Instead, compare
+`B_{6,6}=0`, which is false under the stated hypotheses. Instead, compare
 the two operator choices and prove the required relation for
 `(B_{6,2}+B_{6,4})-(B'_{6,2}+B'_{6,4})`; the top term drops out separately.
 For p=8 and p=10, the analogous comparison must include all lower even
@@ -1498,4 +1498,20 @@ This is a reduction of the proof target, not a new Lean theorem. The constants
 remain conditional diagnostics until their support cardinality and diagonal
 degree premises are assembled into a machine-checked result. No cancellation
 between the lower even strata is claimed here.
+
+## 4aq. CI confirmation for the refined p=6 target
+
+The documentation-only target refinement in commit
+`2b33a6db1d92fd602c9e280a49058c9f4f96cf38` has now completed CI successfully:
+the Lean formalization workflow and the Python tests both report success for
+that exact SHA (the push test and pull-request checks). This confirms the
+existing source still builds; it does not turn the conditional boundary
+diagnostics into a proof of the p=6 lower-stratum cancellation.
+
+The next source change should wait until the two-N and four-N boundary sums
+have been written in one common notation and their coefficients compared
+without assuming reversal-pair equality. Adjoint reversal only gives complex
+conjugacy in general. In particular, do not collapse a cyclic/reversal orbit
+to twice one real trace unless reality of that representative has separately
+been proved.
 
