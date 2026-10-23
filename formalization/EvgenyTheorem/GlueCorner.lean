@@ -662,10 +662,6 @@ end EvgenyTheorem
 namespace EvgenyTheorem
 
 
-/-- Six-pairing boundary reduction for the concrete glued operator.
-The three corner hypotheses are discharged from orientation antisymmetry
-and the geometric distance bound, provided b, d, f are below the side length.
-This is a boundary identity, not a vanishing theorem. -/
 /-- Concrete seven-pairing vanishing theorem. The three selected middle
 powers are below the side length, so their corner-off-diagonal hypotheses
 follow from orientation antisymmetry and the geometric support bound. -/
@@ -746,6 +742,10 @@ theorem trace_nine_N_powers_zero_of_OAnti
     (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh)
 
 
+/-- Six-pairing boundary reduction for the concrete glued operator.
+The three corner hypotheses are discharged from orientation antisymmetry
+and the geometric distance bound, provided b, d, f are below the side length.
+This is a boundary identity, not a vanishing theorem. -/
 theorem trace_six_N_powers_boundary_of_OAnti
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
