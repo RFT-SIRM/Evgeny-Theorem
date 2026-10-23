@@ -137,6 +137,55 @@ theorem trace_conjTranspose_eq_star {n : Type*} [Fintype n] [DecidableEq n]
     Matrix.trace (Matrix.conjTranspose M) = star (Matrix.trace M) := by
   simp [Matrix.trace, Matrix.conjTranspose_apply]
 
+/-- Cyclic trace invariance for powers of a product: the factors may be
+swapped as a pair, even though the matrices themselves need not commute. -/
+theorem trace_mul_pow_swap {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p : ℕ) :
+    Matrix.trace ((A * B) ^ p) = Matrix.trace ((B * A) ^ p) := by
+  have hshift : ∀ q : ℕ, B * (A * B) ^ q = (B * A) ^ q * B := by
+    intro q
+    induction q with
+    | zero =>
+        simp
+    | succ q ih =>
+        rw [pow_succ]
+        calc
+          B * ((A * B) ^ q * (A * B)) =
+              (B * (A * B) ^ q) * A * B := by
+                simp [Matrix.mul_assoc]
+          _ = ((B * A) ^ q * B) * A * B := by rw [ih]
+          _ = (B * A) ^ (q + 1) * B := by
+                rw [pow_succ]
+                simp [Matrix.mul_assoc]
+  cases p with
+  | zero =>
+      simp
+  | succ p =>
+      rw [pow_succ, pow_succ]
+      calc
+        Matrix.trace ((A * B) ^ p * (A * B)) =
+            Matrix.trace (((A * B) ^ p * A) * B) := by
+              simp [Matrix.mul_assoc]
+        _ = Matrix.trace (B * ((A * B) ^ p * A)) :=
+              Matrix.trace_mul_comm _ _
+        _ = Matrix.trace (((B * A) ^ p * B) * A) := by
+              rw [show B * (A * B) ^ p = (B * A) ^ p * B from hshift p]
+              simp [Matrix.mul_assoc]
+        _ = Matrix.trace ((B * A) ^ p * (B * A)) := by
+              congr 1
+              simp [Matrix.mul_assoc]
+
+/-- If A and B are self-adjoint, every power of their product has real trace.
+This follows from adjoint reversal and the cyclic product-power identity above. -/
+theorem trace_mul_pow_real_of_selfAdjoint {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ)
+    (hA : Matrix.conjTranspose A = A)
+    (hB : Matrix.conjTranspose B = B) (p : ℕ) :
+    star (Matrix.trace ((A * B) ^ p)) = Matrix.trace ((A * B) ^ p) := by
+  rw [← trace_conjTranspose_eq_star, Matrix.conjTranspose_pow,
+    Matrix.conjTranspose_mul, hA, hB]
+  exact (trace_mul_pow_swap B A p).symm
+
 /-- Conjugate transpose reverses an ordered product when every factor is
 self-adjoint. The order is retained explicitly; no factors are commuted. -/
 theorem conjTranspose_list_prod_eq_reverse {n : Type*} [Fintype n] [DecidableEq n]
