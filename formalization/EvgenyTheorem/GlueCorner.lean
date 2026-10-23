@@ -560,6 +560,24 @@ theorem sgK_pow_hkg_of_OAnti
     exact sgK_pow_zero_of_distinct_glued_corner_coords
       m n hn θ ax o w w' hw hw' hcoord
 
+/-- Concrete p=6 support bridge: for levels m ≥ 3, all powers through
+degree five satisfy the same-copy glued-corner vanishing premise used by
+the abstract lower-even-strata trace formula. Distinct corner coordinates
+are separated by 2^m > 5; equal partner coordinates are handled by GlueDiag. -/
+theorem sgK_pow_hkg_up_to_five_of_OAnti
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    ∀ n, n ≤ 5 → ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro n hn w w' hw hw' hcopy hne
+  have hside : 5 < 2 ^ m := by
+    calc
+      5 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
+    (by omega) w w' hw hw' hcopy hne
+
 /-- Under orientation antisymmetry, the glued corner lemma supplies the
 middle-power hypothesis required to annihilate every ordered three-pairing
 trace word whose middle exponent is below the geometric bound. -/
