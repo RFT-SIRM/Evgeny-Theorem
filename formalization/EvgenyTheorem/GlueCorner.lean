@@ -603,21 +603,8 @@ theorem trace_four_N_powers_explicit_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_four_N_powers_explicit (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e (hkg b hb) (hkg d hd)
 
@@ -719,21 +706,8 @@ theorem trace_seven_N_powers_zero_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_seven_N_powers_zero (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f g h (hkg b hb) (hkg d hd) (hkg f hf)
 
@@ -760,21 +734,8 @@ theorem trace_nine_N_powers_zero_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_nine_N_powers_zero (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f g h i j
     (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh)
@@ -808,21 +769,8 @@ theorem trace_six_N_powers_boundary_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_six_N_powers_boundary (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f g (hkg b hb) (hkg d hd) (hkg f hf)
 
@@ -861,21 +809,8 @@ theorem trace_eight_N_powers_boundary_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_eight_N_powers_boundary (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f g h i
     (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh)
@@ -920,21 +855,8 @@ theorem trace_ten_N_powers_boundary_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_ten_N_powers_boundary (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f g h i j k
     (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh) (hkg j hj)
