@@ -491,8 +491,5 @@ theorem sgK_pow_samePoint_spinOffdiag_zero_of_OAnti
         change Matrix.conjTranspose (pOpO m θ ax (oCo m o)) =
           pOpO m θ ax (oCo m o)
         exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (hanti .C)
-  · exact c
-  · exact n
-  · exact p
 
 end EvgenyTheorem
