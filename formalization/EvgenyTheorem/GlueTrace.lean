@@ -254,4 +254,39 @@ theorem defectO_succ (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
     hA ax, hA ax', hB ax, hB ax', hC ax, hC ax']
   ring
 
+
+/-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
+operator. This discharges the abstract power-support premise from the
+geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
+theorem sg_trace_p6_lower_even_strata_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    6 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace (sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 4 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace (sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) =
+    6 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 1) x x * (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 2) x x * (sgK m θ ax o ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    3 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 3) x x * (sgK m θ ax o ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x * (sgK m θ ax o ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 1) x x) * (sgK m θ ax o ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x * (sgK m θ ax o ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 2) x x) * (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    3 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x * (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 1) x x) * (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+  apply trace_p6_lower_even_strata_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
 end EvgenyTheorem
