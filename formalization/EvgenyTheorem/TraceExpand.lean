@@ -225,7 +225,7 @@ complementary-gap symmetry of the corresponding boundary kernel. They do not
 assert that the operator kernels are axis-independent. -/
 
 /-- For p=6, complementary gaps have weights 6,6,3. -/
-theorem twoN_gap_weights_six {α : Type*} [Ring α] (E : ℕ → α)
+theorem twoN_gap_weights_six {α : Type*} [CommRing α] (E : ℕ → α)
     (h15 : E 1 = E 5) (h24 : E 2 = E 4) :
     6 * E 1 + 6 * E 2 + 3 * E 3 =
       3 * (E 1 + E 2 + E 3 + E 4 + E 5) := by
@@ -233,7 +233,7 @@ theorem twoN_gap_weights_six {α : Type*} [Ring α] (E : ℕ → α)
   ring
 
 /-- For p=8, complementary gaps have weights 8,8,8,4. -/
-theorem twoN_gap_weights_eight {α : Type*} [Ring α] (E : ℕ → α)
+theorem twoN_gap_weights_eight {α : Type*} [CommRing α] (E : ℕ → α)
     (h17 : E 1 = E 7) (h26 : E 2 = E 6) (h35 : E 3 = E 5) :
     8 * E 1 + 8 * E 2 + 8 * E 3 + 4 * E 4 =
       4 * (E 1 + E 2 + E 3 + E 4 + E 5 + E 6 + E 7) := by
@@ -241,7 +241,7 @@ theorem twoN_gap_weights_eight {α : Type*} [Ring α] (E : ℕ → α)
   ring
 
 /-- For p=10, complementary gaps have weights 10,10,10,10,5. -/
-theorem twoN_gap_weights_ten {α : Type*} [Ring α] (E : ℕ → α)
+theorem twoN_gap_weights_ten {α : Type*} [CommRing α] (E : ℕ → α)
     (h19 : E 1 = E 9) (h28 : E 2 = E 8) (h37 : E 3 = E 7)
     (h46 : E 4 = E 6) :
     10 * E 1 + 10 * E 2 + 10 * E 3 + 10 * E 4 + 5 * E 5 =
