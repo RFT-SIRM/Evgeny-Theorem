@@ -1515,3 +1515,33 @@ conjugacy in general. In particular, do not collapse a cyclic/reversal orbit
 to twice one real trace unless reality of that representative has separately
 been proved.
 
+## 4ar. Concrete cyclic-class expressions for the p=6 lower even strata
+
+The exact word inventory fixes the three cyclic representatives and their
+multiplicities in each lower even stratum. Let
+`T_{a,b} := ∑_{x : g x} (K^a)_{x,x}(K^b)_{σx,σx}`, with the same glued
+boundary support and the relevant corner hypotheses as
+`trace_two_N_powers_of_BD`. Then the r=2 contribution has the explicit form
+`B_{6,2} = 6 T_{1,5} + 6 T_{2,4} + 3 T_{3,3}`.
+This follows from the cyclic gap representatives `(0,4)`, `(1,3)`,
+`(2,2)`: each KN tile contributes one K before its N, so the intervening
+K-power pairs are `(1,5)`, `(2,4)`, and `(3,3)`. Their exact orbit
+weights are `6,6,3`, not a uniform factor of six.
+
+For r=4, define `U_{a,b,c,d}` to be the explicit nested boundary sum obtained
+from `trace_four_N_powers_explicit` for the cyclic word
+`K^a N K^b N K^c N K^d N`, with `a+b+c+d=6` and the four intervening
+powers all positive. The three cyclic gap representatives are
+`(0,0,0,2)`, `(0,0,1,1)`, and `(0,1,0,1)`, hence the intervening powers
+are `(1,1,1,3)`, `(1,1,2,2)`, and `(1,2,1,2)`, with weights `6,6,3`.
+Thus
+`B_{6,4} = 6 U_{1,1,1,3} + 6 U_{1,1,2,2} + 3 U_{1,2,1,2}`.
+
+These are exact class-weighted reductions, not cancellation identities. The
+remaining p=6 question is now term-level: under the concrete axis comparison,
+does the difference of these two weighted sums vanish? The r=2 formula is
+already a single boundary sum of diagonal power entries; the r=4 formula is a
+nested sum with off-diagonal K entries between boundary points. No equality
+between individual T and U terms is assumed, and the cyclic census alone gives
+no such equality.
+
