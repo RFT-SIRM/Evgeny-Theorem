@@ -146,6 +146,20 @@ theorem trace_sandwich_pow {V W : Type*}
   simpa [Matrix.mul_assoc] using
     (trace_mul_pow_rect E (K * Eᵀ) p)
 
+
+/-- Arbitrary-moment pushforward identity for the concrete gluing map.
+Using EᵀE = 1 + N, every power of the glued operator has the same trace as
+the corresponding power of K + K*N. This is the bridge to the full ordered-word
+expansion at moments 6, 8, and 10. -/
+theorem trace_push_power {cp : W → ι} (G : GlueData cp) (π : W → V)
+    (hπ : ∀ w w', π w = π w' ↔ (w = w' ∨ (G.g w ∧ w' = G.σ w)))
+    (K : Matrix W W ℂ) (p : ℕ) :
+    Matrix.trace ((Emat π * K * (Emat π)ᵀ) ^ p) =
+      Matrix.trace ((K + K * G.N) ^ p) := by
+  have hKT : K * (1 + G.N) = K + K * G.N := by
+    rw [Matrix.mul_add, Matrix.mul_one]
+  rw [trace_sandwich_pow, EtE_eq_one_add_N G π hπ, hKT]
+
 end GlueBridge
 
 end EvgenyTheorem
