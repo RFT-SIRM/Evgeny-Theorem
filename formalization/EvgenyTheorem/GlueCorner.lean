@@ -228,7 +228,10 @@ theorem sgK_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
   by_cases hc : w.1 = w'.1
   · have hH := Hc_hermitian_of_OAnti m θ ax o hanti w.1
     simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hH]
-  · simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hc.symm]
+  · have hrev : w'.1 ≠ w.1 := by
+      intro h
+      exact hc h.symm
+    simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hrev]
 
 /-- Reversing any expanded K/N word conjugates its trace in the concrete
 glued model. This records the exact adjoint symmetry needed for the reversal
