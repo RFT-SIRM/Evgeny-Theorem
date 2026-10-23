@@ -29,6 +29,36 @@ attribute [instance] GlueData.dg
 noncomputable def GlueData.N {cp : W → ι} (G : GlueData cp) : Matrix W W ℂ :=
   fun w a => if G.g w ∧ a = G.σ w then 1 else 0
 
+/-- The pairing matrix is self-adjoint: the involution law for the partner map
+makes its graph symmetric, and all nonzero entries are real. This is the
+adjoint premise needed to reverse expanded K/N words by complex conjugation. -/
+theorem GlueData.N_hermitian {cp : W → ι} (G : GlueData cp) :
+    Matrix.conjTranspose G.N = G.N := by
+  ext w a
+  simp only [Matrix.conjTranspose_apply, GlueData.N]
+  by_cases hw : G.g w
+  · by_cases hwa : a = G.σ w
+    · have ha : G.g a := by
+        rw [hwa]
+        exact G.g_σ w hw
+      have haw : w = G.σ a := by
+        rw [hwa]
+        exact (G.σσ w hw).symm
+      simp [hw, ha, hwa, haw]
+    · have hleft : ¬ (G.g a ∧ w = G.σ a) := by
+        rintro ⟨ha, haw⟩
+        apply hwa
+        calc
+          a = G.σ (G.σ a) := (G.σσ a ha).symm
+          _ = G.σ w := by rw [haw]
+      simp [hw, hwa, hleft]
+  · have hleft : ¬ (G.g a ∧ w = G.σ a) := by
+      rintro ⟨ha, haw⟩
+      apply hw
+      rw [haw]
+      exact G.g_σ a ha
+    simp [hw, hleft]
+
 /-- Block diagonality with respect to the copy map `cp`. -/
 def BD (cp : W → ι) (M : Matrix W W ℂ) : Prop := ∀ w w', cp w ≠ cp w' → M w w' = 0
 
