@@ -687,29 +687,6 @@ theorem trace_four_N_powers_explicit {cp : W → ι} (G : GlueData cp)
         rw [hentry x]
       · simp [gx]
 
-/-- Four-pairing words whose left boundary power is K have a fully
-diagonal two-boundary kernel. The remaining powers may be arbitrary; only
-the middle and right powers need the usual glued-corner vanishing. -/
-theorem trace_four_N_powers_diagonal_left_one {cp : W → ι}
-    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
-    (b c d : ℕ)
-    (hkgK : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
-    (hkgB : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
-      (K ^ b) x y = 0)
-    (hkgD : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
-      (K ^ d) x y = 0) :
-    Matrix.trace (K ^ 1 * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ 0) =
-      ∑ x, if G.g x then
-        (K x x * (K ^ b) (G.σ x) (G.σ x) * (K ^ c) x x) *
-          (K ^ d) (G.σ x) (G.σ x) else 0 := by
-  have hexp := trace_four_N_powers_explicit G K hK 1 b c d 0 hkgB hkgD
-  rw [hexp]
-  have hcollapse := glued_boundary_kernel_sum_diagonal_of_BD
-    G K hK hkgK
-    (fun y x => (K ^ b) (G.σ y) (G.σ y) * (K ^ c) y x)
-    (fun x => (K ^ d) (G.σ x) (G.σ x))
-  simpa [pow_zero, Matrix.one_mul, mul_assoc] using hcollapse
-
 /-- Six-pairing boundary reduction. Pairing consecutive N factors turns each
 `N * K^n * N` into a diagonal boundary factor, provided the corresponding
 corner-vanishing hypothesis is supplied. Cyclicity preserves the order of the
@@ -1196,6 +1173,29 @@ theorem glued_boundary_kernel_sum_diagonal_of_BD {cp : W → ι}
       ∑ x, if G.g x then K x x * F x x * H x else 0 := by
   exact glued_boundary_kernel_sum_diagonal G K
     (glued_offdiag_of_BD G K hbd hkg) F H
+
+/-- Four-pairing words whose left boundary power is K have a fully
+diagonal two-boundary kernel. The remaining powers may be arbitrary; only
+the middle and right powers need the usual glued-corner vanishing. -/
+theorem trace_four_N_powers_diagonal_left_one {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (b c d : ℕ)
+    (hkgK : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
+    (hkgB : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
+      (K ^ b) x y = 0)
+    (hkgD : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
+      (K ^ d) x y = 0) :
+    Matrix.trace (K ^ 1 * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ 0) =
+      ∑ x, if G.g x then
+        (K x x * (K ^ b) (G.σ x) (G.σ x) * (K ^ c) x x) *
+          (K ^ d) (G.σ x) (G.σ x) else 0 := by
+  have hexp := trace_four_N_powers_explicit G K hK 1 b c d 0 hkgB hkgD
+  rw [hexp]
+  have hcollapse := glued_boundary_kernel_sum_diagonal_of_BD
+    G K hK hkgK
+    (fun y x => (K ^ b) (G.σ y) (G.σ y) * (K ^ c) y x)
+    (fun x => (K ^ d) (G.σ x) (G.σ x))
+  simpa [pow_zero, Matrix.one_mul, mul_assoc] using hcollapse
 
 /-- Exact weighted boundary reduction for the two lower even strata of the
 sixth moment. The coefficients 6, 6, 3 are the orbit multiplicities of the
