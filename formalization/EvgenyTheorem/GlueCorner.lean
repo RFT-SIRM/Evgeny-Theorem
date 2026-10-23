@@ -666,6 +666,86 @@ namespace EvgenyTheorem
 The three corner hypotheses are discharged from orientation antisymmetry
 and the geometric distance bound, provided b, d, f are below the side length.
 This is a boundary identity, not a vanishing theorem. -/
+/-- Concrete seven-pairing vanishing theorem. The three selected middle
+powers are below the side length, so their corner-off-diagonal hypotheses
+follow from orientation antisymmetry and the geometric support bound. -/
+theorem trace_seven_N_powers_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m) (hf : f < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ g * (sgGlue m).N * sgK m θ ax o ^ h) = 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+    · exact hdiag w w' hw hw' hcopy hpartner hne
+    · have h1 := (glW_sgσ hw).1
+      have h2 := (glW_sgσ hw').1
+      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+        intro hsame
+        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+          simpa [hcopy, hsame] using h2
+        have huniq := gl_unique m h1' h2'
+        exact hpartner huniq.1
+      exact sgK_pow_zero_of_distinct_glued_corner_coords
+        m n hn θ ax o w w' hw hw' hcoord
+  exact trace_seven_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g h (hkg b hb) (hkg d hd) (hkg f hf)
+
+
+/-- Concrete nine-pairing vanishing theorem. The four selected middle
+powers are below the side length, so their corner-off-diagonal hypotheses
+follow from orientation antisymmetry and the geometric support bound. -/
+theorem trace_nine_N_powers_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m)
+    (hf : f < 2 ^ m) (hh : h < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ g * (sgGlue m).N *
+      sgK m θ ax o ^ h * (sgGlue m).N *
+      sgK m θ ax o ^ i * (sgGlue m).N * sgK m θ ax o ^ j) = 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+    · exact hdiag w w' hw hw' hcopy hpartner hne
+    · have h1 := (glW_sgσ hw).1
+      have h2 := (glW_sgσ hw').1
+      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+        intro hsame
+        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+          simpa [hcopy, hsame] using h2
+        have huniq := gl_unique m h1' h2'
+        exact hpartner huniq.1
+      exact sgK_pow_zero_of_distinct_glued_corner_coords
+        m n hn θ ax o w w' hw hw' hcoord
+  exact trace_nine_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g h i j
+    (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh)
+
+
 theorem trace_six_N_powers_boundary_of_OAnti
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
