@@ -1545,3 +1545,30 @@ nested sum with off-diagonal K entries between boundary points. No equality
 between individual T and U terms is assumed, and the cyclic census alone gives
 no such equality.
 
+## 4as. Kernel-level form of the p=6 four-pairing boundary terms
+
+Expanding the three specializations in `trace_p6_lower_even_strata_boundary`
+one level further makes the obstruction more concrete. Write
+`d_j(x) := (K^j)_{σ(x),σ(x)}` on the glued locus. The nested sums are
+
+```text
+U_{1,1,1,3} = ∑_{x,y glued} K[x,y] K[y,x] d_1(y) d_3(x),
+U_{1,1,2,2} = ∑_{x,y glued} K[x,y] (K²)[y,x] d_1(y) d_2(x),
+U_{1,2,1,2} = ∑_{x,y glued} K[x,y] K[y,x] d_2(y) d_2(x).
+```
+
+Here “x,y glued” means both `G.g x` and `G.g y`; the summands outside
+that support are zero. If `K` is Hermitian, then
+`K[y,x] = conj(K[x,y])` and `(K²)[y,x] = conj((K²)[x,y])`.
+Thus the first and third kernels are weighted by `|K[x,y]|²`, while the
+middle term is a mixed kernel
+`K[x,y] * conj((K²)[x,y])`. This distinction matters: it is not valid to
+replace all three terms by absolute-square sums or to assume they cancel
+individually.
+
+This kernel form suggests the next concrete comparison: establish which
+boundary-point pairs `(x,y)` have nonzero `K[x,y]` and `(K²)[x,y]` for
+the two axis choices, then compare the weighted diagonal factors
+`d_1,d_2,d_3` on those pairs. The current Lean lemma proves the nested-sum
+identities but does not yet prove that the two operator choices have equal
+weighted sums. No cancellation theorem is claimed in this section.
