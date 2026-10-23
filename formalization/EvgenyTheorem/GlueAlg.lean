@@ -1219,16 +1219,13 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
     3 * (∑ x, if G.g x then
       (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0) +
     6 * (∑ x, if G.g x then
-      (∑ y, if G.g y then
-        (K x y * (K ^ 1) (G.σ y) (G.σ y)) * (K ^ 1) y x else 0) *
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
         (K ^ 3) (G.σ x) (G.σ x) else 0) +
     6 * (∑ x, if G.g x then
-      (∑ y, if G.g y then
-        (K x y * (K ^ 1) (G.σ y) (G.σ y)) * (K ^ 2) y x else 0) *
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
         (K ^ 2) (G.σ x) (G.σ x) else 0) +
     3 * (∑ x, if G.g x then
-      (∑ y, if G.g y then
-        (K x y * (K ^ 2) (G.σ y) (G.σ y)) * (K ^ 1) y x else 0) *
+      (K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
         (K ^ 2) (G.σ x) (G.σ x) else 0) := by
   have h21 :
       Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) =
@@ -1262,8 +1259,8 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
             (K ^ 3) (G.σ x) (G.σ x)) else 0 := by
     simpa [pow_zero, pow_one] using
       (trace_four_N_powers_diagonal_left_one G K hK 1 1 3
-        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
-        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
         (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
   have h42 :
       Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N *
@@ -1273,8 +1270,8 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
             (K ^ 2) (G.σ x) (G.σ x)) else 0 := by
     simpa [pow_zero, pow_one] using
       (trace_four_N_powers_diagonal_left_one G K hK 1 2 2
-        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
-        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   have h43 :
       Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N *
@@ -1284,7 +1281,7 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
             (K ^ 2) (G.σ x) (G.σ x)) else 0 := by
     simpa [pow_zero, pow_one] using
       (trace_four_N_powers_diagonal_left_one G K hK 2 1 2
-        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   rw [h21, h22, h23, h41, h42, h43]
@@ -1311,13 +1308,13 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
     (trace_six_N_powers_boundary G K hK 1 1 1 1 1 1 0
       (by
         intro w w' hw hw' hcopy hne
-        exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
       (by
         intro w w' hw hw' hcopy hne
-        exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
       (by
         intro w w' hw hw' hcopy hne
-        exact hkg 1 (by omega) w w' hw hw' hcopy hne))
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
 
 end GlueAlg
 
