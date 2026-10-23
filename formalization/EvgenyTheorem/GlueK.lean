@@ -445,4 +445,21 @@ theorem pOpO_trace4_glue (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point →
   rw [← sg_EKEt m θ ax o hax1 hax2]
   exact sg_trace4_glue m (sgK m θ ax o) (blockK_BD _) hkg hu2
 
+
+/-- The actual level-(m+1) operator has an exact ordered-word trace expansion
+at every positive moment. This specializes the abstract pushforward theorem
+to the three-copy Sierpiński-gasket construction. -/
+theorem pOpO_succ_trace_ordered_words
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o]
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (p : ℕ) (hp : 0 < p) :
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ p) =
+      ((orderedWordExpansion (sgK m θ ax o)
+        (sgK m θ ax o * (sgGlue m).N) p).map Matrix.trace).sum := by
+  rw [← sg_EKEt m θ ax o hax1 hax2]
+  exact trace_push_ordered_words (sgGlue m) (sgπ m) (sgπ_iff m)
+    (sgK m θ ax o) p hp
+
 end EvgenyTheorem
