@@ -130,7 +130,7 @@ theorem trace_mul_pow_rect_succ {V W : Type*}
           rw [mul_pow_mul_left_rect]
     _ = Matrix.trace ((B * A) ^ (n + 1)) := by
           congr 1
-          rw [← Matrix.mul_assoc, pow_succ]
+          rw [← Matrix.mul_assoc, pow_succ']
 
 /-- Arbitrary positive-power push-through identity for graph gluing. -/
 theorem trace_sandwich_pow {V W : Type*}
