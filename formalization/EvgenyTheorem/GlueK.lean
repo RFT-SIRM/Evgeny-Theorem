@@ -462,4 +462,37 @@ theorem pOpO_succ_trace_ordered_words
   exact trace_push_ordered_words (sgGlue m) (sgπ m) (sgπ_iff m)
     (sgK m θ ax o) p hp
 
+
+
+/-- Same-point opposite-spin entries of every power vanish under the concrete
+orientation-antisymmetry hypotheses. This packages the Hermiticity bridge
+for all three copies, so callers need not supply the abstract premise by hand. -/
+theorem sgK_pow_samePoint_spinOffdiag_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o]
+    (hanti : ∀ c : GCopy, OAnti m
+      (match c with
+       | .A => o
+       | .B => oBo m o
+       | .C => oCo m o))
+    (c : GCopy) (n : ℕ) (p : Pt m) :
+    (sgK m θ ax o ^ n) (c, (p, (0 : C2))) (c, (p, (1 : C2))) = 0 := by
+  apply sgK_pow_samePoint_spinOffdiag_zero m θ ax o
+  · intro c'
+    cases c' with
+    | A =>
+        change Matrix.conjTranspose (pOpO m θ ax o) = pOpO m θ ax o
+        exact pOpO_hermitian_of_OAnti m θ ax o (hanti .A)
+    | B =>
+        change Matrix.conjTranspose (pOpO m θ ax (oBo m o)) =
+          pOpO m θ ax (oBo m o)
+        exact pOpO_hermitian_of_OAnti m θ ax (oBo m o) (hanti .B)
+    | C =>
+        change Matrix.conjTranspose (pOpO m θ ax (oCo m o)) =
+          pOpO m θ ax (oCo m o)
+        exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (hanti .C)
+  · exact c
+  · exact n
+  · exact p
+
 end EvgenyTheorem
