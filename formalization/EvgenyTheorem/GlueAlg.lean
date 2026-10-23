@@ -1123,6 +1123,18 @@ theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
 
 
 
+/-- Block diagonality across copies plus the glued-corner hypothesis
+implies that K has no off-diagonal entries anywhere on the glued locus. -/
+theorem glued_offdiag_of_BD {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ)
+    (hbd : BD cp K)
+    (hkg : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0) :
+    ∀ x y, G.g x → G.g y → x ≠ y → K x y = 0 := by
+  intro x y gx gy hne
+  by_cases hc : cp x = cp y
+  · exact hkg x y gx gy hc hne
+  · exact hbd x y hc
+
 /-- If the restriction of K to glued points is diagonal, a nested boundary
 sum collapses to its diagonal kernel. This isolates the support step needed
 before comparing the p=6 four-pairing terms. -/
