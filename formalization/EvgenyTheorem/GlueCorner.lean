@@ -521,6 +521,31 @@ theorem sgK_pow_zero_of_distinct_glued_corner_coords
   · apply sgK_pow_entry_zero_of_coord_gap
     exact Or.inr (Or.inr (Or.inr (by omega)))
 
+/-- Reusable same-copy off-diagonal vanishing for powers of the concrete
+glued operator. The proof splits the partner-coordinate case, handled by
+GlueDiag, from distinct geometric corners, handled by the path-length bound. -/
+theorem sgK_pow_hkg_of_OAnti
+    (m n : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (hn : n < 2 ^ m) :
+    ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro w w' hw hw' hcopy hne
+  have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+  by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+  · exact hdiag w w' hw hw' hcopy hpartner hne
+  · have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+      intro hsame
+      have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+      have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+        simpa [hcopy, hsame] using h2
+      have huniq := gl_unique m h1' h2'
+      exact hpartner huniq.1
+    exact sgK_pow_zero_of_distinct_glued_corner_coords
+      m n hn θ ax o w w' hw hw' hcoord
+
 /-- Under orientation antisymmetry, the glued corner lemma supplies the
 middle-power hypothesis required to annihilate every ordered three-pairing
 trace word whose middle exponent is below the geometric bound. -/
@@ -609,24 +634,7 @@ theorem trace_three_N_word_zero_of_OAnti
     Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
       sgK m θ ax o ^ b * (sgGlue m).N *
       sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d) = 0 := by
-  have hkg : ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
-      w.1 = w'.1 → w ≠ w' →
-      (sgK m θ ax o ^ b) w w' = 0 := by
-    intro w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m b θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m b hb θ ax o w w' hw hw' hcoord
+  have hkg := sgK_pow_hkg_of_OAnti m b θ ax o hanti hb
   have hbd : BD (fun w : WSG m => w.1) (sgK m θ ax o) := blockK_BD _
   have hxs : ∀ A, A ∈ ([sgK m θ ax o ^ a] : List (Matrix (WSG m) (WSG m) ℂ)) →
       BD (fun w : WSG m => w.1) A := by
