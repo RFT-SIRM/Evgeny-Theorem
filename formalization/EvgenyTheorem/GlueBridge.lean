@@ -157,6 +157,18 @@ theorem trace_push_power {cp : W → ι} (G : GlueData cp) (π : W → V)
     rw [Matrix.mul_add, Matrix.mul_one]
   rw [trace_sandwich_pow (Emat π) K p hp, EtE_eq_one_add_N G π hπ, hKT]
 
+
+/-- Exact ordered-word expansion of every positive glued moment.
+Combined with the boundary reductions, this gives a common expression for
+the complete p=6,8,10 calculation while preserving every word multiplicity. -/
+theorem trace_push_ordered_words {cp : W → ι} (G : GlueData cp) (π : W → V)
+    (hπ : ∀ w w', π w = π w' ↔ (w = w' ∨ (G.g w ∧ w' = G.σ w)))
+    (K : Matrix W W ℂ) (p : ℕ) (hp : 0 < p) :
+    Matrix.trace ((Emat π * K * (Emat π)ᵀ) ^ p) =
+      ((orderedWordExpansion K (K * G.N) p).map Matrix.trace).sum := by
+  rw [trace_push_power G π hπ K p hp]
+  exact trace_orderedWordExpansion K (K * G.N) p
+
 end GlueBridge
 
 end EvgenyTheorem
