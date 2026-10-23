@@ -218,6 +218,32 @@ theorem Hc_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
         pOpO m θ ax (oCo m o)
       exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (oanti_C m o hanti)
 
+/-- The concrete glued operator is Hermitian whenever the orientation
+relation is antisymmetric at the parent level. -/
+theorem sgK_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.conjTranspose (sgK m θ ax o) = sgK m θ ax o := by
+  ext w w'
+  by_cases hc : w.1 = w'.1
+  · have hH := Hc_hermitian_of_OAnti m θ ax o hanti w.1
+    simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hH]
+  · simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hc.symm]
+
+/-- Reversing any expanded K/N word conjugates its trace in the concrete
+glued model. This records the exact adjoint symmetry needed for the reversal
+orbits in the p=6,8,10 ledger; it does not claim that each trace is real. -/
+theorem trace_sgK_N_word_reverse_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (xs : List (Matrix (WSG m) (WSG m) ℂ))
+    (hxs : ∀ M, M ∈ xs → M = sgK m θ ax o ∨ M = (sgGlue m).N) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.reverse.prod := by
+  exact trace_K_N_word_reverse (sgK m θ ax o) ((sgGlue m).N)
+    (sgK_hermitian_of_OAnti m θ ax o hanti)
+    (GlueData.N_hermitian (sgGlue m)) xs hxs
+
 /-- For every natural power, the same-point opposite-spin entry in a glued
 copy vanishes under the original level's orientation-antisymmetry hypothesis.
 This combines concrete Hermiticity with quaternionic spin-block closure. -/
