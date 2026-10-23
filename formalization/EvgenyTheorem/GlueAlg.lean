@@ -1123,6 +1123,33 @@ theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
 
 
 
+/-- If the restriction of K to glued points is diagonal, a nested boundary
+sum collapses to its diagonal kernel. This isolates the support step needed
+before comparing the p=6 four-pairing terms. -/
+theorem glued_boundary_kernel_sum_diagonal {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ)
+    (hKoff : ∀ x y, G.g x → G.g y → x ≠ y → K x y = 0)
+    (F : W → W → ℂ) (H : W → ℂ) :
+    (∑ x, if G.g x then
+      (∑ y, if G.g y then K x y * F y x else 0) * H x else 0) =
+      ∑ x, if G.g x then K x x * F x x * H x else 0 := by
+  classical
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases gx : G.g x
+  · simp only [gx, if_pos]
+    have hinner :
+        (∑ y, if G.g y then K x y * F y x else 0) = K x x * F x x := by
+      rw [Finset.sum_eq_single x]
+      · simp [gx]
+      · intro y hy hne
+        by_cases gy : G.g y
+        · simp [gy, hKoff x y gx gy hne]
+        · simp [gy]
+      · simp
+    rw [hinner]
+  · simp [gx]
+
 /-- Exact weighted boundary reduction for the two lower even strata of the
 sixth moment. The coefficients 6, 6, 3 are the orbit multiplicities of the
 cyclic classes; no reversal-pair equality is assumed. This lemma only exposes
