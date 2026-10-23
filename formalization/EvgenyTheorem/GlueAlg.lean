@@ -52,9 +52,9 @@ theorem glued_sum_partner_product_swap {cp : W → ι} (G : GlueData cp)
     _ = ∑ x : {w // G.g w}, f (G.σ x.1) * h x.1 := by
           apply Finset.sum_congr rfl
           intro x hx
-          simp only [e]
-          congr 1
-          exact G.σσ x.1 x.2
+          change f (G.σ x.1) * h (G.σ (G.σ x.1)) =
+            f (G.σ x.1) * h x.1
+          rw [G.σσ x.1 x.2]
     _ = ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
           apply Finset.sum_congr rfl
           intro x hx
