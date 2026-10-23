@@ -170,6 +170,26 @@ theorem trace_push_ordered_words {cp : W → ι} (G : GlueData cp) (π : W → V
   rw [trace_push_power G π hπ K p hp]
   exact trace_orderedWordExpansion K (K * G.N) p
 
+
+/-- Concrete reversal rule for expanded operator words.  If every letter is
+one of two Hermitian matrices K or N, reversing the full K/N word conjugates
+its trace.  This is the operator-level form of the reversal pairing used in
+the higher-moment boundary analysis; it does not assert that the two traces
+are equal. -/
+theorem trace_K_N_word_reverse
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K N : Matrix W W ℂ)
+    (hK : Matrix.conjTranspose K = K)
+    (hN : Matrix.conjTranspose N = N)
+    (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → M = K ∨ M = N) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.reverse.prod := by
+  apply trace_reverse_conj_of_selfAdjoint_list
+  intro M hM
+  rcases hxs M hM with h | h
+  · simpa [h] using hK
+  · simpa [h] using hN
+
 end GlueBridge
 
 end EvgenyTheorem
