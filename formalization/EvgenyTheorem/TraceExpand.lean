@@ -217,6 +217,27 @@ theorem trace_reverse_conj_of_selfAdjoint_list
 
 
 
+
+/-- Reindexing a finite sum by an involution swaps the two factors paired
+across that involution. This is the kernel-level symmetry needed before the
+cyclic-gap weights can be applied to concrete boundary sums. -/
+theorem sum_involution_product_swap
+    {W : Type*} [Fintype W] {α : Type*} [CommSemiring α]
+    (σ : Equiv.Perm W) (hσ : ∀ x, σ (σ x) = x)
+    (f g : W → α) :
+    (∑ x, f x * g (σ x)) = ∑ x, g x * f (σ x) := by
+  calc
+    (∑ x, f x * g (σ x)) =
+        ∑ x, (fun y => f y * g (σ y)) (σ x) := by
+          symm
+          exact Equiv.sum_comp σ (fun y => f y * g (σ y))
+    _ = ∑ x, f (σ x) * g x := by
+          simp [hσ]
+    _ = ∑ x, g x * f (σ x) := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          exact mul_comm _ _
+
 /-! ## Two-N cyclic-gap weights for the target moments
 
 These are the finite orbit-weight identities for the lowest even stratum.
