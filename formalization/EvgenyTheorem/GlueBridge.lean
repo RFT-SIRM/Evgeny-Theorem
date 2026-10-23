@@ -141,7 +141,8 @@ theorem trace_sandwich_pow {V W : Type*}
   cases p with
   | zero => omega
   | succ n =>
-      exact trace_mul_pow_rect_succ E (K * Eᵀ) n
+      simpa [Matrix.mul_assoc] using
+        (trace_mul_pow_rect_succ E (K * Eᵀ) n)
 
 
 /-- Arbitrary-moment pushforward identity for the concrete gluing map.
