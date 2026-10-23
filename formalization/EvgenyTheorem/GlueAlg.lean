@@ -25,6 +25,41 @@ def GlueDiag {cp : W → ι} (G : GlueData cp) (X : Matrix W W ℂ) : Prop :=
 
 attribute [instance] GlueData.dg
 
+
+/-- A partner involution on the glued locus lets us exchange the two factors
+in a boundary sum. Unlike a permutation of all of W, this uses only the
+involution law actually provided by GlueData. -/
+theorem glued_sum_partner_product_swap {cp : W → ι} (G : GlueData cp)
+    (f h : W → ℂ) :
+    (∑ x : {w // G.g w}, f x.1 * h (G.σ x.1)) =
+      ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
+  let e : Equiv.Perm {w // G.g w} :=
+    { toFun := fun x => ⟨G.σ x.1, G.g_σ x.1 x.2⟩
+      invFun := fun x => ⟨G.σ x.1, G.g_σ x.1 x.2⟩
+      left_inv := by
+        intro x
+        apply Subtype.ext
+        exact G.σσ x.1 x.2
+      right_inv := by
+        intro x
+        apply Subtype.ext
+        exact G.σσ x.1 x.2 }
+  calc
+    (∑ x : {w // G.g w}, f x.1 * h (G.σ x.1)) =
+        ∑ x : {w // G.g w}, (fun y => f y.1 * h (G.σ y.1)) (e x) := by
+          symm
+          exact Equiv.sum_comp e (fun y => f y.1 * h (G.σ y.1))
+    _ = ∑ x : {w // G.g w}, f (G.σ x.1) * h x.1 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          simp only [e]
+          congr 1
+          exact G.σσ x.1 x.2
+    _ = ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          exact mul_comm _ _
+
 /-- The pairing matrix. -/
 noncomputable def GlueData.N {cp : W → ι} (G : GlueData cp) : Matrix W W ℂ :=
   fun w a => if G.g w ∧ a = G.σ w then 1 else 0
