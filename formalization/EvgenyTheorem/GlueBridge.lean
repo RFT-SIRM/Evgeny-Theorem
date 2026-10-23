@@ -190,6 +190,20 @@ theorem trace_K_N_word_reverse
   · simpa [h] using hK
   · simpa [h] using hN
 
+/-- A K/N word whose factor list is invariant under reversal has real trace.
+This is the fixed-point case of the reversal involution; non-palindromic
+words still require pairing with their reversed word. -/
+theorem trace_K_N_word_real_of_reverse_eq
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K N : Matrix W W ℂ)
+    (hK : Matrix.conjTranspose K = K)
+    (hN : Matrix.conjTranspose N = N)
+    (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → M = K ∨ M = N)
+    (hrev : xs.reverse = xs) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.prod := by
+  rw [trace_K_N_word_reverse K N hK hN xs hxs, hrev]
+
 end GlueBridge
 
 end EvgenyTheorem
