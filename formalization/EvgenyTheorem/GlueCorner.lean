@@ -226,8 +226,9 @@ theorem sgK_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     Matrix.conjTranspose (sgK m θ ax o) = sgK m θ ax o := by
   ext w w'
   by_cases hc : w.1 = w'.1
-  · have hH := Hc_hermitian_of_OAnti m θ ax o hanti w.1
-    simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hH]
+  · have hH := Hc_hermitian_of_OAnti m θ ax o hanti w'.1
+    have hentry := congrFun (congrFun hH w.2) w'.2
+    simpa [sgK, blockK, Matrix.conjTranspose_apply, hc] using hentry
   · have hrev : w'.1 ≠ w.1 := by
       intro h
       exact hc h.symm
