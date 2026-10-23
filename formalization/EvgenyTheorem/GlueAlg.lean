@@ -46,7 +46,8 @@ theorem GlueData.N_hermitian {cp : W → ι} (G : GlueData cp) :
       rw [hwa]
       exact (G.σσ w hw).symm
     have hleft : G.g a ∧ w = G.σ a := ⟨ha, haw⟩
-    simp only [if_pos hleft, if_pos ⟨hw, hwa⟩, star_one]
+    have hright' : G.g w ∧ a = G.σ w := ⟨hw, hwa⟩
+    simp only [if_pos hleft, if_pos hright', star_one]
   · have hleft : ¬ (G.g a ∧ w = G.σ a) := by
       rintro ⟨ha, haw⟩
       apply hright
