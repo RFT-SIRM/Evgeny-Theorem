@@ -128,6 +128,20 @@ theorem sgK_hkg (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (o : Poi
   · exact Hc_zero_edge m θ ax o w.1 w.2 w'.2 hp
       (corners_far hm (glued_corner hw) (glued_corner hw') hp)
 
+/-- Any two distinct glued states have zero one-step sgK coupling.
+Within one copy this is sgK_hkg; across different copies it follows from
+the block-diagonal definition of sgK. -/
+theorem sgK_glued_offdiag (m : ℕ) (hm : 1 ≤ m) (θ : ℝ)
+    (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m) (hw : (sgGlue m).g w) (hw' : (sgGlue m).g w')
+    (hne : w ≠ w') :
+    sgK m θ ax o w w' = 0 := by
+  by_cases hc : w.1 = w'.1
+  · exact sgK_hkg m hm θ ax o w w' hw hw' hc hne
+  · have hz : sgK m θ ax o w w' = 0 := by
+      simp [sgK, blockK, hc]
+    exact hz
+
 /-! ### `hu2` -/
 
 theorem blockK_mul_same {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
