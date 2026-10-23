@@ -1144,7 +1144,7 @@ theorem glued_boundary_kernel_sum_diagonal {cp : W → ι}
       · simp [gx]
       · intro y hy hne
         by_cases gy : G.g y
-        · simp [gy, hKoff x y gx gy hne]
+        · simp [gy, hKoff x y gx gy hne.symm]
         · simp [gy]
       · simp
     rw [hinner]
