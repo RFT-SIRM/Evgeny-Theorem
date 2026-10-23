@@ -1162,6 +1162,18 @@ theorem glued_boundary_kernel_sum_diagonal {cp : W → ι}
     rw [hinner]
   · simp [gx]
 
+/-- Convenient form of the diagonal collapse: its support premise follows
+from the standard block-diagonal and glued-corner hypotheses. -/
+theorem glued_boundary_kernel_sum_diagonal_of_BD {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
+    (hkg : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
+    (F : W → W → ℂ) (H : W → ℂ) :
+    (∑ x, if G.g x then
+      (∑ y, if G.g y then K x y * F y x else 0) * H x else 0) =
+      ∑ x, if G.g x then K x x * F x x * H x else 0 := by
+  exact glued_boundary_kernel_sum_diagonal G K
+    (glued_offdiag_of_BD G K hbd hkg) F H
+
 /-- Exact weighted boundary reduction for the two lower even strata of the
 sixth moment. The coefficients 6, 6, 3 are the orbit multiplicities of the
 cyclic classes; no reversal-pair equality is assumed. This lemma only exposes
