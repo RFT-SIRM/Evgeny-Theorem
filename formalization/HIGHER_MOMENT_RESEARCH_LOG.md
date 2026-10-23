@@ -1474,3 +1474,28 @@ Fixed and paired weights sum to (inom{p}{r}) in every row. The strata r=0,1,p�
 
 This gives the correct combinatorial partner for the adjoint relation: if the concrete matrices K and N are Hermitian, then the trace of an expanded product is conjugated when the order of all K/N letters is reversed. The retiling map therefore pairs factor-word contributions by complex conjugation, not necessarily by equality. Consequently the full weighted expansion is real, and any paired orbit contributes twice the real part of one representative trace. This does not yet prove that individual traces are real or that the cross-stratum boundary contributions cancel. Those remain separate obligations for the recurrence proof.
 
+## 4ap. Remove the top-stratum constant before searching for p=6 cancellation
+
+The all-pairing boundary term should not be targeted for vanishing. Under the
+support-diagonality and corner-degree facts in §§4u–4x, its value depends only
+on the degree-two outer corners, not on the orientation/axis choice. The
+conditional values are
+`B_{6,6}=768`, `B_{8,8}=3072`, and `B_{10,10}=12288`.
+For two operator choices on the same gasket graph, these top-stratum constants
+therefore cancel when taking their trace-defect difference, provided the
+same gluing support and diagonal-degree hypotheses are used on both sides.
+
+This sharpens the p=6 target. Writing the nontrivial even boundary contribution
+as `B_{6,2}+B_{6,4}+B_{6,6}`, the next identity to prove is not
+`B_{6,6}=0), which is false under the stated hypotheses. Instead, compare
+the two operator choices and prove the required relation for
+`(B_{6,2}+B_{6,4})-(B'_{6,2}+B'_{6,4})`; the top term drops out separately.
+For p=8 and p=10, the analogous comparison must include all lower even
+strata, while the top term can be removed from the comparison under the same
+hypotheses.
+
+This is a reduction of the proof target, not a new Lean theorem. The constants
+remain conditional diagnostics until their support cardinality and diagonal
+degree premises are assembled into a machine-checked result. No cancellation
+between the lower even strata is claimed here.
+
