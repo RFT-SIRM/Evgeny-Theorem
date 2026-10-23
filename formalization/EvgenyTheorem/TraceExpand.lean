@@ -231,7 +231,7 @@ theorem trace_word_reverse_pair_real
   have hrev : ∀ M, M ∈ xs.reverse → Matrix.conjTranspose M = M := by
     intro M hM
     exact hxs M (by simpa using hM)
-  rw [map_add, trace_reverse_conj_of_selfAdjoint_list xs hxs,
+  rw [star_add, trace_reverse_conj_of_selfAdjoint_list xs hxs,
     trace_reverse_conj_of_selfAdjoint_list xs.reverse hrev]
   simp only [List.reverse_reverse]
   exact add_comm _ _
