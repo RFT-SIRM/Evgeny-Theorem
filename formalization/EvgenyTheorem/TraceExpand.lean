@@ -169,8 +169,8 @@ theorem trace_mul_pow_swap {n : Type*} [Fintype n] [DecidableEq n]
         _ = Matrix.trace (B * ((A * B) ^ p * A)) :=
               Matrix.trace_mul_comm _ _
         _ = Matrix.trace (((B * A) ^ p * B) * A) := by
+              rw [← Matrix.mul_assoc B ((A * B) ^ p) A]
               rw [show B * (A * B) ^ p = (B * A) ^ p * B from hshift p]
-              simp [Matrix.mul_assoc]
         _ = Matrix.trace ((B * A) ^ p * (B * A)) := by
               congr 1
               simp [Matrix.mul_assoc]
@@ -184,7 +184,7 @@ theorem trace_mul_pow_real_of_selfAdjoint {n : Type*} [Fintype n] [DecidableEq n
     star (Matrix.trace ((A * B) ^ p)) = Matrix.trace ((A * B) ^ p) := by
   rw [← trace_conjTranspose_eq_star, Matrix.conjTranspose_pow,
     Matrix.conjTranspose_mul, hA, hB]
-  exact (trace_mul_pow_swap B A p).symm
+  exact trace_mul_pow_swap B A p
 
 /-- Conjugate transpose reverses an ordered product when every factor is
 self-adjoint. The order is retained explicitly; no factors are commuted. -/
