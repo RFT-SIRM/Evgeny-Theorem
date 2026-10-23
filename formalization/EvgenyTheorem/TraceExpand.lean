@@ -215,4 +215,38 @@ theorem trace_reverse_conj_of_selfAdjoint_list
   rw [conjTranspose_list_prod_eq_reverse xs hxs]
 
 
+
+
+/-! ## Two-N cyclic-gap weights for the target moments
+
+These are the finite orbit-weight identities for the lowest even stratum.
+They formalize only the cyclic multiplicities: the hypotheses state the
+complementary-gap symmetry of the corresponding boundary kernel. They do not
+assert that the operator kernels are axis-independent. -/
+
+/-- For p=6, complementary gaps have weights 6,6,3. -/
+theorem twoN_gap_weights_six {α : Type*} [Ring α] (E : ℕ → α)
+    (h15 : E 1 = E 5) (h24 : E 2 = E 4) :
+    6 * E 1 + 6 * E 2 + 3 * E 3 =
+      3 * (E 1 + E 2 + E 3 + E 4 + E 5) := by
+  rw [h15, h24]
+  ring
+
+/-- For p=8, complementary gaps have weights 8,8,8,4. -/
+theorem twoN_gap_weights_eight {α : Type*} [Ring α] (E : ℕ → α)
+    (h17 : E 1 = E 7) (h26 : E 2 = E 6) (h35 : E 3 = E 5) :
+    8 * E 1 + 8 * E 2 + 8 * E 3 + 4 * E 4 =
+      4 * (E 1 + E 2 + E 3 + E 4 + E 5 + E 6 + E 7) := by
+  rw [h17, h26, h35]
+  ring
+
+/-- For p=10, complementary gaps have weights 10,10,10,10,5. -/
+theorem twoN_gap_weights_ten {α : Type*} [Ring α] (E : ℕ → α)
+    (h19 : E 1 = E 9) (h28 : E 2 = E 8) (h37 : E 3 = E 7)
+    (h46 : E 4 = E 6) :
+    10 * E 1 + 10 * E 2 + 10 * E 3 + 10 * E 4 + 5 * E 5 =
+      5 * (E 1 + E 2 + E 3 + E 4 + E 5 + E 6 + E 7 + E 8 + E 9) := by
+  rw [h19, h28, h37, h46]
+  ring
+
 end EvgenyTheorem
