@@ -1572,3 +1572,33 @@ the two axis choices, then compare the weighted diagonal factors
 `d_1,d_2,d_3` on those pairs. The current Lean lemma proves the nested-sum
 identities but does not yet prove that the two operator choices have equal
 weighted sums. No cancellation theorem is claimed in this section.
+
+## 4at. CI recovery and the remaining support bridge
+
+Commit `784c987` is now confirmed green on both workflows: Lean formalization and
+Python tests. This repairs the p=6 theorem's right-hand side so its three
+four-`N` strata match the diagonal forms proved by
+`trace_four_N_powers_diagonal_left_one`.
+
+A useful distinction for the next proof step: `sgK_glued_offdiag` proves
+only the one-step fact `sgK w w' = 0` for distinct glued states. It does
+**not** by itself imply `(sgK ^ n) w w' = 0`: a power can travel through
+unglued intermediate states. The abstract p=6 boundary theorem still assumes
+the stronger power-by-power condition `hkg` for exponents through 5.
+
+The repository already has the right ingredients for replacing that abstract
+assumption in the concrete Sierpinski case:
+- `sgK_pow_entry_coord_dist` bounds the coordinate displacement of a nonzero
+  entry of `sgK ^ n) by `n`;
+- `glued_corner` restricts glued coordinates to `(0,0)`, `(2^m,0)`,
+  and `(0,2^m)`;
+- `sgK_pow_GlueDiag_of_OAnti` handles same-coordinate, opposite-spin
+  entries of every power under `OAnti (m+1) o`.
+
+For `m ≥ 3` and `n ≤ 5`, distinct corner coordinates are separated by
+`2^m ≥ 8 > n`, so coordinate support should force the distinct-coordinate
+case to vanish. The remaining formalization task is to combine that distance
+argument with `sgK_pow_GlueDiag_of_OAnti` (including its partner-coordinate
+premise) into a concrete theorem supplying the `hkg` premise. Until that bridge
+is proved, the concrete p=6 specialization is not yet discharged from the
+abstract boundary formula. No all-level moment recurrence is claimed.
