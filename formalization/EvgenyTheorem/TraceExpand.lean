@@ -130,4 +130,40 @@ theorem affine_recurrence_closed_form
       ring
 
 
+/-- The trace of a conjugate-transposed complex matrix is the conjugate of
+the original trace. -/
+theorem trace_conjTranspose_eq_star {n : Type*} [Fintype n] [DecidableEq n]
+    (M : Matrix n n ℂ) :
+    Matrix.trace (Matrix.conjTranspose M) = star (Matrix.trace M) := by
+  simp [Matrix.trace, Matrix.conjTranspose_apply]
+
+/-- Conjugate transpose reverses an ordered product when every factor is
+self-adjoint. The order is retained explicitly; no factors are commuted. -/
+theorem conjTranspose_list_prod_eq_reverse {n : Type*} [Fintype n] [DecidableEq n]
+    (xs : List (Matrix n n ℂ))
+    (hxs : ∀ M, M ∈ xs → Matrix.conjTranspose M = M) :
+    Matrix.conjTranspose xs.prod = xs.reverse.prod := by
+  induction xs with
+  | nil =>
+      simp
+  | cons x xs ih =>
+      have hx : Matrix.conjTranspose x = x := hxs x (by simp)
+      have htail : ∀ M, M ∈ xs → Matrix.conjTranspose M = M := by
+        intro M hM
+        exact hxs M (by simp [hM])
+      simp only [List.prod_cons, Matrix.conjTranspose_mul, hx, ih htail]
+      simp [List.reverse_cons, List.prod_append]
+
+/-- Adjoint reversal pairs the trace of an ordered self-adjoint word with the
+complex conjugate trace of its reversed word. This is the operator-level
+identity needed before using reversal pairings in higher-moment word sums. -/
+theorem trace_reverse_conj_of_selfAdjoint_list
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (xs : List (Matrix n n ℂ))
+    (hxs : ∀ M, M ∈ xs → Matrix.conjTranspose M = M) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.reverse.prod := by
+  rw [← trace_conjTranspose_eq_star]
+  rw [conjTranspose_list_prod_eq_reverse xs hxs]
+
+
 end EvgenyTheorem
