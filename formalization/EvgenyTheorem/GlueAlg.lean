@@ -1215,6 +1215,36 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   rw [h21, h22, h23, h41, h42, h43]
 
+
+
+/-- The top even stratum of the sixth moment is a three-step boundary trace.
+This specialization deliberately does not assert vanishing: its value must be
+compared with the other even strata (or with the corresponding operator's
+boundary correction). -/
+theorem trace_p6_top_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    Matrix.trace (K * G.N * K * G.N * K * G.N *
+      K * G.N * K * G.N * K * G.N) =
+    Matrix.trace (K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0)) := by
+  simpa [pow_zero, pow_one] using
+    (trace_six_N_powers_boundary G K hK 1 1 1 1 1 1 0
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 1 (by omega) w w' hw hw' hcopy hne))
+
 end GlueAlg
 
 end EvgenyTheorem
