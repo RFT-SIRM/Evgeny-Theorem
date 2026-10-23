@@ -216,3 +216,22 @@ theorem trace_reverse_conj_of_selfAdjoint_list
 
 
 end EvgenyTheorem
+
+
+/-- The sum of an ordered self-adjoint word and its reversal has real trace.
+This packages the conjugate pairing used by the reversal involution: it does
+not identify the two traces individually, but shows their paired contribution
+is invariant under complex conjugation. -/
+theorem trace_word_reverse_pair_real
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (xs : List (Matrix n n ℂ))
+    (hxs : ∀ M, M ∈ xs → Matrix.conjTranspose M = M) :
+    star (Matrix.trace xs.prod + Matrix.trace xs.reverse.prod) =
+      Matrix.trace xs.prod + Matrix.trace xs.reverse.prod := by
+  have hrev : ∀ M, M ∈ xs.reverse → Matrix.conjTranspose M = M := by
+    intro M hM
+    exact hxs M (by simpa using hM)
+  rw [map_add, trace_reverse_conj_of_selfAdjoint_list xs hxs,
+    trace_reverse_conj_of_selfAdjoint_list xs.reverse hrev]
+  simp only [List.reverse_reverse]
+  exact add_comm _ _
