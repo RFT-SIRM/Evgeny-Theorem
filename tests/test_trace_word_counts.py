@@ -853,12 +853,12 @@ def test_adjoint_factor_word_inventory_is_stratumwise_involution():
             9: (1, 1, 0, 10), 10: (1, 1, 0, 1),
         },
     }
-    for p, fixed_counts in expected_fixed.items():
+    for p, strata_expected in expected.items():
         report = adjoint_factor_word_inventory(p)
         assert report["is_combinatorial_involution"]
         for row in report["strata"]:
             r = row["r"]
-            cyclic, fixed_classes, paired_orbits, fixed_weight = expected[p][r]
+            cyclic, fixed_classes, paired_orbits, fixed_weight = strata_expected[r]
             assert row["word_count"] == comb(p, r)
             assert row["image_word_count"] == cyclic
             assert row["cyclic_class_count"] == cyclic
