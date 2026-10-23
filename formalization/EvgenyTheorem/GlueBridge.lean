@@ -112,39 +112,36 @@ theorem mul_pow_mul_left_rect {V W : Type*}
         _ = A * (B * A) ^ (n + 1) := by
           rw [pow_succ]
 
-/-- For rectangular matrices A and B, the traces of (A B)^n and (B A)^n
-agree for every natural power. This is the dimension-changing trace identity
-needed to handle graph gluing at arbitrary moment order. -/
-theorem trace_mul_pow_rect {V W : Type*}
+/-- For rectangular matrices A and B, the traces of positive powers of
+(A B) and (B A) agree. Positivity is essential: at exponent zero the two
+identity matrices can have different dimensions and traces. -/
+theorem trace_mul_pow_rect_succ {V W : Type*}
     [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
     (A : Matrix V W ℂ) (B : Matrix W V ℂ) (n : ℕ) :
-    Matrix.trace ((A * B) ^ n) = Matrix.trace ((B * A) ^ n) := by
-  induction n with
-  | zero =>
-      simp
-  | succ n ih =>
-      rw [pow_succ, pow_succ]
-      calc
-        Matrix.trace ((A * B) ^ n * (A * B)) =
-            Matrix.trace (((A * B) ^ n * A) * B) := by
-              simp only [Matrix.mul_assoc]
-        _ = Matrix.trace (B * ((A * B) ^ n * A)) :=
-              Matrix.trace_mul_comm _ _
-        _ = Matrix.trace (B * (A * (B * A) ^ n)) := by
-              rw [mul_pow_mul_left_rect]
-        _ = Matrix.trace ((B * A) ^ (n + 1)) := by
-              congr 1
-              rw [← Matrix.mul_assoc, pow_succ]
+    Matrix.trace ((A * B) ^ (n + 1)) = Matrix.trace ((B * A) ^ (n + 1)) := by
+  rw [pow_succ, pow_succ]
+  calc
+    Matrix.trace ((A * B) ^ n * (A * B)) =
+        Matrix.trace (((A * B) ^ n * A) * B) := by
+          simp only [Matrix.mul_assoc]
+    _ = Matrix.trace (B * ((A * B) ^ n * A)) :=
+          Matrix.trace_mul_comm _ _
+    _ = Matrix.trace (B * (A * (B * A) ^ n)) := by
+          rw [mul_pow_mul_left_rect]
+    _ = Matrix.trace ((B * A) ^ (n + 1)) := by
+          congr 1
+          rw [← Matrix.mul_assoc, pow_succ]
 
-/-- Arbitrary-power push-through identity for graph gluing. Unlike the former
-fourth-power lemma, this holds for every natural moment order p. -/
+/-- Arbitrary positive-power push-through identity for graph gluing. -/
 theorem trace_sandwich_pow {V W : Type*}
     [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
-    (E : Matrix V W ℂ) (K : Matrix W W ℂ) (p : ℕ) :
+    (E : Matrix V W ℂ) (K : Matrix W W ℂ) (p : ℕ) (hp : 0 < p) :
     Matrix.trace ((E * K * Eᵀ) ^ p) =
       Matrix.trace ((K * (Eᵀ * E)) ^ p) := by
-  simpa [Matrix.mul_assoc] using
-    (trace_mul_pow_rect E (K * Eᵀ) p)
+  cases p with
+  | zero => omega
+  | succ n =>
+      exact trace_mul_pow_rect_succ E (K * Eᵀ) n
 
 
 /-- Arbitrary-moment pushforward identity for the concrete gluing map.
@@ -153,12 +150,12 @@ the corresponding power of K + K*N. This is the bridge to the full ordered-word
 expansion at moments 6, 8, and 10. -/
 theorem trace_push_power {cp : W → ι} (G : GlueData cp) (π : W → V)
     (hπ : ∀ w w', π w = π w' ↔ (w = w' ∨ (G.g w ∧ w' = G.σ w)))
-    (K : Matrix W W ℂ) (p : ℕ) :
+    (K : Matrix W W ℂ) (p : ℕ) (hp : 0 < p) :
     Matrix.trace ((Emat π * K * (Emat π)ᵀ) ^ p) =
       Matrix.trace ((K + K * G.N) ^ p) := by
   have hKT : K * (1 + G.N) = K + K * G.N := by
     rw [Matrix.mul_add, Matrix.mul_one]
-  rw [trace_sandwich_pow, EtE_eq_one_add_N G π hπ, hKT]
+  rw [trace_sandwich_pow (Emat π) K p hp, EtE_eq_one_add_N G π hπ, hKT]
 
 end GlueBridge
 
