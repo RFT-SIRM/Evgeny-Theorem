@@ -89,6 +89,63 @@ theorem trace4_glue_formula {cp : W → ι} (G : GlueData cp) (π : W → V)
   rw [trace4_push G π hπ K]
   exact glue_trace4 G K hbd hkg hu2
 
+
+/-- Rectangular cyclic-power identity.  It moves the final rectangular factor
+through a power without assuming that either product is commutative. -/
+theorem mul_pow_mul_left_rect {V W : Type*}
+    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
+    (A : Matrix V W ℂ) (B : Matrix W V ℂ) (n : ℕ) :
+    (A * B) ^ n * A = A * (B * A) ^ n := by
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      calc
+        (A * B) ^ (n + 1) * A = ((A * B) ^ n * (A * B)) * A := by
+          rw [pow_succ]
+        _ = ((A * B) ^ n * A) * (B * A) := by
+          simp only [Matrix.mul_assoc]
+        _ = (A * (B * A) ^ n) * (B * A) := by
+          rw [ih]
+        _ = A * ((B * A) ^ n * (B * A)) := by
+          simp only [Matrix.mul_assoc]
+        _ = A * (B * A) ^ (n + 1) := by
+          rw [pow_succ]
+
+/-- For rectangular matrices A and B, the traces of (A B)^n and (B A)^n
+agree for every natural power. This is the dimension-changing trace identity
+needed to handle graph gluing at arbitrary moment order. -/
+theorem trace_mul_pow_rect {V W : Type*}
+    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
+    (A : Matrix V W ℂ) (B : Matrix W V ℂ) (n : ℕ) :
+    Matrix.trace ((A * B) ^ n) = Matrix.trace ((B * A) ^ n) := by
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      rw [pow_succ, pow_succ]
+      calc
+        Matrix.trace ((A * B) ^ n * (A * B)) =
+            Matrix.trace (((A * B) ^ n * A) * B) := by
+              simp only [Matrix.mul_assoc]
+        _ = Matrix.trace (B * ((A * B) ^ n * A)) :=
+              Matrix.trace_mul_comm _ _
+        _ = Matrix.trace (B * (A * (B * A) ^ n)) := by
+              rw [mul_pow_mul_left_rect]
+        _ = Matrix.trace ((B * A) ^ (n + 1)) := by
+              congr 1
+              rw [← Matrix.mul_assoc, pow_succ]
+
+/-- Arbitrary-power push-through identity for graph gluing. Unlike the former
+fourth-power lemma, this holds for every natural moment order p. -/
+theorem trace_sandwich_pow {V W : Type*}
+    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
+    (E : Matrix V W ℂ) (K : Matrix W W ℂ) (p : ℕ) :
+    Matrix.trace ((E * K * Eᵀ) ^ p) =
+      Matrix.trace ((K * (Eᵀ * E)) ^ p) := by
+  simpa [Matrix.mul_assoc] using
+    (trace_mul_pow_rect E (K * Eᵀ) p)
+
 end GlueBridge
 
 end EvgenyTheorem
