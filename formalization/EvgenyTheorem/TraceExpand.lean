@@ -326,8 +326,8 @@ theorem trace_kernel_diagonal_kernel_diagonal_collapse
     rw [Finset.sum_eq_single x]
     · intro y hy hne
       by_cases hgy : g y
-      · have hxy : K x y = 0 := hK x y hgx hgy hne
-        have hyx : K y x = 0 := hK y x hgy hgx (Ne.symm hne)
+      · have hxy : K x y = 0 := hK x y hgx hgy (Ne.symm hne)
+        have hyx : K y x = 0 := hK y x hgy hgx hne
         simp [hxy, hyx]
       · simp [ha y hgy]
     · simp
