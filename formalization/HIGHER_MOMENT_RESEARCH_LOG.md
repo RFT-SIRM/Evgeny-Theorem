@@ -1732,3 +1732,35 @@ the whole trace argument.
 The specialized choice (d_x=K_{\sigma(x),\sigma(x)}) gives the paired
 diagonal cube sum. Its invariance under changing the axis is still a separate
 claim and is not implied by this trace reduction.
+
+## 4az. Correct factorization for the p=6 top trace
+
+The concrete specialization `sg_trace_p6_top_stratum_cube` is now green in
+Lean CI (commit `b4bc08a`). Its conclusion is only
+`Tr(K D K D K D) = Tr((K D)^3)`; this is a reassociation identity and does
+not evaluate the trace.
+
+For the next reduction, let (D=\operatorname{diag}(d)), with (d_x=0)
+outside the glued locus (g), and assume (K_{xy}=0) for distinct (x,y)
+both in (g). The already formalized sandwich statement says
+(A=DKD) is diagonal. By cyclicity and associativity,
+[
+\operatorname{Tr}(KDKDKD)=\operatorname{Tr}(K(DKD)KD)
+=\operatorname{Tr}(KAKD).
+]
+Expanding the latter trace gives the two-index kernel
+[
+\sum_{x,y} K_{xy} A_{yy} K_{yx} d_x.
+]
+Since (A_{yy}=d_y K_{yy} d_y), its support forces (y\in g), and
+(d_x) forces (x\in g). The glued-locus off-diagonal hypothesis then
+forces (x=y). The desired collapse is therefore
+[
+\sum_{x\in g} K_{xx}^3 d_x^3
+=\sum_{x\in g}(K_{xx}d_x)^3.
+]
+This derivation makes the exact remaining formalization target clear: a
+generic finite-matrix lemma for `Tr(K * A * K * D)` when `A,D` are
+diagonal, with support and restricted off-diagonal hypotheses explicit.
+Only after that generic lemma passes CI should it be specialized to `sgK`.
+No axis-invariance or moment recurrence is claimed by this reduction.
