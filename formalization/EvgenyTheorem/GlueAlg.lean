@@ -1360,6 +1360,35 @@ theorem diagonal_sandwich_offdiag_zero
   · have hdx : d x = 0 := hd x hx
     simp [hdx]
 
+
+/-- Trace formula for a diagonal sandwich. The support of the diagonal weight
+and off-diagonal vanishing of K on that support make the sandwich diagonal;
+its trace is therefore the finite sum of its diagonal entries. -/
+theorem trace_diagonal_sandwich_eq_sum
+    (g : W → Prop) (d : W → ℂ) (K : Matrix W W ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    Matrix.trace (Matrix.diagonal d * K * Matrix.diagonal d) =
+      ∑ x, if g x then d x * K x x * d x else 0 := by
+  classical
+  have hdiag :
+      Matrix.diagonal d * K * Matrix.diagonal d =
+        Matrix.diagonal (fun x => d x * K x x * d x) := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      rw [Matrix.diagonal_apply]
+      simp [diagonal_sandwich_apply]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero g d K hd hK x y hxy
+  rw [hdiag, trace_diagonal_eq_sum]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hg : g x
+  · simp [hg]
+  · simp [hg, hd x hg]
+
 end GlueAlg
 
 end EvgenyTheorem
