@@ -410,4 +410,14 @@ theorem sgK_corner_sandwich_eq_diagonal
 
 
 
+
+/-- Reassociate the alternating six-factor trace as a cubic trace. -/
+theorem trace_K_D_alternating_six_eq_cube
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    Matrix.trace (K * D * K * D * K * D) =
+      Matrix.trace ((K * D) ^ 3) := by
+  rw [pow_succ, pow_two]
+  simp only [Matrix.mul_assoc]
+
 end EvgenyTheorem
