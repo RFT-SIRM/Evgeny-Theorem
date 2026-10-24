@@ -361,4 +361,23 @@ theorem sgK_corner_sandwich_apply
       sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)
     (sgK m θ ax o) x y
 
+
+/-- The diagonal entries of the concrete partner-corner sandwich are the
+paired diagonal products squared times the corresponding diagonal of sgK. -/
+theorem sgK_corner_sandwich_diag_apply
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (x : WSG m) :
+    (Matrix.diagonal (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) x x =
+      (if (sgGlue m).g x then
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
+      sgK m θ ax o x x *
+      (if (sgGlue m).g x then
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  exact sgK_corner_sandwich_apply m θ ax o x x
+
 end EvgenyTheorem
