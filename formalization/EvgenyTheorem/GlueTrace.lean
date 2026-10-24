@@ -17,7 +17,7 @@ open Matrix
 
 section Block
 
-variable {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X]
+variable {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
 
 theorem blockK_mul (H G : ι → Matrix X X ℂ) :
     blockK H * blockK G = blockK (fun c => H c * G c) := by
@@ -266,14 +266,30 @@ theorem sg_trace_p6_lower_even_strata_boundary
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
-    6 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5 * (sgGlue m).N * sgK m θ ax o ^ 0) +
-    6 * Matrix.trace (sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 4 * (sgGlue m).N * sgK m θ ax o ^ 0) +
-    3 * Matrix.trace (sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
-    6 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
-    6 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) +
-    3 * Matrix.trace (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) =
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 4 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 3 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 *
+        (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 *
+        (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 *
+        (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) =
     6 * (∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o ^ 1) x x * (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+      (sgK m θ ax o ^ 1) x x *
+      (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
     6 * (∑ x, if (sgGlue m).g x then
       (sgK m θ ax o ^ 2) x x * (sgK m θ ax o ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
     3 * (∑ x, if (sgGlue m).g x then
