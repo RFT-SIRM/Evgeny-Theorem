@@ -1317,6 +1317,14 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
         simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
 
 
+/-- Entrywise formula for a diagonal sandwich. -/
+theorem diagonal_sandwich_apply
+    (d : W → ℂ) (K : Matrix W W ℂ) (x y : W) :
+    (Matrix.diagonal d * K * Matrix.diagonal d) x y =
+      d x * K x y * d y := by
+  classical
+  simp [Matrix.mul_apply]
+
 /-- If a diagonal weight is supported on a set on which K has no
 off-diagonal entries, then sandwiching K by that weight is diagonal.
 This is the local matrix fact needed to collapse the p=6 top boundary trace. -/
