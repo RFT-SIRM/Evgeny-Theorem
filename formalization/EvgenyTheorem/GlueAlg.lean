@@ -1329,7 +1329,7 @@ theorem diagonal_sandwich_apply
 off-diagonal entries, then sandwiching K by that weight is diagonal.
 This is the local matrix fact needed to collapse the p=6 top boundary trace. -/
 theorem diagonal_sandwich_offdiag_zero
-    (g : W → Prop) [DecidablePred g]
+    (g : W → Prop)
     (d : W → ℂ) (K : Matrix W W ℂ)
     (hd : ∀ x, ¬ g x → d x = 0)
     (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
@@ -1341,7 +1341,7 @@ theorem diagonal_sandwich_offdiag_zero
   by_cases hx : g x
   · by_cases hy : g y
     · have hzero : K x y = 0 := hK x y hx hy hxy
-      simp [hzero, hxy]
+      simp [hzero]
     · have hdy : d y = 0 := hd y hy
       simp [hdy]
   · have hdx : d x = 0 := hd x hx
