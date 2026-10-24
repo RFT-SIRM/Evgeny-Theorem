@@ -319,4 +319,25 @@ theorem sg_trace_p6_top_stratum_boundary
   exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
     n hn w w' hw hw' hcopy hne
 
+
+/-- The partner-corner diagonal weight sandwiches sgK to a diagonal
+matrix: distinct glued states have zero coupling. -/
+theorem sgK_corner_sandwich_offdiag_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    ∀ x y : WSG m, x ≠ y →
+      (Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+        sgK m θ ax o *
+        Matrix.diagonal (fun z => if (sgGlue m).g z then
+          sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) x y = 0 := by
+  apply diagonal_sandwich_offdiag_zero (g := (sgGlue m).g)
+    (d := fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)
+    (K := sgK m θ ax o)
+  · intro x hx
+    simp [hx]
+  · intro x y hx hy hxy
+    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
+
 end EvgenyTheorem
