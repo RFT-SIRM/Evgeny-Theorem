@@ -1322,6 +1322,14 @@ theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
   simp [Matrix.trace, Matrix.diagonal_apply]
 
+/-- The trace of a product of two diagonal matrices is the sum
+of the pointwise products of their weights. -/
+theorem trace_diagonal_mul_diagonal_eq_sum (d e : W → ℂ) :
+    Matrix.trace (Matrix.diagonal d * Matrix.diagonal e) =
+      ∑ x, d x * e x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+
 /-- Entrywise formula for a diagonal sandwich. -/
 theorem diagonal_sandwich_apply
     (d : W → ℂ) (K : Matrix W W ℂ) (x y : W) :
