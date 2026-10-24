@@ -288,3 +288,17 @@ theorem twoN_gap_weights_ten {α : Type*} [CommRing α] (E : ℕ → α)
   ring
 
 end EvgenyTheorem
+
+
+/-- Two-index expansion of a trace with diagonal middle and right factors.
+No commutation of the kernel is assumed: the ordered factors
+`K x y` and `K y x` remain distinct. This is the finite-sum identity
+needed before support hypotheses can collapse a boundary trace. -/
+theorem trace_kernel_diagonal_kernel_diagonal
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K : Matrix n n ℂ) (a d : n → ℂ) :
+    Matrix.trace (K * Matrix.diagonal a * K * Matrix.diagonal d) =
+      ∑ x, ∑ y, K x y * a y * K y x * d x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
+    Finset.mul_sum, mul_assoc]
