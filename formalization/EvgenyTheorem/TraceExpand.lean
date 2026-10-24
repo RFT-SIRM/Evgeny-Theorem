@@ -253,7 +253,7 @@ theorem trace_reverse_pair_sum_real
     apply hxs
     simpa using hM
   rw [trace_reverse_conj_of_selfAdjoint_list xs.reverse hrev]
-  simp
+  exact add_comm _ _
 
 /-! ## Two-N cyclic-gap weights for the target moments
 
