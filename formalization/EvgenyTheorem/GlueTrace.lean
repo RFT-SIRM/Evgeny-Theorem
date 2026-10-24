@@ -535,4 +535,23 @@ theorem sg_trace_p6_top_stratum_cube
     (Matrix.diagonal (fun y => if (sgGlue m).g y then
       sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
 
+
+/-- Summing diagonal cubic contributions over glued boundary points is independent
+of the axis assignment. This follows pointwise from sgK_corner_data; it does
+not assert cancellation of the full boundary trace. -/
+theorem sg_glue_cube_diag_sum_axis_indep
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ a, if (sgGlue m).g a then
+        (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o) a a else 0) =
+    (∑ a, if (sgGlue m).g a then
+        (sgK m θ ax' o * sgK m θ ax' o * sgK m θ ax' o) a a else 0) := by
+  apply Finset.sum_congr rfl
+  intro a ha
+  by_cases hg : (sgGlue m).g a
+  · simp only [hg, ↓reduceIte]
+    exact (sgK_corner_data m θ ax ax' o hanti a hg).1
+  · simp [hg]
+
 end EvgenyTheorem
