@@ -1602,3 +1602,26 @@ argument with `sgK_pow_GlueDiag_of_OAnti` (including its partner-coordinate
 premise) into a concrete theorem supplying the `hkg` premise. Until that bridge
 is proved, the concrete p=6 specialization is not yet discharged from the
 abstract boundary formula. No all-level moment recurrence is claimed.
+
+## 4au. Concrete p=6 boundary specializations
+
+The support bridge described in §4at has now been formalized as
+`sgK_pow_hkg_up_to_five_of_OAnti` in `GlueCorner.lean`, and both CI
+workflows passed for commit `ceedec5`. In `GlueTrace.lean`, theorem
+`sg_trace_p6_lower_even_strata_boundary` specializes the abstract lower
+even-strata identity to `sgK`/`sgGlue` for `m ≥ 3` under `OAnti`.
+
+The next commit adds the analogous specialization
+`sg_trace_p6_top_stratum_boundary`: the six-`N) top stratum is expressed
+as `Tr(K D K D K D)`, with `D) the diagonal matrix of partner-corner
+values. The top term is retained exactly; it is **not** proved zero.
+
+CI for the new top-stratum specialization is currently running (commit
+`c9a9402`). If green, this gives a concrete decomposition of all p=6 even
+boundary strata. The remaining mathematical obstacle is comparison between
+two axis choices: the lower strata depend on diagonal entries of powers
+`K^a), while the top stratum still involves off-diagonal entries of `K)
+between glued corners. The existing p=4 recursion hypothesis `hcorner)
+only identifies corner diagonals of `K), `K²), and `K³`; it does not by
+itself establish equality of `Tr(K D K D K D)` across axis choices. No
+p=6 cancellation identity or p=6,8,10 moment recurrence is claimed.
