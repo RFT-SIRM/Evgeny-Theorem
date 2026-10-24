@@ -238,6 +238,23 @@ theorem sum_involution_product_swap
           intro x hx
           exact mul_comm _ _
 
+/-- A word and its reversed word have a real combined trace whenever
+all factors are self-adjoint. This lets reversal-paired contributions be
+collected without commuting any factors. -/
+theorem trace_reverse_pair_sum_real
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (xs : List (Matrix n n ℂ))
+    (hxs : ∀ M, M ∈ xs → Matrix.conjTranspose M = M) :
+    star (Matrix.trace xs.prod + Matrix.trace xs.reverse.prod) =
+      Matrix.trace xs.prod + Matrix.trace xs.reverse.prod := by
+  rw [map_add, trace_reverse_conj_of_selfAdjoint_list xs hxs]
+  have hrev : ∀ M, M ∈ xs.reverse → Matrix.conjTranspose M = M := by
+    intro M hM
+    apply hxs
+    simpa using hM
+  rw [trace_reverse_conj_of_selfAdjoint_list xs.reverse hrev]
+  simp
+
 /-! ## Two-N cyclic-gap weights for the target moments
 
 These are the finite orbit-weight identities for the lowest even stratum.
