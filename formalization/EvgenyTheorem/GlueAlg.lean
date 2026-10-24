@@ -1365,7 +1365,7 @@ theorem diagonal_sandwich_offdiag_zero
 and off-diagonal vanishing of K on that support make the sandwich diagonal;
 its trace is therefore the finite sum of its diagonal entries. -/
 theorem trace_diagonal_sandwich_eq_sum
-    (g : W → Prop) (d : W → ℂ) (K : Matrix W W ℂ)
+    (g : W → Prop) [DecidablePred g] (d : W → ℂ) (K : Matrix W W ℂ)
     (hd : ∀ x, ¬ g x → d x = 0)
     (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
     Matrix.trace (Matrix.diagonal d * K * Matrix.diagonal d) =
