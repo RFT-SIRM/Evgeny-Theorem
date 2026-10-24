@@ -1625,3 +1625,33 @@ between glued corners. The existing p=4 recursion hypothesis `hcorner)
 only identifies corner diagonals of `K), `K²), and `K³`; it does not by
 itself establish equality of `Tr(K D K D K D)` across axis choices. No
 p=6 cancellation identity or p=6,8,10 moment recurrence is claimed.
+
+## 4av. Exact target for collapsing the p=6 top stratum
+
+CI is green for both `c9a9402` (the concrete top-stratum specialization)
+and `5cf3716` (the research-log update). The new specialization is therefore
+checked, not merely queued.
+
+The concrete one-step lemma `sgK_glued_offdiag` is stronger than a
+same-copy statement: it says `sgK w w' = 0` whenever both states are glued
+and `w ≠ w'`, including states in different copies. Let
+`d(x) = if g(x) then K (σ x) (σ x) else 0` and `D = diagonal d`.
+Then `D) is supported on glued states, and every off-diagonal matrix entry
+of `K) between points in that support vanishes. Expanding the trace gives
+the exact candidate identity
+
+```
+Tr(K D K D K D)
+  = ∑ x, if g x then
+      (K x x * K (σ x) (σ x)) *
+      (K x x * K (σ x) (σ x)) *
+      (K x x * K (σ x) (σ x))
+    else 0
+```
+
+This is a finite-matrix consequence of support, not an assumption about the
+desired moment cancellation. It is the next lemma to formalize. It would
+reduce the top stratum to a sum of cubes of the paired corner-diagonal
+product, but does **not** alone show equality between two axis choices: one
+still needs equality of the paired diagonal products (or a weighted-sum
+identity). Keep that comparison as a separate obligation.
