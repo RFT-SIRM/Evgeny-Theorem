@@ -1655,3 +1655,28 @@ reduce the top stratum to a sum of cubes of the paired corner-diagonal
 product, but does **not** alone show equality between two axis choices: one
 still needs equality of the paired diagonal products (or a weighted-sum
 identity). Keep that comparison as a separate obligation.
+
+## 4aw. Algebraic expansion of the top p=6 boundary term
+
+The CI runs for `963c8ed` completed successfully: Lean formalization and Python
+tests are green. The new observation in §4av can be checked directly by
+expanding the trace. For `D = diag(d)` with `d(x)=0` off the glued set,
+`Tr(K D K D K D)` is the finite sum over triples `x,y,z` of
+`K x y * d(y) * K y z * d(z) * K z x * d(x)`.
+Every nonzero summand has `g x`, `g y`, and `g z`. The existing
+`sgK_glued_offdiag` then forces `x=y=z`: if any adjacent pair differs,
+the corresponding K entry vanishes. The surviving summand is
+`(K x x * d(x))^3`. With `d(x)=K (σ x) (σ x)` on glued states, this is
+the proposed paired-diagonal cube formula.
+
+Formalization note: keep the support condition explicit in the helper lemma;
+do not try to use `sgK_glued_offdiag` on indices before proving that the
+diagonal factors force those indices to be glued. A clean generic helper
+should state both (i) `d x = 0` whenever `¬ g x`, and (ii) off-diagonal
+vanishing of K between any two g-supported indices. The concrete theorem can
+then discharge these hypotheses using `sgGlue` and `sgK_glued_offdiag`.
+
+This reduction does not settle axis comparison. The resulting sum is
+`∑ x, if g x then (K x x * K (σ x) (σ x))^3 else 0`; equality for two axis
+choices still requires a separate invariant for these paired diagonal
+products. No moment recurrence is claimed here.
