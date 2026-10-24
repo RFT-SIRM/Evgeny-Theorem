@@ -1317,6 +1317,11 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
         simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
 
 
+/-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
+theorem trace_diagonal_eq_sum (d : W → ℂ) :
+    Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
+  simp [Matrix.trace, Matrix.diagonal_apply]
+
 /-- Entrywise formula for a diagonal sandwich. -/
 theorem diagonal_sandwich_apply
     (d : W → ℂ) (K : Matrix W W ℂ) (x y : W) :
