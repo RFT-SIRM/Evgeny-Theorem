@@ -289,4 +289,34 @@ theorem sg_trace_p6_lower_even_strata_boundary
   exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
     n hn w w' hw hw' hcopy hne
 
+
+/-- Concrete top-stratum boundary reduction for the sixth moment. Together
+with `sg_trace_p6_lower_even_strata_boundary`, this gives all even boundary
+strata at p=6 for the Sierpinski glued operator. The top stratum is retained
+as a trace with three diagonal corner insertions; it is not asserted to vanish. -/
+theorem sg_trace_p6_top_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace (sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  apply trace_p6_top_stratum_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
 end EvgenyTheorem
