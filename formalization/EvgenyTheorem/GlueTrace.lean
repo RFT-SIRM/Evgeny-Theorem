@@ -340,4 +340,25 @@ theorem sgK_corner_sandwich_offdiag_zero
   · intro x y hx hy hxy
     exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
 
+
+/-- Entrywise form of the concrete partner-corner sandwich. -/
+theorem sgK_corner_sandwich_apply
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (x y : WSG m) :
+    (Matrix.diagonal (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) x y =
+      (if (sgGlue m).g x then
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
+      sgK m θ ax o x y *
+      (if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) := by
+  exact diagonal_sandwich_apply
+    (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)
+    (sgK m θ ax o) x y
+
 end EvgenyTheorem
