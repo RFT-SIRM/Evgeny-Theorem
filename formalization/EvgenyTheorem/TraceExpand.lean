@@ -302,39 +302,3 @@ theorem trace_kernel_diagonal_kernel_diagonal
   classical
   simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
     Finset.mul_sum, mul_assoc]
-
-
-/-- Collapse the two-index trace sum when both diagonal weights are supported
-on a locus where the kernel has no off-diagonal entries. -/
-theorem trace_kernel_diagonal_kernel_diagonal_collapse
-    {n : Type*} [Fintype n] [DecidableEq n]
-    (g : n → Prop) [DecidablePred g]
-    (K : Matrix n n ℂ) (d : n → ℂ)
-    (hd : ∀ x, ¬ g x → d x = 0)
-    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
-    Matrix.trace (K * Matrix.diagonal (fun x => d x * K x x * d x) *
-      K * Matrix.diagonal d) =
-      ∑ x, if g x then (K x x * d x) ^ 3 else 0 := by
-  classical
-  rw [trace_kernel_diagonal_kernel_diagonal]
-  apply Finset.sum_congr rfl
-  intro x hx
-  by_cases hgx : g x
-  · simp only [hgx, ↓reduceIte]
-    have hinner :
-        (∑ y, K x y * (d y * K y y * d y) * K y x * d x) =
-          K x x * (d x * K x x * d x) * K x x * d x := by
-      rw [Finset.sum_eq_single x]
-      · simp
-      · intro y hyx
-        by_cases hgy : g y
-        · have hxy : x ≠ y := fun h => hyx h.symm
-          rw [hK x y hgx hgy hxy]
-          simp
-        · rw [hd y hgy]
-          simp
-      · simp
-    rw [hinner]
-    ring
-  · simp [hgx, hd x hgx]
-
