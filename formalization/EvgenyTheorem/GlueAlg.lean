@@ -1323,7 +1323,7 @@ theorem diagonal_sandwich_apply
     (Matrix.diagonal d * K * Matrix.diagonal d) x y =
       d x * K x y * d y := by
   classical
-  simp [Matrix.mul_apply]
+  simp [Matrix.mul_apply, Matrix.diagonal_apply]
 
 /-- If a diagonal weight is supported on a set on which K has no
 off-diagonal entries, then sandwiching K by that weight is diagonal.
