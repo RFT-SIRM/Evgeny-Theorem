@@ -1337,7 +1337,10 @@ theorem trace_alternating_six_eq_sum_diag_cube
         K * Matrix.diagonal d = A * A * A := by
     simp [A, Matrix.mul_assoc]
   rw [hprod, hA]
-  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+  simp only [Matrix.trace, Matrix.diagonal_apply, Matrix.mul_apply]
+  apply Finset.sum_congr rfl
+  intro x hx
+  ring
 
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
