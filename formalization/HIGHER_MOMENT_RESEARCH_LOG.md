@@ -1796,3 +1796,35 @@ The next formalization should isolate precisely this two-index trace lemma,
 not claim that (KD) is diagonal and not repeat the earlier failed
 three-diagonal-product proof. Require CI to pass before specializing it to
 `sgK`. Axis invariance remains an independent open obligation.
+
+## 4bb. Exact level-3 test rules out unrestricted axis-pattern equality (2026-10-24)
+
+A separate exact-arithmetic diagnostic was run against the definitions in
+`src/graph/sg_graph.py` and `src/operators/operators.py`, at level 3 and
+`theta = pi`. At this parameter, each flux rotation is exactly
+`-i * sigma_axis`, so the resulting matrix has Gaussian-integer entries.
+The calculation used integer real/imaginary matrix multiplication, not
+floating-point powers.
+
+For the repository's two documented configurations, the full operator traces
+are:
+
+| power p | cycling axes x/y/z (`commuting=False`) | common z axis (`commuting=True`) |
+|---:|---:|---:|
+| 4 | 52,572 | 52,732 |
+| 6 | 2,080,992 | 2,120,640 |
+| 8 | 89,944,892 | 93,788,476 |
+| 10 | 4,082,500,316 | 4,362,907,356 |
+
+Thus these two configurations do not have equal full spectral moments at
+this level and parameter. This is a counterexample to any *unrestricted*
+claim that the cycling-axis and common-axis operators have identical moments;
+it is not a counterexample to gauge invariance, and it does not settle any
+more narrowly stated comparison between particular axis assignments or
+glued-boundary contributions. In particular, do not try to prove equality
+between these two configurations from the corner-diagonal reduction alone.
+First state precisely which axis choices are being compared and verify that
+the desired equality is actually true for that comparison.
+
+This is a diagnostic entry only. No Lean theorem is inferred from the
+calculation, and no moment recurrence is claimed.
