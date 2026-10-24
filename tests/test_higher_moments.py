@@ -89,6 +89,33 @@ def test_finite_base_transition_R3_equals_R4(power, theta):
     )
 
 
+@pytest.mark.parametrize("level", [1, 2, 3])
+@pytest.mark.parametrize("commuting", [False, True])
+def test_exact_sparse_pi_operator_matches_production_operator(level, commuting):
+    """Cross-check the exact certificate's operator builder against production.
+
+    This guards the finite Gaussian-integer certificate against silently
+    drifting from graph ordering, face-edge assignment, Pauli-axis convention,
+    or the Hermitian-conjugate block used by build_su2_bundle.
+    """
+    from operators.operators import build_su2_bundle
+
+    exact, dimension = _exact_sparse_operator_pi(level, commuting)
+    production, vertices = build_su2_bundle(level, np.pi, commuting=commuting)
+    assert production.shape == (dimension, dimension)
+    assert dimension == 2 * vertices
+    for i in range(dimension):
+        for j in range(dimension):
+            expected = exact.get((i, j), (0, 0))
+            actual = production[i, j]
+            assert np.isclose(actual.real, expected[0], atol=1e-12), (
+                level, commuting, i, j, actual, expected
+            )
+            assert np.isclose(actual.imag, expected[1], atol=1e-12), (
+                level, commuting, i, j, actual, expected
+            )
+
+
 def _gaussian_add(a, b):
     return (a[0] + b[0], a[1] + b[1])
 
