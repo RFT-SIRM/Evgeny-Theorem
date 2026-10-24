@@ -1390,51 +1390,6 @@ theorem trace_diagonal_sandwich_eq_sum
   · simp [hg, hd x hg]
 
 
-/-- A two-index trace reduction for diagonal weights supported on a locus.
-If the kernel has no off-diagonal entries within that locus, only the
-x = y term survives in Tr(K * diag(a) * K * diag(d)). This is deliberately
-stated independently of the Sierpiński-gluing specialization. -/
-theorem trace_K_diag_K_diag_eq_sum_of_support
-    (g : W → Prop) [DecidablePred g]
-    (a d : W → ℂ) (K : Matrix W W ℂ)
-    (ha : ∀ x, ¬ g x → a x = 0)
-    (hd : ∀ x, ¬ g x → d x = 0)
-    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
-    Matrix.trace (K * Matrix.diagonal a * K * Matrix.diagonal d) =
-      ∑ x, if g x then K x x * a x * K x x * d x else 0 := by
-  classical
-  have hexpand :
-      Matrix.trace (K * Matrix.diagonal a * K * Matrix.diagonal d) =
-        ∑ x, (∑ y, K x y * a y * K y x) * d x := by
-    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
-  have hcollapse (x : W) :
-      (∑ y, K x y * a y * K y x) * d x =
-        if g x then K x x * a x * K x x * d x else 0 := by
-    by_cases hx : g x
-    · rw [if_pos hx]
-      have hsum : (∑ y, K x y * a y * K y x) =
-          K x x * a x * K x x := by
-        rw [Finset.sum_eq_single x]
-        · simp
-        · intro y hy hyx
-          by_cases hgy : g y
-          · rw [hK x y hx hgy hyx]
-            simp
-          · rw [ha y hgy]
-            simp
-        · intro hnot
-          exact (hnot (Finset.mem_univ x)).elim
-      rw [hsum]
-    · rw [if_neg hx, hd x hx]
-      simp
-  calc
-    Matrix.trace (K * Matrix.diagonal a * K * Matrix.diagonal d) =
-        ∑ x, (∑ y, K x y * a y * K y x) * d x := hexpand
-    _ = ∑ x, if g x then K x x * a x * K x x * d x else 0 := by
-      apply Finset.sum_congr rfl
-      intro x hx
-      exact hcollapse x
-
 end GlueAlg
 
 end EvgenyTheorem
