@@ -302,3 +302,33 @@ theorem trace_kernel_diagonal_kernel_diagonal
   classical
   simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
     Finset.mul_sum, mul_assoc]
+
+
+/-- Collapse the two-index trace expansion to its diagonal terms when both
+diagonal weights are supported on a locus where K has no off-diagonal
+entries. This is the precise support-sensitive step used by boundary trace
+reductions; no symmetry of K is assumed. -/
+theorem trace_kernel_diagonal_kernel_diagonal_collapse
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K : Matrix n n ℂ) (g : n → Prop) [DecidablePred g]
+    (a d : n → ℂ)
+    (ha : ∀ x, ¬ g x → a x = 0)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    Matrix.trace (K * Matrix.diagonal a * K * Matrix.diagonal d) =
+      ∑ x, if g x then K x x * a x * K x x * d x else 0 := by
+  classical
+  rw [trace_kernel_diagonal_kernel_diagonal]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : g x
+  · simp only [if_pos hgx]
+    rw [Finset.sum_eq_single x]
+    · simp
+    · intro y hy hne
+      by_cases hgy : g y
+      · rw [hK x y hgx hgy hne, zero_mul]
+      · rw [ha y hgy, mul_zero]
+    · intro hnot
+      exact (hnot (Finset.mem_univ x)).elim
+  · simp [hgx, hd x hgx]
