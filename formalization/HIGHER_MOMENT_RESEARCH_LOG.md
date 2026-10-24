@@ -1828,3 +1828,16 @@ the desired equality is actually true for that comparison.
 
 This is a diagnostic entry only. No Lean theorem is inferred from the
 calculation, and no moment recurrence is claimed.
+
+
+## 4bc. Precise algebraic target for the p=6 top-stratum collapse (2026-10-24)
+
+The next proof obligation is now stated as a concrete finite-matrix identity, not as an axis-invariance assertion. Let D = diag(d), with d_x = 0 off the glued set g, and assume K_xy = 0 whenever x,y are in g and x != y. The desired intermediate identity is
+
+$$
+\operatorname{Tr}(KDKDKD) = \sum_{x\in g}(K_{xx}d_x)^3.
+$$
+
+The safe factorization is KDKDKD = K(DKD)KD, with associativity understood. The existing lemma diagonal_sandwich_offdiag_zero proves that A = DKD is diagonal, and trace_diagonal_sandwich_eq_sum evaluates its trace. To finish the displayed identity one must still expand Tr(KAKD) into a two-index sum and use support of both A and D to force both indices into g, where the off-diagonal hypothesis on K applies. It is invalid to infer that KD itself is diagonal from the current hypotheses.
+
+This note is a proof plan, not a Lean theorem. No axis-invariance statement follows from this identity alone: the resulting sum still depends on the diagonal entries of the particular operator. The next code change should add and compile the two-index trace lemma before specializing it to the concrete sgK operator.
