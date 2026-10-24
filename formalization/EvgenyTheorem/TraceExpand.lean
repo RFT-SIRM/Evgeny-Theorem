@@ -247,7 +247,7 @@ theorem trace_reverse_pair_sum_real
     (hxs : ∀ M, M ∈ xs → Matrix.conjTranspose M = M) :
     star (Matrix.trace xs.prod + Matrix.trace xs.reverse.prod) =
       Matrix.trace xs.prod + Matrix.trace xs.reverse.prod := by
-  rw [map_add, trace_reverse_conj_of_selfAdjoint_list xs hxs]
+  rw [star_add, trace_reverse_conj_of_selfAdjoint_list xs hxs]
   have hrev : ∀ M, M ∈ xs.reverse → Matrix.conjTranspose M = M := by
     intro M hM
     apply hxs
