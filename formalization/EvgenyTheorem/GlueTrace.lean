@@ -380,4 +380,31 @@ theorem sgK_corner_sandwich_diag_apply
         sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
   exact sgK_corner_sandwich_apply m θ ax o x x
 
+
+/-- The partner-corner sandwich is exactly the diagonal matrix formed from
+its diagonal entries. This packages the entrywise formula and off-diagonal
+vanishing into a matrix identity. -/
+theorem sgK_corner_sandwich_eq_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    (Matrix.diagonal (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) =
+    Matrix.diagonal (fun z =>
+      (Matrix.diagonal (fun w => if (sgGlue m).g w then
+        sgK m θ ax o ((sgGlue m).σ w) ((sgGlue m).σ w) else 0) *
+        sgK m θ ax o *
+        Matrix.diagonal (fun w => if (sgGlue m).g w then
+          sgK m θ ax o ((sgGlue m).σ w) ((sgGlue m).σ w) else 0)) z z) := by
+  classical
+  ext x y
+  by_cases hxy : x = y
+  · subst y
+    simp [Matrix.diagonal_apply]
+  · rw [Matrix.diagonal_apply]
+    simp only [if_neg hxy]
+    exact sgK_corner_sandwich_offdiag_zero m hm θ ax o x y hxy
+
 end EvgenyTheorem
