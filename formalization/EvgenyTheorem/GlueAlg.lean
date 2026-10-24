@@ -1329,15 +1329,11 @@ theorem diagonal_sandwich_offdiag_zero
       (Matrix.diagonal d * K * Matrix.diagonal d) x y = 0 := by
   classical
   intro x y hxy
-  rw [Matrix.mul_apply]
-  simp only [Matrix.diagonal, Matrix.mul_apply]
-  simp only [Matrix.diagonal_apply]
-  simp_rw [mul_ite, ite_mul]
-  simp_rw [mul_ite, ite_mul]
+  simp only [Matrix.mul_apply, Matrix.diagonal_apply]
   by_cases hx : g x
   · by_cases hy : g y
     · have hzero : K x y = 0 := hK x y hx hy hxy
-      simp [hzero]
+      simp [hzero, hxy]
     · have hdy : d y = 0 := hd y hy
       simp [hdy]
   · have hdx : d x = 0 := hd x hx
