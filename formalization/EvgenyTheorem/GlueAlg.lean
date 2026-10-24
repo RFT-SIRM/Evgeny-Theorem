@@ -1316,6 +1316,33 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
         intro w w' hw hw' hcopy hne
         simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
 
+
+/-- If a diagonal weight is supported on a set on which K has no
+off-diagonal entries, then sandwiching K by that weight is diagonal.
+This is the local matrix fact needed to collapse the p=6 top boundary trace. -/
+theorem diagonal_sandwich_offdiag_zero
+    (g : W → Prop) [DecidablePred g]
+    (d : W → ℂ) (K : Matrix W W ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    ∀ x y, x ≠ y →
+      (Matrix.diagonal d * K * Matrix.diagonal d) x y = 0 := by
+  classical
+  intro x y hxy
+  rw [Matrix.mul_apply]
+  simp only [Matrix.diagonal, Matrix.mul_apply]
+  simp only [Matrix.diagonal_apply]
+  simp_rw [mul_ite, ite_mul]
+  simp_rw [mul_ite, ite_mul]
+  by_cases hx : g x
+  · by_cases hy : g y
+    · have hzero : K x y = 0 := hK x y hx hy hxy
+      simp [hzero]
+    · have hdy : d y = 0 := hd y hy
+      simp [hdy]
+  · have hdx : d x = 0 := hd x hx
+    simp [hdx]
+
 end GlueAlg
 
 end EvgenyTheorem
