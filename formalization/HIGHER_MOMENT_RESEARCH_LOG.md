@@ -1680,3 +1680,27 @@ This reduction does not settle axis comparison. The resulting sum is
 `∑ x, if g x then (K x x * K (σ x) (σ x))^3 else 0`; equality for two axis
 choices still requires a separate invariant for these paired diagonal
 products. No moment recurrence is claimed here.
+
+## 4ax. Verified CI and an algebraic route to the diagonal collapse
+
+The two workflows for `c23bdff` have now completed successfully. The top
+stratum remains the next formal proof target.
+
+A useful way to avoid expanding all six matrix factors at once is to first
+prove a support lemma for `D K D). If `D = diagonal d`, `d x = 0` off
+the glued set, and `K x y = 0` for distinct glued states, then
+`(D * K * D) x y = d x * K x y * d y` is zero whenever `x ≠ y):
+if either diagonal coefficient is zero, the product vanishes; otherwise both
+indices are glued and the off-diagonal hypothesis applies. Thus `D*K*D`
+is diagonal. This is a simpler local target than immediately expanding
+`Tr(K D K D K D)).
+
+The remaining trace can then be reduced by associativity and the finite-matrix
+identity `trace_mul_comm`, keeping the diagonal support explicit until the
+last simplification. This approach is preferable to claiming the cube formula
+from a verbal expansion: the Lean proof must still justify the finite sums
+and the collapse of every off-diagonal term.
+
+No source theorem was added in this step; this entry records the checked
+algebraic route for the next Lean lemma. The axis-comparison identity and the
+moment recurrence remain open.
