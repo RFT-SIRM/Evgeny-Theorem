@@ -1,4 +1,5 @@
 import EvgenyTheorem.GlueCornerGeom
+import EvgenyTheorem.GlueTrace
 
 namespace EvgenyTheorem
 
@@ -144,5 +145,16 @@ theorem sgK_glued_cube_diag_sum_axis_indep
   · simp only [hg, ↓reduceIte]
     exact (sgK_corner_data m θ ax ax' o hanti a hg).1
   · simp [hg]
+
+
+/-- The full fourth-moment corner correction is independent of the axis
+assignment, by the pointwise corner identities for powers one through three. -/
+theorem cornerTerm_sgK_axis_indep
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    cornerTerm m (sgK m θ ax o) = cornerTerm m (sgK m θ ax' o) := by
+  apply cornerTerm_congr
+  exact sgK_corner_data m θ ax ax' o hanti
 
 end EvgenyTheorem
