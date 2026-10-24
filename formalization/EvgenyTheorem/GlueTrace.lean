@@ -410,6 +410,77 @@ theorem sgK_corner_sandwich_eq_diagonal
 
 
 
+/-- Regroup the p=6 top boundary trace so the already-proved diagonal
+sandwich identity can be applied. This is an exact reduction, not yet a
+claim that the trace is a sum of cubes. -/
+theorem sg_trace_p6_top_stratum_reduce_to_diagonal_sandwich
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace (sgK m θ ax o *
+      Matrix.diagonal (fun z =>
+        (Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          sgK m θ ax o *
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) z z) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  let D : Matrix (WSG m) (WSG m) ℂ :=
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  have hboundary :
+      Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N) =
+      Matrix.trace (sgK m θ ax o * D * sgK m θ ax o *
+        D * sgK m θ ax o * D) := by
+    simpa [D] using
+      sg_trace_p6_top_stratum_boundary m hm θ ax o hanti
+  have hsandwich :
+      D * sgK m θ ax o * D =
+        Matrix.diagonal (fun z => (D * sgK m θ ax o * D) z z) := by
+    simpa [D] using
+      sgK_corner_sandwich_eq_diagonal m hm θ ax o
+  calc
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N) =
+        Matrix.trace (sgK m θ ax o * D * sgK m θ ax o *
+          D * sgK m θ ax o * D) := hboundary
+    _ = Matrix.trace (sgK m θ ax o *
+          (D * sgK m θ ax o * D) * sgK m θ ax o * D) := by
+          simp [Matrix.mul_assoc]
+    _ = Matrix.trace (sgK m θ ax o *
+          Matrix.diagonal (fun z => (D * sgK m θ ax o * D) z z) *
+          sgK m θ ax o * D) := by rw [hsandwich]
+    _ = Matrix.trace (sgK m θ ax o *
+          Matrix.diagonal (fun z =>
+            (Matrix.diagonal (fun y => if (sgGlue m).g y then
+              sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+              sgK m θ ax o *
+            Matrix.diagonal (fun y => if (sgGlue m).g y then
+              sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) z z) *
+          sgK m θ ax o *
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+          simp [D]
+
+
+
 
 /-- Reassociate the alternating six-factor trace as a cubic trace. -/
 theorem trace_K_D_alternating_six_eq_cube
