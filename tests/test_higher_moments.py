@@ -195,6 +195,33 @@ def test_exact_gaussian_integer_trace_defects_at_theta_pi(power, expected):
     assert actual == expected
 
 
+@pytest.mark.parametrize("power,cycling,common_axis", [
+    (6, 2080992, 2120640),
+    (8, 89944892, 93788476),
+    (10, 4082500316, 4362907356),
+])
+def test_exact_level_three_traces_disprove_unrestricted_axis_pattern_equality(
+    power, cycling, common_axis
+):
+    """Pin both exact traces at theta=pi, not just their difference.
+
+    The level-three graph has 42 vertices.  These Gaussian-integer traces
+    show that cycling x/y/z axes and using a common z axis do not give equal
+    traces individually for p=6,8,10.  This rules out the overly broad
+    identity that the two arbitrary axis patterns have the same full trace;
+    it does not rule out the stabilized level-residual identities.
+    """
+    actual_cycling = _exact_sparse_trace_power_pi(3, power, False)
+    actual_common_axis = _exact_sparse_trace_power_pi(3, power, True)
+    assert actual_cycling == cycling
+    assert actual_common_axis == common_axis
+    assert actual_cycling - actual_common_axis == {
+        6: -39648,
+        8: -3843584,
+        10: -280407040,
+    }[power]
+
+
 @pytest.mark.parametrize("power,expected_residual", [
     (6, 5280),
     (8, 277504),
