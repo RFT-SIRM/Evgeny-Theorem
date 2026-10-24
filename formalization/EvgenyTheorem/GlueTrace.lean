@@ -420,4 +420,27 @@ theorem trace_K_D_alternating_six_eq_cube
   rw [pow_succ, pow_two]
   simp only [Matrix.mul_assoc]
 
+
+/-- The p=6 top stratum can be viewed as a cubic trace after the
+already-proved boundary reduction. All geometric hypotheses are inherited
+from the boundary theorem; this does not claim axis invariance. -/
+theorem sg_trace_p6_top_stratum_cube
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace ((sgK m θ ax o * Matrix.diagonal (fun y =>
+      if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) ) ^ 3) := by
+  rw [sg_trace_p6_top_stratum_boundary m hm θ ax o hanti]
+  exact trace_K_D_alternating_six_eq_cube
+    (sgK m θ ax o)
+    (Matrix.diagonal (fun y => if (sgGlue m).g y then
+      sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
+
 end EvgenyTheorem
