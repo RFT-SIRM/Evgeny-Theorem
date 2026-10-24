@@ -477,7 +477,7 @@ theorem sg_trace_p6_top_stratum_reduce_to_diagonal_sandwich
           sgK m θ ax o *
           Matrix.diagonal (fun y => if (sgGlue m).g y then
             sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
-          simp [D]
+          simp [D, Matrix.diagonal_apply]
 
 
 
