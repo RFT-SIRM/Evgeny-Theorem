@@ -136,6 +136,30 @@ def test_published_exact_certificate_trace_matches_independent_test_trace(
     )
 
 
+@pytest.mark.parametrize("power,expected_residual", [
+    (6, 5280),
+    (8, 277504),
+    (10, 4507520),
+])
+def test_published_certificate_level_six_transition_exactly(power, expected_residual):
+    """Extend the exact residual-stabilization check through level six."""
+    from computational.higher_moment_pi_certificate import certificate
+
+    data = certificate()[power]
+    deltas = [
+        _exact_sparse_trace_power_pi(level, power, False)
+        - _exact_sparse_trace_power_pi(level, power, True)
+        for level in range(1, 7)
+    ]
+    residuals = [
+        deltas[level - 1] - 3 * deltas[level - 2]
+        for level in range(2, 7)
+    ]
+    assert data["delta_levels_1_to_6"] == deltas
+    assert data["residual_levels_2_to_6"] == residuals
+    assert residuals[2:] == [expected_residual] * 3
+
+
 def _gaussian_add(a, b):
     return (a[0] + b[0], a[1] + b[1])
 
