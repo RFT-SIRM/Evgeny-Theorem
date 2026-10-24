@@ -27,4 +27,20 @@ theorem defect_closed_form (D Dt : ℕ → ℂ) (s2 : ℂ)
     · rw [hD n hn, a, b, Nat.add_sub_cancel, e]; ring
     · rw [hDt n hn, a, b, Nat.add_sub_cancel, e]; ring
 
+
+/-- Closed form for any stabilized third-order growth law: if the
+one-step residual `D (n+4) - 3 * D (n+3)` is constant, then the tail is
+an affine function of `3^n`. This is the arithmetic bridge needed once a
+moment-specific residual identity has been proved. -/
+theorem affine_three_recurrence (D : ℕ → ℂ) (C : ℂ)
+    (hrec : ∀ n, D (n + 4) = 3 * D (n + 3) + C) :
+    ∀ n, D (n + 3) = (3 : ℂ) ^ n * (D 3 + C / 2) - C / 2 := by
+  intro n
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      rw [pow_succ, ← ih, hrec n]
+      ring
+
 end EvgenyTheorem
