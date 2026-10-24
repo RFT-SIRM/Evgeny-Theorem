@@ -1704,3 +1704,31 @@ and the collapse of every off-diagonal term.
 No source theorem was added in this step; this entry records the checked
 algebraic route for the next Lean lemma. The axis-comparison identity and the
 moment recurrence remain open.
+
+## 4ay. The trace-collapse step needs support as well as diagonality
+
+The concrete sandwich lemmas in `GlueAlg.lean` and `GlueTrace.lean`
+now pass Lean CI (commit `d0689e0`). The next identity should be proved with
+the support condition kept explicit, rather than inferred from diagonality
+alone.
+
+Let (D=\operatorname{diag}(d)), where (d_x=0) off (g), and assume
+(K_{xy}=0) whenever (x,y\in g) and (x\ne y). Then the trace expansion
+is
+[
+\operatorname{Tr}(KDKDKD)
+=\sum_{x,y,z}K_{xy}d_yK_{yz}d_zK_{zx}d_x.
+]
+A nonzero term forces (x,y,z\in g) by the three diagonal weights. The
+off-diagonal hypothesis then forces (x=y=z), so the sum reduces to
+[
+\sum_{x\in g}(K_{xx}d_x)^3.
+]
+This direct finite-sum proof is the intended next theorem. It uses both
+support and boundary off-diagonal vanishing; the already proved statement
+that (DKD) is diagonal is a useful intermediate lemma but is not by itself
+the whole trace argument.
+
+The specialized choice (d_x=K_{\sigma(x),\sigma(x)}) gives the paired
+diagonal cube sum. Its invariance under changing the axis is still a separate
+claim and is not implied by this trace reduction.
