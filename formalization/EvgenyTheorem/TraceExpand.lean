@@ -324,13 +324,13 @@ theorem trace_kernel_diagonal_kernel_diagonal_collapse
   by_cases hgx : g x
   · simp only [if_pos hgx]
     rw [Finset.sum_eq_single x]
-    · simp
     · intro y hne
       by_cases hgy : g y
       · have hxy : K x y = 0 := hK x y hgx hgy hne
         have hyx : K y x = 0 := hK y x hgy hgx (Ne.symm hne)
         simp [hxy, hyx]
       · simp [ha y hgy]
+    · simp
     · intro hnot
       exact (hnot (Finset.mem_univ x)).elim
   · simp [hgx, hd x hgx]
