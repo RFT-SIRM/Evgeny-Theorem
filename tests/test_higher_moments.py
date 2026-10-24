@@ -98,15 +98,19 @@ def test_exact_sparse_pi_operator_matches_production_operator(level, commuting):
     drifting from graph ordering, face-edge assignment, Pauli-axis convention,
     or the Hermitian-conjugate block used by build_su2_bundle.
     """
+    from computational.higher_moment_pi_certificate import operator_at_pi
     from operators.operators import build_su2_bundle
+    from graph.sg_graph import sg_tree_graph_with_faces
 
-    exact, dimension = _exact_sparse_operator_pi(level, commuting)
+    exact_rows = operator_at_pi(level, commuting)
     production, vertices = build_su2_bundle(level, np.pi, commuting=commuting)
+    dimension = 2 * vertices
+    assert len(exact_rows) == dimension
     assert production.shape == (dimension, dimension)
-    assert dimension == 2 * vertices
+    assert dimension == 2 * len(sg_tree_graph_with_faces(level)[0])
     for i in range(dimension):
         for j in range(dimension):
-            expected = exact.get((i, j), (0, 0))
+            expected = exact_rows[i].get(j, (0, 0))
             actual = production[i, j]
             assert np.isclose(actual.real, expected[0], atol=1e-12), (
                 level, commuting, i, j, actual, expected
