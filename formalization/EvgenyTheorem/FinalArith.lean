@@ -40,7 +40,8 @@ theorem affine_three_recurrence (D : ℕ → ℂ) (C : ℂ)
   | zero =>
       simp
   | succ n ih =>
-      rw [pow_succ, ← ih, hrec n]
+      have hnidx : n + 1 + 3 = n + 4 := by omega
+      rw [hnidx, hrec n, ih, pow_succ]
       ring
 
 end EvgenyTheorem
