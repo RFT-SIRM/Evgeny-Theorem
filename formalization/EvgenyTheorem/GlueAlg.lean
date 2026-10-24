@@ -1317,6 +1317,28 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
         simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
 
 
+/-- If every column of K selected by d has no off-diagonal entries,
+then the alternating six-factor trace collapses to a sum of diagonal cubes. -/
+theorem trace_alternating_six_eq_sum_diag_cube
+    (K : Matrix W W ℂ) (d : W → ℂ)
+    (hKD : ∀ x y, x ≠ y → K x y * d y = 0) :
+    Matrix.trace (K * Matrix.diagonal d * K * Matrix.diagonal d *
+      K * Matrix.diagonal d) = ∑ x, (K x x * d x) ^ 3 := by
+  classical
+  let A : Matrix W W ℂ := K * Matrix.diagonal d
+  have hA : A = Matrix.diagonal (fun x => K x x * d x) := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simp [A, Matrix.mul_apply, Matrix.diagonal_apply]
+    · simp [A, Matrix.mul_apply, Matrix.diagonal_apply, hxy, hKD x y hxy]
+  have hprod :
+      K * Matrix.diagonal d * K * Matrix.diagonal d *
+        K * Matrix.diagonal d = A * A * A := by
+    simp [A, Matrix.mul_assoc]
+  rw [hprod, hA]
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
