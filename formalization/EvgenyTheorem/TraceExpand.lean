@@ -326,14 +326,15 @@ theorem trace_kernel_diagonal_kernel_diagonal_collapse
           K x x * (d x * K x x * d x) * K x x * d x := by
       rw [Finset.sum_eq_single x]
       · simp
-      · intro y hy hyx
+      · intro y hyx
         by_cases hgy : g y
-        · rw [hK x y hgx hgy hyx]
+        · have hxy : x ≠ y := fun h => hyx h.symm
+          rw [hK x y hgx hgy hxy]
           simp
         · rw [hd y hgy]
           simp
-      · intro hxnot
-        exact (hxnot (Finset.mem_univ x)).elim
+      · simp
     rw [hinner]
     ring
   · simp [hgx, hd x hgx]
+
