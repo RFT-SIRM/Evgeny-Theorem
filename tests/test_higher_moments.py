@@ -120,6 +120,22 @@ def test_exact_sparse_pi_operator_matches_production_operator(level, commuting):
             )
 
 
+@pytest.mark.parametrize("level", [1, 2, 3])
+@pytest.mark.parametrize("power", [6, 8, 10])
+@pytest.mark.parametrize("commuting", [False, True])
+def test_published_exact_certificate_trace_matches_independent_test_trace(
+    level, power, commuting
+):
+    """Compare two independently implemented exact sparse trace calculations."""
+    from computational.higher_moment_pi_certificate import raw_trace_at_pi
+
+    certificate_trace = raw_trace_at_pi(level, power, commuting)
+    independent_trace = _exact_sparse_trace_power_pi(level, power, commuting)
+    assert certificate_trace == independent_trace, (
+        level, power, commuting, certificate_trace, independent_trace
+    )
+
+
 def _gaussian_add(a, b):
     return (a[0] + b[0], a[1] + b[1])
 
