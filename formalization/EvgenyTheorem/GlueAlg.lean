@@ -1340,7 +1340,7 @@ theorem trace_alternating_six_eq_sum_diag_cube
   simp only [Matrix.trace, Matrix.diagonal_apply, Matrix.mul_apply]
   apply Finset.sum_congr rfl
   intro x hx
-  ring
+  ring_nf
 
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
