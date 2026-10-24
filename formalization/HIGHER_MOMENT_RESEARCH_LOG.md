@@ -1764,3 +1764,35 @@ generic finite-matrix lemma for `Tr(K * A * K * D)` when `A,D` are
 diagonal, with support and restricted off-diagonal hypotheses explicit.
 Only after that generic lemma passes CI should it be specialized to `sgK`.
 No axis-invariance or moment recurrence is claimed by this reduction.
+
+## 4ba. CI restored; sharpened next proof obligation (2026-10-24)
+
+Commit `dc319ed` removes the unverified generic diagonal-cube lemma. Both
+Lean formalization and Python tests pass on that commit. Do not reintroduce
+the removed proof without compiling it in the project environment.
+
+The existing concrete fact is stronger than a mere hope but narrower than
+the desired trace evaluation:
+`sgK_corner_sandwich_eq_diagonal` proves that (A=D K D) is diagonal,
+where (D=\operatorname{diag}(d)) and (d) is supported on the glued locus.
+It does **not** imply that (KD) is diagonal: entries (K_{xy}d_y) with
+(x\notin g, y\in g) are not covered by `sgK_glued_offdiag`.
+
+A safe route for the top trace is the cyclic regrouping
+[
+\operatorname{Tr}(KDKDKD)=\operatorname{Tr}(K(DKD)KD)
+=\operatorname{Tr}(KAKD).
+]
+Since (A=DKD) is diagonal, expand the trace into a two-index sum:
+[
+\sum_{x,y} K_{xy} A_{yy} K_{yx} d_x.
+]
+The supports of (A_{yy}) and (d_x) force (x,y\in g). Only then may
+`sgK_glued_offdiag` be applied to conclude that nonzero terms have (x=y).
+This yields (sum_{x\in g}K_{xx}^2 A_{xx}d_x), and using
+(A_{xx}=d_xK_{xx}d_x) gives (sum_{x\in g}(K_{xx}d_x)^3).
+
+The next formalization should isolate precisely this two-index trace lemma,
+not claim that (KD) is diagonal and not repeat the earlier failed
+three-diagonal-product proof. Require CI to pass before specializing it to
+`sgK`. Axis invariance remains an independent open obligation.
