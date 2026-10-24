@@ -302,35 +302,3 @@ theorem trace_kernel_diagonal_kernel_diagonal
   classical
   simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
     Finset.mul_sum, mul_assoc]
-
-
-/-- Supported two-index trace collapse. The support hypotheses are explicit:
-both diagonal weights vanish outside g, and K has no off-diagonal entries
-between points of g. -/
-theorem trace_kernel_diagonal_kernel_diagonal_collapse
-    {n : Type*} [Fintype n] [DecidableEq n]
-    (g : n → Prop) [DecidablePred g]
-    (K : Matrix n n ℂ) (a d : n → ℂ)
-    (ha : ∀ y, ¬ g y → a y = 0)
-    (hd : ∀ x, ¬ g x → d x = 0)
-    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
-    Matrix.trace (K * Matrix.diagonal a * K * Matrix.diagonal d) =
-      ∑ x, if g x then K x x * a x * K x x * d x else 0 := by
-  classical
-  rw [trace_kernel_diagonal_kernel_diagonal]
-  apply Finset.sum_congr rfl
-  intro x hx
-  by_cases hgx : g x
-  · simp only [hgx, ↓reduceIte]
-    rw [Finset.sum_eq_single x]
-    · simp
-    · intro y hy hyx
-      by_cases hgy : g y
-      · rw [hK x y hgx hgy hyx]
-        simp
-      · rw [ha y hgy]
-        simp
-    · simp
-  · simp only [hgx, if_false]
-    rw [hd x hgx]
-    simp
