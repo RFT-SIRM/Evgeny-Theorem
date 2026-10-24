@@ -331,6 +331,4 @@ theorem trace_kernel_diagonal_kernel_diagonal_collapse
         simp [hxy, hyx]
       · simp [ha y hgy]
     · simp
-    · intro hnot
-      exact (hnot (Finset.mem_univ x)).elim
   · simp [hgx, hd x hgx]
