@@ -993,3 +993,851 @@ cancellation with lower-r strata in the full p=8 or p=10 residual identity;
 that requires the complete weighted sum over all ordered representatives
 and their orbit multiplicities. No such cross-stratum cancellation is claimed.
 
+
+
+## Exact finite calculation checkpoint: theta = pi, H6/H8/H10
+
+The branch `moment-6-8-10` now includes a sparse matrix-power calculation over
+Gaussian integers ℤ[i]. At θ = π, the operator entries are exact integers
+or Gaussian integers, so these trace differences are not floating-point
+approximations. The Python tests compute Δ_m^{(p)} = Tr(H_C^p) - Tr(H_{C'}^p)
+independently for levels m = 1,...,5:
+
+| m | Δ(H⁶) | Δ(H⁸) | Δ(H¹⁰) |
+|---:|---:|---:|---:|
+| 1 | -6,744 | -547,552 | -32,992,520 |
+| 2 | -14,976 | -1,373,696 | -94,971,520 |
+| 3 | -39,648 | -3,843,584 | -280,407,040 |
+| 4 | -113,664 | -11,253,248 | -836,713,600 |
+| 5 | -335,712 | -33,482,240 | -2,505,633,280 |
+
+For R_m^{(p)} = Δ_m^{(p)} - 3Δ_{m-1}^{(p)}, the exact sequences for
+m = 2,...,5 are:
+
+- H⁶: 5,256; 5,280; 5,280; 5,280.
+- H⁸: 268,960; 277,504; 277,504; 277,504.
+- H¹⁰: 4,006,040; 4,507,520; 4,507,520; 4,507,520.
+
+Thus the exact finite computations establish stabilization of these residuals
+from m = 3 through m = 5 at θ = π for the concrete matrices in this
+repository. This is evidence for a recurrence, not a proof for all m or all
+angles. The all-level analytic cancellation of the remaining even boundary
+strata is still open, and the H⁶/H⁸/H¹⁰ closed forms are not
+claimed as proved.
+
+Verification at commit `5b260c1ab203ca39754cd2585f9195ccc9843a1d`:
+- Lean formalization build: passed.
+- Python test suite, including fast and slow tests, on Python 3.11 and 3.12: passed.
+
+
+## Finite-level extension: checking the next transition
+
+The regression suite has also been extended beyond levels 1--5. For each
+$p \in \{6,8,10\}$ it checks, on a fixed five-angle set, the numerical
+identity
+\[
+R_5^{(p)}(\theta)=R_6^{(p)}(\theta),\qquad
+R_m^{(p)}(\theta)=\Delta_m^{(p)}(\theta)-3\Delta_{m-1}^{(p)}(\theta).
+\]
+Separate grid tests check $R_3=R_4=R_5$ over 11 angles, and $R_3=R_4$ over
+a 17-angle grid. These are finite numerical stress tests with explicit
+floating-point tolerances; they are not proofs for a continuum of angles or
+all levels.
+
+CI verification at commit `65cc18d9b36f4ed1f14f4145c1c3ba9525b1e266`:
+- Lean formalization: passed.
+- Python test workflow: passed.
+
+The proof obligation is unchanged: derive the weighted cancellation among the
+remaining even-pairing boundary strata for arbitrary level and angle. The
+current finite tests provide further evidence, but do not discharge that
+obligation.
+
+
+## Candidate closed forms at the special angle θ = π
+
+The exact residual data suggest the following compact formulas, restricted to
+the special angle θ = π and levels m ≥ 3:
+
+- H⁶: Δ_m(π) = −37008 · 3^(m−3) − 2640.
+- H⁸: Δ_m(π) = −3704832 · 3^(m−3) − 138752.
+- H¹⁰: Δ_m(π) = −278153280 · 3^(m−3) − 2253760.
+
+These are obtained by solving the first-order recurrence
+Δ_m − 3Δ_(m−1) = R, using the exact residuals R = 5280, 277504,
+4507520 observed from m = 4 onward. The added exact-integer regression
+checks verify these formulas only at m = 3, 4, 5, 6. They are therefore
+finite-data-supported candidates, not a proof of the recurrence for all
+m. In particular, they do not provide the missing all-angle formulas for
+H⁶, H⁸, or H¹⁰.
+
+
+## Exact-arithmetic regression refresh (2026-10-22)
+
+The sparse finite-level certificate now uses Python-integer Gaussian arithmetic
+through every matrix product, rather than complex floating-point sparse
+multiplication followed by an integer-valuedness check. The regression test
+checks the full delta sequence for levels 1--6 and the five residuals for
+levels 2--6, for each of p = 6, 8, 10.
+
+| m | Δ(H⁶) | Δ(H⁸) | Δ(H¹⁰) |
+|---:|---:|---:|---:|
+| 1 | -6,744 | -547,552 | -32,992,520 |
+| 2 | -14,976 | -1,373,696 | -94,971,520 |
+| 3 | -39,648 | -3,843,584 | -280,407,040 |
+| 4 | -113,664 | -11,253,248 | -836,713,600 |
+| 5 | -335,712 | -33,482,240 | -2,505,633,280 |
+| 6 | -1,001,856 | -100,169,216 | -7,512,392,320 |
+
+The residual sequences for m = 2,...,6 are:
+
+- H⁶: 5,256; 5,280; 5,280; 5,280; 5,280.
+- H⁸: 268,960; 277,504; 277,504; 277,504; 277,504.
+- H¹⁰: 4,006,040; 4,507,520; 4,507,520; 4,507,520; 4,507,520.
+
+CI at commit `95e65dd4539e291be672c28b3152816da2e2fd9f`:
+- Python tests on Python 3.11 and 3.12: passed.
+- Lean formalization build: passed.
+
+This closes the exact finite-data checkpoint through level 6. It does not
+close the proof obligation identified in Sections 4t--4x: even-stratum
+boundary expressions can be nonzero individually, and their weighted
+cancellation in the full moment difference remains unproved. In particular,
+the formulas at θ = π remain finite-data-supported conjectures, not all-level
+theorems.
+
+## 4y. Concrete consequence: the top strata force cross-stratum accounting
+
+The all-pairing diagnostics in Sections 4w and 4x imply a useful constraint on
+any proposed proof strategy. Under the stated support-diagonality and corner
+degree assumptions, the top strata contribute respectively 768, 3,072, and
+12,288 for p = 6, 8, and 10. Therefore a proof cannot close by declaring every
+even stratum zero separately. If the target trace identity is correct, its
+boundary bookkeeping must either (i) exhibit an exact cancellation of each
+top-stratum term against lower even strata with the correct ordered-word
+multiplicities, or (ii) show that the hypotheses used in the diagnostic do not
+hold for the particular comparison being evaluated. The latter must be
+demonstrated explicitly; it cannot be silently assumed.
+
+For the next formal step, retain the boundary terms as named quantities rather
+than simplify them to zero. For each p, define B_{p,r} to be the sum of the
+boundary expression for the r-pairing stratum over canonical cyclic
+representatives, weighted by their rotation-orbit sizes. The required
+closure obligation is then a finite, explicit identity among the B_{p,r}
+(and the all-K term) for p = 6, 8, and 10. The Python inventory already
+supplies the representatives and orbit weights; the missing mathematical
+content is the operator-level evaluation of these weighted boundary sums.
+This notation is a proof plan only: no B_{p,r} cancellation theorem is claimed
+by this section, and no new Lean theorem or CI result is implied.
+
+
+## Exact level-seven extension (2026-10-22)
+
+The exact sparse Gaussian-integer regression has now been extended to level
+7 for all three even powers. The tests assert the candidate special-angle
+formula and its residual directly against `delta_at_pi` and
+`residual_at_pi`, which recompute the traces from the sparse operator rather
+than substituting the candidate formula into itself.
+
+| p | exact Δ₇(π) checked | exact R₇(π) checked |
+|---:|---:|---:|
+| 6 | -3,000,288 | 5,280 |
+| 8 | -300,230,144 | 277,504 |
+| 10 | -22,532,669,440 | 4,507,520 |
+
+Both Python CI matrix jobs (3.11 and 3.12), including the slow-test stage, and
+the Lean formalization build passed for the code commit
+`e47287354d62d44c9857afc71f06a3ae583ec98e`.
+
+This adds one more exact finite-level checkpoint for the `θ = π` candidates.
+It still does not establish their validity for all levels, nor the desired
+all-angle identity. The unresolved proof obligation remains the weighted
+cancellation of the nonzero even-pairing boundary strata; the new tests do
+not discharge it.
+
+
+## 4z. Exact bookkeeping target for the even strata
+
+The cancellation claim should be stated as axis-independence of the *total*
+boundary correction, not as vanishing of each stratum. This distinction is
+necessary because the top-stratum diagnostics in Sections 4w--4x are nonzero.
+
+Fix an even power p in {6, 8, 10}. Write an ordered word as a binary word
+u of length p, where 1 marks a selected K*N factor and 0 marks a K factor.
+Let r(u) be the number of 1s. For each cyclic class [u], let o(u) be its
+rotation-orbit size (the number of distinct rotations, not p divided by an
+assumed generic stabilizer). Let E_{p,r,[u]}(ax) denote the boundary expression
+obtained by applying the already formalized N-boundary reduction to that
+ordered word for axis function ax; for a word in a class this expression is
+read after the corresponding cyclic rotation of the trace. Define the weighted
+stratum quantity
+
+  B_{p,r}(ax) = sum_{[u] : r(u)=r} o(u) * E_{p,r,[u]}(ax).
+
+This definition is a bookkeeping specification; E is intentionally left as
+the output of the relevant boundary theorem, rather than silently replacing
+it by zero. The orbit weight ensures that the sum is over the original
+ordered expansion with multiplicity. The combinatorial sanity check is
+  sum_{[u] : r(u)=r} o(u) = binomial(p,r),
+which must hold for every p and r. In particular the complete word counts
+are 64, 256, and 1024 for p=6, 8, and 10 respectively.
+
+The already established odd-stratum vanishing lemmas remove odd r under their
+stated OAnti and exponent hypotheses. The r=0 term is the unglued K^p trace.
+Consequently the remaining correction has the schematic form
+
+  F_p(ax) = B_{p,2}(ax) + B_{p,4}(ax) + ... + B_{p,p}(ax),
+
+with the precise E expressions determined class-by-class by the existing
+four-, six-, eight-, and ten-N boundary formulas. The required recurrence
+closure is the identity
+
+  F_p(ax) = F_p(ax')
+
+for admissible axis functions ax, ax' (equivalently, the difference of these
+weighted sums is zero). It is *not* justified to assert B_{p,r}=0 separately.
+For p=6 the target is B_{6,2}+B_{6,4}+B_{6,6} axis-independent; for p=8
+it is B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}; for p=10 it is
+B_{10,2}+B_{10,4}+B_{10,6}+B_{10,8}+B_{10,10}.
+
+The present Lean development proves reductions of individual ordered words to
+boundary expressions and proves the degree-four axis-independence argument,
+but does not yet define these B quantities or prove the displayed higher-power
+axis-independence identities. The next formal implementation should introduce
+the ordered-word/cyclic-class indexing and the orbit-size multiplicity lemma
+before attempting any operator-level cancellation. Until those lemmas compile,
+this section is a precise proof obligation, not a Lean theorem or a claimed
+proof of the moment recurrence.
+
+## 4aa. The two-pairing layer is the base case for boundary-sum comparison
+
+The next useful reduction is to separate the lowest even layer from the genuinely nested ones. For a word with exactly two occurrences of K*N, let the two cyclic K-gaps be g1,g2 >= 0, with g1+g2=p-2. The corresponding powers between successive N factors are g1+1 and g2+1, because each selected K*N contributes its own leading K.
+
+Write the cyclic word as K^(g1+1) * N * K^(g2+1) * N, with g1+g2=p-2. This has total K-degree p and is the specialization (a,b,c)=(g1+1,g2+1,0) of trace_two_N_powers. Its boundary expression is exactly the sum over glued x of (K^(g1+1))(x,x) times (K^(g2+1))(sigma(x),sigma(x)), assuming the required corner-vanishing hypothesis for the middle power K^(g2+1). The order of the two gaps can be exchanged by choosing the other cyclic representative; no commutation of N through K is used.
+
+For p=6,8,10, the r=2 class counts are respectively 3, 4, and 5, while the ordered-word multiplicities are binomial(p,2)=15,28,45. Their cyclic gap representatives are already recorded in trace_word_inventory_p6_p8_p10.json; each representative's orbit size is its weight. This layer is therefore the simplest place to define a concrete B_{p,2} in Lean and verify that the gap encoding agrees with the generic two-N theorem.
+
+This does not by itself yield the required cancellation: B_{p,2} must be compared with the r=4 and higher even boundary sums. The higher layers contain products of several diagonal boundary factors separated by K powers, so their comparison requires additional structure (for example, a common endpoint-sum identity), not just the orbit-count lemma. No such identity is asserted here.
+## 4ab. Closed weighted formula for the two-N stratum
+
+The r=2 orbit bookkeeping can be collapsed into a single gap sum. Define, for 1 <= a <= p-1,
+
+  E_a := sum_{x : G.g(x)} (K^a)(x,x) * (K^(p-a))(sigma(x),sigma(x)).
+
+By `trace_two_N_powers`, the cyclic word with gaps (a-1,p-a-1) has boundary contribution E_a, whenever the corner-vanishing premise for K^(p-a) is available. The cyclic gap classes are unordered pairs {a,p-a}: for a != p-a the class orbit has size p, while for a=p-a its orbit has size p/2. Therefore the orbit-weighted sum over the r=2 classes is exactly
+
+  B_{p,2} = (p/2) * sum_{a=1}^{p-1} E_a.
+
+The factor p/2 is valid because each unequal pair {a,p-a} appears twice in the ordered sum and each equal pair appears once. This is a combinatorial identity, not a cancellation claim. The orbit totals it reproduces are 15, 28, and 45 for p=6, 8, and 10.
+
+Equivalently, the lowest even stratum is now reduced to a single weighted sum of products of diagonal entries of complementary powers of K. The unresolved step is to express the r=4, r=6, ... boundary strata in a compatible form and prove that their sum cancels the axis-dependent part of this expression. The current Lean theorem supplies each E_a once its hypotheses are met; it does not yet prove the global cross-stratum identity.
+## 4ac. Explicit r=4 boundary kernel and finite indexing target
+
+The next stratum is r=4. For a cyclic gap tuple (g1,g2,g3,g4), with each gi >= 0 and sum gi=p-4, the corresponding word is cyclically represented by
+
+  K^(g1+1) * N * K^(g2+1) * N * K^(g3+1) * N * K^(g4+1) * N.
+
+Applying `trace_four_N_powers_explicit` after cyclic rotation gives the boundary kernel
+
+  sum_{x:g(x)} [ sum_{y:g(y)} ((K^(g1+1))(x,y) * (K^(g2+1))(sigma(y),sigma(y))) * (K^(g3+1))(y,x) ] * (K^(g4+1))(sigma(x),sigma(x)),
+
+with the exponents aligned to the theorem arguments (a,b,c,d,e)=(g1+1,g2+1,g3+1,g4+1,0) after rotating the word so that the final outside exponent is zero. In particular, the first matrix factor in the inner sum is K^(g1+1), since e=0; there is no extra K^(g4+1) factor on its left. If a different cyclic representative is used, the same theorem must be instantiated with that representative's ordered gaps; the factors must not be commuted.
+
+For fixed p, the r=4 cyclic classes are necklaces of four nonnegative gaps summing to p-4, modulo cyclic rotation. Their orbit size is the number of distinct rotations of the gap tuple, and it supplies the exact multiplicity in B_{p,4}. The inventory already gives 3, 5, and 14 classes for p=6, 8, and 10 respectively (their weighted totals must be binomial(p,4)=15,70,210).
+
+This gives a concrete finite target for implementation: generate each canonical four-gap tuple, retain its rotation-orbit size, instantiate the four-N boundary formula with the corresponding ordered exponents, and sum. The remaining proof is then an equality of these explicit double endpoint sums with the r=2 and higher even-stratum kernels. The formula itself does not imply that this equality holds.
+### Ordered-gap summation formula for B_{p,4}
+
+Let E(g1,g2,g3,g4) be the four-N boundary kernel above. The sum over cyclic classes weighted by the original binary-word orbit size can be rewritten as
+
+  B_{p,4} = (p/4) * sum_{g1+g2+g3+g4=p-4, gi>=0} E(g1,g2,g3,g4),
+
+where the sum is over all ordered four-tuples of nonnegative gaps. Reason: an r-marked binary word has a cyclic orbit p/r times the size of the corresponding gap-tuple rotation orbit. Thus for r=4, the word-orbit weight is p/4 times the gap-orbit weight. Since E is invariant under cyclic rotation of the word by trace cyclicity, summing once over all ordered gap tuples is equivalent to summing each gap necklace with its gap-orbit size.
+
+This gives a direct computational indexing set without needing a separate canonical-necklace representative in the formula. The number of ordered tuples is binomial(p-1,3), namely 10, 35, and 84 for p=6, 8, and 10; the prefactor p/4 restores the original word multiplicities, giving total weights binomial(p,4)=15, 70, and 210. This is the r=4 analogue of B_{p,2}=(p/2) sum_{a=1}^{p-1} E_a.
+
+Important: this identity only reorganizes multiplicities. It does not assert that E is equal across tuples, nor that B_{p,4} cancels B_{p,2}.
+## 4ad. General weighted gap formula for every stratum
+
+The r=2 and r=4 prefactors are instances of one exact orbit identity. Fix 1 <= r <= p and let E(g1,...,gr) be the trace contribution assigned to the cyclic word with gap tuple g, where gi >= 0 and sum gi=p-r. Assume E is invariant under cyclic rotation of g, as it is when it is obtained from a trace and the corresponding word is cyclically rotated. Then
+
+  B_{p,r} = (p/r) * sum_{g1+...+gr=p-r, gi>=0} E(g1,...,gr).
+
+Proof of the multiplicity factor: a gap tuple has r positions, while its binary word has p positions. If the tuple has rotational stabilizer of size s, its gap orbit has size r/s and the corresponding binary-word orbit has size p/s. Their ratio is p/r. Thus weighting cyclic word classes by their word-orbit sizes is exactly p/r times summing the rotation-invariant E over all ordered gap tuples. This argument also handles periodic tuples; no assumption of a full orbit is needed.
+
+The finite inventory/test suite now checks the counts and weights for every even stratum relevant to p=6,8,10. This resolves the indexing and multiplicity issue uniformly. It does not resolve the operator identity: each E still depends on the ordered gap tuple through products of K powers and diagonal boundary factors. The remaining theorem is the axis-independence of the sum over all even r after substituting the appropriate boundary kernel for each r.
+
+### Implementation correction: compute the orbit ratio after multiplying
+
+The exact class weight is (p * gap_orbit_size) / r, not (p // r) * gap_orbit_size. The latter incorrectly truncates p/r when r does not divide p (for example p=6,r=4). Since a gap orbit size is r divided by its rotational stabilizer, the product p * gap_orbit_size is divisible by r, so integer division after multiplication is exact. The inventory implementation now uses (p * len(members)) // r, and a new regression test compares the multiset of gap-derived word weights with the actual binary-necklace orbit weights class by class for every p in {6,8,10} and every 1 <= r <= p. Workflow status for this test commit has not yet appeared, so it should be treated as added but not CI-verified.
+
+## 4ae. Six-N boundary kernel from the existing Lean theorem
+
+The existing `trace_six_N_powers_boundary` gives a concrete kernel for r=6, rather than an unspecified E. Let a six-gap tuple g=(g1,...,g6) satisfy gi >= 0 and sum gi=p-6. Choose the cyclic word
+
+  K^(g1+1) N K^(g2+1) N K^(g3+1) N K^(g4+1) N K^(g5+1) N K^(g6+1) N.
+
+Instantiate `trace_six_N_powers_boundary` with (a,b,c,d,e,f,g)=(g1+1,g2+1,g3+1,g4+1,g5+1,g6+1,0). The theorem reduces the trace to
+
+  trace( K^(g1+1) * D_(g2+1) * K^(g3+1) * D_(g4+1) * K^(g5+1) * D_(g6+1) ),
+
+where D_q is the diagonal matrix with entries (K^q)(sigma(y),sigma(y)) on glued indices and zero elsewhere. This instantiation requires the three explicit corner-vanishing hypotheses for the powers K^(g2+1), K^(g4+1), and K^(g6+1). Those hypotheses must be discharged from the available `GlueDiag`/OAnti lemmas for each concrete tuple; they must not be dropped from the statement.
+
+Thus the six-N layer is a trace of three K-power blocks alternating with three diagonal boundary blocks. Its weighted sum is (p/6) times the sum of this kernel over all ordered six-gap tuples summing to p-6, provided cyclic invariance is established for the chosen kernel. This makes B_(6,6) at p=6 the single tuple (0,0,0,0,0,0), with kernel trace(K D_1 K D_1 K D_1); for p=8 and p=10 the same formula ranges over 7 and 84 ordered tuples respectively.
+
+This is an explicit operator-level target, but not yet the cancellation identity: the alternating diagonal kernels for r=6 must still be compared with the r=2, r=4, and, for p>=8, r=8 and higher layers.
+## 4af. Hypothesis audit: `GlueDiag` does not discharge the six-N corner premises
+
+A crucial distinction surfaced when matching the generic six-N theorem to the gasket-specific lemmas. `trace_six_N_powers_boundary` requires, for each selected exponent q=b,d,f, the condition
+
+  ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → (K^q) w w' = 0.
+
+By contrast, `sgK_pow_GlueDiag_of_OAnti` proves `GlueDiag (sgGlue m) (sgK^q)`, whose definition has the additional premise `cp (σ w) = cp (σ w')`. This is strictly weaker: it does not cover pairs of distinct glued corners whose partners lie in different copies. Therefore it is not valid to claim that the three hkg premises in the six-N theorem follow directly from `sgK_pow_GlueDiag_of_OAnti`.
+
+The exact next Lean obligation is a stronger corner-off-diagonal lemma: under `OAnti (m+1) o`, prove `(sgK m θ ax o ^ q) w w' = 0` for distinct glued w,w' in the same copy, with no equality assumption on the copy labels of their partners. The case q=1 is `sgK_hkg`; the needed q>1 result is not supplied by the current GlueDiag theorem. Any proof must use the geometry of distinct gasket corners and the structure of powers, or derive an alternative boundary theorem whose hypotheses genuinely match `GlueDiag`.
+
+This audit corrects the proof plan: the six-N kernel written in §4ae is a valid specialization of the generic theorem only once these stronger premises are established. Until then, it is a conditional reduction, not an instantiated gasket theorem.
+### Refined next obligation: use a distance bound, not an all-powers corner lemma
+
+The stronger lemma proposed above must not be stated for arbitrary q without a distance hypothesis: powers of a graph adjacency operator can connect distinct corners once q reaches their graph distance. The plausible geometric route is instead to prove that distinct corners in one gasket copy have graph distance at least 2^m, then derive the needed zero entry for q < 2^m by induction on matrix powers (or by a path-expansion lemma).
+
+For fixed moment degree p in the intended large-level regime 2^m > p, every selected exponent q <= p is below this distance threshold, so the six-N corner hypotheses may follow. This is only a proof strategy until the corner-distance theorem and the power-entry lemma are formalized. It also leaves small levels with 2^m <= p to be handled separately; do not silently claim the boundary formula for those levels.
+## 4ag. Exact level thresholds for applying the six-N boundary theorem
+
+For an r=6 gap tuple in degree p, each selected middle exponent is gi+1 and the gap sum is p-6. Consequently gi+1 <= p-5, not merely <= p. Thus the new `trace_six_N_powers_boundary_of_OAnti` applies uniformly to every r=6 word of total degree p as soon as p-5 < 2^m.
+
+For the target degrees this gives:
+
+- p=6: all middle exponents equal 1; the bound requires 1 < 2^m, hence m >= 1.
+- p=8: every middle exponent is at most 3; it suffices that m >= 2.
+- p=10: every middle exponent is at most 5; it suffices that m >= 3.
+
+These are sufficient level thresholds for the six-N boundary reduction only. They do not show that the six-N contribution vanishes, nor that it cancels the other even strata. For levels below these thresholds, the generic boundary theorem remains conditional on the individual corner premises.
+## 4ah. Eight-N wrapper: exact degree thresholds
+
+`trace_eight_N_powers_boundary_of_OAnti` has four middle exponents b,d,f,h. For a gap tuple with r=8 and total degree p, the eight nonnegative gaps sum to p-8, so each middle exponent is at most p-7. Hence all eight-N words satisfy the wrapper's distance bounds when p-7 < 2^m.
+
+- p=8: each middle exponent is 1; it suffices that m >= 1.
+- p=10: each middle exponent is at most 3; it suffices that m >= 2.
+
+Together with the r=6 wrapper, this supplies conditional boundary reductions for the r=6 layer in degrees 6,8,10 and the r=8 layer in degrees 8,10, at the stated levels. It still does not supply an r=10 wrapper, and none of these reductions prove cancellation between the even strata.
+## 4ai. Ten-N wrapper and uniform degree thresholds
+
+The new `trace_ten_N_powers_boundary_of_OAnti` discharges the five corner premises for the r=10 boundary theorem when b,d,f,h,j < 2^m. In a degree-p word with ten N factors, the ten gaps sum to p-10, so each middle exponent is at most p-9.
+
+For the target p=10, all gaps are zero and all five middle exponents are 1; the sufficient bound is 1 < 2^m, i.e. m >= 1. The wrapper therefore covers the unique r=10 word at degree ten at every positive level, conditional on its underlying geometric distance lemma and successful Lean compilation.
+
+At this point wrappers have been authored for r=6,8,10. This is a source-level milestone only: current visible Actions results do not include these latest wrapper commits, so compilation remains unverified. More importantly, even successful compilation would only establish the boundary reductions. The main remaining theorem is still the exact cancellation/axis-independence identity across all even strata.
+
+## 4aj. CI verification after namespace repair; remaining theorem stated precisely
+
+Commit `832674619617357e2a7d0c3e8822920388fd141d` repairs the namespace around the concrete (r=6,8,10) boundary wrappers in `GlueCorner.lean`. Both GitHub Actions workflows completed successfully on that exact commit:
+
+- Lean formalization, push: run `39831944688` — success.
+- Python tests, push: run `39831944779` — success.
+- The corresponding pull-request runs `39831954958` (Lean) and `39831955466` (Python) also succeeded.
+
+Thus the current wrappers compile and the Python regression suite passes. This is a verified source/CI milestone, not a proof of the higher-moment recurrence.
+
+### Exact remaining mathematical obligation
+
+For each (p\in\{6,8,10\}), the word expansion of ((K+KN)^p) has already been partitioned by the number (r) of (KN) factors, with exact cyclic-orbit multiplicities. Odd strata are handled by the existing conditional vanishing lemmas; the even strata (r=2,4,6) (and (r=8) for (p=8,10), (r=10) for (p=10)) reduce to boundary kernels under the stated corner hypotheses.
+
+What is still missing is an identity between the **weighted sums of those even-stratum boundary kernels** that yields the desired axis-independence / defect recursion. The (r=6,8,10) wrappers only expose the kernels; they do not make them zero and do not compare them with lower even strata. No all-level theorem
+[
+\Delta_m^{(p)}(\theta)=3\Delta_{m-1}^{(p)}(\theta)+C_p(\theta)
+]
+for (p=6,8,10) has been proved by the work recorded here.
+
+Finite exact data at (\theta=\pi) supports a stable residual from level (m\ge3) in the tested range, but that is evidence for a conjecture, not a proof for general (\theta\) or all levels. Do not promote the finite regression to a theorem. The next proof step must derive the cross-stratum kernel identity (or find a counterexample); adding more individual boundary wrappers is not a substitute.
+
+## 4ak. Reversal pairing census for even strata
+
+The combinatorial reversal quotient was refined into a fixed-vs-paired census. For each cyclic gap class, reverse the gap tuple, canonicalize by cyclic rotation, and pair the two cyclic classes if they differ. This is still a combinatorial partition only: no equality of the associated matrix traces is assumed.
+
+Exact results (fixed classes, paired orbits, fixed word weight, paired word weight):
+
+| p | r | fixed | paired | fixed weight | paired weight | total |
+|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 2 | 3 | 0 | 15 | 0 | 15 |
+| 6 | 4 | 3 | 0 | 15 | 0 | 15 |
+| 6 | 6 | 1 | 0 | 1 | 0 | 1 |
+| 8 | 2 | 4 | 0 | 28 | 0 | 28 |
+| 8 | 4 | 6 | 2 | 38 | 32 | 70 |
+| 8 | 6 | 4 | 0 | 28 | 0 | 28 |
+| 8 | 8 | 1 | 0 | 1 | 0 | 1 |
+| 10 | 2 | 5 | 0 | 45 | 0 | 45 |
+| 10 | 4 | 10 | 6 | 90 | 120 | 210 |
+| 10 | 6 | 10 | 6 | 90 | 120 | 210 |
+| 10 | 8 | 5 | 0 | 45 | 0 | 45 |
+| 10 | 10 | 1 | 0 | 1 | 0 | 1 |
+
+The total weight in each row agrees with \(\binom{p}{r}\). Nontrivial reversal pairs occur only at (p,r)=(8,4),(10,4),(10,6) in this census. If an independently proved trace-reversal identity is available for the model, these pairs could reduce the number of distinct algebraic cases; without it they must remain separate. In particular, this census does not itself prove the cross-stratum cancellation needed for the all-level recurrence.
+
+## 4al. Full binary-word reversal quotient
+
+The reversal grouping was extended from individual even-r gap inventories to all binary factor words of lengths p=6,8,10. This groups cyclic necklace classes under word reversal, preserving the exact size of each rotation orbit. The result is a smaller combinatorial census, but it does not assert equality of the corresponding operator traces.
+
+| p | all words | cyclic classes | classes after reversal pairing |
+|---:|---:|---:|---:|
+| 6 | 64 | 14 | 13 |
+| 8 | 256 | 36 | 30 |
+| 10 | 1024 | 108 | 78 |
+
+The weight sum remains exactly (2^p) for each p, and every reversal group contains either one or two cyclic classes. This provides a whole-expansion inventory to complement the even-stratum gap census.
+
+Mathematical caveat: trace cyclicity identifies rotations. It does not, by itself, identify a word with its reversal. To use this quotient to reduce the operator calculation, one must prove a reversal identity for the actual factors K and K*N (for example, via a suitable transpose/dagger relation and the hypotheses on N). Until that is established, the 13/30/78 values are counts of candidate symmetry classes, not counts of distinct trace values. The cross-stratum cancellation identity and the all-level defect recurrence remain open.
+
+## 4am. Reversal classes resolved by KN-count strata
+
+The full-word reversal census has now been stratified by the number r of (KN) factors. This is more useful than the global 13/30/78 totals because the trace expansion and the boundary formulas are organized by r. The exact values below are computed from binary words and cyclic orbit weights; each stratum total is checked against (inom{p}{r}).
+
+| p | r | cyclic classes | reversal classes | paired reversal orbits | fixed weight | paired weight |
+|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 2 | 3 | 3 | 0 | 15 | 0 |
+| 6 | 3 | 4 | 3 | 1 | 8 | 12 |
+| 6 | 4 | 3 | 3 | 0 | 15 | 0 |
+| 8 | 2 | 4 | 4 | 0 | 28 | 0 |
+| 8 | 3 | 7 | 5 | 2 | 24 | 32 |
+| 8 | 4 | 10 | 8 | 2 | 38 | 32 |
+| 8 | 5 | 7 | 5 | 2 | 24 | 32 |
+| 8 | 6 | 4 | 4 | 0 | 28 | 0 |
+| 10 | 2 | 5 | 5 | 0 | 45 | 0 |
+| 10 | 3 | 12 | 8 | 4 | 40 | 80 |
+| 10 | 4 | 22 | 16 | 6 | 90 | 120 |
+| 10 | 5 | 26 | 16 | 10 | 52 | 200 |
+| 10 | 6 | 22 | 16 | 6 | 90 | 120 |
+| 10 | 7 | 12 | 8 | 4 | 40 | 80 |
+| 10 | 8 | 5 | 5 | 0 | 45 | 0 |
+
+The census is symmetric under (r\leftrightarrow p-r), as expected for complementing the binary factor labels. For even r-strata, this identifies exactly which strata contain nontrivial reversal pairs. The combinatorics is now pinned by tests; it still does not establish equality of traces within reversal pairs. Since transpose reverses products but also transposes each factor, a proof must explicitly relate (K^T) and ((KN)^T) to the factors in the original word. No such identity is inferred from cyclicity alone.
+
+## 4an. Expanded operator words after substituting each KN as K·N
+
+The previous inventory treats each chosen factor as either (K) or the compound factor (KN). For the boundary analysis, expand each compound factor explicitly as two letters (K,N). A factor word with p slots and r occurrences of (KN) becomes a matrix word of length p+r containing exactly p copies of K and r copies of N.
+
+Grouping these expanded words under cyclic rotation and reversal gives the following exact census for 1 ≤ r ≤ p−1:
+
+| p | r | expanded length p+r | reversal classes | factor-word weight |
+|---:|---:|---:|---:|---:|
+| 6 | 1 | 7 | 1 | 6 |
+| 6 | 2 | 8 | 3 | 15 |
+| 6 | 3 | 9 | 3 | 20 |
+| 6 | 4 | 10 | 3 | 15 |
+| 6 | 5 | 11 | 1 | 6 |
+| 8 | 1 | 9 | 1 | 8 |
+| 8 | 2 | 10 | 4 | 28 |
+| 8 | 3 | 11 | 5 | 56 |
+| 8 | 4 | 12 | 8 | 70 |
+| 8 | 5 | 13 | 5 | 56 |
+| 8 | 6 | 14 | 4 | 28 |
+| 8 | 7 | 15 | 1 | 8 |
+| 10 | 1 | 11 | 1 | 10 |
+| 10 | 2 | 12 | 5 | 45 |
+| 10 | 3 | 13 | 8 | 120 |
+| 10 | 4 | 14 | 16 | 210 |
+| 10 | 5 | 15 | 16 | 252 |
+| 10 | 6 | 16 | 16 | 210 |
+| 10 | 7 | 17 | 8 | 120 |
+| 10 | 8 | 18 | 5 | 45 |
+| 10 | 9 | 19 | 1 | 10 |
+
+Every stratum preserves the original factor-word weight (inom{p}{r}); all strata together sum to (2^p). This is a more operator-faithful inventory because it exposes the interleaving of K and N instead of treating KN as an indivisible symbol.
+
+Important caveat: the reversal quotient remains a symbolic candidate quotient. In the concrete model, the established Hermiticity statement is for the **conjugate transpose** of the copy operator. It does not automatically imply a plain-transpose identity for each K and N letter, nor does it prove equality of traces for all reversed expanded words. The next formal step must derive the appropriate adjoint relation for the glued operator and pairing matrix, then use cyclicity to identify exactly which expanded-word traces are equal. The cross-stratum cancellation and all-level recurrence remain unproved.
+
+## 4ao. Adjoint reversal induces an involution on cyclic factor words
+
+A useful distinction emerged between reversing the expanded matrix word and reversing the original two-choice factor word. A factor word of length p is expanded by replacing each (KN) tile with (K,N). Reversing the expanded circular word still admits a (K) / (KN) tiling after choosing a cyclic boundary, so it induces a map on cyclic factor classes. The implementation now constructs this map explicitly and checks that it preserves r and is an involution on cyclic classes for p=6,8,10.
+
+The exact census below gives (cyclic classes, fixed cyclic classes, paired orbits, fixed factor-word weight):
+
+| p | r | cyclic classes | fixed classes | paired orbits | fixed weight | paired weight |
+|---:|---:|---:|---:|---:|---:|---:|
+| 6 | 2 | 3 | 3 | 0 | 15 | 0 |
+| 6 | 3 | 4 | 2 | 1 | 8 | 12 |
+| 6 | 4 | 3 | 3 | 0 | 15 | 0 |
+| 8 | 2 | 4 | 4 | 0 | 28 | 0 |
+| 8 | 3 | 7 | 3 | 2 | 24 | 32 |
+| 8 | 4 | 10 | 6 | 2 | 38 | 32 |
+| 8 | 5 | 7 | 3 | 2 | 24 | 32 |
+| 8 | 6 | 4 | 4 | 0 | 28 | 0 |
+| 10 | 2 | 5 | 5 | 0 | 45 | 0 |
+| 10 | 3 | 12 | 4 | 4 | 40 | 80 |
+| 10 | 4 | 22 | 10 | 6 | 90 | 120 |
+| 10 | 5 | 26 | 6 | 10 | 52 | 200 |
+| 10 | 6 | 22 | 10 | 6 | 90 | 120 |
+| 10 | 7 | 12 | 4 | 4 | 40 | 80 |
+| 10 | 8 | 5 | 5 | 0 | 45 | 0 |
+
+Fixed and paired weights sum to (inom{p}{r}) in every row. The strata r=0,1,p−1,p have only fixed classes and are omitted from the table.
+
+This gives the correct combinatorial partner for the adjoint relation: if the concrete matrices K and N are Hermitian, then the trace of an expanded product is conjugated when the order of all K/N letters is reversed. The retiling map therefore pairs factor-word contributions by complex conjugation, not necessarily by equality. Consequently the full weighted expansion is real, and any paired orbit contributes twice the real part of one representative trace. This does not yet prove that individual traces are real or that the cross-stratum boundary contributions cancel. Those remain separate obligations for the recurrence proof.
+
+## 4ap. Remove the top-stratum constant before searching for p=6 cancellation
+
+The all-pairing boundary term should not be targeted for vanishing. Under the
+support-diagonality and corner-degree facts in §§4u–4x, its value depends only
+on the degree-two outer corners, not on the orientation/axis choice. The
+conditional values are
+`B_{6,6}=768`, `B_{8,8}=3072`, and `B_{10,10}=12288`.
+For two operator choices on the same gasket graph, these top-stratum constants
+therefore cancel when taking their trace-defect difference, provided the
+same gluing support and diagonal-degree hypotheses are used on both sides.
+
+This sharpens the p=6 target. Writing the nontrivial even boundary contribution
+as `B_{6,2}+B_{6,4}+B_{6,6}`, the next identity to prove is not
+`B_{6,6}=0`, which is false under the stated hypotheses. Instead, compare
+the two operator choices and prove the required relation for
+`(B_{6,2}+B_{6,4})-(B'_{6,2}+B'_{6,4})`; the top term drops out separately.
+For p=8 and p=10, the analogous comparison must include all lower even
+strata, while the top term can be removed from the comparison under the same
+hypotheses.
+
+This is a reduction of the proof target, not a new Lean theorem. The constants
+remain conditional diagnostics until their support cardinality and diagonal
+degree premises are assembled into a machine-checked result. No cancellation
+between the lower even strata is claimed here.
+
+## 4aq. CI confirmation for the refined p=6 target
+
+The documentation-only target refinement in commit
+`2b33a6db1d92fd602c9e280a49058c9f4f96cf38` has now completed CI successfully:
+the Lean formalization workflow and the Python tests both report success for
+that exact SHA (the push test and pull-request checks). This confirms the
+existing source still builds; it does not turn the conditional boundary
+diagnostics into a proof of the p=6 lower-stratum cancellation.
+
+The next source change should wait until the two-N and four-N boundary sums
+have been written in one common notation and their coefficients compared
+without assuming reversal-pair equality. Adjoint reversal only gives complex
+conjugacy in general. In particular, do not collapse a cyclic/reversal orbit
+to twice one real trace unless reality of that representative has separately
+been proved.
+
+## 4ar. Concrete cyclic-class expressions for the p=6 lower even strata
+
+The exact word inventory fixes the three cyclic representatives and their
+multiplicities in each lower even stratum. Let
+`T_{a,b} := ∑_{x : g x} (K^a)_{x,x}(K^b)_{σx,σx}`, with the same glued
+boundary support and the relevant corner hypotheses as
+`trace_two_N_powers_of_BD`. Then the r=2 contribution has the explicit form
+`B_{6,2} = 6 T_{1,5} + 6 T_{2,4} + 3 T_{3,3}`.
+This follows from the cyclic gap representatives `(0,4)`, `(1,3)`,
+`(2,2)`: each KN tile contributes one K before its N, so the intervening
+K-power pairs are `(1,5)`, `(2,4)`, and `(3,3)`. Their exact orbit
+weights are `6,6,3`, not a uniform factor of six.
+
+For r=4, define `U_{a,b,c,d}` to be the explicit nested boundary sum obtained
+from `trace_four_N_powers_explicit` for the cyclic word
+`K^a N K^b N K^c N K^d N`, with `a+b+c+d=6` and the four intervening
+powers all positive. The three cyclic gap representatives are
+`(0,0,0,2)`, `(0,0,1,1)`, and `(0,1,0,1)`, hence the intervening powers
+are `(1,1,1,3)`, `(1,1,2,2)`, and `(1,2,1,2)`, with weights `6,6,3`.
+Thus
+`B_{6,4} = 6 U_{1,1,1,3} + 6 U_{1,1,2,2} + 3 U_{1,2,1,2}`.
+
+These are exact class-weighted reductions, not cancellation identities. The
+remaining p=6 question is now term-level: under the concrete axis comparison,
+does the difference of these two weighted sums vanish? The r=2 formula is
+already a single boundary sum of diagonal power entries; the r=4 formula is a
+nested sum with off-diagonal K entries between boundary points. No equality
+between individual T and U terms is assumed, and the cyclic census alone gives
+no such equality.
+
+## 4as. Kernel-level form of the p=6 four-pairing boundary terms
+
+Expanding the three specializations in `trace_p6_lower_even_strata_boundary`
+one level further makes the obstruction more concrete. Write
+`d_j(x) := (K^j)_{σ(x),σ(x)}` on the glued locus. The nested sums are
+
+```text
+U_{1,1,1,3} = ∑_{x,y glued} K[x,y] K[y,x] d_1(y) d_3(x),
+U_{1,1,2,2} = ∑_{x,y glued} K[x,y] (K²)[y,x] d_1(y) d_2(x),
+U_{1,2,1,2} = ∑_{x,y glued} K[x,y] K[y,x] d_2(y) d_2(x).
+```
+
+Here “x,y glued” means both `G.g x` and `G.g y`; the summands outside
+that support are zero. If `K` is Hermitian, then
+`K[y,x] = conj(K[x,y])` and `(K²)[y,x] = conj((K²)[x,y])`.
+Thus the first and third kernels are weighted by `|K[x,y]|²`, while the
+middle term is a mixed kernel
+`K[x,y] * conj((K²)[x,y])`. This distinction matters: it is not valid to
+replace all three terms by absolute-square sums or to assume they cancel
+individually.
+
+This kernel form suggests the next concrete comparison: establish which
+boundary-point pairs `(x,y)` have nonzero `K[x,y]` and `(K²)[x,y]` for
+the two axis choices, then compare the weighted diagonal factors
+`d_1,d_2,d_3` on those pairs. The current Lean lemma proves the nested-sum
+identities but does not yet prove that the two operator choices have equal
+weighted sums. No cancellation theorem is claimed in this section.
+
+## 4at. CI recovery and the remaining support bridge
+
+Commit `784c987` is now confirmed green on both workflows: Lean formalization and
+Python tests. This repairs the p=6 theorem's right-hand side so its three
+four-`N` strata match the diagonal forms proved by
+`trace_four_N_powers_diagonal_left_one`.
+
+A useful distinction for the next proof step: `sgK_glued_offdiag` proves
+only the one-step fact `sgK w w' = 0` for distinct glued states. It does
+**not** by itself imply `(sgK ^ n) w w' = 0`: a power can travel through
+unglued intermediate states. The abstract p=6 boundary theorem still assumes
+the stronger power-by-power condition `hkg` for exponents through 5.
+
+The repository already has the right ingredients for replacing that abstract
+assumption in the concrete Sierpinski case:
+- `sgK_pow_entry_coord_dist` bounds the coordinate displacement of a nonzero
+  entry of `sgK ^ n) by `n`;
+- `glued_corner` restricts glued coordinates to `(0,0)`, `(2^m,0)`,
+  and `(0,2^m)`;
+- `sgK_pow_GlueDiag_of_OAnti` handles same-coordinate, opposite-spin
+  entries of every power under `OAnti (m+1) o`.
+
+For `m ≥ 3` and `n ≤ 5`, distinct corner coordinates are separated by
+`2^m ≥ 8 > n`, so coordinate support should force the distinct-coordinate
+case to vanish. The remaining formalization task is to combine that distance
+argument with `sgK_pow_GlueDiag_of_OAnti` (including its partner-coordinate
+premise) into a concrete theorem supplying the `hkg` premise. Until that bridge
+is proved, the concrete p=6 specialization is not yet discharged from the
+abstract boundary formula. No all-level moment recurrence is claimed.
+
+## 4au. Concrete p=6 boundary specializations
+
+The support bridge described in §4at has now been formalized as
+`sgK_pow_hkg_up_to_five_of_OAnti` in `GlueCorner.lean`, and both CI
+workflows passed for commit `ceedec5`. In `GlueTrace.lean`, theorem
+`sg_trace_p6_lower_even_strata_boundary` specializes the abstract lower
+even-strata identity to `sgK`/`sgGlue` for `m ≥ 3` under `OAnti`.
+
+The next commit adds the analogous specialization
+`sg_trace_p6_top_stratum_boundary`: the six-`N) top stratum is expressed
+as `Tr(K D K D K D)`, with `D) the diagonal matrix of partner-corner
+values. The top term is retained exactly; it is **not** proved zero.
+
+CI for the new top-stratum specialization is currently running (commit
+`c9a9402`). If green, this gives a concrete decomposition of all p=6 even
+boundary strata. The remaining mathematical obstacle is comparison between
+two axis choices: the lower strata depend on diagonal entries of powers
+`K^a), while the top stratum still involves off-diagonal entries of `K)
+between glued corners. The existing p=4 recursion hypothesis `hcorner)
+only identifies corner diagonals of `K), `K²), and `K³`; it does not by
+itself establish equality of `Tr(K D K D K D)` across axis choices. No
+p=6 cancellation identity or p=6,8,10 moment recurrence is claimed.
+
+## 4av. Exact target for collapsing the p=6 top stratum
+
+CI is green for both `c9a9402` (the concrete top-stratum specialization)
+and `5cf3716` (the research-log update). The new specialization is therefore
+checked, not merely queued.
+
+The concrete one-step lemma `sgK_glued_offdiag` is stronger than a
+same-copy statement: it says `sgK w w' = 0` whenever both states are glued
+and `w ≠ w'`, including states in different copies. Let
+`d(x) = if g(x) then K (σ x) (σ x) else 0` and `D = diagonal d`.
+Then `D) is supported on glued states, and every off-diagonal matrix entry
+of `K) between points in that support vanishes. Expanding the trace gives
+the exact candidate identity
+
+```
+Tr(K D K D K D)
+  = ∑ x, if g x then
+      (K x x * K (σ x) (σ x)) *
+      (K x x * K (σ x) (σ x)) *
+      (K x x * K (σ x) (σ x))
+    else 0
+```
+
+This is a finite-matrix consequence of support, not an assumption about the
+desired moment cancellation. It is the next lemma to formalize. It would
+reduce the top stratum to a sum of cubes of the paired corner-diagonal
+product, but does **not** alone show equality between two axis choices: one
+still needs equality of the paired diagonal products (or a weighted-sum
+identity). Keep that comparison as a separate obligation.
+
+## 4aw. Algebraic expansion of the top p=6 boundary term
+
+The CI runs for `963c8ed` completed successfully: Lean formalization and Python
+tests are green. The new observation in §4av can be checked directly by
+expanding the trace. For `D = diag(d)` with `d(x)=0` off the glued set,
+`Tr(K D K D K D)` is the finite sum over triples `x,y,z` of
+`K x y * d(y) * K y z * d(z) * K z x * d(x)`.
+Every nonzero summand has `g x`, `g y`, and `g z`. The existing
+`sgK_glued_offdiag` then forces `x=y=z`: if any adjacent pair differs,
+the corresponding K entry vanishes. The surviving summand is
+`(K x x * d(x))^3`. With `d(x)=K (σ x) (σ x)` on glued states, this is
+the proposed paired-diagonal cube formula.
+
+Formalization note: keep the support condition explicit in the helper lemma;
+do not try to use `sgK_glued_offdiag` on indices before proving that the
+diagonal factors force those indices to be glued. A clean generic helper
+should state both (i) `d x = 0` whenever `¬ g x`, and (ii) off-diagonal
+vanishing of K between any two g-supported indices. The concrete theorem can
+then discharge these hypotheses using `sgGlue` and `sgK_glued_offdiag`.
+
+This reduction does not settle axis comparison. The resulting sum is
+`∑ x, if g x then (K x x * K (σ x) (σ x))^3 else 0`; equality for two axis
+choices still requires a separate invariant for these paired diagonal
+products. No moment recurrence is claimed here.
+
+## 4ax. Verified CI and an algebraic route to the diagonal collapse
+
+The two workflows for `c23bdff` have now completed successfully. The top
+stratum remains the next formal proof target.
+
+A useful way to avoid expanding all six matrix factors at once is to first
+prove a support lemma for `D K D). If `D = diagonal d`, `d x = 0` off
+the glued set, and `K x y = 0` for distinct glued states, then
+`(D * K * D) x y = d x * K x y * d y` is zero whenever `x ≠ y):
+if either diagonal coefficient is zero, the product vanishes; otherwise both
+indices are glued and the off-diagonal hypothesis applies. Thus `D*K*D`
+is diagonal. This is a simpler local target than immediately expanding
+`Tr(K D K D K D)).
+
+The remaining trace can then be reduced by associativity and the finite-matrix
+identity `trace_mul_comm`, keeping the diagonal support explicit until the
+last simplification. This approach is preferable to claiming the cube formula
+from a verbal expansion: the Lean proof must still justify the finite sums
+and the collapse of every off-diagonal term.
+
+No source theorem was added in this step; this entry records the checked
+algebraic route for the next Lean lemma. The axis-comparison identity and the
+moment recurrence remain open.
+
+## 4ay. The trace-collapse step needs support as well as diagonality
+
+The concrete sandwich lemmas in `GlueAlg.lean` and `GlueTrace.lean`
+now pass Lean CI (commit `d0689e0`). The next identity should be proved with
+the support condition kept explicit, rather than inferred from diagonality
+alone.
+
+Let (D=\operatorname{diag}(d)), where (d_x=0) off (g), and assume
+(K_{xy}=0) whenever (x,y\in g) and (x\ne y). Then the trace expansion
+is
+[
+\operatorname{Tr}(KDKDKD)
+=\sum_{x,y,z}K_{xy}d_yK_{yz}d_zK_{zx}d_x.
+]
+A nonzero term forces (x,y,z\in g) by the three diagonal weights. The
+off-diagonal hypothesis then forces (x=y=z), so the sum reduces to
+[
+\sum_{x\in g}(K_{xx}d_x)^3.
+]
+This direct finite-sum proof is the intended next theorem. It uses both
+support and boundary off-diagonal vanishing; the already proved statement
+that (DKD) is diagonal is a useful intermediate lemma but is not by itself
+the whole trace argument.
+
+The specialized choice (d_x=K_{\sigma(x),\sigma(x)}) gives the paired
+diagonal cube sum. Its invariance under changing the axis is still a separate
+claim and is not implied by this trace reduction.
+
+## 4az. Correct factorization for the p=6 top trace
+
+The concrete specialization `sg_trace_p6_top_stratum_cube` is now green in
+Lean CI (commit `b4bc08a`). Its conclusion is only
+`Tr(K D K D K D) = Tr((K D)^3)`; this is a reassociation identity and does
+not evaluate the trace.
+
+For the next reduction, let (D=\operatorname{diag}(d)), with (d_x=0)
+outside the glued locus (g), and assume (K_{xy}=0) for distinct (x,y)
+both in (g). The already formalized sandwich statement says
+(A=DKD) is diagonal. By cyclicity and associativity,
+[
+\operatorname{Tr}(KDKDKD)=\operatorname{Tr}(K(DKD)KD)
+=\operatorname{Tr}(KAKD).
+]
+Expanding the latter trace gives the two-index kernel
+[
+\sum_{x,y} K_{xy} A_{yy} K_{yx} d_x.
+]
+Since (A_{yy}=d_y K_{yy} d_y), its support forces (y\in g), and
+(d_x) forces (x\in g). The glued-locus off-diagonal hypothesis then
+forces (x=y). The desired collapse is therefore
+[
+\sum_{x\in g} K_{xx}^3 d_x^3
+=\sum_{x\in g}(K_{xx}d_x)^3.
+]
+This derivation makes the exact remaining formalization target clear: a
+generic finite-matrix lemma for `Tr(K * A * K * D)` when `A,D` are
+diagonal, with support and restricted off-diagonal hypotheses explicit.
+Only after that generic lemma passes CI should it be specialized to `sgK`.
+No axis-invariance or moment recurrence is claimed by this reduction.
+
+## 4ba. CI restored; sharpened next proof obligation (2026-10-24)
+
+Commit `dc319ed` removes the unverified generic diagonal-cube lemma. Both
+Lean formalization and Python tests pass on that commit. Do not reintroduce
+the removed proof without compiling it in the project environment.
+
+The existing concrete fact is stronger than a mere hope but narrower than
+the desired trace evaluation:
+`sgK_corner_sandwich_eq_diagonal` proves that (A=D K D) is diagonal,
+where (D=\operatorname{diag}(d)) and (d) is supported on the glued locus.
+It does **not** imply that (KD) is diagonal: entries (K_{xy}d_y) with
+(x\notin g, y\in g) are not covered by `sgK_glued_offdiag`.
+
+A safe route for the top trace is the cyclic regrouping
+[
+\operatorname{Tr}(KDKDKD)=\operatorname{Tr}(K(DKD)KD)
+=\operatorname{Tr}(KAKD).
+]
+Since (A=DKD) is diagonal, expand the trace into a two-index sum:
+[
+\sum_{x,y} K_{xy} A_{yy} K_{yx} d_x.
+]
+The supports of (A_{yy}) and (d_x) force (x,y\in g). Only then may
+`sgK_glued_offdiag` be applied to conclude that nonzero terms have (x=y).
+This yields (sum_{x\in g}K_{xx}^2 A_{xx}d_x), and using
+(A_{xx}=d_xK_{xx}d_x) gives (sum_{x\in g}(K_{xx}d_x)^3).
+
+The next formalization should isolate precisely this two-index trace lemma,
+not claim that (KD) is diagonal and not repeat the earlier failed
+three-diagonal-product proof. Require CI to pass before specializing it to
+`sgK`. Axis invariance remains an independent open obligation.
+
+## 4bb. Exact level-3 test rules out unrestricted axis-pattern equality (2026-10-24)
+
+A separate exact-arithmetic diagnostic was run against the definitions in
+`src/graph/sg_graph.py` and `src/operators/operators.py`, at level 3 and
+`theta = pi`. At this parameter, each flux rotation is exactly
+`-i * sigma_axis`, so the resulting matrix has Gaussian-integer entries.
+The calculation used integer real/imaginary matrix multiplication, not
+floating-point powers.
+
+For the repository's two documented configurations, the full operator traces
+are:
+
+| power p | cycling axes x/y/z (`commuting=False`) | common z axis (`commuting=True`) |
+|---:|---:|---:|
+| 4 | 52,572 | 52,732 |
+| 6 | 2,080,992 | 2,120,640 |
+| 8 | 89,944,892 | 93,788,476 |
+| 10 | 4,082,500,316 | 4,362,907,356 |
+
+Thus these two configurations do not have equal full spectral moments at
+this level and parameter. This is a counterexample to any *unrestricted*
+claim that the cycling-axis and common-axis operators have identical moments;
+it is not a counterexample to gauge invariance, and it does not settle any
+more narrowly stated comparison between particular axis assignments or
+glued-boundary contributions. In particular, do not try to prove equality
+between these two configurations from the corner-diagonal reduction alone.
+First state precisely which axis choices are being compared and verify that
+the desired equality is actually true for that comparison.
+
+This is a diagnostic entry only. No Lean theorem is inferred from the
+calculation, and no moment recurrence is claimed.
+
+
+## 4bc. Precise algebraic target for the p=6 top-stratum collapse (2026-10-24)
+
+The next proof obligation is now stated as a concrete finite-matrix identity, not as an axis-invariance assertion. Let D = diag(d), with d_x = 0 off the glued set g, and assume K_xy = 0 whenever x,y are in g and x != y. The desired intermediate identity is
+
+$$
+\operatorname{Tr}(KDKDKD) = \sum_{x\in g}(K_{xx}d_x)^3.
+$$
+
+The safe factorization is KDKDKD = K(DKD)KD, with associativity understood. The existing lemma diagonal_sandwich_offdiag_zero proves that A = DKD is diagonal, and trace_diagonal_sandwich_eq_sum evaluates its trace. To finish the displayed identity one must still expand Tr(KAKD) into a two-index sum and use support of both A and D to force both indices into g, where the off-diagonal hypothesis on K applies. It is invalid to infer that KD itself is diagonal from the current hypotheses.
+
+This note is a proof plan, not a Lean theorem. No axis-invariance statement follows from this identity alone: the resulting sum still depends on the diagonal entries of the particular operator. The next code change should add and compile the two-index trace lemma before specializing it to the concrete sgK operator.

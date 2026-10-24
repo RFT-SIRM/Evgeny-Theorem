@@ -89,6 +89,121 @@ theorem trace4_glue_formula {cp : W → ι} (G : GlueData cp) (π : W → V)
   rw [trace4_push G π hπ K]
   exact glue_trace4 G K hbd hkg hu2
 
+
+/-- Rectangular cyclic-power identity.  It moves the final rectangular factor
+through a power without assuming that either product is commutative. -/
+theorem mul_pow_mul_left_rect {V W : Type*}
+    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
+    (A : Matrix V W ℂ) (B : Matrix W V ℂ) (n : ℕ) :
+    (A * B) ^ n * A = A * (B * A) ^ n := by
+  induction n with
+  | zero =>
+      simp
+  | succ n ih =>
+      calc
+        (A * B) ^ (n + 1) * A = ((A * B) ^ n * (A * B)) * A := by
+          rw [pow_succ]
+        _ = ((A * B) ^ n * A) * (B * A) := by
+          simp only [Matrix.mul_assoc]
+        _ = (A * (B * A) ^ n) * (B * A) := by
+          rw [ih]
+        _ = A * ((B * A) ^ n * (B * A)) := by
+          simp only [Matrix.mul_assoc]
+        _ = A * (B * A) ^ (n + 1) := by
+          rw [pow_succ]
+
+/-- For rectangular matrices A and B, the traces of positive powers of
+(A B) and (B A) agree. Positivity is essential: at exponent zero the two
+identity matrices can have different dimensions and traces. -/
+theorem trace_mul_pow_rect_succ {V W : Type*}
+    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
+    (A : Matrix V W ℂ) (B : Matrix W V ℂ) (n : ℕ) :
+    Matrix.trace ((A * B) ^ (n + 1)) = Matrix.trace ((B * A) ^ (n + 1)) := by
+  rw [pow_succ, pow_succ]
+  calc
+    Matrix.trace ((A * B) ^ n * (A * B)) =
+        Matrix.trace (((A * B) ^ n * A) * B) := by
+          simp only [Matrix.mul_assoc]
+    _ = Matrix.trace (B * ((A * B) ^ n * A)) :=
+          Matrix.trace_mul_comm _ _
+    _ = Matrix.trace (B * (A * (B * A) ^ n)) := by
+          rw [mul_pow_mul_left_rect]
+    _ = Matrix.trace ((B * A) ^ (n + 1)) := by
+          congr 1
+          rw [← Matrix.mul_assoc, pow_succ']
+
+/-- Arbitrary positive-power push-through identity for graph gluing. -/
+theorem trace_sandwich_pow {V W : Type*}
+    [Fintype V] [DecidableEq V] [Fintype W] [DecidableEq W]
+    (E : Matrix V W ℂ) (K : Matrix W W ℂ) (p : ℕ) (hp : 0 < p) :
+    Matrix.trace ((E * K * Eᵀ) ^ p) =
+      Matrix.trace ((K * (Eᵀ * E)) ^ p) := by
+  cases p with
+  | zero => omega
+  | succ n =>
+      simpa [Matrix.mul_assoc] using
+        (trace_mul_pow_rect_succ E (K * Eᵀ) n)
+
+
+/-- Arbitrary-moment pushforward identity for the concrete gluing map.
+Using EᵀE = 1 + N, every power of the glued operator has the same trace as
+the corresponding power of K + K*N. This is the bridge to the full ordered-word
+expansion at moments 6, 8, and 10. -/
+theorem trace_push_power {cp : W → ι} (G : GlueData cp) (π : W → V)
+    (hπ : ∀ w w', π w = π w' ↔ (w = w' ∨ (G.g w ∧ w' = G.σ w)))
+    (K : Matrix W W ℂ) (p : ℕ) (hp : 0 < p) :
+    Matrix.trace ((Emat π * K * (Emat π)ᵀ) ^ p) =
+      Matrix.trace ((K + K * G.N) ^ p) := by
+  have hKT : K * (1 + G.N) = K + K * G.N := by
+    rw [Matrix.mul_add, Matrix.mul_one]
+  rw [trace_sandwich_pow (Emat π) K p hp, EtE_eq_one_add_N G π hπ, hKT]
+
+
+/-- Exact ordered-word expansion of every positive glued moment.
+Combined with the boundary reductions, this gives a common expression for
+the complete p=6,8,10 calculation while preserving every word multiplicity. -/
+theorem trace_push_ordered_words {cp : W → ι} (G : GlueData cp) (π : W → V)
+    (hπ : ∀ w w', π w = π w' ↔ (w = w' ∨ (G.g w ∧ w' = G.σ w)))
+    (K : Matrix W W ℂ) (p : ℕ) (hp : 0 < p) :
+    Matrix.trace ((Emat π * K * (Emat π)ᵀ) ^ p) =
+      ((orderedWordExpansion K (K * G.N) p).map Matrix.trace).sum := by
+  rw [trace_push_power G π hπ K p hp]
+  exact trace_orderedWordExpansion K (K * G.N) p
+
+
+/-- Concrete reversal rule for expanded operator words.  If every letter is
+one of two Hermitian matrices K or N, reversing the full K/N word conjugates
+its trace.  This is the operator-level form of the reversal pairing used in
+the higher-moment boundary analysis; it does not assert that the two traces
+are equal. -/
+theorem trace_K_N_word_reverse
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K N : Matrix W W ℂ)
+    (hK : Matrix.conjTranspose K = K)
+    (hN : Matrix.conjTranspose N = N)
+    (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → M = K ∨ M = N) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.reverse.prod := by
+  apply trace_reverse_conj_of_selfAdjoint_list
+  intro M hM
+  rcases hxs M hM with h | h
+  · simpa [h] using hK
+  · simpa [h] using hN
+
+/-- A K/N word whose factor list is invariant under reversal has real trace.
+This is the fixed-point case of the reversal involution; non-palindromic
+words still require pairing with their reversed word. -/
+theorem trace_K_N_word_real_of_reverse_eq
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K N : Matrix W W ℂ)
+    (hK : Matrix.conjTranspose K = K)
+    (hN : Matrix.conjTranspose N = N)
+    (xs : List (Matrix W W ℂ))
+    (hxs : ∀ M, M ∈ xs → M = K ∨ M = N)
+    (hrev : xs.reverse = xs) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.prod := by
+  rw [trace_K_N_word_reverse K N hK hN xs hxs, hrev]
+
 end GlueBridge
 
 end EvgenyTheorem

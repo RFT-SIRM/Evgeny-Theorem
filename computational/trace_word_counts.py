@@ -9,6 +9,7 @@ term vanishes or that distinct classes have equal contributions.
 from __future__ import annotations
 
 from itertools import product
+from math import comb
 import json
 
 FACTOR_CHOICES = ("K", "K*N")
@@ -96,8 +97,316 @@ def main() -> None:
         assert sum(int(v) for v in row["factor_words_by_KN_count"].values()) == 2**p
         assert sum(int(v) for v in row["class_orbit_size_counts"].values()) == row["cyclic_classes"]
         assert sum(int(r["orbit_size"]) for r in row["classes"]) == 2**p
+
+        # Check the multiplicity identity stratum by stratum, not only globally:
+        # each cyclic class contributes its number of distinct rotations, so
+        # periodic words are weighted correctly rather than by a blanket factor p.
+        for r in range(p + 1):
+            classes_r = [
+                item for item in row["classes"]
+                if int(item["kn_factor_count"]) == r
+            ]
+            weighted_count = sum(int(item["orbit_size"]) for item in classes_r)
+            assert weighted_count == comb(p, r), (
+                f"p={p}, r={r}: orbit-weighted count {weighted_count} "
+                f"does not equal binomial({p}, {r})={comb(p, r)}"
+            )
     print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":
     main()
+
+
+def weak_compositions(total: int, parts: int) -> list[tuple[int, ...]]:
+    """Return all ordered weak compositions of total into a positive parts count."""
+    if total < 0 or parts < 1:
+        raise ValueError("total must be nonnegative and parts must be positive")
+    if parts == 1:
+        return [(total,)]
+    out: list[tuple[int, ...]] = []
+    for first in range(total + 1):
+        out.extend((first,) + rest for rest in weak_compositions(total - first, parts - 1))
+    return out
+
+
+def gap_composition_inventory(p: int, r: int) -> dict[str, object]:
+    """Index r-marked cyclic words by ordered K-gaps, with exact rotation weights."""
+    if not (1 <= r <= p):
+        raise ValueError("require 1 <= r <= p")
+    gaps = weak_compositions(p - r, r)
+    canonical = lambda g: min(g[i:] + g[:i] for i in range(r))
+    classes: dict[tuple[int, ...], set[tuple[int, ...]]] = {}
+    for g in gaps:
+        classes.setdefault(canonical(g), set()).add(g)
+    rows = [
+        {"gaps": list(rep), "gap_orbit_size": len(members),
+         "word_orbit_weight": (p * len(members)) // r}
+        for rep, members in sorted(classes.items())
+    ]
+    return {
+        "p": p,
+        "r": r,
+        "ordered_gap_tuples": len(gaps),
+        "cyclic_gap_classes": len(rows),
+        "word_weight_total": sum(int(row["word_orbit_weight"]) for row in rows),
+        "expected_word_count": comb(p, r),
+        "classes": rows,
+    }
+
+
+def reversal_gap_inventory(p: int, r: int) -> dict[str, object]:
+    """Group cyclic gap classes with their reversals as a candidate symmetry quotient.
+
+    This is combinatorial bookkeeping only. It does not assert that the corresponding
+    matrix traces are equal; that requires a separate algebraic argument.
+    """
+    inventory = gap_composition_inventory(p, r)
+    rows = inventory["classes"]
+    grouped: dict[tuple[int, ...], list[dict[str, object]]] = {}
+    for row in rows:
+        gaps = tuple(int(x) for x in row["gaps"])
+        reverse = tuple(reversed(gaps))
+        reverse_canonical = min(
+            reverse[i:] + reverse[:i] for i in range(len(reverse))
+        )
+        key = min(gaps, reverse_canonical)
+        grouped.setdefault(key, []).append(row)
+    reversal_classes = [
+        {
+            "representative": list(key),
+            "cyclic_gap_representatives": [
+                list(tuple(int(x) for x in row["gaps"]))
+                for row in sorted(group, key=lambda item: tuple(item["gaps"]))
+            ],
+            "cyclic_class_count": len(group),
+            "word_weight": sum(int(row["word_orbit_weight"]) for row in group),
+        }
+        for key, group in sorted(grouped.items())
+    ]
+    return {
+        "p": p,
+        "r": r,
+        "cyclic_gap_class_count": int(inventory["cyclic_gap_classes"]),
+        "reversal_class_count": len(reversal_classes),
+        "word_weight_total": sum(int(row["word_weight"]) for row in reversal_classes),
+        "expected_word_count": comb(p, r),
+        "classes": reversal_classes,
+    }
+
+
+def reversal_gap_pairing_report(p: int, r: int) -> dict[str, object]:
+    """Separate reversal-fixed cyclic gap classes from two-class reversal pairs."""
+    inventory = reversal_gap_inventory(p, r)
+    fixed = [row for row in inventory["classes"] if int(row["cyclic_class_count"]) == 1]
+    paired = [row for row in inventory["classes"] if int(row["cyclic_class_count"]) == 2]
+    return {
+        "p": p,
+        "r": r,
+        "fixed_cyclic_class_count": len(fixed),
+        "paired_orbit_count": len(paired),
+        "fixed_word_weight": sum(int(row["word_weight"]) for row in fixed),
+        "paired_word_weight": sum(int(row["word_weight"]) for row in paired),
+        "total_word_weight": int(inventory["word_weight_total"]),
+        "expected_word_count": int(inventory["expected_word_count"]),
+    }
+
+
+def reversal_word_inventory(p: int) -> dict[str, object]:
+    """Group binary cyclic word classes by reversal, without assuming trace equality."""
+    inventory = word_inventory(p)
+    grouped: dict[tuple[str, ...], list[dict[str, object]]] = {}
+    for row in inventory["classes"]:
+        word = tuple(str(x) for x in row["representative"])
+        reverse = tuple(reversed(word))
+        reverse_canonical = canonical_rotation(reverse)
+        key = min(word, reverse_canonical)
+        grouped.setdefault(key, []).append(row)
+    classes = []
+    for key, members in sorted(grouped.items()):
+        classes.append({
+            "representative": list(key),
+            "cyclic_representatives": [
+                list(tuple(str(x) for x in row["representative"]))
+                for row in sorted(members, key=lambda row: tuple(row["representative"]))
+            ],
+            "cyclic_class_count": len(members),
+            "word_weight": sum(int(row["orbit_size"]) for row in members),
+            "kn_factor_count": sum(1 for x in key if x == "K*N"),
+        })
+    return {
+        "p": p,
+        "cyclic_class_count": len(inventory["classes"]),
+        "reversal_class_count": len(classes),
+        "word_weight_total": sum(int(row["word_weight"]) for row in classes),
+        "expected_word_count": 2**p,
+        "classes": classes,
+    }
+
+
+def reversal_word_strata_inventory(p: int) -> dict[str, object]:
+    """Report reversal classes and exact weights separately for each KN-count stratum."""
+    inventory = reversal_word_inventory(p)
+    rows = []
+    for r in range(p + 1):
+        classes = [
+            item for item in inventory["classes"]
+            if int(item["kn_factor_count"]) == r
+        ]
+        fixed = [item for item in classes if int(item["cyclic_class_count"]) == 1]
+        paired = [item for item in classes if int(item["cyclic_class_count"]) == 2]
+        fixed_weight = sum(int(item["word_weight"]) for item in fixed)
+        paired_weight = sum(int(item["word_weight"]) for item in paired)
+        rows.append({
+            "kn_factor_count": r,
+            "cyclic_class_count": sum(int(item["cyclic_class_count"]) for item in classes),
+            "reversal_class_count": len(classes),
+            "fixed_class_count": len(fixed),
+            "paired_orbit_count": len(paired),
+            "fixed_word_weight": fixed_weight,
+            "paired_word_weight": paired_weight,
+            "word_weight_total": fixed_weight + paired_weight,
+            "expected_word_count": comb(p, r),
+        })
+        assert fixed_weight + paired_weight == comb(p, r)
+    return {
+        "p": p,
+        "strata": rows,
+        "cyclic_class_count": int(inventory["cyclic_class_count"]),
+        "reversal_class_count": int(inventory["reversal_class_count"]),
+        "word_weight_total": int(inventory["word_weight_total"]),
+    }
+
+
+def expanded_operator_word_inventory(p: int) -> dict[str, object]:
+    """Count expanded K/N words underlying (K + K*N)^p.
+
+    Each chosen factor K contributes the letter K; each chosen factor K*N
+    contributes K,N. Cyclic/reversal classes here are purely symbolic. They
+    become trace identities only after proving the needed transpose or
+    conjugate-transpose hypotheses for the concrete operators.
+    """
+    base = word_inventory(p)
+    by_r: list[dict[str, object]] = []
+    total_factor_words = 0
+    for r in range(p + 1):
+        grouped: dict[tuple[str, ...], dict[str, object]] = {}
+        for row in base["classes"]:
+            rep = tuple(str(x) for x in row["representative"])
+            if sum(x == "K*N" for x in rep) != r:
+                continue
+            expanded = tuple(letter for factor in rep for letter in (("K", "N") if factor == "K*N" else ("K",)))
+            cyc = canonical_rotation(expanded)
+            rev = canonical_rotation(tuple(reversed(expanded)))
+            key = min(cyc, rev)
+            entry = grouped.setdefault(key, {
+                "representative": list(key),
+                "cyclic_expanded_words": [],
+                "factor_word_weight": 0,
+                "cyclic_factor_class_count": 0,
+            })
+            entry["cyclic_expanded_words"].append(list(cyc))
+            entry["factor_word_weight"] = int(entry["factor_word_weight"]) + int(row["orbit_size"])
+            entry["cyclic_factor_class_count"] = int(entry["cyclic_factor_class_count"]) + 1
+        expected = comb(p, r)
+        weight = sum(int(item["factor_word_weight"]) for item in grouped.values())
+        by_r.append({
+            "r": r,
+            "expanded_length": p + r,
+            "expanded_K_count": p,
+            "expanded_N_count": r,
+            "reversal_class_count": len(grouped),
+            "factor_word_weight": weight,
+            "expected_factor_word_count": expected,
+            "classes": [grouped[k] for k in sorted(grouped)],
+        })
+        assert weight == expected
+        total_factor_words += weight
+    return {
+        "p": p,
+        "factor_word_count": total_factor_words,
+        "expected_factor_word_count": 2**p,
+        "strata": by_r,
+    }
+
+
+def _factor_word_from_circular_expansion(word: tuple[str, ...]) -> tuple[str, ...]:
+    """Recover K / K*N tiles from a circular K/N word whose every N follows K."""
+    if not word:
+        raise ValueError("expanded word must be nonempty")
+    if any(letter not in ("K", "N") for letter in word):
+        raise ValueError("expanded word may contain only K and N")
+    n = len(word)
+    if any(word[i] == "N" and word[(i - 1) % n] != "K" for i in range(n)):
+        raise ValueError("every N must be preceded cyclically by K")
+    if "N" not in word:
+        return ("K",) * n
+    # Start immediately after an N, i.e. at a tile boundary.
+    start = (word.index("N") + 1) % n
+    rotated = word[start:] + word[:start]
+    factors: list[str] = []
+    i = 0
+    while i < n:
+        if rotated[i] != "K":
+            raise ValueError("invalid circular tile boundary")
+        if i + 1 < n and rotated[i + 1] == "N":
+            factors.append("K*N")
+            i += 2
+        else:
+            factors.append("K")
+            i += 1
+    return canonical_rotation(tuple(factors))
+
+
+def adjoint_factor_word_inventory(p: int) -> dict[str, object]:
+    """Compute the factor-word permutation induced by reversing expanded K/N words.
+
+    This is a combinatorial map only. For Hermitian K,N, the associated matrix
+    trace is conjugated under reversal; equality requires an additional
+    reality/symmetry argument and is not asserted here.
+    """
+    words = list(product(FACTOR_CHOICES, repeat=p))
+    image: dict[tuple[str, ...], tuple[str, ...]] = {}
+    for factors in words:
+        expanded = tuple(
+            letter for factor in factors
+            for letter in (("K", "N") if factor == "K*N" else ("K",))
+        )
+        reversed_expanded = tuple(reversed(expanded))
+        image[factors] = _factor_word_from_circular_expansion(reversed_expanded)
+    by_r = []
+    for r in range(p + 1):
+        stratum = [w for w in words if w.count("K*N") == r]
+        cyclic_representatives = sorted({canonical_rotation(w) for w in stratum})
+        fixed_representatives = [
+            rep for rep in cyclic_representatives if image[rep] == rep
+        ]
+        orbit_weights = {
+            rep: sum(1 for w in stratum if canonical_rotation(w) == rep)
+            for rep in cyclic_representatives
+        }
+        fixed = sum(orbit_weights[rep] for rep in fixed_representatives)
+        image_keys = {canonical_rotation(image[w]) for w in stratum}
+        by_r.append({
+            "r": r,
+            "word_count": len(stratum),
+            "expected_word_count": comb(p, r),
+            "cyclic_class_count": len(cyclic_representatives),
+            "image_word_count": len(image_keys),
+            "fixed_cyclic_class_count": len(fixed_representatives),
+            "paired_orbit_count": (len(cyclic_representatives) - len(fixed_representatives)) // 2,
+            "fixed_word_weight": fixed,
+            "paired_word_weight": len(stratum) - fixed,
+            "fixed_canonical_word_count": fixed,
+            "preserves_stratum": all(image[w].count("K*N") == r for w in stratum),
+            "involution_on_cyclic_classes": all(
+                canonical_rotation(image[image[w]]) == canonical_rotation(w)
+                for w in stratum
+            ),
+        })
+        assert len(stratum) == comb(p, r)
+        assert by_r[-1]["preserves_stratum"]
+        assert by_r[-1]["involution_on_cyclic_classes"]
+        assert len(image_keys) == len({canonical_rotation(w) for w in stratum})
+    return {"p": p, "strata": by_r, "is_combinatorial_involution": True}
+

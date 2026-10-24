@@ -1,4 +1,5 @@
 import EvgenyTheorem.GlueCornerGeom
+import EvgenyTheorem.GlueTrace
 
 namespace EvgenyTheorem
 
@@ -125,5 +126,35 @@ theorem sgK_corner_data (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis) (o : Point 
     · exact cube_axis_indep m θ ax ax' (oCo m o) (oanti_C m o hanti) x hx i
   · rw [sgK_sq_diag m θ ax o hanti, sgK_sq_diag m θ ax' o hanti]
   · rw [sgK_diag, sgK_diag]
+
+
+/-- The sum of cubic diagonal entries over glued states is independent of
+ the axis assignment. The pointwise corner identity is supplied by
+ sgK_corner_data; the result concerns the diagonal cube contribution only. -/
+theorem sgK_glued_cube_diag_sum_axis_indep
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ a, if (sgGlue m).g a then
+      (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o) a a else 0) =
+    (∑ a, if (sgGlue m).g a then
+      (sgK m θ ax' o * sgK m θ ax' o * sgK m θ ax' o) a a else 0) := by
+  apply Finset.sum_congr rfl
+  intro a ha
+  by_cases hg : (sgGlue m).g a
+  · simp only [hg, ↓reduceIte]
+    exact (sgK_corner_data m θ ax ax' o hanti a hg).1
+  · simp [hg]
+
+
+/-- The full fourth-moment corner correction is independent of the axis
+assignment, by the pointwise corner identities for powers one through three. -/
+theorem cornerTerm_sgK_axis_indep
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    cornerTerm m (sgK m θ ax o) = cornerTerm m (sgK m θ ax' o) := by
+  apply cornerTerm_congr
+  exact sgK_corner_data m θ ax ax' o hanti
 
 end EvgenyTheorem

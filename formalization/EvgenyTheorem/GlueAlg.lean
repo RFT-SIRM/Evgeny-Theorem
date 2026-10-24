@@ -25,9 +25,74 @@ def GlueDiag {cp : W → ι} (G : GlueData cp) (X : Matrix W W ℂ) : Prop :=
 
 attribute [instance] GlueData.dg
 
+
+/-- A partner involution on the glued locus lets us exchange the two factors
+in a boundary sum. Unlike a permutation of all of W, this uses only the
+involution law actually provided by GlueData. -/
+theorem glued_sum_partner_product_swap {cp : W → ι} (G : GlueData cp)
+    (f h : W → ℂ) :
+    (∑ x : {w // G.g w}, f x.1 * h (G.σ x.1)) =
+      ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
+  let e : Equiv.Perm {w // G.g w} :=
+    { toFun := fun x => ⟨G.σ x.1, G.g_σ x.1 x.2⟩
+      invFun := fun x => ⟨G.σ x.1, G.g_σ x.1 x.2⟩
+      left_inv := by
+        intro x
+        apply Subtype.ext
+        exact G.σσ x.1 x.2
+      right_inv := by
+        intro x
+        apply Subtype.ext
+        exact G.σσ x.1 x.2 }
+  calc
+    (∑ x : {w // G.g w}, f x.1 * h (G.σ x.1)) =
+        ∑ x : {w // G.g w}, (fun y => f y.1 * h (G.σ y.1)) (e x) := by
+          symm
+          exact Equiv.sum_comp e (fun y => f y.1 * h (G.σ y.1))
+    _ = ∑ x : {w // G.g w}, f (G.σ x.1) * h x.1 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          change f (G.σ x.1) * h (G.σ (G.σ x.1)) =
+            f (G.σ x.1) * h x.1
+          rw [G.σσ x.1 x.2]
+    _ = ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          exact mul_comm _ _
+
 /-- The pairing matrix. -/
 noncomputable def GlueData.N {cp : W → ι} (G : GlueData cp) : Matrix W W ℂ :=
   fun w a => if G.g w ∧ a = G.σ w then 1 else 0
+
+/-- The pairing matrix is self-adjoint: the involution law for the partner map
+makes its graph symmetric, and all nonzero entries are real. This is the
+adjoint premise needed to reverse expanded K/N words by complex conjugation. -/
+theorem GlueData.N_hermitian {cp : W → ι} (G : GlueData cp) :
+    Matrix.conjTranspose G.N = G.N := by
+  classical
+  ext w a
+  simp only [Matrix.conjTranspose_apply, GlueData.N]
+  by_cases hright : G.g w ∧ a = G.σ w
+  · rcases hright with ⟨hw, hwa⟩
+    have ha : G.g a := by
+      rw [hwa]
+      exact G.g_σ w hw
+    have haw : w = G.σ a := by
+      rw [hwa]
+      exact (G.σσ w hw).symm
+    have hleft : G.g a ∧ w = G.σ a := ⟨ha, haw⟩
+    have hright' : G.g w ∧ a = G.σ w := ⟨hw, hwa⟩
+    simp only [if_pos hleft, if_pos hright', star_one]
+  · have hleft : ¬ (G.g a ∧ w = G.σ a) := by
+      rintro ⟨ha, haw⟩
+      apply hright
+      constructor
+      · rw [haw]
+        exact G.g_σ a ha
+      · calc
+          a = G.σ (G.σ a) := (G.σσ a ha).symm
+          _ = G.σ w := by rw [haw]
+    simp only [if_neg hleft, if_neg hright, star_zero]
 
 /-- Block diagonality with respect to the copy map `cp`. -/
 def BD (cp : W → ι) (M : Matrix W W ℂ) : Prop := ∀ w w', cp w ≠ cp w' → M w w' = 0
@@ -1055,6 +1120,276 @@ theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
       ∑ a, if G.g a then (K * K * K) a a * K (G.σ a) (G.σ a) else 0 := r3
   rw [r3']
   ring
+
+
+
+/-- Block diagonality across copies plus the glued-corner hypothesis
+implies that K has no off-diagonal entries anywhere on the glued locus. -/
+theorem glued_offdiag_of_BD {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ)
+    (hbd : BD cp K)
+    (hkg : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0) :
+    ∀ x y, G.g x → G.g y → x ≠ y → K x y = 0 := by
+  intro x y gx gy hne
+  by_cases hc : cp x = cp y
+  · exact hkg x y gx gy hc hne
+  · exact hbd x y hc
+
+/-- If the restriction of K to glued points is diagonal, a nested boundary
+sum collapses to its diagonal kernel. This isolates the support step needed
+before comparing the p=6 four-pairing terms. -/
+theorem glued_boundary_kernel_sum_diagonal {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ)
+    (hKoff : ∀ x y, G.g x → G.g y → x ≠ y → K x y = 0)
+    (F : W → W → ℂ) (H : W → ℂ) :
+    (∑ x, if G.g x then
+      (∑ y, if G.g y then K x y * F y x else 0) * H x else 0) =
+      ∑ x, if G.g x then K x x * F x x * H x else 0 := by
+  classical
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases gx : G.g x
+  · simp only [gx, if_pos]
+    have hinner :
+        (∑ y, if G.g y then K x y * F y x else 0) = K x x * F x x := by
+      rw [Finset.sum_eq_single x]
+      · simp [gx]
+      · intro y hy hne
+        by_cases gy : G.g y
+        · simp [gy, hKoff x y gx gy hne.symm]
+        · simp [gy]
+      · simp
+    rw [hinner]
+  · simp [gx]
+
+/-- Convenient form of the diagonal collapse: its support premise follows
+from the standard block-diagonal and glued-corner hypotheses. -/
+theorem glued_boundary_kernel_sum_diagonal_of_BD {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
+    (hkg : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
+    (F : W → W → ℂ) (H : W → ℂ) :
+    (∑ x, if G.g x then
+      (∑ y, if G.g y then K x y * F y x else 0) * H x else 0) =
+      ∑ x, if G.g x then K x x * F x x * H x else 0 := by
+  exact glued_boundary_kernel_sum_diagonal G K
+    (glued_offdiag_of_BD G K hbd hkg) F H
+
+/-- Four-pairing words whose left boundary power is K have a fully
+diagonal two-boundary kernel. The remaining powers may be arbitrary; only
+the middle and right powers need the usual glued-corner vanishing. -/
+theorem trace_four_N_powers_diagonal_left_one {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (b c d : ℕ)
+    (hkgK : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
+    (hkgB : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
+      (K ^ b) x y = 0)
+    (hkgD : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
+      (K ^ d) x y = 0) :
+    Matrix.trace (K ^ 1 * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ 0) =
+      ∑ x, if G.g x then
+        (K x x * (K ^ b) (G.σ x) (G.σ x) * (K ^ c) x x) *
+          (K ^ d) (G.σ x) (G.σ x) else 0 := by
+  have hexp := trace_four_N_powers_explicit G K hK 1 b c d 0 hkgB hkgD
+  rw [hexp]
+  have hcollapse := glued_boundary_kernel_sum_diagonal_of_BD
+    G K hK hkgK
+    (fun y x => (K ^ b) (G.σ y) (G.σ y) * (K ^ c) y x)
+    (fun x => (K ^ d) (G.σ x) (G.σ x))
+  simpa [pow_zero, Matrix.one_mul, mul_assoc] using hcollapse
+
+/-- Exact weighted boundary reduction for the two lower even strata of the
+sixth moment. The coefficients 6, 6, 3 are the orbit multiplicities of the
+cyclic classes; no reversal-pair equality is assumed. This lemma only exposes
+the boundary kernels. Comparing them for two concrete operators is a separate
+geometric obligation. -/
+theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+    6 * (∑ x, if G.g x then
+      (K ^ 1) x x * (K ^ 5) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K ^ 2) x x * (K ^ 4) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) := by
+  have h21 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 1) x x * (K ^ 5) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_two_N_powers G K 1 5 0 (BD_pow K hK 5) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 5 (by omega) w w' hw hw' hcopy hne))
+  have h22 :
+      Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 2) x x * (K ^ 4) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 2 4 0 (BD_pow K hK 4) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 4 (by omega) w w' hw hw' hcopy hne))
+  have h23 :
+      Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 3 3 0 (BD_pow K hK 3) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h41 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+        K ^ 3 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          ((K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+            (K ^ 3) (G.σ x) (G.σ x)) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_four_N_powers_diagonal_left_one G K hK 1 1 3
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h42 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N *
+        K ^ 2 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          ((K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
+            (K ^ 2) (G.σ x) (G.σ x)) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_four_N_powers_diagonal_left_one G K hK 1 2 2
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h43 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N *
+        K ^ 2 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          ((K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+            (K ^ 2) (G.σ x) (G.σ x)) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_four_N_powers_diagonal_left_one G K hK 2 1 2
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  rw [h21, h22, h23, h41, h42, h43]
+
+
+
+/-- The top even stratum of the sixth moment is a three-step boundary trace.
+This specialization deliberately does not assert vanishing: its value must be
+compared with the other even strata (or with the corresponding operator's
+boundary correction). -/
+theorem trace_p6_top_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    Matrix.trace (K * G.N * K * G.N * K * G.N *
+      K * G.N * K * G.N * K * G.N) =
+    Matrix.trace (K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0)) := by
+  simpa [pow_zero, pow_one] using
+    (trace_six_N_powers_boundary G K hK 1 1 1 1 1 1 0
+      (by
+        intro w w' hw hw' hcopy hne
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+      (by
+        intro w w' hw hw' hcopy hne
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+      (by
+        intro w w' hw hw' hcopy hne
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
+
+
+/-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
+theorem trace_diagonal_eq_sum (d : W → ℂ) :
+    Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
+  simp [Matrix.trace, Matrix.diagonal_apply]
+
+/-- The trace of a product of two diagonal matrices is the sum
+of the pointwise products of their weights. -/
+theorem trace_diagonal_mul_diagonal_eq_sum (d e : W → ℂ) :
+    Matrix.trace (Matrix.diagonal d * Matrix.diagonal e) =
+      ∑ x, d x * e x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+
+/-- Entrywise formula for a diagonal sandwich. -/
+theorem diagonal_sandwich_apply
+    (d : W → ℂ) (K : Matrix W W ℂ) (x y : W) :
+    (Matrix.diagonal d * K * Matrix.diagonal d) x y =
+      d x * K x y * d y := by
+  classical
+  simp [Matrix.mul_apply, Matrix.diagonal_apply]
+
+/-- If a diagonal weight is supported on a set on which K has no
+off-diagonal entries, then sandwiching K by that weight is diagonal.
+This is the local matrix fact needed to collapse the p=6 top boundary trace. -/
+theorem diagonal_sandwich_offdiag_zero
+    (g : W → Prop)
+    (d : W → ℂ) (K : Matrix W W ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    ∀ x y, x ≠ y →
+      (Matrix.diagonal d * K * Matrix.diagonal d) x y = 0 := by
+  classical
+  intro x y hxy
+  simp only [Matrix.mul_apply, Matrix.diagonal_apply]
+  by_cases hx : g x
+  · by_cases hy : g y
+    · have hzero : K x y = 0 := hK x y hx hy hxy
+      simp [hzero]
+    · have hdy : d y = 0 := hd y hy
+      simp [hdy]
+  · have hdx : d x = 0 := hd x hx
+    simp [hdx]
+
+
+/-- Trace formula for a diagonal sandwich. The support of the diagonal weight
+and off-diagonal vanishing of K on that support make the sandwich diagonal;
+its trace is therefore the finite sum of its diagonal entries. -/
+theorem trace_diagonal_sandwich_eq_sum
+    (g : W → Prop) [DecidablePred g] (d : W → ℂ) (K : Matrix W W ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    Matrix.trace (Matrix.diagonal d * K * Matrix.diagonal d) =
+      ∑ x, if g x then d x * K x x * d x else 0 := by
+  classical
+  have hdiag :
+      Matrix.diagonal d * K * Matrix.diagonal d =
+        Matrix.diagonal (fun x => d x * K x x * d x) := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      rw [Matrix.diagonal_apply]
+      simp [diagonal_sandwich_apply]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero g d K hd hK x y hxy
+  rw [hdiag, trace_diagonal_eq_sum]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hg : g x
+  · simp [hg]
+  · simp [hg, hd x hg]
+
+
 
 end GlueAlg
 

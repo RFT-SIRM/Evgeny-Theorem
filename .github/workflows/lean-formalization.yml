@@ -2,13 +2,14 @@ name: Lean formalization
 
 on:
   push:
-    branches: [main]
+    branches: [main, moment-6-8-10]
     paths:
       - "formalization/**/*.lean"
       - "lakefile.toml"
       - "lean-toolchain"
       - "lake-manifest.json"
       - ".github/workflows/lean-formalization.yml"
+      - "tests/test_higher_moments.py"
   pull_request:
     branches: [main]
     paths:
@@ -17,6 +18,7 @@ on:
       - "lean-toolchain"
       - "lake-manifest.json"
       - ".github/workflows/lean-formalization.yml"
+      - "tests/test_higher_moments.py"
   workflow_dispatch:
 
 jobs:

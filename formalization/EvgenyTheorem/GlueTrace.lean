@@ -21,6 +21,7 @@ variable {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X
 
 theorem blockK_mul (H G : ι → Matrix X X ℂ) :
     blockK H * blockK G = blockK (fun c => H c * G c) := by
+  classical
   ext w w'
   rw [Matrix.mul_apply, Fintype.sum_prod_type]
   by_cases hc : w.1 = w'.1
@@ -46,6 +47,7 @@ theorem blockK_mul (H G : ι → Matrix X X ℂ) :
 
 theorem trace_blockK (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H) = ∑ c, Matrix.trace (H c) := by
+  classical
   rw [Matrix.trace, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl (fun c _ => ?_)
   simp [Matrix.trace, Matrix.diag, blockK]
@@ -53,6 +55,7 @@ theorem trace_blockK (H : ι → Matrix X X ℂ) :
 /-- Powers of a block-diagonal matrix are computed independently in each block. -/
 theorem blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
     blockK H ^ n = blockK (fun c => H c ^ n) := by
+  classical
   induction n with
   | zero =>
       ext ⟨i, x⟩ ⟨j, y⟩
@@ -132,6 +135,7 @@ theorem trace_add_pow_four_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
       ∑ c, Matrix.trace (H c * H c * H c * H c) := by
+  classical
   rw [blockK_mul, blockK_mul, blockK_mul, trace_blockK]
 
 end Block
@@ -253,5 +257,283 @@ theorem defectO_succ (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
     cornerTerm_congr m (sgK m θ ax o) (sgK m θ ax' o) hcorner, sum_gcopy, sum_gcopy,
     hA ax, hA ax', hB ax, hB ax', hC ax, hC ax']
   ring
+
+
+/-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
+operator. This discharges the abstract power-support premise from the
+geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
+theorem sg_trace_p6_lower_even_strata_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 4 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 3 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 *
+        (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 *
+        (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 *
+        (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) =
+    6 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 1) x x *
+      (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 2) x x * (sgK m θ ax o ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    3 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 3) x x * (sgK m θ ax o ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x * (sgK m θ ax o ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 1) x x) * (sgK m θ ax o ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x * (sgK m θ ax o ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 2) x x) * (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    3 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x * (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 1) x x) * (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+  apply trace_p6_lower_even_strata_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
+
+/-- Concrete top-stratum boundary reduction for the sixth moment. Together
+with `sg_trace_p6_lower_even_strata_boundary`, this gives all even boundary
+strata at p=6 for the Sierpinski glued operator. The top stratum is retained
+as a trace with three diagonal corner insertions; it is not asserted to vanish. -/
+theorem sg_trace_p6_top_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace (sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  apply trace_p6_top_stratum_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
+
+/-- The partner-corner diagonal weight sandwiches sgK to a diagonal
+matrix: distinct glued states have zero coupling. -/
+theorem sgK_corner_sandwich_offdiag_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    ∀ x y : WSG m, x ≠ y →
+      (Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+        sgK m θ ax o *
+        Matrix.diagonal (fun z => if (sgGlue m).g z then
+          sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) x y = 0 := by
+  apply diagonal_sandwich_offdiag_zero (g := (sgGlue m).g)
+    (d := fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)
+    (K := sgK m θ ax o)
+  · intro x hx
+    simp [hx]
+  · intro x y hx hy hxy
+    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
+
+
+/-- Entrywise form of the concrete partner-corner sandwich. -/
+theorem sgK_corner_sandwich_apply
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (x y : WSG m) :
+    (Matrix.diagonal (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) x y =
+      (if (sgGlue m).g x then
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
+      sgK m θ ax o x y *
+      (if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) := by
+  exact diagonal_sandwich_apply
+    (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)
+    (sgK m θ ax o) x y
+
+
+/-- The diagonal entries of the concrete partner-corner sandwich are the
+paired diagonal products squared times the corresponding diagonal of sgK. -/
+theorem sgK_corner_sandwich_diag_apply
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (x : WSG m) :
+    (Matrix.diagonal (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) x x =
+      (if (sgGlue m).g x then
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
+      sgK m θ ax o x x *
+      (if (sgGlue m).g x then
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  exact sgK_corner_sandwich_apply m θ ax o x x
+
+
+/-- The partner-corner sandwich is exactly the diagonal matrix formed from
+its diagonal entries. This packages the entrywise formula and off-diagonal
+vanishing into a matrix identity. -/
+theorem sgK_corner_sandwich_eq_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    (Matrix.diagonal (fun z => if (sgGlue m).g z then
+      sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun z => if (sgGlue m).g z then
+        sgK m θ ax o ((sgGlue m).σ z) ((sgGlue m).σ z) else 0)) =
+    Matrix.diagonal (fun z =>
+      (Matrix.diagonal (fun w => if (sgGlue m).g w then
+        sgK m θ ax o ((sgGlue m).σ w) ((sgGlue m).σ w) else 0) *
+        sgK m θ ax o *
+        Matrix.diagonal (fun w => if (sgGlue m).g w then
+          sgK m θ ax o ((sgGlue m).σ w) ((sgGlue m).σ w) else 0)) z z) := by
+  classical
+  ext x y
+  by_cases hxy : x = y
+  · subst y
+    simp
+  · rw [Matrix.diagonal_apply]
+    simp only [if_neg hxy]
+    exact sgK_corner_sandwich_offdiag_zero m hm θ ax o x y hxy
+
+
+
+
+/-- Regroup the p=6 top boundary trace so the already-proved diagonal
+sandwich identity can be applied. This is an exact reduction, not yet a
+claim that the trace is a sum of cubes. -/
+theorem sg_trace_p6_top_stratum_reduce_to_diagonal_sandwich
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace (sgK m θ ax o *
+      Matrix.diagonal (fun z =>
+        (Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          sgK m θ ax o *
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) z z) *
+      sgK m θ ax o *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  let D : Matrix (WSG m) (WSG m) ℂ :=
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  have hboundary :
+      Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N) =
+      Matrix.trace (sgK m θ ax o * D * sgK m θ ax o *
+        D * sgK m θ ax o * D) := by
+    simpa [D] using
+      sg_trace_p6_top_stratum_boundary m hm θ ax o hanti
+  have hsandwich :
+      D * sgK m θ ax o * D =
+        Matrix.diagonal (fun z => (D * sgK m θ ax o * D) z z) := by
+    simpa [D] using
+      sgK_corner_sandwich_eq_diagonal m hm θ ax o
+  calc
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N) =
+        Matrix.trace (sgK m θ ax o * D * sgK m θ ax o *
+          D * sgK m θ ax o * D) := hboundary
+    _ = Matrix.trace (sgK m θ ax o *
+          (D * sgK m θ ax o * D) * sgK m θ ax o * D) := by
+          simp [Matrix.mul_assoc]
+    _ = Matrix.trace (sgK m θ ax o *
+          Matrix.diagonal (fun z => (D * sgK m θ ax o * D) z z) *
+          sgK m θ ax o * D) := by
+          conv_lhs => rw [hsandwich]
+    _ = Matrix.trace (sgK m θ ax o *
+          Matrix.diagonal (fun z =>
+            (Matrix.diagonal (fun y => if (sgGlue m).g y then
+              sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+              sgK m θ ax o *
+            Matrix.diagonal (fun y => if (sgGlue m).g y then
+              sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) z z) *
+          sgK m θ ax o *
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+          simp [D]
+
+
+
+
+/-- Reassociate the alternating six-factor trace as a cubic trace. -/
+theorem trace_K_D_alternating_six_eq_cube
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    Matrix.trace (K * D * K * D * K * D) =
+      Matrix.trace ((K * D) ^ 3) := by
+  rw [pow_succ, pow_two]
+  simp only [Matrix.mul_assoc]
+
+
+/-- The p=6 top stratum can be viewed as a cubic trace after the
+already-proved boundary reduction. All geometric hypotheses are inherited
+from the boundary theorem; this does not claim axis invariance. -/
+theorem sg_trace_p6_top_stratum_cube
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace ((sgK m θ ax o * Matrix.diagonal (fun y =>
+      if (sgGlue m).g y then
+        sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) ) ^ 3) := by
+  rw [sg_trace_p6_top_stratum_boundary m hm θ ax o hanti]
+  exact trace_K_D_alternating_six_eq_cube
+    (sgK m θ ax o)
+    (Matrix.diagonal (fun y => if (sgGlue m).g y then
+      sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
+
 
 end EvgenyTheorem
