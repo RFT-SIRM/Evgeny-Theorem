@@ -402,22 +402,12 @@ theorem sgK_corner_sandwich_eq_diagonal
   ext x y
   by_cases hxy : x = y
   · subst y
-    simp [Matrix.diagonal_apply]
+    simp
   · rw [Matrix.diagonal_apply]
     simp only [if_neg hxy]
     exact sgK_corner_sandwich_offdiag_zero m hm θ ax o x y hxy
 
 
-/-- The six-step top-boundary trace is the trace of a cube of K times
-the diagonal boundary weight. This is an exact algebraic repackaging, not
-yet a diagonal-sum or axis-invariance claim. -/
-theorem trace_K_D_alternating_six_eq_cube
-    {X : Type*} [Fintype X] [DecidableEq X]
-    (K D : Matrix X X ℂ) :
-    Matrix.trace (K * D * K * D * K * D) =
-      Matrix.trace ((K * D) ^ 3) := by
-  simp only [pow_succ]
-  simp only [Matrix.mul_assoc]
 
 
 end EvgenyTheorem
