@@ -17,10 +17,11 @@ open Matrix
 
 section Block
 
-variable {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
+variable {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X]
 
 theorem blockK_mul (H G : ι → Matrix X X ℂ) :
     blockK H * blockK G = blockK (fun c => H c * G c) := by
+  classical
   ext w w'
   rw [Matrix.mul_apply, Fintype.sum_prod_type]
   by_cases hc : w.1 = w'.1
@@ -46,6 +47,7 @@ theorem blockK_mul (H G : ι → Matrix X X ℂ) :
 
 theorem trace_blockK (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H) = ∑ c, Matrix.trace (H c) := by
+  classical
   rw [Matrix.trace, Fintype.sum_prod_type]
   refine Finset.sum_congr rfl (fun c _ => ?_)
   simp [Matrix.trace, Matrix.diag, blockK]
@@ -53,6 +55,7 @@ theorem trace_blockK (H : ι → Matrix X X ℂ) :
 /-- Powers of a block-diagonal matrix are computed independently in each block. -/
 theorem blockK_pow (H : ι → Matrix X X ℂ) (n : ℕ) :
     blockK H ^ n = blockK (fun c => H c ^ n) := by
+  classical
   induction n with
   | zero =>
       ext ⟨i, x⟩ ⟨j, y⟩
@@ -132,6 +135,7 @@ theorem trace_add_pow_four_eq_addWordSum {X : Type*} [Fintype X] [DecidableEq X]
 theorem trace_blockK_pow4 (H : ι → Matrix X X ℂ) :
     Matrix.trace (blockK H * blockK H * blockK H * blockK H) =
       ∑ c, Matrix.trace (H c * H c * H c * H c) := by
+  classical
   rw [blockK_mul, blockK_mul, blockK_mul, trace_blockK]
 
 end Block
@@ -466,7 +470,8 @@ theorem sg_trace_p6_top_stratum_reduce_to_diagonal_sandwich
           simp [Matrix.mul_assoc]
     _ = Matrix.trace (sgK m θ ax o *
           Matrix.diagonal (fun z => (D * sgK m θ ax o * D) z z) *
-          sgK m θ ax o * D) := by rw [hsandwich]
+          sgK m θ ax o * D) := by
+          conv_lhs => rw [hsandwich]
     _ = Matrix.trace (sgK m θ ax o *
           Matrix.diagonal (fun z =>
             (Matrix.diagonal (fun y => if (sgGlue m).g y then
@@ -477,7 +482,7 @@ theorem sg_trace_p6_top_stratum_reduce_to_diagonal_sandwich
           sgK m θ ax o *
           Matrix.diagonal (fun y => if (sgGlue m).g y then
             sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
-          simp [D, Matrix.diagonal_apply]
+          simp [D]
 
 
 
