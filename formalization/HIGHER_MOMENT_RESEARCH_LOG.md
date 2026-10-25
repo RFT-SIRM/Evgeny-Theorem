@@ -1876,3 +1876,34 @@ remains a justified comparison/cancellation of the explicit even-stratum
 boundary sums, followed by a proof of the finite base transition and the
 level-propagation step. Numerical agreement at θ=π remains finite exact
 evidence only.
+
+
+## 4be. Correct recurrence target for the higher-moment boundary sum (2026-10-25)
+
+A correction to the wording in §4aa is necessary. The phrase
+`F_p(ax) = F_p(ax')` is too strong for the observed higher-moment recurrence
+and must not be used as the proof target without an additional theorem showing
+that the relevant boundary correction cancels completely. The exact
+`theta = pi` data give nonzero stabilized residuals
+`R_6 = 5280`, `R_8 = 277504`, and `R_10 = 4507520`; hence the total
+boundary contribution to the defect recurrence is not zero in those cases.
+
+The correct target should be formulated from the actual expansion of the
+defect recurrence. If `F_{p,m}(ax)` denotes the fully weighted sum of the
+even-stratum boundary terms at level `m`, the required statement is that the
+**difference for the two specified operator/axis configurations** gives the
+moment residual:
+`F_{p,m}(ax) - F_{p,m}(ax') = R_p(theta)`,
+with the appropriate level indexing verified against the expansion. For the
+conjectured stabilization, one must additionally prove that this difference
+is independent of `m` from the claimed starting level. This is a target
+statement, not yet a theorem: the exact finite values at `theta = pi` do not
+determine the all-angle function `R_p(theta)`.
+
+Accordingly, the top-stratum reduction in §4bd is only one component of the
+calculation. Its trace is reduced to an explicit diagonal sum and is not
+claimed to vanish. The remaining task is to assemble every even-stratum
+contribution with the correct cyclic-orbit weights, subtract the two
+specified configurations, and prove the resulting level transition. Do not
+infer the recurrence by asserting separate vanishing or axis-independence of
+each even stratum.
