@@ -1317,6 +1317,46 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
         simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
 
 
+
+/-- The complete even-stratum contribution at moment six, assembled with the
+exact cyclic multiplicities. The lower two strata are expanded into their
+boundary sums; the top stratum is retained as its exact diagonal-sandwich
+trace. This is an assembly identity only: it makes no cancellation claim. -/
+theorem trace_p6_all_even_strata_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
+    Matrix.trace (K * G.N * K * G.N * K * G.N * K * G.N * K * G.N * K * G.N) =
+    6 * (∑ x, if G.g x then
+      (K ^ 1) x x * (K ^ 5) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K ^ 2) x x * (K ^ 4) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) +
+    Matrix.trace (K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0)) := by
+  rw [trace_p6_lower_even_strata_boundary G K hK hkg,
+    trace_p6_top_stratum_boundary G K hK hkg]
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
