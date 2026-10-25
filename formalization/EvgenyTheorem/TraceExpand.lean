@@ -287,6 +287,23 @@ theorem twoN_gap_weights_ten {α : Type*} [CommRing α] (E : ℕ → α)
   rw [h19, h28, h37, h46]
   ring
 
+
+/-- If a moment defect has the affine-in-3^m form
+`a * 3^(m-3) + c` at two consecutive levels, then its
+three-to-one residual is exactly `-2*c`. This is an algebraic
+consequence of the candidate form; it does not assert that an operator
+trace defect has that form. -/
+theorem residual_eq_neg_two_constant_of_affine_three_pow
+    {α : Type*} [CommRing α] (D : ℕ → α) (a c : α) (m : ℕ)
+    (hm : 4 ≤ m)
+    (hD : D m = a * (3 : α) ^ (m - 3) + c)
+    (hPrev : D (m - 1) = a * (3 : α) ^ (m - 4) + c) :
+    D m - 3 * D (m - 1) = -2 * c := by
+  rw [hD, hPrev]
+  have hexp : m - 3 = (m - 4) + 1 := by omega
+  rw [hexp, pow_succ]
+  ring
+
 end EvgenyTheorem
 
 
