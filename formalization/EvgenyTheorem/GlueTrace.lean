@@ -914,8 +914,6 @@ theorem sg_trace_p10_top_stratum_fifth_power_trace
     _ = Matrix.trace ((K * Matrix.diagonal (fun x =>
           if (sgGlue m).g x then
             K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) ^ 5) := by
-          congr 2
-          funext x
-          simp [d, g]
+          rfl
 
 end EvgenyTheorem
