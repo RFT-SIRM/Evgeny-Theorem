@@ -536,4 +536,72 @@ theorem sg_trace_p6_top_stratum_cube
       sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
 
 
+/-- Evaluate the p=6 top boundary trace using support-sensitive two-index
+trace collapse. This is an exact finite-level identity, not an axis-invariance
+claim. -/
+theorem sg_trace_p6_top_stratum_diagonal_cube
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    ∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o x x *
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+  classical
+  let d : WSG m → ℂ := fun x =>
+    if (sgGlue m).g x then
+      sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let D : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal d
+  let a : WSG m → ℂ := fun x => (D * sgK m θ ax o * D) x x
+  have hd : ∀ x, ¬ (sgGlue m).g x → d x = 0 := by
+    intro x hx
+    simp [d, hx]
+  have ha : ∀ x, ¬ (sgGlue m).g x → a x = 0 := by
+    intro x hx
+    change (D * sgK m θ ax o * D) x x = 0
+    rw [diagonal_sandwich_apply]
+    simp [d, hx]
+  have hKoff : ∀ x y, (sgGlue m).g x → (sgGlue m).g y →
+      x ≠ y → sgK m θ ax o x y = 0 := by
+    intro x y hx hy hxy
+    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
+  have hreduce :=
+    sg_trace_p6_top_stratum_reduce_to_diagonal_sandwich m hm θ ax o hanti
+  calc
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N) =
+        Matrix.trace (sgK m θ ax o * Matrix.diagonal a *
+          sgK m θ ax o * D) := by
+          simpa only [D, a, d] using hreduce
+    _ = ∑ x, if (sgGlue m).g x then
+          sgK m θ ax o x x * a x * sgK m θ ax o x x * d x else 0 := by
+          exact trace_kernel_diagonal_kernel_diagonal_collapse
+            (sgK m θ ax o) (sgGlue m).g a d ha hd hKoff
+    _ = ∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o x x *
+            sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp only [if_pos hg]
+            have hax : a x =
+                d x * sgK m θ ax o x x * d x := by
+              change (Matrix.diagonal d * sgK m θ ax o *
+                Matrix.diagonal d) x x = _
+              rw [diagonal_sandwich_apply]
+            rw [hax]
+            simp [d, hg]
+            ring
+          · simp [hg]
+
+
 end EvgenyTheorem
