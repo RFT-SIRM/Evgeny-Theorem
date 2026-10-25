@@ -1398,7 +1398,7 @@ theorem prod_p8_alternating_kernel_diagonal_word
       List (Matrix X X ℂ)).prod =
       K * D * K * D * K * D * K := by
   simp only [List.prod_cons, List.prod_nil, pow_zero, pow_one,
-    Matrix.one_mul, Matrix.mul_assoc]
+    Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
 
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
