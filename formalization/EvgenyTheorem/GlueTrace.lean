@@ -907,6 +907,57 @@ theorem sg_trace_p8_top_stratum_diagonal_fourth
 operator. This specializes the generic ten-pairing reduction under OAnti.
 The ordered boundary sum is explicit; no cancellation or axis-independence
 is asserted. -/
+/-- Complete two-pairing boundary contribution for the tenth moment.
+The five cyclic classes have exact multiplicities 10, 10, 10, 10, and 5.
+The theorem reduces this stratum to paired corner-diagonal sums only; it
+does not assert cancellation with any other stratum or axis-independence. -/
+theorem sg_trace_p10_two_N_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    10 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 9 * (sgGlue m).N) +
+    10 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 8 * (sgGlue m).N) +
+    10 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 7 * (sgGlue m).N) +
+    10 * Matrix.trace
+      (sgK m θ ax o ^ 4 * (sgGlue m).N * sgK m θ ax o ^ 6 * (sgGlue m).N) +
+    5 * Matrix.trace
+      (sgK m θ ax o ^ 5 * (sgGlue m).N * sgK m θ ax o ^ 5 * (sgGlue m).N) =
+    10 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 1) x x *
+        (sgK m θ ax o ^ 9) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    10 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 2) x x *
+        (sgK m θ ax o ^ 8) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    10 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 3) x x *
+        (sgK m θ ax o ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    10 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 4) x x *
+        (sgK m θ ax o ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    5 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 5) x x *
+        (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  let K := sgK m θ ax o
+  let G := sgGlue m
+  have hK : BD G K := by
+    simpa [K, G, sgK] using (blockK_BD (Hc m θ ax o))
+  have h9 : 9 < 2 ^ m := by
+    calc
+      9 < 16 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have htwo (a b : ℕ) (hb : b < 2 ^ m) :
+      Matrix.trace (K ^ a * G.N * K ^ b * G.N) =
+        ∑ x, if G.g x then
+          (K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0 := by
+    have hkg := sgK_pow_hkg_of_OAnti m b θ ax o hanti hb
+    have htrace := trace_two_N_powers G K a b 0 (BD_pow K hK b) hkg
+    simpa [K, G, pow_zero] using htrace
+  rw [htwo 1 9 h9, htwo 2 8 h9, htwo 3 7 h9,
+    htwo 4 6 h9, htwo 5 5 h9]
+
 theorem sg_trace_p10_top_stratum_boundary
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
