@@ -773,25 +773,21 @@ theorem sg_trace_p8_top_stratum_boundary
 
 
 /-- The p=8 top boundary contribution collapses to pointwise fourth powers.
-The proof composes the already established boundary reduction with the
-support-sensitive generic trace identity; cancellation with lower strata is
-not part of this statement. -/
+The proof composes the established boundary reduction with the generic trace
+identity; cancellation with lower strata is not part of this statement. -/
 theorem sg_trace_p8_top_stratum_diagonal_fourth
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
-    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N *
-      sgK m θ ax o * (sgGlue m).N) =
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
     ∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o x x *
-        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
+      (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
   classical
+  dsimp
   let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
   let g : WSG m → Prop := (sgGlue m).g
   let d : WSG m → ℂ := fun x =>
@@ -804,14 +800,10 @@ theorem sg_trace_p8_top_stratum_diagonal_fourth
     intro x y hx hy hxy
     exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
   calc
-    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N *
-        sgK m θ ax o * (sgGlue m).N) =
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
         ∑ x, if g x then
           (([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
             List (Matrix (WSG m) (WSG m) ℂ)).prod) x x * d x else 0 := by
@@ -828,8 +820,7 @@ theorem sg_trace_p8_top_stratum_diagonal_fourth
     _ = ∑ x, if g x then (K x x * d x) ^ 4 else 0 := by
           exact trace_alternating_four_supported_diagonal g K d hd hKoff
     _ = ∑ x, if (sgGlue m).g x then
-          (sgK m θ ax o x x *
-            sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
+          (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
           apply Finset.sum_congr rfl
           intro x hx
           by_cases hg : (sgGlue m).g x
