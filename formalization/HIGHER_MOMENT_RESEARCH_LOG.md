@@ -1841,3 +1841,38 @@ $$
 The safe factorization is KDKDKD = K(DKD)KD, with associativity understood. The existing lemma diagonal_sandwich_offdiag_zero proves that A = DKD is diagonal, and trace_diagonal_sandwich_eq_sum evaluates its trace. To finish the displayed identity one must still expand Tr(KAKD) into a two-index sum and use support of both A and D to force both indices into g, where the off-diagonal hypothesis on K applies. It is invalid to infer that KD itself is diagonal from the current hypotheses.
 
 This note is a proof plan, not a Lean theorem. No axis-invariance statement follows from this identity alone: the resulting sum still depends on the diagonal entries of the particular operator. The next code change should add and compile the two-index trace lemma before specializing it to the concrete sgK operator.
+
+
+## 4bd. Support-sensitive p=6 top-stratum collapse (2026-10-25)
+
+The current PR branch now contains the Lean theorem
+`sg_trace_p6_top_stratum_diagonal_cube` in
+`formalization/EvgenyTheorem/GlueTrace.lean`. It combines the already proved
+boundary regrouping with the two-index trace-collapse lemma. The support
+conditions are explicit: both diagonal weights vanish off the glued locus,
+and `sgK_glued_offdiag` is used only after both summation indices have been
+shown to lie in that locus. The result is the exact finite-level identity
+
+$$
+\operatorname{Tr}(K N K N K N K N K N K N)
+= \sum_{x\in g}
+  \left(K_{xx}K_{\sigma(x),\sigma(x)}\right)^3,
+$$
+
+under the theorem's stated `OAnti (m + 1) o` hypothesis and the concrete
+definitions of `K`, `N`, `g`, and `σ`.
+
+**Verified CI for commit `2ac025af202c5a9e0986e0ee8b6591a7b3c014c8`:**
+the Lean `Build formalization` job passed, and both Python 3.11 and 3.12
+jobs passed their fast and slow tests. This verifies compilation and the
+repository's test suite for that exact commit. The subsequent documentation
+commit, if any, must be checked separately.
+
+This closes the specific finite-matrix reduction for the p=6 top boundary
+trace. It does **not** show that the displayed sum is independent of the axis
+assignment, does not cancel the other even-`r` strata, and does not prove
+`R_m^(p)=R_4^(p)` for all levels or angles. The next mathematical obligation
+remains a justified comparison/cancellation of the explicit even-stratum
+boundary sums, followed by a proof of the finite base transition and the
+level-propagation step. Numerical agreement at θ=π remains finite exact
+evidence only.
