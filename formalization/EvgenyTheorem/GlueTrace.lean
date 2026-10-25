@@ -678,6 +678,62 @@ theorem sg_trace_p6_top_stratum_diagonal_cube
 
 
 
+
+/-- Four alternating kernel/diagonal factors collapse to a pointwise fourth
+power when the diagonal weight is supported on a set where K has no
+off-diagonal entries. The support condition is used before invoking the
+off-diagonal hypothesis. -/
+theorem trace_alternating_four_supported_diagonal
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    Matrix.trace (K * Matrix.diagonal d * K * Matrix.diagonal d *
+      K * Matrix.diagonal d * K * Matrix.diagonal d) =
+      ∑ x, if g x then (K x x * d x) ^ 4 else 0 := by
+  classical
+  let D : Matrix X X ℂ := Matrix.diagonal d
+  let e : X → ℂ := fun x => d x * K x x * d x
+  have hD : D * K * D = Matrix.diagonal e := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simp [D, e, Matrix.mul_apply, Matrix.diagonal_apply]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      have hz := diagonal_sandwich_offdiag_zero g d K hd hK x y hxy
+      simpa [D] using hz
+  have he : ∀ x, ¬ g x → e x = 0 := by
+    intro x hx
+    simp [e, hd x hx]
+  have hcyc :
+      Matrix.trace (K * D * K * D * K * D * K * D) =
+        Matrix.trace (K * (D * K * D) * K * (D * K * D)) := by
+    calc
+      Matrix.trace (K * D * K * D * K * D * K * D) =
+          Matrix.trace (D * K * D * K * D * K * D * K) := by
+            rw [show K * D * K * D * K * D * K * D =
+              K * (D * K * D * K * D * K * D) by simp [Matrix.mul_assoc]]
+            exact Matrix.trace_mul_comm _ _
+      _ = Matrix.trace ((D * K * D) * K * (D * K * D) * K) := by
+            simp [Matrix.mul_assoc]
+      _ = Matrix.trace (K * (D * K * D) * K * (D * K * D)) := by
+            rw [Matrix.trace_mul_comm]
+            simp [Matrix.mul_assoc]
+  rw [hcyc, hD]
+  have hKoff : ∀ x y, g x → g y → x ≠ y → K x y = 0 := hK
+  have hcollapsed :=
+    trace_kernel_diagonal_kernel_diagonal_collapse K g e e he he hKoff
+  rw [hcollapsed]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hg : g x
+  · simp only [if_pos hg]
+    simp [e]
+    ring
+  · simp [hg]
+
 /-- Concrete p=8 top-stratum boundary formula for the Sierpinski glued
 operator. This specializes the generic eight-pairing reduction under OAnti.
 The resulting ordered boundary sum is explicit; no cancellation is claimed. -/
