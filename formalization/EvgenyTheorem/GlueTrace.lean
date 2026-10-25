@@ -770,55 +770,6 @@ theorem sg_trace_p8_top_stratum_boundary
 
 
 
-/-- Evaluate the p=8 top boundary contribution as a fourth-power corner sum.
-The boundary reduction is converted back to a trace by weighting its final
-diagonal with the partner-corner value; the supported-diagonal collapse then
-evaluates that trace exactly. -/
-theorem sg_trace_p8_top_stratum_fourth_power
-    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o]
-    (hanti : OAnti (m + 1) o) :
-    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
-      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
-      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
-      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
-    ∑ x, if (sgGlue m).g x then
-      (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
-  dsimp
-  rw [sg_trace_p8_top_stratum_boundary m hm θ ax o hanti]
-  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-  let g : WSG m → Prop := (sgGlue m).g
-  let d : WSG m → ℂ := fun x =>
-    if g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
-  let D : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal d
-  have hd : ∀ x, ¬ g x → d x = 0 := by
-    intro x hx
-    simp [d, hx]
-  have hKoff : ∀ x y, g x → g y → x ≠ y → K x y = 0 := by
-    intro x y hx hy hxy
-    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
-  have hprod :
-      ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
-        List (Matrix (WSG m) (WSG m) ℂ)).prod =
-        K * D * K * D * K * D * K := by
-    simp [pow_zero, pow_one, Matrix.one_mul, Matrix.mul_assoc]
-  have hsum :
-      (∑ x, if g x then
-        (([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
-          List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
-          K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
-      Matrix.trace (K * D * K * D * K * D * K * D) := by
-    rw [hprod, trace_mul_diagonal_eq_sum]
-    apply Finset.sum_congr rfl
-    intro x hx
-    by_cases hg : g x
-    · simp only [if_pos hg]
-      simp [d, hg, Matrix.mul_assoc]
-    · simp [hg, d]
-  rw [hsum]
-  exact trace_alternating_four_supported_diagonal g K d hd hKoff
-
 /-- Concrete p=10 top-stratum boundary formula for the Sierpinski glued
 operator. This specializes the generic ten-pairing reduction under OAnti.
 The ordered boundary sum is explicit; no cancellation or axis-independence
