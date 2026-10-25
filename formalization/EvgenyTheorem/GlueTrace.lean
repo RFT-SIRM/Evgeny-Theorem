@@ -770,6 +770,43 @@ theorem sg_trace_p8_top_stratum_boundary
 
 
 
+
+/-- Collapse the concrete p=8 top boundary sum to pointwise fourth powers.
+This combines the boundary reduction with the support-sensitive trace
+identity and the glued-corner off-diagonal vanishing. It evaluates this
+stratum only; cancellation against the remaining strata is separate. -/
+theorem sg_trace_p8_top_stratum_diagonal_fourth
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+    ∑ x, if (sgGlue m).g x then
+      (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
+  classical
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let d : WSG m → ℂ := fun x =>
+    if g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let D : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal d
+  have hd : ∀ x, ¬ g x → d x = 0 := by
+    intro x hx
+    simp [d, hx]
+  have hKoff : ∀ x y, g x → g y → x ≠ y → K x y = 0 := by
+    intro x y hx hy hxy
+    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
+  rw [sg_trace_p8_top_stratum_boundary m hm θ ax o hanti]
+  change
+    (∑ x, if g x then
+      (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+        List (Matrix (WSG m) (Matrix (Fin 2) (Fin 2) ℂ) ℂ)).prod) x x *
+        K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) = _ 
+
 /-- Concrete p=10 top-stratum boundary formula for the Sierpinski glued
 operator. This specializes the generic ten-pairing reduction under OAnti.
 The ordered boundary sum is explicit; no cancellation or axis-independence
