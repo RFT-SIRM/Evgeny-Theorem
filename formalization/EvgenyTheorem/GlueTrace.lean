@@ -734,6 +734,77 @@ theorem trace_alternating_four_supported_diagonal
     ring
   · simp [hg]
 
+/-- Five alternating kernel/diagonal factors collapse to a pointwise fifth
+power when the diagonal weight is supported on a set where K has no
+off-diagonal entries. This extends the p=8 collapse by one factor. -/
+theorem trace_alternating_five_supported_diagonal
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    Matrix.trace (K * Matrix.diagonal d * K * Matrix.diagonal d *
+      K * Matrix.diagonal d * K * Matrix.diagonal d *
+      K * Matrix.diagonal d) =
+      ∑ x, if g x then (K x x * d x) ^ 5 else 0 := by
+  classical
+  let D : Matrix X X ℂ := Matrix.diagonal d
+  let e : X → ℂ := fun x => d x * K x x * d x
+  let E : Matrix X X ℂ := D * K * D
+  let f : X → ℂ := fun x => e x * K x x * e x
+  have hD : E = Matrix.diagonal e := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simp [E, D, e, Matrix.mul_apply, Matrix.diagonal_apply]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      have hz := diagonal_sandwich_offdiag_zero g d K hd hK x y hxy
+      simpa [E, D] using hz
+  have he : ∀ x, ¬ g x → e x = 0 := by
+    intro x hx
+    simp [e, hd x hx]
+  have hE : Matrix.diagonal e * K * Matrix.diagonal e =
+      Matrix.diagonal f := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simp [f, Matrix.mul_apply, Matrix.diagonal_apply]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero g e K he hK x y hxy
+  have hf : ∀ x, ¬ g x → f x = 0 := by
+    intro x hx
+    simp [f, he x hx]
+  have hcyc :
+      Matrix.trace (K * D * K * D * K * D * K * D * K * D) =
+        Matrix.trace (E * K * E * K * D * K) := by
+    calc
+      Matrix.trace (K * D * K * D * K * D * K * D * K * D) =
+          Matrix.trace (D * K * D * K * D * K * D * K * D * K) := by
+            rw [show K * D * K * D * K * D * K * D * K * D =
+              K * (D * K * D * K * D * K * D * K * D) by
+                simp [Matrix.mul_assoc]]
+            exact Matrix.trace_mul_comm _ _
+      _ = Matrix.trace (E * K * E * K * D * K) := by
+            simp [E, Matrix.mul_assoc]
+  calc
+    Matrix.trace (K * D * K * D * K * D * K * D * K * D) =
+        Matrix.trace (Matrix.diagonal f * K * D * K) := by
+          rw [hcyc, hD, hE]
+    _ = Matrix.trace (K * D * K * Matrix.diagonal f) := by
+          exact Matrix.trace_mul_comm _ _
+    _ = ∑ x, if g x then K x x * d x * K x x * f x else 0 := by
+          exact trace_kernel_diagonal_kernel_diagonal_collapse K g d f hd hf hK
+    _ = ∑ x, if g x then (K x x * d x) ^ 5 else 0 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : g x
+          · simp only [if_pos hg]
+            simp [f, e]
+            ring
+          · simp [hg]
+
 /-- Concrete p=8 top-stratum boundary formula for the Sierpinski glued
 operator. This specializes the generic eight-pairing reduction under OAnti.
 The resulting ordered boundary sum is explicit; no cancellation is claimed. -/
