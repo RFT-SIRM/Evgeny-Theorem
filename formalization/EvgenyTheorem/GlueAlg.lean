@@ -1435,6 +1435,41 @@ theorem trace_K_D_alternating_eight_eq_four
   rw [pow_succ, pow_succ, pow_succ]
   simp only [pow_one, Matrix.mul_assoc]
 
+
+/-- Combine the support restriction and matrix-word normalization: the
+supported p=8 boundary sum is the fourth-power trace of the kernel-diagonal
+product. This remains a generic algebraic identity, not an operator-specific
+cancellation theorem. -/
+theorem trace_p8_supported_boundary_sum_as_fourth_power
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    (∑ x, if g x then
+      (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+        List (Matrix X X ℂ)).prod) x x * d x else 0) =
+      Matrix.trace ((K * Matrix.diagonal d) ^ 4) := by
+  calc
+    (∑ x, if g x then
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+          List (Matrix X X ℂ)).prod) x x * d x else 0)
+        = Matrix.trace
+            (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+              Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+              List (Matrix X X ℂ)).prod * Matrix.diagonal d) := by
+              symm
+              exact trace_p8_supported_boundary_sum_as_alternating_trace
+                g K d hd
+    _ = Matrix.trace
+          (K * Matrix.diagonal d * K * Matrix.diagonal d *
+            K * Matrix.diagonal d * K * Matrix.diagonal d) := by
+          rw [prod_p8_alternating_kernel_diagonal_word]
+          simp only [Matrix.mul_assoc]
+    _ = Matrix.trace ((K * Matrix.diagonal d) ^ 4) := by
+          exact trace_K_D_alternating_eight_eq_four K (Matrix.diagonal d)
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
