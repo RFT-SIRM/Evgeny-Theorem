@@ -991,4 +991,54 @@ theorem sg_trace_p10_top_stratum_fifth_power_trace
             K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) ^ 5) := by
           rfl
 
+
+/-- The p=10 top boundary contribution collapses to pointwise fifth powers.
+This composes the established boundary reduction with the generic supported
+trace identity; cancellation with lower strata is not part of this statement. -/
+theorem sg_trace_p10_top_stratum_diagonal_fifth
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+    ∑ x, if (sgGlue m).g x then
+      (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0 := by
+  classical
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let d : WSG m → ℂ := fun x =>
+    if g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let D : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal d
+  have hd : ∀ x, ¬ g x → d x = 0 := by
+    intro x hx
+    simp [d, hx]
+  have hKoff : ∀ x y, g x → g y → x ≠ y → K x y = 0 := by
+    intro x y hx hy hxy
+    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
+  calc
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+        Matrix.trace ((K * D) ^ 5) := by
+          exact sg_trace_p10_top_stratum_fifth_power_trace m hm θ ax o hanti
+    _ = Matrix.trace (K * D * K * D * K * D * K * D * K * D) := by
+          rw [trace_K_D_alternating_ten_eq_five]
+    _ = ∑ x, if g x then (K x x * d x) ^ 5 else 0 := by
+          exact trace_alternating_five_supported_diagonal g K d hd hKoff
+    _ = ∑ x, if (sgGlue m).g x then
+          (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp only [if_pos hg]
+            simp [K, d, g, hg]
+          · simp [hg, g]
+
 end EvgenyTheorem
