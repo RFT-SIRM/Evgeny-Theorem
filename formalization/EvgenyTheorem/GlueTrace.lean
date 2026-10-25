@@ -815,8 +815,12 @@ theorem sg_trace_p8_top_stratum_diagonal_fourth
         ∑ x, if g x then
           (([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
             List (Matrix (WSG m) (WSG m) ℂ)).prod) x x * d x else 0 := by
-          simpa [K, g, d, D] using
-            sg_trace_p8_top_stratum_boundary m hm θ ax o hanti
+          rw [sg_trace_p8_top_stratum_boundary m hm θ ax o hanti]
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp [K, g, d, D, hg]
+          · simp [K, g, d, D, hg]
     _ = Matrix.trace ((K * D) ^ 4) := by
           exact trace_p8_supported_boundary_sum_as_fourth_power g K d hd
     _ = Matrix.trace (K * D * K * D * K * D * K * D) := by
