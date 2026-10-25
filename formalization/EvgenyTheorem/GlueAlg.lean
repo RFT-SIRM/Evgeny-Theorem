@@ -1073,6 +1073,30 @@ theorem trace_ten_N_powers_boundary {cp : W → ι} (G : GlueData cp)
         K ^ i] : List (Matrix W W ℂ))
       ([K ^ k] : List (Matrix W W ℂ)) (K ^ j) (BD_pow K hK j) hkgJ)
 
+
+/-- One four-N cyclic class in the tenth-moment expansion. The run lengths
+(1,1,1,7) have cyclic orbit size four, hence multiplicity 10 among the
+length-ten words. This records its exact boundary-kernel expression; it does
+not identify it with any other class or claim cancellation. -/
+theorem trace_p10_four_N_class_1117 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 7 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 7) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 1 7 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 7 (by omega) w w' hw hw' hcopy hne)]
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
