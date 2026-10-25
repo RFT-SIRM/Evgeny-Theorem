@@ -793,7 +793,8 @@ theorem trace_alternating_five_supported_diagonal
         Matrix.trace (Matrix.diagonal f * K * D * K) := by
           rw [hcyc, hD, hE]
     _ = Matrix.trace (K * D * K * Matrix.diagonal f) := by
-          exact Matrix.trace_mul_comm _ _
+          rw [Matrix.trace_mul_comm]
+          simp [Matrix.mul_assoc]
     _ = ∑ x, if g x then K x x * d x * K x x * f x else 0 := by
           exact trace_kernel_diagonal_kernel_diagonal_collapse K g d f hd hf hK
     _ = ∑ x, if g x then (K x x * d x) ^ 5 else 0 := by
