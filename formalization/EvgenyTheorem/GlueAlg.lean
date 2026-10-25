@@ -1400,6 +1400,29 @@ theorem prod_p8_alternating_kernel_diagonal_word
   simp only [List.prod_cons, List.prod_nil, pow_zero, pow_one,
     Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
 
+
+/-- Generic p=8 boundary-sum bridge. The supported sum is exactly the trace
+of the alternating four-kernel/four-diagonal word; this theorem contains no
+operator-specific hypotheses and does not assert that the trace collapses
+further to a fourth-power sum. -/
+theorem trace_p8_supported_boundary_sum_as_alternating_trace
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    Matrix.trace
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+          List (Matrix X X ℂ)).prod * Matrix.diagonal d) =
+      ∑ x, if g x then
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+          List (Matrix X X ℂ)).prod) x x * d x else 0 := by
+  exact trace_list_prod_mul_diagonal_supported_sum g
+    ([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+      Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+      List (Matrix X X ℂ)) d hd
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
