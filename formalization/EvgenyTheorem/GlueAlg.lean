@@ -1288,6 +1288,72 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
 
 
 
+
+/-- The two-N stratum of the tenth moment, grouped by cyclic rotations.
+The five classes of positive run lengths are (1,9), (2,8), (3,7),
+(4,6), and (5,5), with multiplicities 10, 10, 10, 10, and 5.
+This theorem only reduces these five trace classes to boundary sums. -/
+theorem trace_p10_two_N_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 9 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * G.N * K ^ 8 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 3 * G.N * K ^ 7 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 4 * G.N * K ^ 6 * G.N * K ^ 0) +
+    5 * Matrix.trace (K ^ 5 * G.N * K ^ 5 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (K ^ 1) x x * (K ^ 9) (G.σ x) (G.σ x) else 0) +
+    10 * (∑ x, if G.g x then
+      (K ^ 2) x x * (K ^ 8) (G.σ x) (G.σ x) else 0) +
+    10 * (∑ x, if G.g x then
+      (K ^ 3) x x * (K ^ 7) (G.σ x) (G.σ x) else 0) +
+    10 * (∑ x, if G.g x then
+      (K ^ 4) x x * (K ^ 6) (G.σ x) (G.σ x) else 0) +
+    5 * (∑ x, if G.g x then
+      (K ^ 5) x x * (K ^ 5) (G.σ x) (G.σ x) else 0) := by
+  have h19 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 9 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 1) x x * (K ^ 9) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 1 9 0 (BD_pow K hK 9) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 9 (by omega) w w' hw hw' hcopy hne))
+  have h28 :
+      Matrix.trace (K ^ 2 * G.N * K ^ 8 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 2) x x * (K ^ 8) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 2 8 0 (BD_pow K hK 8) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 8 (by omega) w w' hw hw' hcopy hne))
+  have h37 :
+      Matrix.trace (K ^ 3 * G.N * K ^ 7 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 3) x x * (K ^ 7) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 3 7 0 (BD_pow K hK 7) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 7 (by omega) w w' hw hw' hcopy hne))
+  have h46 :
+      Matrix.trace (K ^ 4 * G.N * K ^ 6 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 4) x x * (K ^ 6) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 4 6 0 (BD_pow K hK 6) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 6 (by omega) w w' hw hw' hcopy hne))
+  have h55 :
+      Matrix.trace (K ^ 5 * G.N * K ^ 5 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 5) x x * (K ^ 5) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 5 5 0 (BD_pow K hK 5) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 5 (by omega) w w' hw hw' hcopy hne))
+  rw [h19, h28, h37, h46, h55]
+
 /-- The top even stratum of the sixth moment is a three-step boundary trace.
 This specialization deliberately does not assert vanishing: its value must be
 compared with the other even strata (or with the corresponding operator's
