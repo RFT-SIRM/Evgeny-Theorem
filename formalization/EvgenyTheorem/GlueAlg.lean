@@ -1180,7 +1180,7 @@ theorem trace_p10_four_N_class_1414 {cp : W → ι}
     5 * (∑ x, if G.g x then
       (∑ y, if G.g y then
         ((K ^ 0 * K ^ 1) x y * (K ^ 4) (G.σ y) (G.σ y)) *
-          (K ^ 4) y x else 0) *
+          (K ^ 1) y x else 0) *
         (K ^ 4) (G.σ x) (G.σ x) else 0) := by
   rw [trace_four_N_powers_explicit G K hK 1 4 1 4 0
     (by
