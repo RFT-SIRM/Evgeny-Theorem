@@ -1169,10 +1169,9 @@ theorem trace_p10_four_N_class_1135 {cp : W → ι}
       exact hkg 5 (by omega) w w' hw hw' hcopy hne)]
 
 
-/-- The fifth four-N cyclic class in the tenth-moment expansion. The run
-lengths (1,4,1,4) have two distinct cyclic rotations, hence multiplicity
-five. The nested boundary-sum formula preserves the exact order of factors. -/
-theorem trace_p10_four_N_class_1144 {cp : W → ι}
+/-- The cyclic four-N class (1,4,1,4) has two distinct cyclic rotations,
+hence multiplicity five. The nested boundary-sum formula preserves the exact order of factors. -/
+theorem trace_p10_four_N_class_1414 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
       w ≠ w' → (K ^ n) w w' = 0) :
@@ -1180,13 +1179,13 @@ theorem trace_p10_four_N_class_1144 {cp : W → ι}
       (K ^ 1 * G.N * K ^ 4 * G.N * K ^ 1 * G.N * K ^ 4 * G.N * K ^ 0) =
     5 * (∑ x, if G.g x then
       (∑ y, if G.g y then
-        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+        ((K ^ 0 * K ^ 1) x y * (K ^ 4) (G.σ y) (G.σ y)) *
           (K ^ 4) y x else 0) *
         (K ^ 4) (G.σ x) (G.σ x) else 0) := by
   rw [trace_four_N_powers_explicit G K hK 1 4 1 4 0
     (by
       intro w w' hw hw' hcopy hne
-      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      exact hkg 4 (by omega) w w' hw hw' hcopy hne)
     (by
       intro w w' hw hw' hcopy hne
       exact hkg 4 (by omega) w w' hw hw' hcopy hne)]
