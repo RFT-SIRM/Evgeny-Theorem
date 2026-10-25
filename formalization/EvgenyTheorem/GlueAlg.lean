@@ -1387,6 +1387,19 @@ theorem trace_list_prod_mul_diagonal_supported_sum
   · simp [hg]
   · simp [hg, hd x hg]
 
+
+/-- Normalize the eight-factor list used by the p=8 boundary reduction.
+Kept separate from the operator-specific theorem so Lean checks only this
+short matrix-product identity here. -/
+theorem prod_p8_alternating_kernel_diagonal_word
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+      List (Matrix X X ℂ)).prod =
+      K * D * K * D * K * D * K := by
+  simp only [List.prod_cons, List.prod_nil, pow_zero, pow_one,
+    Matrix.one_mul, Matrix.mul_assoc]
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
