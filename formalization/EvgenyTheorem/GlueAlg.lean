@@ -1169,8 +1169,6 @@ theorem trace_p10_four_N_class_1135 {cp : W → ι}
       exact hkg 5 (by omega) w w' hw hw' hcopy hne)]
 
 
-/-- The cyclic four-N class (1,4,1,4) has two distinct cyclic rotations,
-hence multiplicity five. The nested boundary-sum formula preserves the exact order of factors. -/
 /-- The cyclic four-N class (1,1,4,4) has four distinct cyclic
 rotations, hence multiplicity ten. It is distinct from the alternating
 class (1,4,1,4), whose multiplicity is five. -/
@@ -1193,6 +1191,8 @@ theorem trace_p10_four_N_class_1144 {cp : W → ι}
       intro w w' hw hw' hcopy hne
       exact hkg 4 (by omega) w w' hw hw' hcopy hne)]
 
+/-- The cyclic four-N class (1,4,1,4) has two distinct cyclic rotations,
+hence multiplicity five. The nested boundary-sum formula preserves the exact order of factors. -/
 theorem trace_p10_four_N_class_1414 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
