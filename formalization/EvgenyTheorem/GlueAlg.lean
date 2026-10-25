@@ -1365,6 +1365,28 @@ theorem trace_mul_diagonal_eq_sum (A : Matrix W W ℂ) (d : W → ℂ) :
   classical
   simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
 
+
+/-- A supported diagonal factor converts a diagonal-entry sum into a trace,
+without expanding the matrix product that precedes it. -/
+theorem trace_list_prod_mul_diagonal_supported_sum
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (M : List (Matrix X X ℂ)) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    Matrix.trace (M.prod * Matrix.diagonal d) =
+      ∑ x, if g x then M.prod x x * d x else 0 := by
+  classical
+  have htrace :
+      Matrix.trace (M.prod * Matrix.diagonal d) =
+        ∑ x, M.prod x x * d x := by
+    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+  rw [htrace]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hg : g x
+  · simp [hg]
+  · simp [hg, hd x hg]
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
