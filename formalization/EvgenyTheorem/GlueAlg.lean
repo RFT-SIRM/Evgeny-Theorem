@@ -1423,6 +1423,18 @@ theorem trace_p8_supported_boundary_sum_as_alternating_trace
       Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
       List (Matrix X X ℂ)) d hd
 
+
+/-- Reassociate the alternating eight-factor trace as a fourth power.
+This is a purely algebraic normalization; it makes no claim about the
+operator-specific boundary sum. -/
+theorem trace_K_D_alternating_eight_eq_four
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    Matrix.trace (K * D * K * D * K * D * K * D) =
+      Matrix.trace ((K * D) ^ 4) := by
+  rw [pow_succ, pow_succ, pow_succ]
+  simp only [pow_one, Matrix.mul_assoc]
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
