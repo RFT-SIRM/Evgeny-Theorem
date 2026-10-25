@@ -1357,6 +1357,14 @@ theorem trace_p6_all_even_strata_boundary {cp : W → ι}
   rw [trace_p6_lower_even_strata_boundary G K hK hkg,
     trace_p6_top_stratum_boundary G K hK hkg]
 
+
+/-- Multiplication on the right by a diagonal matrix weights the diagonal
+entries before taking the trace. -/
+theorem trace_mul_diagonal_eq_sum (A : Matrix W W ℂ) (d : W → ℂ) :
+    Matrix.trace (A * Matrix.diagonal d) = ∑ x, A x x * d x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
