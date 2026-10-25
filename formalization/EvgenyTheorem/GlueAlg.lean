@@ -1469,6 +1469,66 @@ theorem trace_p8_supported_boundary_sum_as_fourth_power
     _ = Matrix.trace ((K * Matrix.diagonal d) ^ 4) := by
           exact trace_K_D_alternating_eight_eq_four K (Matrix.diagonal d)
 
+
+/-- Normalize the ten-factor list used by the p=10 boundary reduction.
+The list contains five kernel factors and four explicit diagonal factors;
+the final diagonal weight is supplied by right multiplication. -/
+theorem prod_p10_alternating_kernel_diagonal_word
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+      List (Matrix X X ℂ)).prod =
+      K * D * K * D * K * D * K * D * K := by
+  simp only [List.prod_cons, List.prod_nil, pow_zero, pow_one,
+    Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
+
+
+/-- Reassociate the alternating ten-factor trace as a fifth power. -/
+theorem trace_K_D_alternating_ten_eq_five
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    Matrix.trace (K * D * K * D * K * D * K * D * K * D) =
+      Matrix.trace ((K * D) ^ 5) := by
+  rw [pow_succ, pow_succ, pow_succ, pow_succ]
+  simp only [pow_one, Matrix.mul_assoc]
+
+
+/-- Convert a supported p=10 boundary sum to the fifth-power trace of
+the kernel-diagonal product. This is an algebraic bridge only; it does not
+claim cancellation with lower boundary strata. -/
+theorem trace_p10_supported_boundary_sum_as_fifth_power
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    (∑ x, if g x then
+      (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)).prod) x x * d x else 0) =
+      Matrix.trace ((K * Matrix.diagonal d) ^ 5) := by
+  calc
+    (∑ x, if g x then
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)).prod) x x * d x else 0)
+        = Matrix.trace
+            (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+              Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+              Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)).prod *
+              Matrix.diagonal d) := by
+              symm
+              exact trace_list_prod_mul_diagonal_supported_sum g
+                ([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+                  Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+                  Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)) d hd
+    _ = Matrix.trace
+          (K * Matrix.diagonal d * K * Matrix.diagonal d *
+            K * Matrix.diagonal d * K * Matrix.diagonal d *
+            K * Matrix.diagonal d) := by
+          rw [prod_p10_alternating_kernel_diagonal_word]
+    _ = Matrix.trace ((K * Matrix.diagonal d) ^ 5) := by
+          exact trace_K_D_alternating_ten_eq_five K (Matrix.diagonal d)
+
 /-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
 theorem trace_diagonal_eq_sum (d : W → ℂ) :
     Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
