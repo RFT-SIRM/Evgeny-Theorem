@@ -340,6 +340,79 @@ theorem sg_trace_p6_top_stratum_boundary
     n hn w w' hw hw' hcopy hne
 
 
+
+/-- Unified concrete boundary expansion for all even strata of the sixth
+moment. The lower strata are written as explicit weighted corner sums and the
+top stratum as its diagonal-sandwich trace, so later axis-comparison proofs
+can address the complete correction in one equation. No cancellation is
+assumed by this identity. -/
+theorem sg_trace_p6_all_even_strata_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 4 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 3 *
+        (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 *
+        (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 1 *
+        (sgGlue m).N * sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 2 *
+        (sgGlue m).N * sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N * sgK m θ ax o ^ 0) +
+    Matrix.trace
+      (sgK m θ ax o * (sgGlue m).N * sgK m θ ax o *
+        (sgGlue m).N * sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N * sgK m θ ax o *
+        (sgGlue m).N * sgK m θ ax o * (sgGlue m).N) =
+    6 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 1) x x *
+        (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 2) x x *
+        (sgK m θ ax o ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    3 * (∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o ^ 3) x x *
+        (sgK m θ ax o ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x *
+        (sgK m θ ax o ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 1) x x) *
+        (sgK m θ ax o ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    6 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x *
+        (sgK m θ ax o ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 2) x x) *
+        (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    3 * (∑ x, if (sgGlue m).g x then
+      ((sgK m θ ax o x x *
+        (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (sgK m θ ax o ^ 1) x x) *
+        (sgK m θ ax o ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) +
+    Matrix.trace
+      (sgK m θ ax o *
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        sgK m θ ax o *
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        sgK m θ ax o *
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          sgK m θ ax o ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  rw [sg_trace_p6_lower_even_strata_boundary m hm θ ax o hanti,
+    sg_trace_p6_top_stratum_boundary m hm θ ax o hanti]
+
 /-- The partner-corner diagonal weight sandwiches sgK to a diagonal
 matrix: distinct glued states have zero coupling. -/
 theorem sgK_corner_sandwich_offdiag_zero
