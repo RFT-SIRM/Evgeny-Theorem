@@ -539,6 +539,8 @@ theorem sg_trace_p6_top_stratum_cube
 /-- The p=6 top boundary trace collapses to a sum of cubes of paired
 corner-diagonal products. This is a finite-matrix identity; it does not
 assert that the resulting sum is independent of the axis assignment. -/
+-- The expanded trace expression has a large reducible matrix type; keep this local.
+set_option maxHeartbeats 800000 in
 theorem sg_trace_p6_top_stratum_diagonal_cube
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
