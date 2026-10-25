@@ -604,4 +604,38 @@ theorem sg_trace_p6_top_stratum_diagonal_cube
           · simp [hg]
 
 
+
+/-- Concrete p=8 top-stratum boundary formula for the Sierpinski glued
+operator. This specializes the generic eight-pairing reduction under OAnti.
+The resulting ordered boundary sum is explicit; no cancellation is claimed. -/
+theorem sg_trace_p8_top_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+    ∑ x, if (sgGlue m).g x then
+      (([K ^ 0, K ^ 1,
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if (sgGlue m).g y then
+          (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+        K ^ 1] : List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
+        (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+  dsimp
+  apply trace_eight_N_powers_boundary (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+    1 1 1 1 1 1 1 1 0
+  all_goals
+    intro w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      1 (by omega) w w' hw hw' hcopy hne
+
 end EvgenyTheorem
