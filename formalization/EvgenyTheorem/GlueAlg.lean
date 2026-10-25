@@ -1466,7 +1466,6 @@ theorem trace_p8_supported_boundary_sum_as_fourth_power
           (K * Matrix.diagonal d * K * Matrix.diagonal d *
             K * Matrix.diagonal d * K * Matrix.diagonal d) := by
           rw [prod_p8_alternating_kernel_diagonal_word]
-          simp only [Matrix.mul_assoc]
     _ = Matrix.trace ((K * Matrix.diagonal d) ^ 4) := by
           exact trace_K_D_alternating_eight_eq_four K (Matrix.diagonal d)
 
