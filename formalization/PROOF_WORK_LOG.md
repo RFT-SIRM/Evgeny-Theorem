@@ -19,6 +19,25 @@ Scope: existing PR #9, branch `moment-6-8-10`. Do not create branches, PRs, or i
 
 The existing p=6 development has `sg_trace_p6_all_even_strata_boundary`, an explicit expansion of the lower even strata plus the top stratum. For p=10, the current file has only the concrete top-stratum boundary reduction, its fifth-power trace bridge, and its pointwise fifth-power form. The next substantive task is to derive the **full p=10 even-strata boundary expansion** from the ordered-word expansion, preserving the exact word multiplicities, and only then compare/cancel terms across orientations. Do not infer coefficients by analogy with p=6.
 
+
+## p=10 even-strata multiplicity audit (combinatorial, not yet Lean-formalized)
+
+For a word with exactly r occurrences of the boundary letter B = K*N in the expansion of (K + K*N)^10, the cyclic trace can be written with r positive K-run lengths (a₁,…,aᵣ) summing to 10. Cyclic rotations have the same trace. For a cyclic composition with orbit size s, its total multiplicity among the original length-10 words is 10s/r. This is the same counting rule that reproduces the existing p=6 coefficients (for r=2: 6, 6, 3; for r=4: 6, 6, 3).
+
+A direct exhaustive enumeration of positive compositions, grouped by cyclic rotation, gives:
+
+| Number r of N factors | Number of positive compositions | Cyclic classes | Sum of class multiplicities | Check against binomial coefficient |
+|---:|---:|---:|---:|---:|
+| 2 | 9 | 5 | 45 | C(10,2) = 45 |
+| 4 | 84 | 22 | 210 | C(10,4) = 210 |
+| 6 | 126 | 22 | 210 | C(10,6) = 210 |
+| 8 | 36 | 5 | 45 | C(10,8) = 45 |
+| 10 | 1 | 1 | 1 | C(10,10) = 1 |
+
+The multiplicity checksum is 45 + 210 + 210 + 45 + 1 = 511, equal to the number of even-cardinality subsets of a 10-letter word excluding the empty subset (sum of the five even binomial coefficients). The full p=10 even-strata expansion therefore has 55 cyclic composition classes before any further identifications from reversal, Hermiticity, or vanishing lemmas. The odd-N word classes are not included here: their vanishing must be justified by the existing trace/support lemmas in the formal proof, not merely assumed from this count.
+
+**Status:** combinatorial audit only. These counts are not yet encoded as a Lean theorem and do not establish cancellation between orientations. The next code change should formalize a small generic cyclic-composition/multiplicity lemma or introduce the p=10 boundary-expansion theorem in controlled groups, validating each coefficient against the checksum before adding axis-comparison claims.
+
 ## Required procedure for each next change
 
 1. Read the latest PR head and the complete failing Lean log before editing.
