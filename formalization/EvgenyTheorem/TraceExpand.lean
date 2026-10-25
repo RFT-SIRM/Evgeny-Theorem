@@ -324,6 +324,23 @@ theorem affine_three_pow_of_recurrence
       rw [hidx, ih, pow_succ]
       ring
 
+
+/-- Converse: the affine closed form forces a constant three-to-one residual.
+Together with affine_three_pow_of_recurrence, this characterizes the sequence
+formula exactly; it still does not establish the recurrence for operator traces. -/
+theorem recurrence_of_affine_three_pow
+    (D : ℕ → ℚ) (R : ℚ)
+    (hform : ∀ k, D (k + 3) = (D 3 + R / 2) * 3 ^ k - R / 2) :
+    ∀ n, 4 ≤ n → D n = 3 * D (n - 1) + R := by
+  intro n hn
+  let k := n - 4
+  have hindex : n = k + 4 := by
+    dsimp [k]
+    omega
+  have hprev : (k + 4) - 1 = k + 3 := by omega
+  rw [hindex, hprev, hform (k + 1), hform k, pow_succ]
+  ring
+
 end EvgenyTheorem
 
 
