@@ -769,6 +769,58 @@ theorem sg_trace_p8_top_stratum_boundary
 
 
 
+
+/-- Re-express the p=8 top-stratum boundary sum as an alternating trace with
+four supported diagonal factors. This isolates the boundary-to-trace step;
+the separate support-collapse lemma then evaluates the trace as a fourth
+power sum. -/
+theorem sg_trace_p8_top_stratum_as_alternating_trace
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let d : WSG m → ℂ := fun x =>
+      if (sgGlue m).g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+    Matrix.trace (K * Matrix.diagonal d * K * Matrix.diagonal d *
+      K * Matrix.diagonal d * K * Matrix.diagonal d) := by
+  dsimp
+  rw [sg_trace_p8_top_stratum_boundary m hm θ ax o hanti]
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let d : WSG m → ℂ := fun x =>
+    if g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let D : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal d
+  have hd : ∀ x, ¬ g x → d x = 0 := by
+    intro x hx
+    simp [d, hx]
+  have hword :
+      ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+        List (Matrix (WSG m) (WSG m) ℂ)).prod =
+        K * D * K * D * K * D * K := by
+    simp [List.prod, pow_zero, pow_one, Matrix.one_mul, Matrix.mul_assoc]
+  calc
+    (∑ x, if g x then
+        (([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+          List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
+          K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)
+        = Matrix.trace
+            (([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+              List (Matrix (WSG m) (WSG m) ℂ)).prod * D) := by
+              symm
+              simpa [D, d] using
+                (trace_list_prod_mul_diagonal_supported_sum
+                  g
+                  ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+                    List (Matrix (WSG m) (WSG m) ℂ))
+                  d hd)
+    _ = Matrix.trace (K * D * K * D * K * D * K * D) := by
+          rw [hword]
+          rfl
+
 /-- Concrete p=10 top-stratum boundary formula for the Sierpinski glued
 operator. This specializes the generic ten-pairing reduction under OAnti.
 The ordered boundary sum is explicit; no cancellation or axis-independence
