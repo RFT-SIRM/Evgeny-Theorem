@@ -304,6 +304,26 @@ theorem residual_eq_neg_two_constant_of_affine_three_pow
   rw [hexp, pow_succ]
   ring
 
+
+/-- A constant three-to-one residual implies the affine-in-3^m closed form.
+This is the converse direction to residual_eq_neg_two_constant_of_affine_three_pow.
+It is a sequence theorem over ℚ; applying it to operator traces still requires
+proving the residual recurrence for those traces. -/
+theorem affine_three_pow_of_recurrence
+    (D : ℕ → ℚ) (R : ℚ)
+    (hrec : ∀ n, 4 ≤ n → D n = 3 * D (n - 1) + R) :
+    ∀ k, D (k + 3) = (D 3 + R / 2) * 3 ^ k - R / 2 := by
+  intro k
+  induction k with
+  | zero =>
+      ring
+  | succ k ih =>
+      have hn : 4 ≤ k + 4 := by omega
+      rw [hrec (k + 4) hn]
+      have hidx : k + 4 - 1 = k + 3 := by omega
+      rw [hidx, ih, pow_succ]
+      ring
+
 end EvgenyTheorem
 
 
