@@ -771,6 +771,68 @@ theorem sg_trace_p8_top_stratum_boundary
 
 
 
+
+/-- The p=8 top boundary contribution collapses to pointwise fourth powers.
+The proof composes the already established boundary reduction with the
+support-sensitive generic trace identity; cancellation with lower strata is
+not part of this statement. -/
+theorem sg_trace_p8_top_stratum_diagonal_fourth
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N *
+      sgK m θ ax o * (sgGlue m).N) =
+    ∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o x x *
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let d : WSG m → ℂ := fun x =>
+    if g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let D : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal d
+  have hd : ∀ x, ¬ g x → d x = 0 := by
+    intro x hx
+    simp [d, hx]
+  have hKoff : ∀ x y, g x → g y → x ≠ y → K x y = 0 := by
+    intro x y hx hy hxy
+    exact sgK_glued_offdiag m (by omega) θ ax o x y hx hy hxy
+  calc
+    Matrix.trace (sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N *
+        sgK m θ ax o * (sgGlue m).N) =
+        ∑ x, if g x then
+          (([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+            List (Matrix (WSG m) (WSG m) ℂ)).prod) x x * d x else 0 := by
+          simpa [K, g, d, D] using
+            sg_trace_p8_top_stratum_boundary m hm θ ax o hanti
+    _ = Matrix.trace ((K * D) ^ 4) := by
+          exact trace_p8_supported_boundary_sum_as_fourth_power g K d hd
+    _ = Matrix.trace (K * D * K * D * K * D * K * D) := by
+          rw [trace_K_D_alternating_eight_eq_four]
+    _ = ∑ x, if g x then (K x x * d x) ^ 4 else 0 := by
+          exact trace_alternating_four_supported_diagonal g K d hd hKoff
+    _ = ∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o x x *
+            sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp only [if_pos hg]
+            simp [K, d, g, hg]
+          · simp [hg, g]
+
 /-- Concrete p=10 top-stratum boundary formula for the Sierpinski glued
 operator. This specializes the generic ten-pairing reduction under OAnti.
 The ordered boundary sum is explicit; no cancellation or axis-independence
