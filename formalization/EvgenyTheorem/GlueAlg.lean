@@ -1074,11 +1074,6 @@ theorem trace_ten_N_powers_boundary {cp : W → ι} (G : GlueData cp)
       ([K ^ k] : List (Matrix W W ℂ)) (K ^ j) (BD_pow K hK j) hkgJ)
 
 
-/-- One four-N cyclic class in the tenth-moment expansion. The run lengths
-(1,1,1,7) have cyclic orbit size four, hence multiplicity 10 among the
-length-ten words. This records its exact boundary-kernel expression; it does
-not identify it with any other class or claim cancellation. -/
-
 /-- Another four-N cyclic class in the tenth-moment expansion. The run
 lengths (1,1,5,3) have four distinct cyclic rotations, hence multiplicity
 10. This is a class-level boundary reduction only; it does not assert that
@@ -1102,6 +1097,10 @@ theorem trace_p10_four_N_class_1153 {cp : W → ι}
       intro w w' hw hw' hcopy hne
       exact hkg 3 (by omega) w w' hw hw' hcopy hne)]
 
+/-- One four-N cyclic class in the tenth-moment expansion. The run lengths
+(1,1,1,7) have cyclic orbit size four, hence multiplicity 10 among the
+length-ten words. This records its exact boundary-kernel expression; it does
+not identify it with any other class or claim cancellation. -/
 theorem trace_p10_four_N_class_1117 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
