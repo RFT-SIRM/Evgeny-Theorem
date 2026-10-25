@@ -866,4 +866,56 @@ theorem sg_trace_p10_top_stratum_boundary
     exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
       1 (by omega) w w' hw hw' hcopy hne
 
+
+/-- Convert the concrete p=10 top boundary contribution into a fifth-power
+trace of the kernel times its glued-corner diagonal. This is the operator-level
+version of the generic supported-sum bridge; it does not claim cancellation
+against the lower boundary strata. -/
+theorem sg_trace_p10_top_stratum_fifth_power_trace
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+    Matrix.trace ((K * Matrix.diagonal (fun x =>
+      if (sgGlue m).g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) ^ 5) := by
+  classical
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let d : WSG m → ℂ := fun x =>
+    if g x then K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  have hd : ∀ x, ¬ g x → d x = 0 := by
+    intro x hx
+    simp [d, hx]
+  calc
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+        ∑ x, if g x then
+          (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+            Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+            Matrix.diagonal d, K ^ 1] :
+            List (Matrix (WSG m) (WSG m) ℂ)).prod) x x * d x else 0 := by
+          rw [sg_trace_p10_top_stratum_boundary m hm θ ax o hanti]
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp [K, g, d, hg]
+          · simp [K, g, d, hg]
+    _ = Matrix.trace ((K * Matrix.diagonal d) ^ 5) := by
+          exact trace_p10_supported_boundary_sum_as_fifth_power g K d hd
+    _ = Matrix.trace ((K * Matrix.diagonal (fun x =>
+          if (sgGlue m).g x then
+            K ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) ^ 5) := by
+          congr 2
+          funext x
+          simp [d, g]
+
 end EvgenyTheorem
