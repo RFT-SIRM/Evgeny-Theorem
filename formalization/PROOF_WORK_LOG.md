@@ -38,6 +38,73 @@ The multiplicity checksum is 45 + 210 + 210 + 45 + 1 = 511, equal to the number 
 
 **Status:** combinatorial audit only. These counts are not yet encoded as a Lean theorem and do not establish cancellation between orientations. The next code change should formalize a small generic cyclic-composition/multiplicity lemma or introduce the p=10 boundary-expansion theorem in controlled groups, validating each coefficient against the checksum before adding axis-comparison claims.
 
+
+## Full cyclic-composition representatives for p=10
+
+This table records the complete output of an exhaustive positive-composition enumeration. Each representative is the lexicographically least cyclic rotation (entries are positive integers summing to 10). The coefficient is (10s/r), where (s) is the number of distinct cyclic rotations. This is a combinatorial ledger for the later trace expansion, **not** a claim that different representatives have different matrix values or that any class vanishes.
+
+| r | Canonical run lengths | Rotation orbit size s | Word coefficient 10s/r |
+|---:|---|---:|---:|
+| 2 | (1,9) | 2 | 10 |
+| 2 | (2,8) | 2 | 10 |
+| 2 | (3,7) | 2 | 10 |
+| 2 | (4,6) | 2 | 10 |
+| 2 | (5,5) | 1 | 5 |
+| 4 | (1,1,1,7) | 4 | 10 |
+| 4 | (1,1,2,6) | 4 | 10 |
+| 4 | (1,1,3,5) | 4 | 10 |
+| 4 | (1,1,4,4) | 4 | 10 |
+| 4 | (1,1,5,3) | 4 | 10 |
+| 4 | (1,1,6,2) | 4 | 10 |
+| 4 | (1,2,1,6) | 4 | 10 |
+| 4 | (1,2,2,5) | 4 | 10 |
+| 4 | (1,2,3,4) | 4 | 10 |
+| 4 | (1,2,4,3) | 4 | 10 |
+| 4 | (1,2,5,2) | 4 | 10 |
+| 4 | (1,3,1,5) | 4 | 10 |
+| 4 | (1,3,2,4) | 4 | 10 |
+| 4 | (1,3,3,3) | 4 | 10 |
+| 4 | (1,3,4,2) | 4 | 10 |
+| 4 | (1,4,1,4) | 2 | 5 |
+| 4 | (1,4,2,3) | 4 | 10 |
+| 4 | (1,4,3,2) | 4 | 10 |
+| 4 | (1,5,2,2) | 4 | 10 |
+| 4 | (2,2,2,4) | 4 | 10 |
+| 4 | (2,2,3,3) | 4 | 10 |
+| 4 | (2,3,2,3) | 2 | 5 |
+| 6 | (1,1,1,1,1,5) | 6 | 10 |
+| 6 | (1,1,1,1,2,4) | 6 | 10 |
+| 6 | (1,1,1,1,3,3) | 6 | 10 |
+| 6 | (1,1,1,1,4,2) | 6 | 10 |
+| 6 | (1,1,1,2,1,4) | 6 | 10 |
+| 6 | (1,1,1,2,2,3) | 6 | 10 |
+| 6 | (1,1,1,2,3,2) | 6 | 10 |
+| 6 | (1,1,1,3,1,3) | 6 | 10 |
+| 6 | (1,1,1,3,2,2) | 6 | 10 |
+| 6 | (1,1,1,4,1,2) | 6 | 10 |
+| 6 | (1,1,2,1,1,4) | 6 | 10 |
+| 6 | (1,1,2,1,2,3) | 6 | 10 |
+| 6 | (1,1,2,1,3,2) | 6 | 10 |
+| 6 | (1,1,2,2,1,3) | 6 | 10 |
+| 6 | (1,1,2,2,2,2) | 6 | 10 |
+| 6 | (1,1,2,3,1,2) | 6 | 10 |
+| 6 | (1,1,3,1,1,3) | 3 | 5 |
+| 6 | (1,1,3,1,2,2) | 6 | 10 |
+| 6 | (1,1,3,2,1,2) | 6 | 10 |
+| 6 | (1,2,1,2,1,3) | 6 | 10 |
+| 6 | (1,2,1,2,2,2) | 6 | 10 |
+| 6 | (1,2,2,1,2,2) | 3 | 5 |
+| 8 | (1,1,1,1,1,1,1,3) | 8 | 10 |
+| 8 | (1,1,1,1,1,1,2,2) | 8 | 10 |
+| 8 | (1,1,1,1,1,2,1,2) | 8 | 10 |
+| 8 | (1,1,1,1,2,1,1,2) | 8 | 10 |
+| 8 | (1,1,1,2,1,1,1,2) | 4 | 5 |
+| 10 | (1,1,1,1,1,1,1,1,1,1) | 1 | 1 |
+
+**Enumeration checks:** the table has 5 + 22 + 22 + 5 + 1 = 55 rows. The coefficient sums by stratum are 45, 210, 210, 45, 1, respectively, matching \\(\binom{10}{r}\\). The representatives with coefficient 5 are the periodic cyclic words whose rotation orbit is smaller than r. This is why assigning coefficient 10 to every representative would overcount.
+
+**Next proof step:** match each row to a generic boundary-reduction lemma and then establish any additional equivalences/vanishing by Lean proofs. In particular, the existing concrete p=10 four-N specializations are not yet a complete 22-class r=4 expansion, and this table alone does not close the p=10 theorem.
+
 ## Required procedure for each next change
 
 1. Read the latest PR head and the complete failing Lean log before editing.
@@ -52,5 +119,6 @@ The multiplicity checksum is 45 + 210 + 210 + 45 + 1 = 511, equal to the number 
 
 - PR: https://github.com/RFT-SIRM/Evgeny-Theorem/pull/9
 - Working branch: `moment-6-8-10`
-- Last verified source commit: `30c98f303f58980ea2a764b51883e5c9f8203e1d`
-- Last Lean formalization result: **success**.
+- Pre-change PR head: `bac1376571066cd3fa0f92ee6b5043a7fe83bdb9`.
+- Pre-change CI at that head: **Lean formalization success; Tests success** (workflow runs 40285722762 and 40285722806).
+- The cyclic-composition table above is a checked combinatorial audit only; it is not a Lean proof and does not claim the p=10 cancellation theorem.
