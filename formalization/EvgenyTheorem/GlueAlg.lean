@@ -1167,10 +1167,6 @@ theorem trace_p10_four_N_class_1126 {cp : W → ι}
       exact hkg 6 (by omega) w w' hw hw' hcopy hne)]
 
 
-/-- A third four-N cyclic class in the tenth-moment expansion. The run
-lengths (1,1,3,5) have four distinct cyclic rotations, giving multiplicity
-10 among length-ten words. No identification with other classes or
-cancellation is asserted. -/
 /-- The cyclic four-N class (1,2,1,6) has four distinct cyclic rotations,
 hence multiplicity ten among the length-ten words. This records its exact
 boundary-sum expression and does not assert cancellation with other classes. -/
@@ -1193,6 +1189,10 @@ theorem trace_p10_four_N_class_1216 {cp : W → ι}
       intro w w' hw hw' hcopy hne
       exact hkg 6 (by omega) w w' hw hw' hcopy hne)]
 
+/-- A third four-N cyclic class in the tenth-moment expansion. The run
+lengths (1,1,3,5) have four distinct cyclic rotations, giving multiplicity
+10 among length-ten words. No identification with other classes or
+cancellation is asserted. -/
 theorem trace_p10_four_N_class_1135 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
