@@ -1494,6 +1494,80 @@ theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
 
 
 
+/-- Boundary kernel for one eight-N word in the tenth-moment expansion.
+It packages the exact diagonalized product from the general eight-pairing lemma. -/
+def trace_p10_eight_N_boundary_term {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (a b c d e f g h : ℕ) : ℂ :=
+  ∑ x, if G.g x then
+    (([K ^ 0, K ^ a, Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0), K ^ c, Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0), K ^ e,
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0), K ^ g] : List (Matrix W W ℂ)).prod) x x *
+      (K ^ h) (G.σ x) (G.σ x) else 0
+
+/-- Complete eight-N stratum of the tenth moment, grouped into its five
+cyclic-composition classes. Their multiplicities are 10, 10, 10, 10, and 5;
+the final coefficient accounts for the periodic class (1,1,1,2,1,1,1,2).
+This is an exact boundary reduction, not a cancellation claim. -/
+theorem trace_p10_eight_N_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 1 3 +
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 2 2 +
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 2 1 2 +
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 2 1 1 2 +
+    5 * trace_p10_eight_N_boundary_term G K 1 1 2 1 1 1 1 2 := by
+  have h11111113 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 1 3 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 1 1 1 3 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h11111122 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 2 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 1 1 2 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h11111212 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 1 2 1 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 1 2 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h11112112 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 2 1 1 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 2 1 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h11121112 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 2 1 1 1 1 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 2 1 1 1 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  rw [h11111113, h11111122, h11111212, h11112112, h11121112]
+
 /-- The two-N stratum of the tenth moment, grouped by cyclic rotations.
 The five classes of positive run lengths are (1,9), (2,8), (3,7),
 (4,6), and (5,5), with multiplicities 10, 10, 10, 10, and 5.
