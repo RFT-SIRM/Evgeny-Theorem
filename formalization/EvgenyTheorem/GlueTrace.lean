@@ -1072,6 +1072,30 @@ theorem sg_trace_p10_four_N_class_1126
     n hn w w' hw hw' hcopy hne
 
 
+/-- Concrete Sierpinski specialization of the (1,2,1,6) four-N
+cyclic class in the p=10 expansion. Its multiplicity is ten. -/
+theorem sg_trace_p10_four_N_class_1216
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace
+      (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) =
+    10 * (∑ x, if (sgGlue m).g x then
+      (∑ y, if (sgGlue m).g y then
+        ((K ^ 0 * K ^ 1) x y *
+          (K ^ 2) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  apply trace_p10_four_N_class_1216 (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
+
 /-- Convert the concrete p=10 top boundary contribution into a fifth-power
 trace of the kernel times its glued-corner diagonal. This is the operator-level
 version of the generic supported-sum bridge; it does not claim cancellation
