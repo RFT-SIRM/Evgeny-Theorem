@@ -1937,9 +1937,9 @@ The source theorem `sg_trace_p6_all_even_strata_boundary` was re-read against it
 | (r=2) | ((1,5,0)) | 6 | (sum_x K_{xx}(K^5)_{sigma x,sigma x}) |
 | (r=2) | ((2,4,0)) | 6 | (sum_x (K^2)_{xx}(K^4)_{sigma x,sigma x}) |
 | (r=2) | ((3,3,0)) | 3 | (sum_x (K^3)_{xx}(K^3)_{sigma x,sigma x}) |
-| (r=4) | ((1,1,1,3)) | 6 | (sum_{x,y} K_{xy} K_{yx} d_1(y) d_3(x)) |
-| (r=4) | ((1,1,2,2)) | 6 | (sum_{x,y} K_{xy} (K^2)_{yx} d_1(y) d_2(x)) |
-| (r=4) | ((1,2,1,2)) | 3 | (sum_{x,y} K_{xy} K_{yx} d_2(y) d_2(x)) |
+| (r=4) | ((1,1,1,3)) | 6 | (sum_x K_{xx} d_1(x) K_{xx} d_3(x)) |
+| (r=4) | ((1,1,2,2)) | 6 | (sum_x K_{xx} d_1(x) (K^2)_{xx} d_2(x)) |
+| (r=4) | ((1,2,1,2)) | 3 | (sum_x K_{xx} d_2(x) K_{xx} d_2(x)) |
 | (r=6) | ((1,1,1,1,1,1)) | 1 | (sum_x (K_{xx}K_{sigma x,sigma x})^3) |
 
 Here (d_j(x)=(K^j)_{sigma x,sigma x}) on glued points, and sums are over the glued locus (or pairs of glued points); the actual Lean theorem encodes support using `if G.g x then ... else 0`. Gap-pattern labels are the canonical classes represented by the existing source specializations; cyclic-word multiplicities remain those in the machine-readable inventory/ledger.
@@ -1961,23 +1961,26 @@ For level propagation, the existing `defectO_succ` is a fourth-moment theorem an
 
 **Revised next action:** construct both sides of the p=6 boundary difference using the exact (C,C') pair above; reduce their difference algebraically to the residual target; then separately prove the level transition. The p=6 term ledger in §4bg remains a single-configuration ledger and must be duplicated with (K_C) and (K_{C'}) labels before any equality or cancellation claim. No Lean code was changed.
 
-## 4bi. Paired symbolic form of the p=6 boundary difference (2026-10-27)
+## 4bi. Paired symbolic form of the p=6 boundary difference (corrected 2026-10-27)
 
-To make the next proof obligation executable, define \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\mathrm{fun}\ \_ \mapsto 2,o)\), . For \(j\ge 0\), write
-\(a_{j,Q}(x):=(K_Q^j)_{xx}\) and \(d_{j,Q}(x):=(K_Q^j)_{\sigma x,\sigma x}\), for \(Q\in\{C,C'\}\) and glued \(x\). The p=6 boundary expression in §4bg then has the following paired difference, with no terms dropped:
+Set \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\mathrm{fun}\ \_ \mapsto 2,o)\). For \(Q\in\{C,C'\}\), define
+\(a_{j,Q}(x):=(K_Q^j)_{xx}\) and \(d_{j,Q}(x):=(K_Q^j)_{\sigma x,\sigma x}\) on glued points. Re-reading the exact RHS of \`sg_trace_p6_all_even_strata_boundary\` shows that the r=4 contributions are **single sums over x**, not double sums over x,y. The paired difference of the two boundary expressions is therefore:
 
     B6(m) =
       6 Σ_x [a_1,C(x) d_5,C(x) - a_1,C'(x) d_5,C'(x)]
     + 6 Σ_x [a_2,C(x) d_4,C(x) - a_2,C'(x) d_4,C'(x)]
     + 3 Σ_x [a_3,C(x) d_3,C(x) - a_3,C'(x) d_3,C'(x)]
-    + 6 Σ_{x,y} [K_C[x,y] K_C[y,x] d_1,C(y) d_3,C(x)
-                 - K_C'[x,y] K_C'[y,x] d_1,C'(y) d_3,C'(x)]
-    + 6 Σ_{x,y} [K_C[x,y] (K_C²)[y,x] d_1,C(y) d_2,C(x)
-                 - K_C'[x,y] (K_C'²)[y,x] d_1,C'(y) d_2,C'(x)]
-    + 3 Σ_{x,y} [K_C[x,y] K_C[y,x] d_2,C(y) d_2,C(x)
-                 - K_C'[x,y] K_C'[y,x] d_2,C'(y) d_2,C'(x)]
+    + 6 Σ_x [a_1,C(x) d_1,C(x) a_1,C(x) d_3,C(x)
+             - a_1,C'(x) d_1,C'(x) a_1,C'(x) d_3,C'(x)]
+    + 6 Σ_x [a_1,C(x) d_1,C(x) a_2,C(x) d_2,C(x)
+             - a_1,C'(x) d_1,C'(x) a_2,C'(x) d_2,C'(x)]
+    + 3 Σ_x [a_1,C(x) d_2,C(x) a_1,C(x) d_2,C(x)
+             - a_1,C'(x) d_2,C'(x) a_1,C'(x) d_2,C'(x)]
     + Σ_x [(a_1,C(x) d_1,C(x))³ - (a_1,C'(x) d_1,C'(x))³].
 
-All \(x,y\) sums are restricted to glued points; outside-support terms are zero by the existing theorem's if-g-then-zero convention. This formula is just the subtraction of the two already-proved boundary expansions, and is the right symbolic object to compare against the p=6 defect residual. It deliberately does **not** assert that any bracket vanishes. In particular, the mixed kernel \(K[x,y](K^2)[y,x]\) in the fifth line cannot be replaced by an absolute square without a separately proved Hermitian identity and correct conjugation.
+The r=6 term in the original theorem is the diagonal-sandwich trace
+\(\operatorname{tr}(K D K D K D)\), with \(D_{xx}=d_{1,Q}(x)\) on glued points and zero elsewhere; the final sum shown above is its further diagonal-cube specialization only when the separate hypotheses of \`sg_trace_p6_top_stratum_diagonal_cube\` are available. Thus the paired formula is to be used with the exact theorem/hypotheses actually invoked, not by silently replacing the sandwich trace.
 
-**Proof gate before Lean:** derive from the actual p=6 trace splitting whether \(B6(m)\) equals \(\Delta_m^{(6)}-3\Delta_{m-1}^{(6)}\), or whether additional orientation/subcopy terms are present. The p=4 theorem defectO_succ does not settle that gate. Once the exact identity and indices are verified, formalize that bridge first; only afterward prove stabilization of \(B6(m)\). No code theorem or cancellation is claimed here.
+**Correction to the previous draft:** the earlier version incorrectly wrote the r=4 terms as double sums with off-diagonal entries \(K_{xy}K_{yx}\) and \(K_{xy}(K^2)_{yx}\). Those terms do not match the checked Lean theorem's RHS. The corrected expressions above mirror its single-index diagonal products. No cross-configuration cancellation is asserted.
+
+**Proof gate before Lean:** independently derive from the p=6 trace splitting whether this paired boundary difference equals \(\Delta_m^{(6)}-3\Delta_{m-1}^{(6)}\), or whether additional orientation/subcopy terms remain. The p=4 theorem \`defectO_succ\` does not settle this. No new Lean theorem or cancellation is claimed.
