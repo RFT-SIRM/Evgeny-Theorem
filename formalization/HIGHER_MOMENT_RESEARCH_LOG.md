@@ -1927,3 +1927,23 @@ each even stratum.
 4. Only after the ledger algebraically reduces to the required residual, formalize the smallest missing identity. Run Lean CI and both Python jobs; keep the source unchanged if the proposed identity cannot be justified.
 
 **Status:** no new mathematical theorem is claimed by this entry. The next step is the exact p=6 weighted comparison/term ledger, not another speculative symmetry lemma and not a heartbeat increase.
+
+## 4bg. Concrete p=6 term ledger after source re-check (2026-10-27)
+
+The source theorem `sg_trace_p6_all_even_strata_boundary` was re-read against its exact right-hand side. The boundary expression has seven contributions; the ledger below records the coefficients and the corresponding kernel form. This is an expansion ledger, not a claim that corresponding terms in two configurations are equal.
+
+| Stratum | Ordered gap pattern represented in the source | Weight | Explicit contribution on the glued locus |
+|---|---|---:|---|
+| (r=2) | ((1,5,0)) | 6 | (sum_x K_{xx}(K^5)_{sigma x,sigma x}) |
+| (r=2) | ((2,4,0)) | 6 | (sum_x (K^2)_{xx}(K^4)_{sigma x,sigma x}) |
+| (r=2) | ((3,3,0)) | 3 | (sum_x (K^3)_{xx}(K^3)_{sigma x,sigma x}) |
+| (r=4) | ((1,1,1,3)) | 6 | (sum_{x,y} K_{xy}K_{yx},d_1(y)d_3(x)) |
+| (r=4) | ((1,1,2,2)) | 6 | (sum_{x,y} K_{xy}(K^2)_{yx},d_1(y)d_2(x)) |
+| (r=4) | ((1,2,1,2)) | 3 | (sum_{x,y} K_{xy}K_{yx},d_2(y)d_2(x)) |
+| (r=6) | ((1,1,1,1,1,1)) | 1 | (sum_x (K_{xx}K_{sigma x,sigma x})^3) |
+
+Here (d_j(x)=(K^j)_{sigma x,sigma x}) on glued points, and sums are over the glued locus (or pairs of glued points); the actual Lean theorem encodes support using `if G.g x then ... else 0`. Gap-pattern labels are the canonical classes represented by the existing source specializations; cyclic-word multiplicities remain those in the machine-readable inventory/ledger.
+
+**Important correction to the immediate next step:** the source defines a generic axis function `ax : ℕ → Axis`, but the current theorem statement alone does not identify a unique pair `ax, ax'` whose boundary difference is the target residual. The log's previous instructions to compare “the two specified configurations” cannot be executed safely until the intended pair is pinned to the exact operator definitions and recurrence. The known pair `commuting=False` (cycling x/y/z) versus `commuting=True` (common z) is explicitly ruled out as an unrestricted moment-equality target by §4bb; do not silently substitute that pair.
+
+**Next action:** trace the definition of the defect/target recurrence back to the exact operators and record the two configurations and level indexing. Then duplicate the ledger columns for the second configuration and derive the *difference* term by term. If no source definition determines the pair, keep this as a documented blocking mathematical specification rather than inventing a target theorem. No Lean source theorem was added in this step.
