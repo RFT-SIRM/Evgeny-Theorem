@@ -1960,3 +1960,24 @@ Therefore the pair itself is not unspecified. The real open obligation is more p
 For level propagation, the existing `defectO_succ` is a fourth-moment theorem and cannot be reused as a p=6 recurrence without a new p=6 splitting proof. Its orientation recursion identifies the relevant sub-orientations `oBo m o` and `oCo m o`; the p=6 argument must track those same branches and their weights rather than infer a recurrence from the boundary ledger alone.
 
 **Revised next action:** construct both sides of the p=6 boundary difference using the exact (C,C') pair above; reduce their difference algebraically to the residual target; then separately prove the level transition. The p=6 term ledger in §4bg remains a single-configuration ledger and must be duplicated with (K_C) and (K_{C'}) labels before any equality or cancellation claim. No Lean code was changed.
+
+## 4bi. Paired symbolic form of the p=6 boundary difference (2026-10-27)
+
+To make the next proof obligation executable, define \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\lambda\_,2,o)\), with \(\lambda\_\) the constant function. For \(j\ge 0\), write
+\(a_{j,Q}(x):=(K_Q^j)_{xx}\) and \(d_{j,Q}(x):=(K_Q^j)_{\sigma x,\sigma x}\), for \(Q\in\{C,C'\}\) and glued \(x\). The p=6 boundary expression in §4bg then has the following paired difference, with no terms dropped:
+
+    B6(m) =
+      6 Σ_x [a_1,C(x) d_5,C(x) - a_1,C'(x) d_5,C'(x)]
+    + 6 Σ_x [a_2,C(x) d_4,C(x) - a_2,C'(x) d_4,C'(x)]
+    + 3 Σ_x [a_3,C(x) d_3,C(x) - a_3,C'(x) d_3,C'(x)]
+    + 6 Σ_{x,y} [K_C[x,y] K_C[y,x] d_1,C(y) d_3,C(x)
+                 - K_C'[x,y] K_C'[y,x] d_1,C'(y) d_3,C'(x)]
+    + 6 Σ_{x,y} [K_C[x,y] (K_C²)[y,x] d_1,C(y) d_2,C(x)
+                 - K_C'[x,y] (K_C'²)[y,x] d_1,C'(y) d_2,C'(x)]
+    + 3 Σ_{x,y} [K_C[x,y] K_C[y,x] d_2,C(y) d_2,C(x)
+                 - K_C'[x,y] K_C'[y,x] d_2,C'(y) d_2,C'(x)]
+    + Σ_x [(a_1,C(x) d_1,C(x))³ - (a_1,C'(x) d_1,C'(x))³].
+
+All \(x,y\) sums are restricted to glued points; outside-support terms are zero by the existing theorem's if-g-then-zero convention. This formula is just the subtraction of the two already-proved boundary expansions, and is the right symbolic object to compare against the p=6 defect residual. It deliberately does **not** assert that any bracket vanishes. In particular, the mixed kernel \(K[x,y](K^2)[y,x]\) in the fifth line cannot be replaced by an absolute square without a separately proved Hermitian identity and correct conjugation.
+
+**Proof gate before Lean:** derive from the actual p=6 trace splitting whether \(B6(m)\) equals \(\Delta_m^{(6)}-3\Delta_{m-1}^{(6)}\), or whether additional orientation/subcopy terms are present. The p=4 theorem defectO_succ does not settle that gate. Once the exact identity and indices are verified, formalize that bridge first; only afterward prove stabilization of \(B6(m)\). No code theorem or cancellation is claimed here.
