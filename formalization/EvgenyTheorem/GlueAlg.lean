@@ -1078,6 +1078,28 @@ theorem trace_ten_N_powers_boundary {cp : W → ι} (G : GlueData cp)
 lengths (1,1,5,3) have four distinct cyclic rotations, hence multiplicity
 10. This is a class-level boundary reduction only; it does not assert that
 different cyclic classes cancel. -/
+/-- The cyclic four-N class (1,1,6,2) has four distinct cyclic
+rotations, hence multiplicity ten. This is a boundary-sum reduction only;
+no cancellation with other strata is asserted. -/
+theorem trace_p10_four_N_class_1162 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 6 * G.N * K ^ 2 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 6) y x else 0) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 6 2 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 2 (by omega) w w' hw hw' hcopy hne)]
+
 theorem trace_p10_four_N_class_1153 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
