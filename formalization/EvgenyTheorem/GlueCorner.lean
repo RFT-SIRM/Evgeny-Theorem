@@ -578,6 +578,23 @@ theorem sgK_pow_hkg_up_to_five_of_OAnti
   exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
     (by omega) w w' hw hw' hcopy hne
 
+/-- Concrete p=10 support bridge: for levels m ≥ 4, every power through
+degree nine satisfies the same-copy glued-corner vanishing premise. The
+geometric path-length bound is strict because 9 < 2^4 ≤ 2^m. -/
+theorem sgK_pow_hkg_up_to_nine_of_OAnti
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    ∀ n, n ≤ 9 → ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro n hn w w' hw hw' hcopy hne
+  have hside : 9 < 2 ^ m := by
+    calc
+      9 < 2 ^ 4 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
+    (by omega) w w' hw hw' hcopy hne
+
 /-- Under orientation antisymmetry, the glued corner lemma supplies the
 middle-power hypothesis required to annihilate every ordered three-pairing
 trace word whose middle exponent is below the geometric bound. -/
