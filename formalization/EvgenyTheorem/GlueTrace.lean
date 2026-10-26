@@ -1340,6 +1340,7 @@ theorem sg_trace_p10_six_N_class_112114
       4 (by omega) w w' hw hw' hcopy hne
 
 
+set_option maxHeartbeats 800000 in
 /-- Concrete specialization of the six-N cyclic class
 (1,1,2,1,3,2) in the p=10 expansion. Its orbit has size ten,
 so its exact multiplicity is ten. -/
