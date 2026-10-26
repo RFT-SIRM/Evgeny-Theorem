@@ -1937,9 +1937,9 @@ The source theorem `sg_trace_p6_all_even_strata_boundary` was re-read against it
 | (r=2) | ((1,5,0)) | 6 | (sum_x K_{xx}(K^5)_{sigma x,sigma x}) |
 | (r=2) | ((2,4,0)) | 6 | (sum_x (K^2)_{xx}(K^4)_{sigma x,sigma x}) |
 | (r=2) | ((3,3,0)) | 3 | (sum_x (K^3)_{xx}(K^3)_{sigma x,sigma x}) |
-| (r=4) | ((1,1,1,3)) | 6 | (sum_{x,y} K_{xy}K_{yx},d_1(y)d_3(x)) |
-| (r=4) | ((1,1,2,2)) | 6 | (sum_{x,y} K_{xy}(K^2)_{yx},d_1(y)d_2(x)) |
-| (r=4) | ((1,2,1,2)) | 3 | (sum_{x,y} K_{xy}K_{yx},d_2(y)d_2(x)) |
+| (r=4) | ((1,1,1,3)) | 6 | (sum_{x,y} K_{xy} K_{yx} d_1(y) d_3(x)) |
+| (r=4) | ((1,1,2,2)) | 6 | (sum_{x,y} K_{xy} (K^2)_{yx} d_1(y) d_2(x)) |
+| (r=4) | ((1,2,1,2)) | 3 | (sum_{x,y} K_{xy} K_{yx} d_2(y) d_2(x)) |
 | (r=6) | ((1,1,1,1,1,1)) | 1 | (sum_x (K_{xx}K_{sigma x,sigma x})^3) |
 
 Here (d_j(x)=(K^j)_{sigma x,sigma x}) on glued points, and sums are over the glued locus (or pairs of glued points); the actual Lean theorem encodes support using `if G.g x then ... else 0`. Gap-pattern labels are the canonical classes represented by the existing source specializations; cyclic-word multiplicities remain those in the machine-readable inventory/ledger.
@@ -1963,7 +1963,7 @@ For level propagation, the existing `defectO_succ` is a fourth-moment theorem an
 
 ## 4bi. Paired symbolic form of the p=6 boundary difference (2026-10-27)
 
-To make the next proof obligation executable, define \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\mathrm{fun}\ \_ \mapsto 2,o)\), with \(\lambda\_\) the constant function. For \(j\ge 0\), write
+To make the next proof obligation executable, define \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\mathrm{fun}\ \_ \mapsto 2,o)\), . For \(j\ge 0\), write
 \(a_{j,Q}(x):=(K_Q^j)_{xx}\) and \(d_{j,Q}(x):=(K_Q^j)_{\sigma x,\sigma x}\), for \(Q\in\{C,C'\}\) and glued \(x\). The p=6 boundary expression in §4bg then has the following paired difference, with no terms dropped:
 
     B6(m) =
