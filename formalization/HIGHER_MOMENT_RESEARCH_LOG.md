@@ -1963,7 +1963,7 @@ For level propagation, the existing `defectO_succ` is a fourth-moment theorem an
 
 ## 4bi. Paired symbolic form of the p=6 boundary difference (2026-10-27)
 
-To make the next proof obligation executable, define \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\lambda\_,2,o)\), with \(\lambda\_\) the constant function. For \(j\ge 0\), write
+To make the next proof obligation executable, define \(K_C := \mathrm{sgK}(m,\theta,\mathrm{faceAxis},o)\) and \(K_{C'} := \mathrm{sgK}(m,\theta,\mathrm{fun}\ \_ \mapsto 2,o)\), with \(\lambda\_\) the constant function. For \(j\ge 0\), write
 \(a_{j,Q}(x):=(K_Q^j)_{xx}\) and \(d_{j,Q}(x):=(K_Q^j)_{\sigma x,\sigma x}\), for \(Q\in\{C,C'\}\) and glued \(x\). The p=6 boundary expression in §4bg then has the following paired difference, with no terms dropped:
 
     B6(m) =
