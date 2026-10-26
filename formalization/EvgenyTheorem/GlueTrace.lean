@@ -1340,6 +1340,42 @@ theorem sg_trace_p10_six_N_class_112114
       4 (by omega) w w' hw hw' hcopy hne
 
 
+/-- Concrete specialization of the six-N cyclic class
+(1,1,2,1,3,2) in the p=10 expansion. Its orbit has size ten,
+so its exact multiplicity is ten. -/
+theorem sg_trace_p10_six_N_class_112132
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    10 * Matrix.trace (K ^ 0 * K ^ 1 *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      K ^ 2 *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ 3) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      K ^ 1 *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ 2) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  dsimp
+  apply congrArg (fun z : ℂ => 10 * z)
+  apply trace_six_N_powers_boundary (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+    1 1 2 1 3 2 0
+  · intro w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      1 (by omega) w w' hw hw' hcopy hne
+  · intro w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      3 (by omega) w w' hw hw' hcopy hne
+  · intro w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      2 (by omega) w w' hw hw' hcopy hne
+
+
 /-- Concrete specialization of the sixth six-N cyclic class
 (1,1,3,1,1,3) in the p=10 expansion. Its orbit has size three and
 multiplicity five. -/
