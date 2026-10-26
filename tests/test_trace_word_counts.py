@@ -887,7 +887,7 @@ def test_p10_eight_pairing_gap_classes_pin_exact_representatives_and_weights():
         (0, 0, 0, 1, 0, 0, 0, 1): 5,
     }
     assert actual == expected
-    assert got["ordered_gap_tuples"] == 45
+    assert got["ordered_gap_tuples"] == 36
     assert got["cyclic_gap_classes"] == 5
     assert got["word_weight_total"] == 45
     assert got["word_weight_total"] == got["expected_word_count"]
