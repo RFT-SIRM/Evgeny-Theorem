@@ -870,3 +870,25 @@ def test_adjoint_factor_word_inventory_is_stratumwise_involution():
             assert row["involution_on_cyclic_classes"]
             assert row["fixed_canonical_word_count"] == fixed_weight
 
+def test_p10_eight_pairing_gap_classes_pin_exact_representatives_and_weights():
+    """Pin the five r=8 cyclic gap classes before any Lean boundary assembly."""
+    from computational.trace_word_counts import gap_composition_inventory
+
+    got = gap_composition_inventory(10, 8)
+    actual = {
+        tuple(row["gaps"]): int(row["word_orbit_weight"])
+        for row in got["classes"]
+    }
+    expected = {
+        (0, 0, 0, 0, 0, 0, 0, 2): 10,
+        (0, 0, 0, 0, 0, 0, 1, 1): 10,
+        (0, 0, 0, 0, 0, 1, 0, 1): 10,
+        (0, 0, 0, 0, 1, 0, 0, 1): 10,
+        (0, 0, 0, 1, 0, 0, 0, 1): 5,
+    }
+    assert actual == expected
+    assert got["ordered_gap_tuples"] == 45
+    assert got["cyclic_gap_classes"] == 5
+    assert got["word_weight_total"] == 45
+    assert got["word_weight_total"] == got["expected_word_count"]
+
