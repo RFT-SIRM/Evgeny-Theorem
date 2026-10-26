@@ -1235,6 +1235,28 @@ theorem trace_p10_four_N_class_1144 {cp : W → ι}
       intro w w' hw hw' hcopy hne
       exact hkg 4 (by omega) w w' hw hw' hcopy hne)]
 
+/-- The cyclic four-N class (1,2,2,5) has four distinct cyclic rotations,
+hence multiplicity ten among the length-ten words. This is a boundary-sum
+reduction only; it does not assert cancellation with other classes. -/
+theorem trace_p10_four_N_class_1225 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 5 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 2) (G.σ y) (G.σ y)) *
+          (K ^ 2) y x else 0) *
+        (K ^ 5) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 2 2 5 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 5 (by omega) w w' hw hw' hcopy hne)]
+
 /-- The cyclic four-N class (1,4,1,4) has two distinct cyclic rotations,
 hence multiplicity five. The nested boundary-sum formula preserves the exact order of factors. -/
 theorem trace_p10_four_N_class_1414 {cp : W → ι}
