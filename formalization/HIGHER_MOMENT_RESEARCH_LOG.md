@@ -1947,3 +1947,16 @@ Here (d_j(x)=(K^j)_{sigma x,sigma x}) on glued points, and sums are over the glu
 **Important correction to the immediate next step:** the source defines a generic axis function `ax : ℕ → Axis`, but the current theorem statement alone does not identify a unique pair `ax, ax'` whose boundary difference is the target residual. The log's previous instructions to compare “the two specified configurations” cannot be executed safely until the intended pair is pinned to the exact operator definitions and recurrence. The known pair `commuting=False` (cycling x/y/z) versus `commuting=True` (common z) is explicitly ruled out as an unrestricted moment-equality target by §4bb; do not silently substitute that pair.
 
 **Next action:** trace the definition of the defect/target recurrence back to the exact operators and record the two configurations and level indexing. Then duplicate the ledger columns for the second configuration and derive the *difference* term by term. If no source definition determines the pair, keep this as a documented blocking mathematical specification rather than inventing a target theorem. No Lean source theorem was added in this step.
+
+## 4bh. Correction: the intended comparison pair is identifiable in source (2026-10-27)
+
+The source re-check resolves the configuration-specification question raised in §4bg. The intended pair is explicitly defined by `THEOREM.md` and the operator builder:
+- (C): `commuting=False`, axis `i % 3` (cycling x/y/z by face index);
+- (C'): `commuting=True`, fixed z axis (axis index 2);
+- in Lean's p=4 defect notation, this is `ax = faceAxis` and `ax' = fun _ => 2`, with the numbering orientation `oNum` / `fun p q => vIdx m p ≤ vIdx m q`, as stated by `traceDefect_eq_defectO`.
+
+Therefore the pair itself is not unspecified. The real open obligation is more precise: the existing p=6 boundary expansion is parameterized by one `ax` at a time. The proof must instantiate it separately at `faceAxis` and `fun _ => 2`, subtract the two fully weighted expressions, and then prove that this difference equals the p=6 defect residual with the correct level indexing. It must not try to prove that either the full moments or each individual stratum is equal between (C) and (C'); §4bb explicitly rules out that stronger claim.
+
+For level propagation, the existing `defectO_succ` is a fourth-moment theorem and cannot be reused as a p=6 recurrence without a new p=6 splitting proof. Its orientation recursion identifies the relevant sub-orientations `oBo m o` and `oCo m o`; the p=6 argument must track those same branches and their weights rather than infer a recurrence from the boundary ledger alone.
+
+**Revised next action:** construct both sides of the p=6 boundary difference using the exact (C,C') pair above; reduce their difference algebraically to the residual target; then separately prove the level transition. The p=6 term ledger in §4bg remains a single-configuration ledger and must be duplicated with (K_C) and (K_{C'}) labels before any equality or cancellation claim. No Lean code was changed.
