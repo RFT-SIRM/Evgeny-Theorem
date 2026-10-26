@@ -1074,10 +1074,6 @@ theorem trace_ten_N_powers_boundary {cp : W → ι} (G : GlueData cp)
       ([K ^ k] : List (Matrix W W ℂ)) (K ^ j) (BD_pow K hK j) hkgJ)
 
 
-/-- Another four-N cyclic class in the tenth-moment expansion. The run
-lengths (1,1,5,3) have four distinct cyclic rotations, hence multiplicity
-10. This is a class-level boundary reduction only; it does not assert that
-different cyclic classes cancel. -/
 /-- The cyclic four-N class (1,1,6,2) has four distinct cyclic
 rotations, hence multiplicity ten. This is a boundary-sum reduction only;
 no cancellation with other strata is asserted. -/
@@ -1100,6 +1096,10 @@ theorem trace_p10_four_N_class_1162 {cp : W → ι}
       intro w w' hw hw' hcopy hne
       exact hkg 2 (by omega) w w' hw hw' hcopy hne)]
 
+/-- Another four-N cyclic class in the tenth-moment expansion. The run
+lengths (1,1,5,3) have four distinct cyclic rotations, hence multiplicity
+10. This is a class-level boundary reduction only; it does not assert that
+different cyclic classes cancel. -/
 theorem trace_p10_four_N_class_1153 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
