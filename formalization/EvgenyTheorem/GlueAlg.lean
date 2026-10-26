@@ -1171,6 +1171,28 @@ theorem trace_p10_four_N_class_1126 {cp : W → ι}
 lengths (1,1,3,5) have four distinct cyclic rotations, giving multiplicity
 10 among length-ten words. No identification with other classes or
 cancellation is asserted. -/
+/-- The cyclic four-N class (1,2,1,6) has four distinct cyclic rotations,
+hence multiplicity ten among the length-ten words. This records its exact
+boundary-sum expression and does not assert cancellation with other classes. -/
+theorem trace_p10_four_N_class_1216 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 6 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 2) (G.σ y) (G.σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 6) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 2 1 6 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 6 (by omega) w w' hw hw' hcopy hne)]
+
 theorem trace_p10_four_N_class_1135 {cp : W → ι}
     (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
     (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
