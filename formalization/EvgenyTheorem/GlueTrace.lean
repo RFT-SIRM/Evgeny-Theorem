@@ -1269,9 +1269,6 @@ theorem sg_trace_p10_six_N_class_113122
       2 (by omega) w w' hw hw' hcopy hne
 
 
-/-- Concrete specialization of the cyclic six-N class
-(1,1,3,2,1,2) in the p=10 expansion. Its orbit has size six and
-multiplicity ten. -/
 /-- Concrete Sierpinski specialization of the complete eight-N stratum.
 The five cyclic classes retain their exact multiplicities, including the
 periodic class of weight five. This is a boundary reduction only. -/
