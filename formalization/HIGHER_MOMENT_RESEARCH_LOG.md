@@ -1907,3 +1907,23 @@ contribution with the correct cyclic-orbit weights, subtract the two
 specified configurations, and prove the resulting level transition. Do not
 infer the recurrence by asserting separate vanishing or axis-independence of
 each even stratum.
+
+## 4bf. Audit after reverting the uncompiled paired-corner lemma (2026-10-27)
+
+**Repository state.** The speculative lemma `sg_paired_corner_sum_swap` was removed by reverting the uncompiled change. The current branch head is `70a91c60a2ceb33a03dcdc1a2a3bda8abdeb11c1`; `GlueTrace.lean` is restored to the previously verified source (blob `3965e79d8829694efe9cfe8fd6ed7ce719032896`). The Lean formalization workflow and the Python 3.11/3.12 test workflows passed for that revert commit. This validates the restored baseline only; it does not prove the higher-moment recurrence.
+
+**What is already proved for p=6.** The current source has:
+- `sg_trace_p6_lower_even_strata_boundary`: the three r=2 boundary classes and their exact weights (6,6,3), reduced to explicit paired-corner sums;
+- `sg_trace_p6_top_stratum_boundary` and `sg_trace_p6_top_stratum_diagonal_cube`: the r=6/top-stratum trace is reduced to the paired diagonal cube sum under explicit support and glued-off-diagonal hypotheses;
+- `sg_trace_p6_all_even_strata_boundary`: assembles the lower r=2 and r=4 contributions plus the r=6 top contribution in one equation;
+- `glued_sum_partner_product_swap` in `GlueAlg.lean`: a verified involution-based finite-sum identity on the glued subtype. This is the existing correct helper for swapping partner-indexed products; do not duplicate it using an unverified permutation constructor.
+
+**Exact gap before the next Lean edit.** The boundary equation is an expansion, not a cancellation theorem. The next task is to write down, outside Lean first, the fully weighted difference between the *two precisely named operator/axis configurations* for the p=6 boundary expression. The derivation must preserve all three lower-stratum weights (6,6,3), all three r=4 weights (6,6,3), and the r=6 term; it must state which diagonal powers or paired products are claimed to match under the partner involution, and prove those equalities from actual operator hypotheses. Do not assume unrestricted axis independence: the exact level-3 trace diagnostic in §4bb disproves that broader claim for cycling x/y/z versus common z.
+
+**Next action sequence.**
+1. Inspect the definitions of the two intended configurations and confirm the exact target difference against the defect recurrence; if the configurations are not specified unambiguously in source/research notes, stop and resolve that before coding.
+2. Build a symbolic term ledger for the p=6 expression with columns: canonical gap tuple/class, orbit weight, explicit corner expression, corresponding term for the second configuration, and the exact lemma/hypothesis needed to equate or subtract them.
+3. Use `glued_sum_partner_product_swap` only where the summands really have the required (f(x)h(σx)) form; it cannot by itself prove equality of axis-dependent factors.
+4. Only after the ledger algebraically reduces to the required residual, formalize the smallest missing identity. Run Lean CI and both Python jobs; keep the source unchanged if the proposed identity cannot be justified.
+
+**Status:** no new mathematical theorem is claimed by this entry. The next step is the exact p=6 weighted comparison/term ledger, not another speculative symmetry lemma and not a heartbeat increase.
