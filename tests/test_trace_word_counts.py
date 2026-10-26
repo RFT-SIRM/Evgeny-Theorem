@@ -892,3 +892,18 @@ def test_p10_eight_pairing_gap_classes_pin_exact_representatives_and_weights():
     assert got["word_weight_total"] == 45
     assert got["word_weight_total"] == got["expected_word_count"]
 
+
+def test_p10_six_pairing_gap_classes_pin_distinct_weights():
+    """The 111313 class has weight 10; periodic 113113 has weight 5."""
+    from computational.trace_word_counts import gap_composition_inventory
+
+    got = gap_composition_inventory(10, 6)
+    by_powers = {
+        tuple(int(gap) + 1 for gap in row["gaps"]): int(row["word_orbit_weight"])
+        for row in got["classes"]
+    }
+    assert by_powers[(1, 1, 1, 3, 1, 3)] == 10
+    assert by_powers[(1, 1, 3, 1, 1, 3)] == 5
+    assert got["ordered_gap_tuples"] == 126
+    assert got["cyclic_gap_classes"] == 22
+    assert got["word_weight_total"] == 210 == got["expected_word_count"]
