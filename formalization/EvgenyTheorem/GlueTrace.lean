@@ -1196,27 +1196,27 @@ theorem sg_trace_p10_six_N_class_111232
 
 
 /-- Concrete specialization of the sixth six-N cyclic class
-(1,1,1,3,1,3) in the p=10 expansion. Its orbit has size six and
-multiplicity ten. -/
+(1,1,1,3,1,3) in the p=10 expansion. Its orbit has size three and
+multiplicity five. -/
 theorem sg_trace_p10_six_N_class_111313
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
     let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
     5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
-      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
-      K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
     5 * Matrix.trace (K ^ 0 * K ^ 1 *
       Matrix.diagonal (fun y => if (sgGlue m).g y then
         (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
       K ^ 1 *
       Matrix.diagonal (fun y => if (sgGlue m).g y then
-        (K ^ 2) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
-      K ^ 3 *
+        (K ^ 3) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      K ^ 1 *
       Matrix.diagonal (fun y => if (sgGlue m).g y then
-        (K ^ 2) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+        (K ^ 3) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
   dsimp
-  apply congrArg (fun z : ℂ => 10 * z)
+  apply congrArg (fun z : ℂ => 5 * z)
   apply trace_six_N_powers_boundary (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
     1 1 1 3 1 3 0
