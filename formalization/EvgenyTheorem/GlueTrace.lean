@@ -942,6 +942,47 @@ theorem sg_trace_p10_top_stratum_boundary
       1 (by omega) w w' hw hw' hcopy hne
 
 
+/-- Concrete Sierpinski specialization of the complete eight-N stratum.
+The five cyclic classes retain their exact multiplicities, including the
+periodic class of weight five. This is a boundary reduction only. -/
+theorem sg_trace_p10_eight_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 1 3 +
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 2 2 +
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 2 1 2 +
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 2 1 1 2 +
+    5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 2 1 1 1 1 2 := by
+  dsimp
+  apply trace_p10_eight_N_stratum_boundary (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
+
  /-- Concrete specialization of the exact two-N p=10 stratum.
 For m ≥ 4, the geometric corner-support bound supplies every power through
 degree nine. This is a boundary-sum identity only; it does not assert
