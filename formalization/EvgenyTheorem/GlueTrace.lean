@@ -1158,9 +1158,10 @@ theorem sg_trace_p10_six_N_class_111223
       3 (by omega) w w' hw hw' hcopy hne
 
 
-/-- Concrete specialization of the sixth six-N cyclic class
-(1,1,1,2,2,3) in the p=10 expansion. Its orbit has size six and
+/-- Concrete specialization of the cyclic six-N class
+(1,1,1,2,3,2) in the p=10 expansion. Its orbit has size six and
 multiplicity ten. -/
+set_option maxHeartbeats 800000 in
 theorem sg_trace_p10_six_N_class_111232
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
