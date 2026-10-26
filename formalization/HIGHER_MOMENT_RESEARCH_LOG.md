@@ -1940,9 +1940,9 @@ The source theorem `sg_trace_p6_all_even_strata_boundary` was re-read against it
 | (r=4) | ((1,1,1,3)) | 6 | (sum_x K_{xx} d_1(x) K_{xx} d_3(x)) |
 | (r=4) | ((1,1,2,2)) | 6 | (sum_x K_{xx} d_1(x) (K^2)_{xx} d_2(x)) |
 | (r=4) | ((1,2,1,2)) | 3 | (sum_x K_{xx} d_2(x) K_{xx} d_2(x)) |
-| (r=6) | ((1,1,1,1,1,1)) | 1 | (sum_x (K_{xx}K_{sigma x,sigma x})^3) |
+| (r=6) | ((1,1,1,1,1,1)) | 1 | (tr(K D K D K D), D_{xx}=1_{g(x)}(K)_{sigma x,sigma x}) |
 
-Here (d_j(x)=(K^j)_{sigma x,sigma x}) on glued points, and sums are over the glued locus (or pairs of glued points); the actual Lean theorem encodes support using `if G.g x then ... else 0`. Gap-pattern labels are the canonical classes represented by the existing source specializations; cyclic-word multiplicities remain those in the machine-readable inventory/ledger.
+Here (d_j(x)=(K^j)_{sigma x,sigma x}) on glued points. The r=2 and r=4 terms are single sums over x; the r=6 term in sg_trace_p6_all_even_strata_boundary is a diagonal-sandwich trace, not automatically a sum of diagonal cubes. The actual Lean theorem encodes support using `if G.g x then ... else 0`. Gap-pattern labels are the canonical classes represented by the existing source specializations; cyclic-word multiplicities remain those in the machine-readable inventory/ledger.
 
 **Important correction to the immediate next step:** the source defines a generic axis function `ax : ℕ → Axis`, but the current theorem statement alone does not identify a unique pair `ax, ax'` whose boundary difference is the target residual. The log's previous instructions to compare “the two specified configurations” cannot be executed safely until the intended pair is pinned to the exact operator definitions and recurrence. The known pair `commuting=False` (cycling x/y/z) versus `commuting=True` (common z) is explicitly ruled out as an unrestricted moment-equality target by §4bb; do not silently substitute that pair.
 
@@ -1984,3 +1984,15 @@ The r=6 term in the original theorem is the diagonal-sandwich trace
 **Correction to the previous draft:** the earlier version incorrectly wrote the r=4 terms as double sums with off-diagonal entries \(K_{xy}K_{yx}\) and \(K_{xy}(K^2)_{yx}\). Those terms do not match the checked Lean theorem's RHS. The corrected expressions above mirror its single-index diagonal products. No cross-configuration cancellation is asserted.
 
 **Proof gate before Lean:** independently derive from the p=6 trace splitting whether this paired boundary difference equals \(\Delta_m^{(6)}-3\Delta_{m-1}^{(6)}\), or whether additional orientation/subcopy terms remain. The p=4 theorem \`defectO_succ\` does not settle this. No new Lean theorem or cancellation is claimed.
+
+## 4bj. Full audit of the latest p=6 ledger correction (2026-10-27)
+
+I compared the literal RHS of sg_trace_p6_all_even_strata_boundary (GlueTrace.lean, lines 379–412) with the research ledger. The earlier §4bg/first §4bi draft was wrong in two places: it described the r=4 terms as double sums over off-diagonal entries, and it presented the r=6 term as a diagonal-cube sum without preserving the theorem's exact hypotheses. These were documentation errors, not Lean source changes. §4bg and §4bi have now been corrected to match the source: r=4 are single-index diagonal products; the unified theorem's r=6 term is tr(K D K D K D). The diagonal-cube form is available only through the separate specialization theorem and its hypotheses.
+
+The latest code-bearing commit before these log-only corrections, 2beebb80c4db4ff0e996d42c28747d3196138331, has confirmed green CI:
+- Lean formalization run 40405788009: success.
+- Python tests run 40405788047: success, both Python 3.11 and 3.12 jobs passed.
+
+The correction-only commit is 605bce8cdbc04fe5473efd1cd1827cdf531d83b2; its Lean workflow is currently in progress and its Python workflow is queued as of this entry. Do not call that commit green until both workflows finish.
+
+**Next mathematical step (no speculative lemma):** prove or refute the missing bridge between the exact p=6 trace split and the paired boundary expression. First locate/derive a p=6 analogue of the p=4 recursive split defectO_succ; do not infer it from sg_trace_p6_all_even_strata_boundary, because that theorem only expands a chosen stratum sum for one operator and one orientation. The bridge must track the three recursive subcopies/orientations oBo m o, oCo m o, plus the correct level-indexed defects. Only if this bridge is established should the axis-difference and residual-stabilization claims be attempted. Until then, keep the p=6, p=8, p=10 stabilization statements explicitly conjectural and make no Lean-code edit.
