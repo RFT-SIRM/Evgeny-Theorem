@@ -904,6 +904,7 @@ def test_p10_six_pairing_gap_classes_pin_distinct_weights():
     }
     assert by_powers[(1, 1, 1, 3, 1, 3)] == 10
     assert by_powers[(1, 1, 3, 1, 1, 3)] == 5
+    assert by_powers[(1, 1, 1, 3, 2, 2)] == 10
     assert got["ordered_gap_tuples"] == 126
     assert got["cyclic_gap_classes"] == 22
     assert got["word_weight_total"] == 210 == got["expected_word_count"]
