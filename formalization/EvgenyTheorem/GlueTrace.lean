@@ -942,6 +942,38 @@ theorem sg_trace_p10_top_stratum_boundary
       1 (by omega) w w' hw hw' hcopy hne
 
 
+ /-- Concrete specialization of the exact two-N p=10 stratum.
+For m ≥ 4, the geometric corner-support bound supplies every power through
+degree nine. This is a boundary-sum identity only; it does not assert
+cancellation with the other even strata. -/
+theorem sg_trace_p10_two_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 9 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 8 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 5 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) =
+    10 * (∑ x, if (sgGlue m).g x then
+      (K ^ 1) x x * (K ^ 9) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    10 * (∑ x, if (sgGlue m).g x then
+      (K ^ 2) x x * (K ^ 8) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    10 * (∑ x, if (sgGlue m).g x then
+      (K ^ 3) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    10 * (∑ x, if (sgGlue m).g x then
+      (K ^ 4) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    5 * (∑ x, if (sgGlue m).g x then
+      (K ^ 5) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  apply trace_p10_two_N_stratum_boundary (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+    n hn w w' hw hw' hcopy hne
+
+
 /-- Convert the concrete p=10 top boundary contribution into a fifth-power
 trace of the kernel times its glued-corner diagonal. This is the operator-level
 version of the generic supported-sum bridge; it does not claim cancellation
