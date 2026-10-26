@@ -1568,6 +1568,37 @@ theorem trace_p10_eight_N_stratum_boundary {cp : W → ι}
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   rw [h11111113, h11111122, h11111212, h11112112, h11121112]
 
+/-- The unique ten-N word in the tenth-moment expansion reduces to
+its explicit boundary sum. This is the r=10 stratum; it makes no claim
+about cancellation with the other strata. -/
+theorem trace_p10_ten_N_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+      K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+      K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+      K ^ 1 * G.N * K ^ 0) =
+    ∑ x, if G.g x then
+      (([K ^ 0, K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1] : List (Matrix W W ℂ)).prod) x x *
+      (K ^ 1) (G.σ x) (G.σ x) else 0 := by
+  simpa [pow_zero] using
+    (trace_ten_N_powers_boundary G K hK
+      1 1 1 1 1 1 1 1 1 1 0
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne))
+
 /-- The two-N stratum of the tenth moment, grouped by cyclic rotations.
 The five classes of positive run lengths are (1,9), (2,8), (3,7),
 (4,6), and (5,5), with multiplicities 10, 10, 10, 10, and 5.
