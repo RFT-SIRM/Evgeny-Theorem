@@ -2468,3 +2468,34 @@ the glued locus. This is only a conditional reduction. Then prove those
 higher-power corner identities from the concrete geometry, or keep their
 difference as part of the residual if they do not hold. No blanket
 axis-invariance or level-stabilization claim follows from this entry.
+
+
+## 4by. Conditional p=6 boundary axis congruence (2026-10-27)
+
+### Exact source result
+
+Commit `933d558159fafb747ddbd4207860cd601723ac6b` adds
+`glueRHS6_sgK_axis_congr_of_diag45` in
+`formalization/EvgenyTheorem/GlueCornerCube.lean`.
+
+Under `OAnti (m+1) o), the lemma proves
+`glueRHS6 m (sgK m θ ax o) = glueRHS6 m (sgK m θ ax' o)`
+assuming, for every glued state `a),
+
+- `(sgK m θ ax o ^ 4) a a = (sgK m θ ax' o ^ 4) a a`;
+- `(sgK m θ ax o ^ 5) a a = (sgK m θ ax' o ^ 5) a a`.
+
+The lower boundary sums are compared pointwise using the existing corner identities for powers one, two and three, plus these two explicit hypotheses. The top-stratum trace is compared only after applying the existing theorem `sg_trace_p6_top_stratum_diagonal_cube`, so the proof does not assume that `K * D` is diagonal.
+
+### Verification for the exact source commit
+
+All four CI workflows passed on commit `933d558159fafb747ddbd4207860cd601723ac6b):
+
+- Push Lean: run `40583936882`, full formalization build successful.
+- PR Lean: run `40583945447`, full formalization build successful.
+- Push Tests: run `40583936732`, Python 3.11 and 3.12 fast and slow tests successful.
+- PR Tests: run `40583945518`, Python 3.11 and 3.12 fast and slow tests successful.
+
+### Mathematical boundary and next obligation
+
+This is a conditional comparison, not a proof that the fourth- and fifth-power diagonal hypotheses hold for arbitrary axis assignments. The next step is to test and then prove the exact `h4`/`h5` statements only for the intended axis pair, if they are true. If either statement fails, preserve the corresponding diagonal-power difference in the residual rather than claiming axis-independence or stabilization.
