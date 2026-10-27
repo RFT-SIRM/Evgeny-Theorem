@@ -2226,3 +2226,23 @@ This note records the source-level diagnosis for the recent p=6 odd-representati
 - At the checked current HEAD `44329cdf78c6b571b105987c7552ad0445690203`, Lean run `40493873249` and Python run `40493873215` both completed successfully. The Lean build step passed; Python 3.11 and 3.12 both passed fast tests and slow level-7 convergence tests.
 
 The green current CI confirms that this source state compiles and its configured tests pass. It does not prove the missing ordered-list-to-cyclic-strata assembly, the full p=6 trace split, boundary cancellation, the base transition, or induction. The immediate mathematical target remains the formal partition of the actual 64-element `orderedWordExpansion K (K*N) 6` list into its 14 cyclic classes with exact orbit weights, connected to the existing odd/even stratum lemmas under their actual hypotheses.
+
+
+## 4bs. Diagnosis and removal of the failing p=6 strata bridge (2026-10-27)
+
+### Confirmed failure
+
+- Commit `ade662bb8df3f875ff5be2e9f3393e887c34955b` added `trace_orderedWordExpansion_six_cyclic_strata` in `formalization/EvgenyTheorem/TraceExpand.lean`.
+- Lean run `40504931340` failed in that new theorem: at line 480, `simpa` on a `trace_cyclic_list` application produced a type mismatch with a heartbeat timeout; additional simplification and tactic execution timeouts followed at lines 486 and 495. The failure was in the attempted bridge from the generic 14-class expansion to the concrete stratum syntax, not in the earlier 64-word cyclic grouping.
+- No increase to `maxHeartbeats` was appropriate: the bridge proof had not elaborated robustly and should not have been committed without a green full build.
+
+### Minimal correction
+
+- Commit `bac3d058a2b87fc184a042f223660442086c3827` removes only the unverified `trace_orderedWordExpansion_six_cyclic_strata` theorem.
+- The previously verified `trace_orderedWordExpansion_six_cyclic` theorem remains. Comparing `TraceExpand.lean` at this commit with the known-green `0c3e8a0a81ec85d00319d4e106bd9590d0fc0364` shows the file is identical apart from extra blank lines; the failed theorem is absent.
+- The PR-triggered Lean workflow for `bac3d058a2b87fc184a042f223660442086c3827`, run `40505598903`, completed successfully. The required `Build formalization` step passed, which runs `lake build EvgenyTheorem`.
+- At the time of this log update, the Python workflow `40505598910` for the same SHA was still in progress; no Python result is recorded as passed here. The parallel push-triggered Lean workflow was also still running, so this note relies on the completed PR-triggered Lean run above.
+
+### Next proof task
+
+Do not restore the removed monolithic bridge. First develop and verify small local rotation/normalization lemmas for representatives grouped by the exact number of `K * N` choices. Then connect those lemmas to the existing p=6 odd-stratum zero results and even-stratum boundary formulas. Preserve the order of all factors and the orbit weights (including periodic classes); do not proceed to the full p=6 trace split until the bridge itself has a green full Lean build.
