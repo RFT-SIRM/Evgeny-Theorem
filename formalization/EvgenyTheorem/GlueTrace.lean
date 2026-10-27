@@ -351,8 +351,27 @@ theorem sg_trace_p6_three_N_representatives_zero
     3 1 2 0 (by omega)
   have h4 := sg_trace_p6_three_N_word_zero m hm θ ax o hanti
     2 2 2 0 (by omega)
-  simp only [h1, h2, h3, h4]
-  ring
+  have h1' : Matrix.trace
+      (sgK m θ ax o ^ 4 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N) = 0 := by
+    simpa [pow_zero] using h1
+  have h2' : Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N) = 0 := by
+    simpa [pow_zero] using h2
+  have h3' : Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N) = 0 := by
+    simpa [pow_zero] using h3
+  have h4' : Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N) = 0 := by
+    simpa [pow_zero] using h4
+  simp [h1', h2', h3', h4']
 
 
 /-- The representative-level odd-N strata at p=6 all vanish after
@@ -384,13 +403,15 @@ theorem sg_trace_p6_odd_N_representatives_zero
       (sgK m θ ax o ^ 2 * (sgGlue m).N *
         sgK m θ ax o ^ 1 * (sgGlue m).N *
         sgK m θ ax o ^ 1 * (sgGlue m).N *
-        sgK m θ ax o ^ 1 * (sgGlue m).N) = 0 := by
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) = 0 := by
   have h1 := sg_trace_p6_one_N_class_zero m θ ax o
   have h3 := sg_trace_p6_three_N_representatives_zero m hm θ ax o hanti
   have h5 := sg_trace_p6_five_N_word_zero m hm θ ax o hanti
     2 1 1 1 1 0 (by omega) (by omega)
-  simp only [h1, h3, h5]
-  ring
+  rw [h1, h5]
+  exact h3
 
 
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
