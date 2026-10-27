@@ -549,6 +549,33 @@ theorem sg_trace_p6_ordered_two_N_representatives_boundary
     sg_trace_p6_ordered_two_N_3_3_representative m θ ax o]
 
 
+/-- The r=4 cyclic representative with K-gap pattern (1,1,1,3)
+is the corresponding lower-even boundary trace after a cyclic rotation.
+This bridges one representative only; it does not claim the full r=4 stratum. -/
+theorem sg_trace_p6_ordered_four_N_1_1_1_3_representative
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N)) =
+    Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) := by
+  simpa [pow_succ, pow_one, pow_zero, Matrix.mul_assoc] using
+    (trace_cyclic_list
+      ([sgK m θ ax o, sgK m θ ax o, sgK m θ ax o, (sgGlue m).N] :
+        List (Matrix (WSG m) (WSG m) ℂ))
+      [sgK m θ ax o, (sgGlue m).N,
+        sgK m θ ax o, (sgGlue m).N,
+        sgK m θ ax o, (sgGlue m).N])
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
