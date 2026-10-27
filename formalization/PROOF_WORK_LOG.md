@@ -146,3 +146,27 @@ This table records the complete output of an exhaustive positive-composition enu
 3. The six-N representatives already present are: `111115`, `111124`, `111133`, `111142`, `111214`, `111223`, `111232`, and `113113` (the last is the corrected `(1,1,3,1,1,3))). Check remaining table entries before choosing the next.
 4. Make one small change at a time; no heartbeat inflation, no speculative batches, no new branch/PR/issue. Require both full Lean formalization and Python 3.11/3.12 test jobs green before continuing.
 5. Keep the end goal explicit: formalize the complete p=10 even-strata boundary expansion with exact multiplicities, then prove the necessary orientation comparison/cancellation. The current per-class boundary lemmas and the combinatorial table alone do not finish the theorem. The four-N stratum also remains incomplete (22 classes).
+
+
+## 2026-10-28 — p=6 residual syntax fix and CI verification
+
+- Source correction: commit `3b3e3cf8ea52f21d5eb4634e9862be8f0e843157`
+  adds the missing closing parenthesis to the final `Matrix.trace` argument
+  in `GlueCornerCube.lean`. No other Lean source was changed.
+- At that exact SHA, PR Lean run `40590688662` and push Lean run
+  `40590678846` both passed `Build formalization`.
+- PR Tests run `40590688632` and push Tests run `40590678827` both passed
+  the fast and slow test suites on Python 3.11 and 3.12.
+- CI's configured build command is `lake build EvgenyTheorem`; a separate
+  local no-argument `lake build` could not be run because the container
+  could not resolve `github.com`.
+- The theorem now compiles and records the exact difference of the p=6
+  boundary corrections as `glueRHS6_highPowerResidual`. It does not prove
+  that residual zero. The axis-independent p=6 recurrence remains blocked by
+  the weighted (1,5) and (2,4) sums. A Python-only corner-power diagnostic
+  cautions against assuming pointwise equality of powers 4 and 5, but is not
+  a formal counterexample because the finite Python/Lean edge-axis convention
+  match is not yet machine-checked.
+- Next: resolve that convention match for the intended axis pair, then test
+  the weighted residual identity under the actual hypotheses. Do not add a
+  speculative lemma or switch to p=8/p=10 before this p=6 barrier is clear.

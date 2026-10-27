@@ -2499,3 +2499,72 @@ All four CI workflows passed on commit `933d558159fafb747ddbd4207860cd601723ac6b
 ### Mathematical boundary and next obligation
 
 This is a conditional comparison, not a proof that the fourth- and fifth-power diagonal hypotheses hold for arbitrary axis assignments. The next step is to test and then prove the exact `h4`/`h5` statements only for the intended axis pair, if they are true. If either statement fails, preserve the corresponding diagonal-power difference in the residual rather than claiming axis-independence or stabilization.
+
+
+## 4bz. p=6 residual syntax correction and verified CI state (2026-10-28)
+
+### Minimal source correction
+
+Commit `b846d169201b3819bc1bcfa2b9f9d4f084c155e8` introduced
+`glueRHS6_highPowerResidual` and
+`glueRHS6_sgK_axis_residual_of_diag123`, but the final `Matrix.trace`
+argument in the last `calc` step was missing one closing parenthesis.
+Commit `3b3e3cf8ea52f21d5eb4634e9862be8f0e843157` changes only that
+parenthesis in `formalization/EvgenyTheorem/GlueCornerCube.lean`.
+It adds no new lemma and changes no mathematical assumptions.
+
+### CI for the exact source SHA `3b3e3cf8ea52f21d5eb4634e9862be8f0e843157`
+
+All four configured PR/push workflows completed successfully:
+
+- PR Lean `40590688662`: `Build formalization` succeeded.
+- Push Lean `40590678846`: `Build formalization` succeeded.
+- PR Tests `40590688632`: Python 3.11 and 3.12 both passed fast tests and
+  slow level-7 convergence tests.
+- Push Tests `40590678827`: Python 3.11 and 3.12 both passed fast tests and
+  slow level-7 convergence tests.
+
+The repository workflow's configured Lean command is `lake build EvgenyTheorem`.
+A separate local no-argument `lake build` was not run: this execution
+container cannot resolve `github.com` to clone/install the checkout. Do not
+describe that local command as verified.
+
+### Mathematical scope after the fix
+
+The repaired theorem proves the exact identity
+
+`glueRHS6(K) - glueRHS6(K') = glueRHS6_highPowerResidual(K,K')`
+
+under its stated hypotheses. The residual consists of the two weighted
+boundary-sum differences with powers (1,5) and (2,4), each with coefficient
+6. The terms using diagonal powers 1--3, and the top-stratum diagonal-cube
+trace, are compared using existing proved identities. The residual is not
+proved zero, and `defectO6_succ` still retains it explicitly.
+
+### Numerical diagnostic and caution on the sufficient pointwise hypotheses
+
+A scratch numerical diagnostic mirroring the repository Python SU(2) graph
+and operator construction compared the current noncommuting-axis mode with
+the commuting-axis mode at outer corners, levels 1--4. For `theta = pi/2`,
+the diagonal blocks of powers 4 and 5 differed at two corners (differences
+`-1` and `-16` per diagonal entry); at `theta = pi`, the corresponding
+differences were `-2` and `-34`. The third corner showed no difference.
+This is numerical evidence against assuming pointwise fourth-/fifth-power
+diagonal equality without checking it.
+
+It is **not** a Lean counterexample: the earlier convention audit in this log
+still requires a finite, edge-by-edge confirmation that the Python's
+index-canonicalized flux edge and Lean's point-order flux edge coincide for
+the intended orientation/axis pair. Also, pointwise inequality alone does
+not determine whether the two *weighted sums* in
+`glueRHS6_highPowerResidual` cancel.
+
+### Next p=6 proof obligation
+
+Do not add hypotheses `h4`/`h5` as if established. First align the
+edge/axis conventions for the intended pair (in particular `faceAxis`
+versus the constant z-axis assignment) with the Lean orientation used by the
+theorem. Then test/prove the actual weighted-sum identity needed to make the
+residual vanish, or preserve a nonzero residual and identify the precise
+remaining recurrence obstruction. No axis-independence or level stabilization
+is claimed by this entry.
