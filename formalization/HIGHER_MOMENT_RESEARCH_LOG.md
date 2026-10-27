@@ -2031,3 +2031,31 @@ This is the immediate algebraic bridge—not a claim that \(B_6\) cancels. Once 
 5. Record and prove any further cancellation as a separate theorem with explicit geometric hypotheses. Do not assert termwise axis independence or derive it from the word inventory.
 
 The current research log's §4bj statement that the p=6 recursive bridge is missing is therefore confirmed, and is sharpened here: the next theorem should be the degree-six analogue of \`pOpO_trace4_glue_final\` in \`GlueCorner.lean\`, not a new corner-symmetry lemma in \`GlueTrace.lean\`. The higher-moment stabilization remains conjectural until the subsequent boundary-difference and level-transition arguments are proved.
+
+## 4bl. Correction after inspecting the full pushforward bridge (2026-10-27)
+
+A further source audit found that §4bk was too coarse in calling the entire p=6 glued trace identity absent. The exact positive-power pushforward/word bridge is **already proved**:
+
+- \`trace_push_power\` and \`trace_push_ordered_words\` in \`GlueBridge.lean\`;
+- concrete specialization \`pOpO_succ_trace_ordered_words\` in \`GlueK.lean\`.
+
+For every positive p these give
+\[
+\operatorname{tr}(pOpO(m+1)^p)
+=\sum_{w\in\operatorname{orderedWordExpansion}(K,K\,N,p)}
+\operatorname{tr}(w),
+\]
+preserving word order and multiplicity. The generic algebraic bridge is not the missing theorem. Likewise, \`trace_blockK_pow\` already handles the three-copy trace for any p.
+
+**Precisely narrowed next target:** at p=6, combine the existing ordered-word equality with the already proved word-stratum reductions and the needed odd-stratum zero results, then package the resulting equality as a trace split:
+\[
+\operatorname{tr}(pOpO(m+1)^6)
+=\sum_{c:GCopy}\operatorname{tr}(H_c(m)^6)+\mathcal B_6(m,\mathrm{ax},o).
+\]
+Here \(\mathcal B_6\) is exactly the full even-stratum correction, with its r=6 diagonal-sandwich trace retained. This package must be proved by matching the actual ordered-word list and its cyclic multiplicities—not by assuming cancellation. Afterward instantiate at the two axis choices and subtract; only then can the subcopy defect terms be separated from the difference of boundary corrections.
+
+This corrects the emphasis of §4bk: do not write a second generic pushforward theorem or change \`trace_orderedWordExpansion\`; focus on the concrete p=6 assembly theorem and verify every omitted odd stratum under the precise current hypotheses. The proposed split is still a proof target, not a theorem already established.
+
+### CI recheck
+
+The research-log-only commit \`bf6bf64d4bce448f3fc87308d95ee7c94f3dbf9a\` has completed both workflows successfully: Lean formalization passed, and Python tests passed (3.11 and 3.12). This green result validates the current source/log commit; it does not validate the unproved p=6 assembly target above.
