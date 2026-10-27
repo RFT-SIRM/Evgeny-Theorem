@@ -2437,7 +2437,7 @@ D6_(m+1)(ax, ax', o)
 ```
 
 The proof applies `pOpO_trace6_glue_final` at both axes, rewrites the
-three-copy sums using `sum_gcopy` and the definitions of `Hc), then closes
+three-copy sums using `sum_gcopy` and the definitions of `Hc`, then closes
 the scalar rearrangement. It preserves the boundary difference exactly; it
 does **not** assume that this difference is zero and does not establish
 sixth-moment stabilization.
@@ -2457,12 +2457,12 @@ All four workflows completed successfully on this exact SHA:
 
 The next target is to isolate exactly when the p=6 boundary correction
 `glueRHS6` is axis-independent, without presuming cancellation. Its r=2
-terms explicitly involve the diagonal entries of `K^4) and `K^5) at glued
+terms explicitly involve the diagonal entries of `K^4` and `K^5` at glued
 partner vertices. The existing `sgK_diag`, `sgK_sq_diag`, and
 `sgK_corner_data` establish axis-independence for diagonal powers one,
 two, and three under their stated hypotheses; the top-stratum diagonal-cube
 reduction `sg_trace_p6_top_stratum_diagonal_cube` handles the r=6 term.
-The immediate algebraic lemma should therefore show that `glueRHS6) agrees
+The immediate algebraic lemma should therefore show that `glueRHS6` agrees
 between axes **assuming** equality of the diagonal powers four and five on
 the glued locus. This is only a conditional reduction. Then prove those
 higher-power corner identities from the concrete geometry, or keep their
