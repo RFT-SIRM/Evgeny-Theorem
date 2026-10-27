@@ -111,6 +111,332 @@ theorem trace_orderedWordExpansion {n : Type*} [Fintype n] [DecidableEq n]
 
 
 
+/-- Exact cyclic-orbit grouping of the sixth ordered-word trace expansion.
+The 64 ordered choice words are grouped into their 14 cyclic classes with
+orbit weights 1, 6, 3, or 2 as appropriate. This is a purely algebraic
+identity for arbitrary matrices; no words are commuted or discarded. -/
+theorem trace_orderedWordExpansion_six_cyclic
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) :
+    ((orderedWordExpansion A B 6).map Matrix.trace).sum =
+      Matrix.trace (A * A * A * A * A * A)
+      + 6 * Matrix.trace (A * A * A * A * A * B)
+      + 6 * Matrix.trace (A * A * A * A * B * B)
+      + 6 * Matrix.trace (A * A * A * B * A * B)
+      + 6 * Matrix.trace (A * A * A * B * B * B)
+      + 3 * Matrix.trace (A * A * B * A * A * B)
+      + 6 * Matrix.trace (A * A * B * A * B * B)
+      + 6 * Matrix.trace (A * A * B * B * A * B)
+      + 6 * Matrix.trace (A * A * B * B * B * B)
+      + 2 * Matrix.trace (A * B * A * B * A * B)
+      + 6 * Matrix.trace (A * B * A * B * B * B)
+      + 3 * Matrix.trace (A * B * B * A * B * B)
+      + 6 * Matrix.trace (A * B * B * B * B * B)
+      + Matrix.trace (B * B * B * B * B * B) := by
+  have hrot_100000 : Matrix.trace (B * A * A * A * A * A) =
+      Matrix.trace (A * A * A * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, A, A, A])
+
+  have hrot_010000 : Matrix.trace (A * B * A * A * A * A) =
+      Matrix.trace (A * A * A * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B] [A, A, A, A])
+
+  have hrot_110000 : Matrix.trace (B * B * A * A * A * A) =
+      Matrix.trace (A * A * A * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, A, A, A])
+
+  have hrot_001000 : Matrix.trace (A * A * B * A * A * A) =
+      Matrix.trace (A * A * A * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, B] [A, A, A])
+
+  have hrot_101000 : Matrix.trace (B * A * B * A * A * A) =
+      Matrix.trace (A * A * A * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, A, B] [A, A, A])
+
+  have hrot_011000 : Matrix.trace (A * B * B * A * A * A) =
+      Matrix.trace (A * A * A * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, B] [A, A, A])
+
+  have hrot_111000 : Matrix.trace (B * B * B * A * A * A) =
+      Matrix.trace (A * A * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B] [A, A, A])
+
+  have hrot_000100 : Matrix.trace (A * A * A * B * A * A) =
+      Matrix.trace (A * A * A * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, A, B] [A, A])
+
+  have hrot_100100 : Matrix.trace (B * A * A * B * A * A) =
+      Matrix.trace (A * A * B * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, B, A, A])
+
+  have hrot_010100 : Matrix.trace (A * B * A * B * A * A) =
+      Matrix.trace (A * A * A * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, A, B] [A, A])
+
+  have hrot_110100 : Matrix.trace (B * B * A * B * A * A) =
+      Matrix.trace (A * A * B * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, A, B] [A, A])
+
+  have hrot_001100 : Matrix.trace (A * A * B * B * A * A) =
+      Matrix.trace (A * A * A * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, B, B] [A, A])
+
+  have hrot_101100 : Matrix.trace (B * A * B * B * A * A) =
+      Matrix.trace (A * A * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, A, B, B] [A, A])
+
+  have hrot_011100 : Matrix.trace (A * B * B * B * A * A) =
+      Matrix.trace (A * A * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, B, B] [A, A])
+
+  have hrot_111100 : Matrix.trace (B * B * B * B * A * A) =
+      Matrix.trace (A * A * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B, B] [A, A])
+
+  have hrot_000010 : Matrix.trace (A * A * A * A * B * A) =
+      Matrix.trace (A * A * A * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, A, A, B] [A])
+
+  have hrot_100010 : Matrix.trace (B * A * A * A * B * A) =
+      Matrix.trace (A * A * A * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, A, B, A])
+
+  have hrot_010010 : Matrix.trace (A * B * A * A * B * A) =
+      Matrix.trace (A * A * B * A * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B] [A, A, B, A])
+
+  have hrot_110010 : Matrix.trace (B * B * A * A * B * A) =
+      Matrix.trace (A * A * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, A, B, A])
+
+  have hrot_001010 : Matrix.trace (A * A * B * A * B * A) =
+      Matrix.trace (A * A * A * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, B, A, B] [A])
+
+  have hrot_101010 : Matrix.trace (B * A * B * A * B * A) =
+      Matrix.trace (A * B * A * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, B, A, B, A])
+
+  have hrot_011010 : Matrix.trace (A * B * B * A * B * A) =
+      Matrix.trace (A * A * B * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, B, A, B] [A])
+
+  have hrot_111010 : Matrix.trace (B * B * B * A * B * A) =
+      Matrix.trace (A * B * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B] [A, B, A])
+
+  have hrot_000110 : Matrix.trace (A * A * A * B * B * A) =
+      Matrix.trace (A * A * A * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, A, B, B] [A])
+
+  have hrot_100110 : Matrix.trace (B * A * A * B * B * A) =
+      Matrix.trace (A * A * B * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, B, B, A])
+
+  have hrot_010110 : Matrix.trace (A * B * A * B * B * A) =
+      Matrix.trace (A * A * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, A, B, B] [A])
+
+  have hrot_110110 : Matrix.trace (B * B * A * B * B * A) =
+      Matrix.trace (A * B * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, B, B, A])
+
+  have hrot_001110 : Matrix.trace (A * A * B * B * B * A) =
+      Matrix.trace (A * A * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, A, B, B, B] [A])
+
+  have hrot_101110 : Matrix.trace (B * A * B * B * B * A) =
+      Matrix.trace (A * B * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, A, B, B, B] [A])
+
+  have hrot_011110 : Matrix.trace (A * B * B * B * B * A) =
+      Matrix.trace (A * A * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, B, B, B] [A])
+
+  have hrot_111110 : Matrix.trace (B * B * B * B * B * A) =
+      Matrix.trace (A * B * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B, B, B] [A])
+
+  have hrot_100001 : Matrix.trace (B * A * A * A * A * B) =
+      Matrix.trace (A * A * A * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, A, A, B])
+
+  have hrot_010001 : Matrix.trace (A * B * A * A * A * B) =
+      Matrix.trace (A * A * A * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B] [A, A, A, B])
+
+  have hrot_110001 : Matrix.trace (B * B * A * A * A * B) =
+      Matrix.trace (A * A * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, A, A, B])
+
+  have hrot_101001 : Matrix.trace (B * A * B * A * A * B) =
+      Matrix.trace (A * A * B * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, A, B] [A, A, B])
+
+  have hrot_011001 : Matrix.trace (A * B * B * A * A * B) =
+      Matrix.trace (A * A * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, B] [A, A, B])
+
+  have hrot_111001 : Matrix.trace (B * B * B * A * A * B) =
+      Matrix.trace (A * A * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B] [A, A, B])
+
+  have hrot_100101 : Matrix.trace (B * A * A * B * A * B) =
+      Matrix.trace (A * A * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, B, A, B])
+
+  have hrot_110101 : Matrix.trace (B * B * A * B * A * B) =
+      Matrix.trace (A * B * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, B, A, B])
+
+  have hrot_101101 : Matrix.trace (B * A * B * B * A * B) =
+      Matrix.trace (A * B * B * A * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, B, B, A, B])
+
+  have hrot_011101 : Matrix.trace (A * B * B * B * A * B) =
+      Matrix.trace (A * B * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B, B, B] [A, B])
+
+  have hrot_111101 : Matrix.trace (B * B * B * B * A * B) =
+      Matrix.trace (A * B * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B, B] [A, B])
+
+  have hrot_100011 : Matrix.trace (B * A * A * A * B * B) =
+      Matrix.trace (A * A * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, A, B, B])
+
+  have hrot_010011 : Matrix.trace (A * B * A * A * B * B) =
+      Matrix.trace (A * A * B * B * A * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [A, B] [A, A, B, B])
+
+  have hrot_110011 : Matrix.trace (B * B * A * A * B * B) =
+      Matrix.trace (A * A * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, A, B, B])
+
+  have hrot_101011 : Matrix.trace (B * A * B * A * B * B) =
+      Matrix.trace (A * B * A * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, B, A, B, B])
+
+  have hrot_111011 : Matrix.trace (B * B * B * A * B * B) =
+      Matrix.trace (A * B * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B, B] [A, B, B])
+
+  have hrot_100111 : Matrix.trace (B * A * A * B * B * B) =
+      Matrix.trace (A * A * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, A, B, B, B])
+
+  have hrot_110111 : Matrix.trace (B * B * A * B * B * B) =
+      Matrix.trace (A * B * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B, B] [A, B, B, B])
+
+  have hrot_101111 : Matrix.trace (B * A * B * B * B * B) =
+      Matrix.trace (A * B * B * B * B * B) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list [B] [A, B, B, B, B])
+  simp [orderedWordExpansion, List.map_append, List.sum_append,
+    hrot_100000,
+    hrot_010000,
+    hrot_110000,
+    hrot_001000,
+    hrot_101000,
+    hrot_011000,
+    hrot_111000,
+    hrot_000100,
+    hrot_100100,
+    hrot_010100,
+    hrot_110100,
+    hrot_001100,
+    hrot_101100,
+    hrot_011100,
+    hrot_111100,
+    hrot_000010,
+    hrot_100010,
+    hrot_010010,
+    hrot_110010,
+    hrot_001010,
+    hrot_101010,
+    hrot_011010,
+    hrot_111010,
+    hrot_000110,
+    hrot_100110,
+    hrot_010110,
+    hrot_110110,
+    hrot_001110,
+    hrot_101110,
+    hrot_011110,
+    hrot_111110,
+    hrot_100001,
+    hrot_010001,
+    hrot_110001,
+    hrot_101001,
+    hrot_011001,
+    hrot_111001,
+    hrot_100101,
+    hrot_110101,
+    hrot_101101,
+    hrot_011101,
+    hrot_111101,
+    hrot_100011,
+    hrot_010011,
+    hrot_110011,
+    hrot_101011,
+    hrot_111011,
+    hrot_100111,
+    hrot_110111,
+    hrot_101111]
+  <;> ring
+
+
+
 /-- Iterating a level-three affine recurrence gives an exact closed form. -/
 theorem affine_recurrence_closed_form
     (delta : ℕ → ℂ) (C : ℂ)
