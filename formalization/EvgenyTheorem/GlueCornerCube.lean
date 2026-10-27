@@ -469,7 +469,7 @@ theorem glueRHS6_sgK_axis_residual_of_diag123
             K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
               K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
             K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
-              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) := by
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
             calc
               _ = Matrix.trace (K' * (sgGlue m).N * K' * (sgGlue m).N *
                 K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N) := by
