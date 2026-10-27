@@ -2150,3 +2150,24 @@ This validates the repository state at that SHA; it does not validate the absent
 Do not expand the existing boundary lemmas. First establish, for the actual recursive `orderedWordExpansion A B 6`, a finite trace-sum identity that groups the 64 ordered terms into the 14 cyclic representatives from §4bo, with the exact orbit weights. The proof must preserve matrix-factor order and use `trace_cyclic_list` only for cyclic rotations. Then connect each representative to the corresponding odd/even stratum theorem, discharging its hypotheses before invoking it. Keep the raw r=0 trace and the r=6 diagonal-sandwich trace explicit.
 
 The current environment has no local `lean`/`lake` executable. Therefore any source edit must be narrowly scoped and its correctness confirmed by the actual PR workflow before the next edit; do not treat this CI audit as a substitute for that compilation.
+
+
+## 4bq. CI recheck at the journal-update head (2026-10-27)
+
+Re-read PR #9 metadata and the branch ref before proceeding. The PR remains open and mergeable; the exact head at the start of this check was `d3a96467cd9a2221c2c5d7afb96d808549820954`.
+
+For this SHA, the workflows have completed successfully:
+- Lean formalization run `40457242351`, build job `122033306533`: success.
+- Tests run `40457242189`: Python 3.12 job `122033305924` and Python 3.11 job `122033306150`: success. Both jobs completed their fast and slow level-7 convergence tests.
+
+This independently confirms the previous journal note's audit is not stale: the journal-only commit itself also passed Lean and both Python versions. This is baseline verification only; no new p=6 assembly theorem was validated.
+
+### Proof strategy checkpoint
+
+The next proof must be chosen from the exact current Lean source and research ledger—not from the Python word inventory alone. In particular:
+1. Inspect existing representative lemmas in `GlueTrace.lean` and all prerequisites in `GlueK.lean` / `GlueBridge.lean`.
+2. Select the smallest missing lemma that advances the aggregate p=6 ordered expansion, not another already-covered boundary case.
+3. Work out its statement and matrix-word order explicitly; verify all multiplicity coefficients, especially periodic cyclic orbits.
+4. Make one source change only after that audit. Require the actual Lean build and both Python jobs to pass before moving to the next obligation.
+
+No Lean source was changed in this checkpoint. The current p=6 milestone remains the ordered-list-to-cyclic-strata assembly and the discharge of odd-stratum premises; CI success by itself does not close it.
