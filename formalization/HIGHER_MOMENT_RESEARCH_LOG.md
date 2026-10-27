@@ -2187,3 +2187,15 @@ Verification status at the time of this note:
 - Commit `094af60990896f09f0eb3d6b4482b40a05567e83` adds the five-`N` lemma; its Lean and Python checks were queued when inspected. Do not mark that commit verified until all three checks finish successfully.
 
 Next: check the current commit's CI, then construct the p=6 ordered-list grouping from the exact expansion `A=K`, `B=K*N`, carefully distinguishing the choice-word length from the expanded K/N factor count.
+
+### CI-confirmed p=6 odd-word reduction audit (2026-10-27)
+
+The corrected five-N support bounds are now verified: commit `450ee15d9968f35829537a146f92baf4eaaf7baf` has successful Lean build and Python 3.11/3.12 workflows. The Lean failure at `094af60` was exactly a strict-vs-nonstrict bound mismatch (`b < 6` supplied where `b ≤ 5` was required); `by omega` resolves that conversion.
+
+The actual p=6 expansion is a six-choice word expansion with A=K and B=K*N, not an arbitrary six-letter K/N word. The odd r counts below are numbers of B-choices (equivalently N-insertions after expansion), with K-runs between successive Ns:
+
+- r=1: one necklace, representative `KKKKKN`, orbit weight 6.
+- r=3: representatives `KKKNNN`, `KKNKNN`, `KKNNKN`, and `KNKNKN`, weights 6, 6, 6, and 2.
+- r=5: one necklace, representative `KNNNNN`, orbit weight 6.
+
+The weights sum to the binomial stratum sizes 6, 20, and 6. This census confirms the classes and periodic orbit but is still not a Lean proof that `orderedWordExpansion` maps into those representatives. The next formal obligation is to establish that bridge without replacing the list by a set (which would lose duplicate-word multiplicities), then apply the existing word-zero lemmas to each representative.
