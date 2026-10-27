@@ -620,6 +620,55 @@ theorem sg_trace_p6_ordered_four_N_1_2_1_2_representative
   simpa [pow_succ, pow_one, pow_zero, Matrix.mul_assoc]
 
 
+/-- The three cyclic classes in the p=6 r=4 stratum, with orbit
+weights 6, 6, and 3, give exactly the last three lower-even boundary trace
+terms. This sums the representatives only; it is not the full 64-word split. -/
+theorem sg_trace_p6_ordered_four_N_representatives_boundary
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    6 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    6 * Matrix.trace
+      ((sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    3 * Matrix.trace
+      ((sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) =
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) := by
+  rw [sg_trace_p6_ordered_four_N_1_1_1_3_representative m θ ax o,
+    sg_trace_p6_ordered_four_N_1_1_2_2_representative m θ ax o,
+    sg_trace_p6_ordered_four_N_1_2_1_2_representative m θ ax o]
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
