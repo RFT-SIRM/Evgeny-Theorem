@@ -2301,14 +2301,15 @@ Commit `78182c829501b2d6694cc449c152f97cca979b0b` adds
 cyclic-rotation bridges for the six-choice words with exactly two `K*N`
 choices:
 
-- gap pattern `(1,5)), orbit weight 6;
-- gap pattern `(2,4)), orbit weight 6;
-- periodic gap pattern `(3,3)), orbit weight 3.
+- gap pattern `(1,5)`, orbit weight 6;
+- gap pattern `(2,4)`, orbit weight 6;
+- periodic gap pattern `(3,3)`, orbit weight 3.
 
-Their weights sum to (6+6+3=15=\binom{6}{2}). The aggregate theorem equates
-the weighted sum of those explicit ordered representatives to the first three
-r=2 terms in `sg_trace_p6_lower_even_strata_boundary`. All equalities preserve
-factor order and use the already proved local representative lemmas.
+The weights sum to `6 + 6 + 3 = 15 = binomial(6, 2)`. The aggregate theorem
+equates the weighted sum of those explicit ordered representatives to the
+first three r=2 terms in `sg_trace_p6_lower_even_strata_boundary`. All
+equalities preserve factor order and use the already-proved local
+representative lemmas.
 
 ### Verification for the exact commit
 
@@ -2330,9 +2331,9 @@ does not prove the complete p=6 trace split, cancellation between axes, or
 induction in level.
 
 The next even stratum to bridge is r=4. Its three cyclic gap patterns are
-`(1,1,1,3)), `(1,1,2,2)), and periodic `(1,2,1,2)`, with respective
-orbit weights 6, 6, and 3 (total (15=\binom{6}{4})). Before adding source
-code, verify the representative products directly against the last three
-r=4 terms of `sg_trace_p6_lower_even_strata_boundary`, then add one local
-rotation lemma at a time and require a green full Lean build and both Python
-versions before proceeding.
+`(1,1,1,3)`, `(1,1,2,2)`, and periodic `(1,2,1,2)`, with respective orbit
+weights 6, 6, and 3 (total `15 = binomial(6, 4)`). Before adding source code,
+verify the representative products directly against the last three r=4
+terms of `sg_trace_p6_lower_even_strata_boundary`, then add one local rotation
+lemma at a time and require a green full Lean build and both Python versions
+before proceeding.
