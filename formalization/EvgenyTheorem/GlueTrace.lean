@@ -423,8 +423,8 @@ theorem sg_trace_p6_odd_N_representatives_zero
         sgK m θ ax o ^ 1 * (sgGlue m).N *
         sgK m θ ax o ^ 0) = 0 := by
     simpa [pow_one] using h5
-  rw [h1', h3', h5']
-  ring
+  rw [h1', h5']
+  simpa only [zero_mul, zero_add, add_zero] using h3'
 
 
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
