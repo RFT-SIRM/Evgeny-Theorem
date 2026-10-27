@@ -427,6 +427,29 @@ theorem sg_trace_p6_odd_N_representatives_zero
   simpa only [mul_zero, zero_add, add_zero] using h3'
 
 
+/-- The one-N cyclic representative in the ordered p=6 word expansion is
+the same trace as the already-vanishing boundary representative. This bridges
+only this single cyclic class; it does not claim the full trace split. -/
+theorem sg_trace_p6_ordered_one_N_class_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o *
+        sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+  have h := sg_trace_p6_one_N_class_zero m θ ax o
+  change Matrix.trace
+      ((sgK m θ ax o ^ 5) * (sgK m θ ax o * (sgGlue m).N)) = 0
+  calc
+    Matrix.trace
+        ((sgK m θ ax o ^ 5) * (sgK m θ ax o * (sgGlue m).N)) =
+      Matrix.trace
+        (sgK m θ ax o * (sgGlue m).N * sgK m θ ax o ^ 5) := by
+          exact Matrix.trace_mul_comm _ _
+    _ = 0 := by
+          simpa [pow_one] using h
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
