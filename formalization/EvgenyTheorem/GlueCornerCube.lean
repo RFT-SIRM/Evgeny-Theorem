@@ -266,7 +266,7 @@ theorem glueRHS6_sgK_axis_congr_of_diag45
     apply sumG_congr
     intro x hx
     rw [hdiag0 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
-      hdiag1 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+      hdiag1 x hx]
 
   have htop :
       Matrix.trace
@@ -313,7 +313,7 @@ theorem glueRHS6_sgK_axis_congr_of_diag45
             K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
               K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
             K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
-              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) := by
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
             calc
               _ = Matrix.trace (K' * (sgGlue m).N * K' * (sgGlue m).N *
                 K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N) := by
