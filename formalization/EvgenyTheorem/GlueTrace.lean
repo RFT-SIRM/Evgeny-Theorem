@@ -293,6 +293,32 @@ theorem sg_trace_p6_three_N_word_zero
     b (by omega) w w' hw hw' hcopy hne
 
 
+/-- Every p=6 ordered word with five pairing insertions vanishes.
+The two powers selected by the five-N reduction are both below six, hence
+the existing geometric corner-support result applies. The outer powers are
+unrestricted and remain in their original order. -/
+theorem sg_trace_p6_five_N_word_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (hb : b < 6) (hd : d < 6) :
+    Matrix.trace
+      (sgK m θ ax o ^ a * (sgGlue m).N *
+        sgK m θ ax o ^ b * (sgGlue m).N *
+        sgK m θ ax o ^ c * (sgGlue m).N *
+        sgK m θ ax o ^ d * (sgGlue m).N *
+        sgK m θ ax o ^ e * (sgGlue m).N *
+        sgK m θ ax o ^ f) = 0 := by
+  apply trace_five_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o)) a b c d e f
+  · intro w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      b hb w w' hw hw' hcopy hne
+  · intro w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      d hd w w' hw hw' hcopy hne
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
