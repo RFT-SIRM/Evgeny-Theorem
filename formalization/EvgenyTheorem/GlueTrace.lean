@@ -355,6 +355,44 @@ theorem sg_trace_p6_three_N_representatives_zero
   ring
 
 
+/-- The representative-level odd-N strata at p=6 all vanish after
+their cyclic orbit weights are applied. This combines r=1, r=3, and r=5;
+the full ordered-expansion partition is a separate remaining theorem. -/
+theorem sg_trace_p6_odd_N_representatives_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 4 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N) +
+    2 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 2 * (sgGlue m).N) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 1 * (sgGlue m).N) = 0 := by
+  have h1 := sg_trace_p6_one_N_class_zero m θ ax o
+  have h3 := sg_trace_p6_three_N_representatives_zero m hm θ ax o hanti
+  have h5 := sg_trace_p6_five_N_word_zero m hm θ ax o hanti
+    2 1 1 1 1 0 (by omega) (by omega)
+  simp only [h1, h3, h5]
+  ring
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
