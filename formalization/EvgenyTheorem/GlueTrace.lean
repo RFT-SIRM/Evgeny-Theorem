@@ -724,6 +724,7 @@ theorem sg_trace_p6_ordered_expansion_boundary
       6 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) +
       3 * Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) +
       Matrix.trace ((K * N) ^ 6) := by
+  dsimp only
   let K := sgK m θ ax o
   let N := (sgGlue m).N
   rw [trace_orderedWordExpansion_six_cyclic K (K * N)]
