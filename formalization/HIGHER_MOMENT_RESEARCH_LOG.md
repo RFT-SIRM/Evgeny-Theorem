@@ -2059,3 +2059,26 @@ This corrects the emphasis of §4bk: do not write a second generic pushforward t
 ### CI recheck
 
 The research-log-only commit \`bf6bf64d4bce448f3fc87308d95ee7c94f3dbf9a\` has completed both workflows successfully: Lean formalization passed, and Python tests passed (3.11 and 3.12). This green result validates the current source/log commit; it does not validate the unproved p=6 assembly target above.
+
+## 4bm. Third source audit: distinguish the existing p=6 boundary theorem from the full trace assembly (2026-10-27)
+
+I rechecked the current branch source after §4bl and searched for a degree-six gluing/split declaration. No \`pOpO_trace6_glue_final\`, \`trace6_split\`, or full p=6 assembly theorem is present. The following distinction is now explicit:
+
+1. \`sg_trace_p6_all_even_strata_boundary\` in \`GlueTrace.lean\` **already exists**. Its LHS is precisely the sum of the seven even-stratum trace terms (three r=2, three r=4, one r=6), and its RHS is the exact weighted boundary formula. It is a boundary-reduction theorem for the concrete \`sgK\` operator under \`OAnti (m+1) o\`; it is not the expansion of the complete glued sixth moment.
+2. \`pOpO_succ_trace_ordered_words\` in \`GlueK.lean\` and \`trace_push_ordered_words\` in \`GlueBridge.lean\` already express the full sixth moment as the trace-sum over the 64-element ordered list \`orderedWordExpansion K (K*N) 6\`.
+3. \`trace_blockK_pow\` already gives the three-copy contribution at degree six.
+4. The unresolved join is finite and specific: establish that the ordered-list trace-sum, after cyclic grouping, is exactly the K^6 term (r=0), the seven even terms consumed by \`sg_trace_p6_all_even_strata_boundary\`, and zero odd strata r=1,3,5 under their *actual* hypotheses. This must account for 64 words, 14 cyclic classes, and exact orbit weights; do not simply equate the list sum with the boundary RHS.
+
+### Correct immediate proof target
+
+Do not write another abstract trace-push theorem or another p=6 boundary lemma. First prove a small finite **p=6 ordered-list-to-strata partition lemma** for the exact recursive list definition. The proof should:
+- classify each word by its number r of \`K*N\` factors;
+- choose cyclic representatives and prove the orbit multiplicities (including non-full orbits);
+- use \`trace_cyclic_list\` to justify rotating words without reordering their matrix factors;
+- route the r=1,3,5 representatives through the corresponding zero lemmas only after discharging their stated corner/anti-orientation premises;
+- route r=2,4,6 representatives through the already proved stratum formulas, preserving the r=6 sandwich trace;
+- leave the r=0 term as \`trace (K^6)\`.
+
+Then combine this partition lemma with \`pOpO_succ_trace_ordered_words\`, \`trace_blockK_pow\`, and \`sg_trace_p6_all_even_strata_boundary\` to state the concrete degree-six split. Only the resulting exact equation may be used for the two-axis subtraction. Boundary cancellation and level stabilization remain separate open proof obligations.
+
+No Lean source changed during this audit. The verified CI state is commit \`4cd195ed72c5b3a8dd03c28100a6e09f0586687c\`: Lean succeeded; Python 3.11 and 3.12 succeeded. This confirms the repository baseline, not the new partition lemma, which is not yet implemented.
