@@ -2094,3 +2094,43 @@ This confirms the branch is still green after the §4bm research-log correction.
 A further source check confirms the safe boundary of the next implementation: the existing generic theorem \`trace_p6_lower_even_strata_boundary\` already handles the six r=2/r=4 trace representatives and their weights \(6,6,3\); \`sg_trace_p6_top_stratum_boundary\` handles the single r=6 word while preserving its diagonal-sandwich trace. Thus the p=6 finite assembly should not reprove these local formulas. The remaining code should handle the 64-list partition, cyclic rotations, and the odd-stratum hypotheses, then invoke these established reductions. Keep the full trace split and its two-axis difference as explicit theorem targets; no stabilization conclusion follows from this CI or inventory.
 
 No Lean source changed in this pass. Next action remains to implement a proof-carrying finite partition of \`orderedWordExpansion ... 6\` (not merely cite the Python inventory), with orbit-size proof for periodic classes and exact connection to Lean's recursive list.
+
+
+## 4bo. Independent p=6 cyclic-orbit census before the Lean partition (2026-10-27)
+
+This is a finite combinatorial audit for the next proof target in §4bn. It is **not** a Lean theorem and does not establish any trace-stratum vanishing.
+
+### Convention and calculation
+
+Encode a choice in the recursive `orderedWordExpansion` by `0 = K` and `1 = K*N`. The recursion appends each choice on the right, so a length-six choice string records the order of the six factors. For each of the (2^6=64) strings, take the lexicographically least cyclic rotation as its representative. The coefficient of a representative in the cyclically grouped trace sum is the size of its rotation orbit. This uses only `trace_cyclic_list`; it does not commute or reorder matrix factors.
+
+The full exhaustive census is:
+
+| (r) (# of `K*N` choices) | Canonical representative | Orbit size / coefficient |
+|---:|:---:|---:|
+| 0 | `000000` | 1 |
+| 1 | `000001` | 6 |
+| 2 | `000011` | 6 |
+| 2 | `000101` | 6 |
+| 2 | `001001` | 3 |
+| 3 | `000111` | 6 |
+| 3 | `001011` | 6 |
+| 3 | `001101` | 6 |
+| 3 | `010101` | 2 |
+| 4 | `001111` | 6 |
+| 4 | `010111` | 6 |
+| 4 | `011011` | 3 |
+| 5 | `011111` | 6 |
+| 6 | `111111` | 1 |
+
+The orbit sizes sum by (r=0,ldots,6) to (1,6,15,20,15,6,1), respectively, exactly (inom 6r); their grand total is 64. There are 14 cyclic classes. The non-full orbits are precisely `001001` (period 3, (r=2)), `010101` (period 2, (r=3)), and `011011` (period 3, (r=4)); their coefficients are 3, 2, and 3, not 6.
+
+### What this does and does not justify
+
+- This table fixes the exact class representatives and multiplicities for the binary *choice words* in the six-step expansion.
+- It does not yet prove that the recursive Lean matrix list has been partitioned by this census. The Lean proof must connect the choice-word encoding to `orderedWordExpansion` and establish each rotation relation with `trace_cyclic_list`.
+- It does not make the (r=1,3,5) trace classes vanish. Their existing zero reductions can only be used after their hypotheses are proved for the actual representative.
+- It does not replace the established (r=2,4,6) boundary reductions, nor does it prove the complete p=6 trace split or axis cancellation.
+
+**Next code milestone:** formalize the finite choice-word/cyclic-orbit partition for this exact length-six recursion, with the above orbit sizes proved in Lean. Then combine it with the existing ordered-word trace equality and the established stratum lemmas. No further boundary cancellation or stabilization claim is licensed before that assembly theorem compiles.
+
