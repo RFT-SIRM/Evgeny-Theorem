@@ -2255,7 +2255,7 @@ Commit `746e23f724b11e172d68f8559ae8fa8155d8017b` adds only the local theorem
 `sg_trace_p6_ordered_two_N_5_1_representative` in `GlueTrace.lean`. The diff does
 not modify other source files or the theorem's assumptions.
 
-For the length-six choice representative `000011`,, the ordered product is
+For the length-six choice representative `000011`, the ordered product is
 `K K K K (K*N) (K*N)`. Expanding, without commuting factors, gives
 `K^5 * N * K * N`. Split its list as
 `[K,K,K,K,K,N] ++ [K,N]`; `trace_cyclic_list` rotates it to
@@ -2283,10 +2283,10 @@ boundary cancellation, and level induction remain open.
 
 ### Next narrowly scoped representative
 
-The next r=2 choice necklace is `000101`,, orbit weight 6. Its ordered product
+The next r=2 choice necklace is `000101`, orbit weight 6. Its ordered product
 is `K^3 * (K*N) * K * (K*N)`, which expands in factor order to
 `K^4 * N * K^2 * N`. A cyclic rotation gives
-`K^2 * N * K^4 * N`,, matching the second lower-even boundary representative.
-The remaining periodic r=2 class is `001001`,, with representative gap pattern
+`K^2 * N * K^4 * N`, matching the second lower-even boundary representative.
+The remaining periodic r=2 class is `001001`, with representative gap pattern
 (3,3) and orbit weight 3. Prove and compile the (4,2) local bridge before
 attempting any aggregate r=2 sum or any broader p=6 assembly.
