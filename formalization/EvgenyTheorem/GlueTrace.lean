@@ -919,6 +919,93 @@ theorem sg_trace_p6_all_even_strata_boundary
   rw [sg_trace_p6_lower_even_strata_boundary m hm θ ax o hanti,
     sg_trace_p6_top_stratum_boundary m hm θ ax o hanti]
 
+/-- The exact p=6 even-stratum boundary correction. The six-insertion
+endpoint is kept as its diagonal-sandwich trace, with no axis-cancellation
+claim built into this definition. -/
+noncomputable def glueRHS6
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  6 * (∑ x, if (sgGlue m).g x then
+    (K ^ 1) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  6 * (∑ x, if (sgGlue m).g x then
+    (K ^ 2) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  3 * (∑ x, if (sgGlue m).g x then
+    (K ^ 3) x x * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  6 * (∑ x, if (sgGlue m).g x then
+    ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+      (K ^ 1) x x) * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  6 * (∑ x, if (sgGlue m).g x then
+    ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+      (K ^ 2) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  3 * (∑ x, if (sgGlue m).g x then
+    ((K x x * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+      (K ^ 1) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  Matrix.trace
+    (K *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      K *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      K *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
+
+
+/-- Full degree-six gluing identity for the actual operator. The ordered
+word expansion is reduced using the established p=6 cyclic representative
+lemmas; the remaining even-stratum contribution is retained exactly as
+glueRHS6. This is a trace split, not an axis-cancellation or level-recurrence
+theorem. -/
+theorem pOpO_trace6_glue_final
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ 6) =
+      (∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 6)) +
+        glueRHS6 m (sgK m θ ax o) := by
+  let K := sgK m θ ax o
+  let N := (sgGlue m).N
+  let evenTerms :=
+    6 * Matrix.trace (K ^ 1 * N * K ^ 5 * N * K ^ 0) +
+    6 * Matrix.trace (K ^ 2 * N * K ^ 4 * N * K ^ 0) +
+    3 * Matrix.trace (K ^ 3 * N * K ^ 3 * N * K ^ 0) +
+    6 * Matrix.trace
+      (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) +
+    6 * Matrix.trace
+      (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) +
+    3 * Matrix.trace
+      (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) +
+    Matrix.trace ((K * N) ^ 6)
+  have hwords :
+      Matrix.trace ((pOpO (m + 1) θ ax o) ^ 6) =
+        ((orderedWordExpansion K (K * N) 6).map Matrix.trace).sum := by
+    simpa [K, N] using
+      (pOpO_succ_trace_ordered_words m θ ax o hax1 hax2 6 (by omega))
+  have hordered :
+      ((orderedWordExpansion K (K * N) 6).map Matrix.trace).sum =
+        Matrix.trace (K ^ 6) + evenTerms := by
+    simpa [K, N, evenTerms, pow_succ, pow_one, pow_zero,
+      Matrix.mul_assoc, add_assoc] using
+      (sg_trace_p6_ordered_expansion_boundary m hm θ ax o hanti)
+  have hcopy :
+      Matrix.trace (K ^ 6) =
+        ∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 6) := by
+    simpa [K, sgK] using (trace_blockK_pow (Hc m θ ax o) 6)
+  have heven : evenTerms = glueRHS6 m K := by
+    simpa [K, N, evenTerms, glueRHS6, pow_succ, pow_one, pow_zero,
+      Matrix.mul_assoc, add_assoc] using
+      (sg_trace_p6_all_even_strata_boundary m hm θ ax o hanti)
+  calc
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ 6) =
+        ((orderedWordExpansion K (K * N) 6).map Matrix.trace).sum := hwords
+    _ = Matrix.trace (K ^ 6) + evenTerms := hordered
+    _ = (∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 6)) +
+        glueRHS6 m K := by
+      rw [hcopy, heven]
+
+
 /-- The partner-corner diagonal weight sandwiches sgK to a diagonal
 matrix: distinct glued states have zero coupling. -/
 theorem sgK_corner_sandwich_offdiag_zero
