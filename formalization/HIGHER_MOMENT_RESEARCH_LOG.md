@@ -2082,3 +2082,15 @@ Do not write another abstract trace-push theorem or another p=6 boundary lemma. 
 Then combine this partition lemma with \`pOpO_succ_trace_ordered_words\`, \`trace_blockK_pow\`, and \`sg_trace_p6_all_even_strata_boundary\` to state the concrete degree-six split. Only the resulting exact equation may be used for the two-axis subtraction. Boundary cancellation and level stabilization remain separate open proof obligations.
 
 No Lean source changed during this audit. The verified CI state is commit \`4cd195ed72c5b3a8dd03c28100a6e09f0586687c\`: Lean succeeded; Python 3.11 and 3.12 succeeded. This confirms the repository baseline, not the new partition lemma, which is not yet implemented.
+
+## 4bn. CI confirmation and proof-scope check (2026-10-27)
+
+The audit commit \`c2e9cb456317ed71e3ee2a1fa8d4f5dacc4ba9f3\` has now completed both CI workflows successfully:
+- Lean formalization run \`40446050874\`, build job succeeded.
+- Python tests run \`40446050905\`, both Python 3.11 and 3.12 jobs succeeded.
+
+This confirms the branch is still green after the §4bm research-log correction. It does not prove the ordered-list-to-strata partition lemma, which is still absent from Lean source.
+
+A further source check confirms the safe boundary of the next implementation: the existing generic theorem \`trace_p6_lower_even_strata_boundary\` already handles the six r=2/r=4 trace representatives and their weights \(6,6,3\); \`sg_trace_p6_top_stratum_boundary\` handles the single r=6 word while preserving its diagonal-sandwich trace. Thus the p=6 finite assembly should not reprove these local formulas. The remaining code should handle the 64-list partition, cyclic rotations, and the odd-stratum hypotheses, then invoke these established reductions. Keep the full trace split and its two-axis difference as explicit theorem targets; no stabilization conclusion follows from this CI or inventory.
+
+No Lean source changed in this pass. Next action remains to implement a proof-carrying finite partition of \`orderedWordExpansion ... 6\` (not merely cite the Python inventory), with orbit-size proof for periodic classes and exact connection to Lean's recursive list.
