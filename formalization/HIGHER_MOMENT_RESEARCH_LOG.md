@@ -2246,3 +2246,47 @@ The green current CI confirms that this source state compiles and its configured
 ### Next proof task
 
 Do not restore the removed monolithic bridge. First develop and verify small local rotation/normalization lemmas for representatives grouped by the exact number of `K * N` choices. Then connect those lemmas to the existing p=6 odd-stratum zero results and even-stratum boundary formulas. Preserve the order of all factors and the orbit weights (including periodic classes); do not proceed to the full p=6 trace split until the bridge itself has a green full Lean build.
+
+## 4bt. CI-confirmed two-N (5,1) representative bridge (2026-10-27)
+
+### Source audit and exact word calculation
+
+Commit `746e23f724b11e172d68f8559ae8fa8155d8017b` adds only the local theorem
+`sg_trace_p6_ordered_two_N_5_1_representative` in `GlueTrace.lean`. The diff does
+not modify other source files or the theorem's assumptions.
+
+For the length-six choice representative `000011), the ordered product is
+`K K K K (K*N) (K*N)`. Expanding, without commuting factors, gives
+`K^5 * N * K * N`. Split its list as
+`[K,K,K,K,K,N] ++ [K,N]`; `trace_cyclic_list` rotates it to
+`[K,N] ++ [K,K,K,K,K,N]`, i.e. the exact trace form
+`K^1 * N * K^5 * N * K^0) already used by
+`sg_trace_p6_lower_even_strata_boundary`. Its orbit weight is 6. This is
+one of the three r=2 cyclic classes only; it is not the r=2 stratum sum or the
+complete p=6 ordered-list assembly.
+
+### Exact CI evidence for this commit
+
+All four runs for the exact head SHA completed successfully:
+
+- PR Lean run `40512309600`: `Build formalization` succeeded.
+- Push Lean run `40512301650`: `Build formalization` succeeded.
+- PR Tests run `40512309528`: Python 3.11 and 3.12 both passed the fast tests
+  and slow level-7 convergence tests.
+- Push Tests run `40512301593`: Python 3.11 and 3.12 both passed the fast tests
+  and slow level-7 convergence tests.
+
+Thus the local cyclic-rotation bridge compiles in the full configured Lean build
+and the configured Python tests pass at this SHA. The full ordered-list-to-strata
+partition, the two remaining r=2 representatives, the full p=6 trace split,
+boundary cancellation, and level induction remain open.
+
+### Next narrowly scoped representative
+
+The next r=2 choice necklace is `000101), orbit weight 6. Its ordered product
+is `K^3 * (K*N) * K * (K*N)`, which expands in factor order to
+`K^4 * N * K^2 * N). A cyclic rotation gives
+`K^2 * N * K^4 * N), matching the second lower-even boundary representative.
+The remaining periodic r=2 class is `001001), with representative gap pattern
+(3,3) and orbit weight 3. Prove and compile the (4,2) local bridge before
+attempting any aggregate r=2 sum or any broader p=6 assembly.
