@@ -2337,3 +2337,44 @@ verify the representative products directly against the last three r=4
 terms of `sg_trace_p6_lower_even_strata_boundary`, then add one local rotation
 lemma at a time and require a green full Lean build and both Python versions
 before proceeding.
+
+## 4bv. CI-confirmed p=6 four-insertion representative sum (2026-10-27)
+
+### Exact source result
+
+Commit `7b29d9039b3503a97104e38a7e9a76cf06ce9362` adds
+`sg_trace_p6_ordered_four_N_representatives_boundary` in
+`formalization/EvgenyTheorem/GlueTrace.lean`. It combines the three local
+representative bridges in the r=4 stratum:
+
+- gap pattern `(1,1,1,3)`, orbit weight 6;
+- gap pattern `(1,1,2,2)`, orbit weight 6;
+- periodic gap pattern `(1,2,1,2)`, orbit weight 3.
+
+The weights sum to `6 + 6 + 3 = 15 = binomial(6, 4)`. The aggregate theorem
+equates the weighted sum of the three explicit ordered representatives to the
+last three r=4 terms of `sg_trace_p6_lower_even_strata_boundary`. It does not
+identify the complete 64-word expansion by itself.
+
+### Verification for the exact commit
+
+All four CI runs for this SHA completed successfully:
+
+- PR Lean run `40547591032`: full `Build formalization` succeeded.
+- Push Lean run `40547582536`: full `Build formalization` succeeded.
+- PR Tests run `40547590787`: Python 3.11 and 3.12 passed fast tests and slow
+  level-7 convergence tests.
+- Push Tests run `40547582571`: Python 3.11 and 3.12 passed fast tests and slow
+  level-7 convergence tests.
+
+### Remaining assembly step
+
+The source already has `trace_orderedWordExpansion_six_cyclic`, which groups
+the 64 ordered words into 14 weighted cyclic representatives, as well as
+`sg_trace_p6_three_N_representatives_zero`, which proves the four r=3
+representatives vanish with orbit weights 6, 6, 6, and 2. The next narrow
+bridge is to expand the four r=3 representatives from the generic cyclic
+formula with `A = sgK` and `B = sgK * N`, preserve factor order, and connect
+their weighted sum to that existing zero theorem. This will not yet be the
+full p=6 split: the r=0/r=6 endpoints and the final assembly of all cyclic
+classes must still be checked explicitly.
