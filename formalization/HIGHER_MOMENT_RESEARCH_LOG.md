@@ -2171,3 +2171,19 @@ The next proof must be chosen from the exact current Lean source and research le
 4. Make one source change only after that audit. Require the actual Lean build and both Python jobs to pass before moving to the next obligation.
 
 No Lean source was changed in this checkpoint. The current p=6 milestone remains the ordered-list-to-cyclic-strata assembly and the discharge of odd-stratum premises; CI success by itself does not close it.
+
+
+### p=6 odd-stratum reduction lemmas (2026-10-27)
+
+Two additional source-level reductions have now been added to `GlueTrace.lean` on the existing PR #9 branch:
+
+- `sg_trace_p6_three_N_word_zero`: for a p=6 word with three `N` insertions, the middle `K^b` run is strictly below six; the proof applies `trace_three_N_powers` and the existing `sgK_pow_hkg_up_to_five_of_OAnti` support theorem.
+- `sg_trace_p6_five_N_word_zero`: for five `N` insertions, both selected runs `K^b` and `K^d` are below six; the proof applies `trace_five_N_powers_zero` with the same geometric support theorem.
+
+The earlier one-`N` class lemma is `sg_trace_p6_one_N_class_zero`. These are word-level vanishing reductions, not yet the complete p=6 cyclic-orbit aggregation: the ordered expansion still needs an explicit list partition/representative proof with multiplicities and an end-to-end trace theorem.
+
+Verification status at the time of this note:
+- Commit `866affa7f6b6212de6d9b15d845e88104b098a9e` passed the Lean formalization workflow and Python tests (3.11 and 3.12).
+- Commit `094af60990896f09f0eb3d6b4482b40a05567e83` adds the five-`N` lemma; its Lean and Python checks were queued when inspected. Do not mark that commit verified until all three checks finish successfully.
+
+Next: check the current commit's CI, then construct the p=6 ordered-list grouping from the exact expansion `A=K`, `B=K*N`, carefully distinguishing the choice-word length from the expanded K/N factor count.
