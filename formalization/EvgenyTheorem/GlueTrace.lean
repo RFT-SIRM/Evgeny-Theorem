@@ -271,6 +271,28 @@ theorem sg_trace_p6_one_N_class_zero
     (blockK_BD (Hc m θ ax o)) 1 5
 
 
+/-- Every p=6 ordered word with three pairing insertions vanishes.
+The middle K-run has length at most five, so the geometric corner-vanishing
+lemma for powers through degree five supplies the hypothesis of the generic
+three-N trace reduction. This is a word-level fact; the cyclic census and its
+multiplicities are handled separately. -/
+theorem sg_trace_p6_three_N_word_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b < 6) :
+    Matrix.trace
+      (sgK m θ ax o ^ a * (sgGlue m).N *
+        sgK m θ ax o ^ b * (sgGlue m).N *
+        sgK m θ ax o ^ c * (sgGlue m).N *
+        sgK m θ ax o ^ d) = 0 := by
+  apply trace_three_N_powers (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o)) a b c d
+  intro w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+    b (by omega) w w' hw hw' hcopy hne
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
