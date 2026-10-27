@@ -371,7 +371,8 @@ theorem sg_trace_p6_three_N_representatives_zero
         sgK m θ ax o ^ 2 * (sgGlue m).N *
         sgK m θ ax o ^ 2 * (sgGlue m).N) = 0 := by
     simpa [pow_one, pow_zero] using h4
-  simp [pow_one, h1', h2', h3', h4']
+  rw [h1', h2', h3', h4']
+  ring
 
 
 /-- The representative-level odd-N strata at p=6 all vanish after
@@ -422,7 +423,8 @@ theorem sg_trace_p6_odd_N_representatives_zero
         sgK m θ ax o ^ 1 * (sgGlue m).N *
         sgK m θ ax o ^ 0) = 0 := by
     simpa [pow_one] using h5
-  simpa [pow_one, pow_zero, h1', h5'] using h3'
+  rw [h1', h3', h5']
+  ring
 
 
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
