@@ -1006,6 +1006,45 @@ theorem pOpO_trace6_glue_final
       rw [hcopy, heven]
 
 
+/-- Sixth-moment analogue of defectO: the difference of the two
+axis traces at the same level and orientation. -/
+noncomputable def defectO6 (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] : ℂ :=
+  Matrix.trace ((pOpO m θ ax o) ^ 6) -
+    Matrix.trace ((pOpO m θ ax' o) ^ 6)
+
+/-- Exact recursion for the sixth-moment defect. The three subcopy defects
+are separated, while the difference of the full p=6 boundary corrections is
+kept explicit. In particular, this theorem does not assume that the boundary
+difference vanishes or that the sixth-moment defect is stabilized. -/
+theorem defectO6_succ
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hax1' : ∀ k, ax' (3 ^ m + k) = ax' k)
+    (hax2' : ∀ k, ax' (2 * 3 ^ m + k) = ax' k) :
+    defectO6 (m + 1) θ ax ax' o =
+      defectO6 m θ ax ax' o +
+      defectO6 m θ ax ax' (oBo m o) +
+      defectO6 m θ ax ax' (oCo m o) +
+      (glueRHS6 m (sgK m θ ax o) -
+        glueRHS6 m (sgK m θ ax' o)) := by
+  have hA : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.A = pOpO m θ b o := fun _ => rfl
+  have hB : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.B = pOpO m θ b (oBo m o) := fun _ => rfl
+  have hC : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.C = pOpO m θ b (oCo m o) := fun _ => rfl
+  unfold defectO6
+  rw [pOpO_trace6_glue_final m hm θ ax o hax1 hax2 hanti,
+    pOpO_trace6_glue_final m hm θ ax' o hax1' hax2' hanti]
+  rw [sum_gcopy, sum_gcopy,
+    hA ax, hA ax', hB ax, hB ax', hC ax, hC ax']
+  ring
+
+
 /-- The partner-corner diagonal weight sandwiches sgK to a diagonal
 matrix: distinct glued states have zero coupling. -/
 theorem sgK_corner_sandwich_offdiag_zero
