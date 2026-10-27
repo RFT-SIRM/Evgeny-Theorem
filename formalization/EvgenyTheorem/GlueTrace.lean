@@ -259,6 +259,18 @@ theorem defectO_succ (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
   ring
 
 
+/-- The one-N cyclic class in the p=6 ordered expansion vanishes.
+The single pairing factor is moved cyclically between powers of the block-diagonal
+kernel; no commutation of K with N is used. -/
+theorem sg_trace_p6_one_N_class_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N * sgK m θ ax o ^ 5) = 0 := by
+  exact trace_pow_N_pow_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD (Hc m θ ax o)) 1 5
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
