@@ -1013,6 +1013,25 @@ noncomputable def defectO6 (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
   Matrix.trace ((pOpO m θ ax o) ^ 6) -
     Matrix.trace ((pOpO m θ ax' o) ^ 6)
 
+
+
+/-- The sixth-moment defect depends on the orientation only through
+its values on flux edges. This is the power-six analogue of defectO_congr. -/
+theorem defectO6_congr
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (h : ∀ p q : Point, p ≠ q →
+      EdgeB m p.1 p.2 q.1 q.2 = true →
+      (if p ≤ q then (p, q) else (q, p)) ∈ fluxEdges m →
+      (o p q ↔ o' p q)) :
+    defectO6 m θ ax ax' o = defectO6 m θ ax ax' o' := by
+  have e : ∀ b : ℕ → Axis, pOpO m θ b o = pOpO m θ b o' := by
+    intro b
+    funext x y
+    exact pHeO_orient_congr m θ b o o' h x.1.1 y.1.1 x.2 y.2
+  unfold defectO6
+  rw [e ax, e ax']
+
 /-- Exact recursion for the sixth-moment defect. The three subcopy defects
 are separated, while the difference of the full p=6 boundary corrections is
 kept explicit. In particular, this theorem does not assume that the boundary
