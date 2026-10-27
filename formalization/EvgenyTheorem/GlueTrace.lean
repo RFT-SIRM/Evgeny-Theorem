@@ -705,6 +705,65 @@ theorem sg_trace_p6_ordered_three_N_representatives_zero
     (sg_trace_p6_three_N_representatives_zero m hm θ ax o hanti)
 
 
+/-- End-to-end p=6 cyclic trace assembly. It retains the K^6 and (K*N)^6
+endpoints, vanishes all odd-insertion classes, and rewrites the r=2 and r=4
+classes to the existing lower-even boundary traces. This is not a level-
+induction or a p=8/p=10 result. -/
+theorem sg_trace_p6_ordered_expansion_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K := sgK m θ ax o
+    let N := (sgGlue m).N
+    ((orderedWordExpansion K (K * N) 6).map Matrix.trace).sum =
+      Matrix.trace (K ^ 6) +
+      6 * Matrix.trace (K ^ 1 * N * K ^ 5 * N * K ^ 0) +
+      6 * Matrix.trace (K ^ 2 * N * K ^ 4 * N * K ^ 0) +
+      3 * Matrix.trace (K ^ 3 * N * K ^ 3 * N * K ^ 0) +
+      6 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) +
+      6 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) +
+      3 * Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) +
+      Matrix.trace ((K * N) ^ 6) := by
+  let K := sgK m θ ax o
+  let N := (sgGlue m).N
+  rw [trace_orderedWordExpansion_six_cyclic K (K * N)]
+  have h1 :
+      Matrix.trace (K * K * K * K * K * (K * N)) = 0 := by
+    simpa [pow_succ, Matrix.mul_assoc] using
+      (sg_trace_p6_ordered_one_N_class_zero m θ ax o)
+  have h2 := sg_trace_p6_ordered_two_N_representatives_boundary m θ ax o
+  have h3 := sg_trace_p6_ordered_three_N_representatives_zero
+    m hm θ ax o hanti
+  have h4 := sg_trace_p6_ordered_four_N_representatives_boundary m θ ax o
+  have h5 :
+      Matrix.trace (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+    simpa [pow_succ, pow_one, pow_zero, Matrix.mul_assoc] using
+      (sg_trace_p6_five_N_word_zero m hm θ ax o hanti
+        2 1 1 1 1 0 (by omega) (by omega))
+  have hrot4b :
+      Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+      Matrix.trace ((K * N) * (K * N) * K * (K * N) * K * (K * N)) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list
+        ([K, K * N, K, K * N] : List (Matrix (WSG m) (WSG m) ℂ))
+        [K * N, K * N])
+  have hrot4c :
+      Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * (K * N)) =
+      Matrix.trace ((K * N) * K * (K * N) * (K * N) * K * (K * N)) := by
+    simpa [Matrix.mul_assoc] using
+      (trace_cyclic_list
+        ([K, K * N] : List (Matrix (WSG m) (WSG m) ℂ))
+        [K * N, K, K * N, K * N])
+  have hK : Matrix.trace (K * K * K * K * K * K) = Matrix.trace (K ^ 6) := by
+    simp [pow_succ, Matrix.mul_assoc]
+  have hN : Matrix.trace
+      ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+      Matrix.trace ((K * N) ^ 6) := by
+    simp [pow_succ, Matrix.mul_assoc]
+  linear_combination hK + 6 * h1 + h2 + h3 + h4 + 6 * h5 +
+    6 * hrot4b + 3 * hrot4c + hN
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
