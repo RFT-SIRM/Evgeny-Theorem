@@ -434,20 +434,16 @@ theorem sg_trace_p6_ordered_one_N_class_zero
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o] :
     Matrix.trace
-      (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o *
-        sgK m θ ax o * sgK m θ ax o *
-        (sgK m θ ax o * (sgGlue m).N)) = 0 := by
-  have h := sg_trace_p6_one_N_class_zero m θ ax o
-  change Matrix.trace
-      ((sgK m θ ax o ^ 5) * (sgK m θ ax o * (sgGlue m).N)) = 0
+      (sgK m θ ax o ^ 5 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
   calc
     Matrix.trace
-        ((sgK m θ ax o ^ 5) * (sgK m θ ax o * (sgGlue m).N)) =
+        (sgK m θ ax o ^ 5 * (sgK m θ ax o * (sgGlue m).N)) =
       Matrix.trace
-        (sgK m θ ax o * (sgGlue m).N * sgK m θ ax o ^ 5) := by
+        ((sgK m θ ax o * (sgGlue m).N) * sgK m θ ax o ^ 5) := by
           exact Matrix.trace_mul_comm _ _
     _ = 0 := by
-          simpa [pow_one] using h
+          simpa [pow_one] using
+            sg_trace_p6_one_N_class_zero m θ ax o
 
 
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
