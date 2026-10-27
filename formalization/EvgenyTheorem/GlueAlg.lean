@@ -1694,6 +1694,60 @@ theorem trace_p6_top_stratum_boundary {cp : W → ι}
 
 
 
+/-- The boundary contribution associated with two pairing insertions
+at powers \(K^a\) and \(K^b\). This is only a finite endpoint sum, not
+a claim that it vanishes or is axis-independent. -/
+def gluedPowerGapSum {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (a b : ℕ) : ℂ :=
+  ∑ x, if G.g x then
+    (K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0
+
+/-- The complete p=6 two-pairing stratum is the exact weighted gap sum
+\(B_{6,2}=3(E_1+E_2+E_3+E_4+E_5)\). The proof uses the existing two-N
+boundary formula and trace cyclicity only; it does not claim cancellation
+against the r=4 or r=6 strata. -/
+theorem trace_p6_two_N_gap_sum {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N) +
+    6 * Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N) +
+    3 * Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N) =
+      3 * (gluedPowerGapSum G K 1 5 +
+        gluedPowerGapSum G K 2 4 +
+        gluedPowerGapSum G K 3 3 +
+        gluedPowerGapSum G K 4 2 +
+        gluedPowerGapSum G K 5 1) := by
+  have htrace (a b : ℕ) (ha : a ≤ 5) (hb : b ≤ 5) :
+      Matrix.trace (K ^ a * G.N * K ^ b * G.N) =
+        gluedPowerGapSum G K a b := by
+    have h := trace_two_N_powers G K a b 0
+      (BD_pow K hK b) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+    simpa [gluedPowerGapSum, pow_zero, Matrix.mul_assoc] using h
+  have hswap (a b : ℕ) (ha : a ≤ 5) (hb : b ≤ 5) :
+      gluedPowerGapSum G K a b = gluedPowerGapSum G K b a := by
+    calc
+      gluedPowerGapSum G K a b =
+          Matrix.trace (K ^ a * G.N * K ^ b * G.N) :=
+        (htrace a b ha hb).symm
+      _ = Matrix.trace ((K ^ a * G.N) * (K ^ b * G.N)) := by
+        simp only [Matrix.mul_assoc]
+      _ = Matrix.trace ((K ^ b * G.N) * (K ^ a * G.N)) :=
+        Matrix.trace_mul_comm _ _
+      _ = Matrix.trace (K ^ b * G.N * K ^ a * G.N) := by
+        simp only [Matrix.mul_assoc]
+      _ = gluedPowerGapSum G K b a :=
+        htrace b a hb ha
+  rw [htrace 1 5 (by omega) (by omega),
+    htrace 2 4 (by omega) (by omega),
+    htrace 3 3 (by omega) (by omega),
+    hswap 4 2 (by omega) (by omega),
+    hswap 5 1 (by omega) (by omega)]
+  ring
+
+
 /-- The complete even-stratum contribution at moment six, assembled with the
 exact cyclic multiplicities. The lower two strata are expanded into their
 boundary sums; the top stratum is retained as its exact diagonal-sandwich
