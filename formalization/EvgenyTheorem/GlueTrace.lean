@@ -669,6 +669,42 @@ theorem sg_trace_p6_ordered_four_N_representatives_boundary
     sg_trace_p6_ordered_four_N_1_2_1_2_representative m θ ax o]
 
 
+/-- The four r=3 cyclic representatives from the generic p=6 expansion
+become the four already-proved three-N representatives after substituting
+A=K and B=K*N. Their orbit weights are 6, 6, 6, and 2. This bridges that
+stratum only. -/
+theorem sg_trace_p6_ordered_three_N_representatives_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    6 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    6 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    6 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    2 * Matrix.trace
+      (sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+  simpa [pow_succ, pow_one, pow_zero, Matrix.mul_assoc] using
+    (sg_trace_p6_three_N_representatives_zero m hm θ ax o hanti)
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
