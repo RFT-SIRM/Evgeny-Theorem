@@ -1996,3 +1996,38 @@ The latest code-bearing commit before these log-only corrections, 2beebb80c4db4f
 The correction-only commit is 605bce8cdbc04fe5473efd1cd1827cdf531d83b2; its Lean workflow is currently in progress and its Python workflow is queued as of this entry. Do not call that commit green until both workflows finish.
 
 **Next mathematical step (no speculative lemma):** prove or refute the missing bridge between the exact p=6 trace split and the paired boundary expression. First locate/derive a p=6 analogue of the p=4 recursive split defectO_succ; do not infer it from sg_trace_p6_all_even_strata_boundary, because that theorem only expands a chosen stratum sum for one operator and one orientation. The bridge must track the three recursive subcopies/orientations oBo m o, oCo m o, plus the correct level-indexed defects. Only if this bridge is established should the axis-difference and residual-stabilization claims be attempted. Until then, keep the p=6, p=8, p=10 stabilization statements explicitly conjectural and make no Lean-code edit.
+
+## 4bk. Re-audit: the exact missing p=6 gluing theorem (2026-10-27)
+
+This entry records a source-level check against the current PR head \`1cdc4bbe77cb7a5beaec7b6cf93318cbae90044b\`. Its CI is green: Lean formalization run \`40408426515\` passed; Python test run \`40408426538\` passed for both 3.11 and 3.12. No Lean source was changed in this audit.
+
+### What is already in place
+
+- \`trace_orderedWordExpansion\` in \`TraceExpand.lean\` gives the exact ordered trace expansion of \((A+B)^p\), preserving all \(2^p\) words and multiplicities. For \(p=6\), this supplies a trustworthy algebraic expansion engine; it does not by itself identify the glued-operator summands.
+- \`trace_blockK_pow\` is already general in the power \(n\): the trace of a copy-block-diagonal power is the sum of the three corresponding copy traces.
+- The p=6 concrete even-stratum reductions are present in \`GlueTrace.lean\`: r=2 and r=4 have exact weighted boundary sums (weights \(6,6,3\)); r=6 is an exact diagonal-sandwich trace. The odd strata r=1,3,5 have conditional vanishing reductions under the stated \`OAnti\` and corner hypotheses. These facts classify/reduce the words after they are known to occur in the glued trace expansion.
+- \`pOpO_trace4_glue_final\` in \`GlueCorner.lean\` is the only concrete gluing trace theorem currently found. It is explicitly fourth-degree and returns \`glueRHS\`/\`cornerTerm\`; it cannot be applied at degree six.
+
+### Exact missing milestone
+
+The missing theorem is a degree-six gluing identity, schematically:
+
+\`\`\`text
+trace (pOpO (m+1) ^ 6)
+  = sum over c : GCopy, trace (Hc m c ^ 6)
+    + B6(m, ax, o)
+\`\`\`
+
+where \`B6\` must be the *fully ordered and multiplicity-weighted* sum of the r=2,4,6 terms, with r=6 retained as the sandwich trace unless its separate diagonal-collapse hypotheses are explicitly proved. The identity must also state the exact hypotheses on the axis periodicity and orientation, analogous to those of \`pOpO_trace4_glue_final\`.
+
+This is the immediate algebraic bridge—not a claim that \(B_6\) cancels. Once this identity is proved, subtract its instantiation at \`faceAxis\` and at \`fun _ => 2\`. The copy sum then becomes the three subcopy defects with orientations \`o\`, \`oBo m o\`, and \`oCo m o\`. Only after this exact equation is in hand can the axis-difference of \(B_6\) be identified with the level residual and its stabilization studied.
+
+### Deliberate proof order
+
+1. Work in \`GlueCorner.lean\` to expose the degree-six glued trace as an ordered word sum. Reuse \`trace_orderedWordExpansion\`; do not change \`trace_blockK_pow\`.
+2. Establish the word-to-glued-boundary correspondence with exact cyclic orbit multiplicities. Use the existing r=2,3,4,5,6 reductions; preserve the r=6 sandwich form.
+3. Prove the copy-block term is exactly the three copy sixth-moment traces.
+4. Package the result as the p=6 gluing identity, then instantiate for the two axis choices and subtract.
+5. Record and prove any further cancellation as a separate theorem with explicit geometric hypotheses. Do not assert termwise axis independence or derive it from the word inventory.
+
+The current research log's §4bj statement that the p=6 recursive bridge is missing is therefore confirmed, and is sharpened here: the next theorem should be the degree-six analogue of \`pOpO_trace4_glue_final\` in \`GlueCorner.lean\`, not a new corner-symmetry lemma in \`GlueTrace.lean\`. The higher-moment stabilization remains conjectural until the subsequent boundary-difference and level-transition arguments are proved.
