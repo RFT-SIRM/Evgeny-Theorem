@@ -2134,3 +2134,19 @@ The orbit sizes sum by (r=0,ldots,6) to (1,6,15,20,15,6,1), respectively, exactl
 
 **Next code milestone:** formalize the finite choice-word/cyclic-orbit partition for this exact length-six recursion, with the above orbit sizes proved in Lean. Then combine it with the existing ordered-word trace equality and the established stratum lemmas. No further boundary cancellation or stabilization claim is licensed before that assembly theorem compiles.
 
+
+
+## 4bp. Exact CI verification after the p=6 orbit inventory (2026-10-27)
+
+Checked the workflows for the exact current head `abba363008e2234fc8cd458ddb134d72822f9a9d`, not an earlier green commit:
+
+- Lean formalization run `40455615095`: job `build` passed; the `Build formalization` step completed successfully.
+- Tests run `40455615167`: both `test (3.11)` and `test (3.12)` passed. In both jobs, `Fast tests` and `Slow tests (level 7 convergence)` completed successfully.
+
+This validates the repository state at that SHA; it does not validate the absent p=6 ordered-list/cyclic-class Lean assembly. No source-level p=6 assembly theorem has been added in this verification pass.
+
+### Immediate implementation target
+
+Do not expand the existing boundary lemmas. First establish, for the actual recursive `orderedWordExpansion A B 6`, a finite trace-sum identity that groups the 64 ordered terms into the 14 cyclic representatives from §4bo, with the exact orbit weights. The proof must preserve matrix-factor order and use `trace_cyclic_list` only for cyclic rotations. Then connect each representative to the corresponding odd/even stratum theorem, discharging its hypotheses before invoking it. Keep the raw r=0 trace and the r=6 diagonal-sandwich trace explicit.
+
+The current environment has no local `lean`/`lake` executable. Therefore any source edit must be narrowly scoped and its correctness confirmed by the actual PR workflow before the next edit; do not treat this CI audit as a substitute for that compilation.
