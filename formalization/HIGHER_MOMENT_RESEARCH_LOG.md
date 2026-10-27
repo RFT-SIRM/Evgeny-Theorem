@@ -2203,3 +2203,26 @@ The weights sum to the binomial stratum sizes 6, 20, and 6. This census confirms
 ### p=6 three-N representative trace sum (2026-10-27)
 
 Added `sg_trace_p6_three_N_representatives_zero` in `GlueTrace.lean`. It explicitly records the four cyclic representatives of the three-N choice stratum, with orbit weights 6, 6, 6, and 2. The representative products have K-run patterns (4,1,1), (3,2,1), (3,1,2), and (2,2,2), respectively. The proof instantiates the already established three-N word-zero lemma at those run lengths and closes the weighted sum algebraically. This is an explicit representative-level result; it does not yet prove that the ordered expansion list is partitioned by these cyclic representatives. Commit `ce276a2e2b118e99fbcdc8e2e43f859df9ded4f4`; await CI before treating this Lean addition as verified.
+
+
+## 4br. Audit of the p=6 representative proof repair and current CI (2026-10-27)
+
+This note records the source-level diagnosis for the recent p=6 odd-representative repair. It does **not** claim that the complete p=6 ordered-list assembly or the higher-moment stabilization theorem is proved.
+
+### Commit-by-commit diagnosis
+
+- `0a6a0e62b053e3222b9386c2c4b8fd53d051ac55` (`Normalize p6 representative trace proofs`) still failed at `GlueTrace.lean:425` with `Type mismatch: After simplification, term h3'`. Its three-N representative sum also left an unsolved goal.
+- `5332cf624dce105b462b992d574b801686f04ed3` (`Use explicit rewrites for p6 representative sums`) improved the three-N sum proof by using explicit rewrites followed by `ring`. In the odd-N theorem, however, `rw [h1', h3', h5']` failed because the full aggregate `h3'` was not a syntactic subexpression of the target while the two endpoint terms were still present.
+- `c6dd0bc7ec7777587aa7ac9c3f32810e92f29e69` (`Fix p6 odd representative proof by isolating endpoint traces`) made the appropriate structural change: rewrite only the one-N and five-N endpoint traces, then use the aggregate three-N result. But it used `zero_mul` in the simplifier.
+- The endpoint terms have the form `6 * 0`, not `0 * 6`. Therefore `zero_mul` is the wrong identity for this goal; the needed identity is `mul_zero`. Commit `e7be77afa5fcb1a41355d3c30be6bfcfe2196f06` changes exactly this simplifier lemma and leaves the theorem statement, hypotheses, coefficients, and matrix-factor order unchanged. This is a justified local proof correction, not a weakening or masking of the statement.
+- The current HEAD `44329cdf78c6b571b105987c7552ad0445690203` changes seven multiline applications of the p=10 support lemma to single-line `exact` applications. It does not alter the p=6 proof or the mathematical content of those applications.
+
+### CI evidence and limitations
+
+- Lean run `40489397074` for `0a6a0e62` reported the unsolved three-N goal and the `h3'` type mismatch in the odd-N theorem.
+- Lean run `40490798447` for `5332cf62` reported the failed rewrite at `GlueTrace.lean:426` described above.
+- The Lean run `40491483721` associated with `c6dd0bc7` failed during the Lean setup retry before the build step ran. It therefore supplies no compiler verdict for that commit's source.
+- For `e7be77afa5fcb1a41355d3c30be6bfcfe2196f06`, Lean run `40493374405` and Python run `40493374314` both completed successfully.
+- At the checked current HEAD `44329cdf78c6b571b105987c7552ad0445690203`, Lean run `40493873249` and Python run `40493873215` both completed successfully. The Lean build step passed; Python 3.11 and 3.12 both passed fast tests and slow level-7 convergence tests.
+
+The green current CI confirms that this source state compiles and its configured tests pass. It does not prove the missing ordered-list-to-cyclic-strata assembly, the full p=6 trace split, boundary cancellation, the base transition, or induction. The immediate mathematical target remains the formal partition of the actual 64-element `orderedWordExpansion K (K*N) 6` list into its 14 cyclic classes with exact orbit weights, connected to the existing odd/even stratum lemmas under their actual hypotheses.
