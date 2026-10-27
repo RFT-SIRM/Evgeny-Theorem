@@ -2199,3 +2199,7 @@ The actual p=6 expansion is a six-choice word expansion with A=K and B=K*N, not 
 - r=5: one necklace, representative `KNNNNN`, orbit weight 6.
 
 The weights sum to the binomial stratum sizes 6, 20, and 6. This census confirms the classes and periodic orbit but is still not a Lean proof that `orderedWordExpansion` maps into those representatives. The next formal obligation is to establish that bridge without replacing the list by a set (which would lose duplicate-word multiplicities), then apply the existing word-zero lemmas to each representative.
+
+### p=6 three-N representative trace sum (2026-10-27)
+
+Added `sg_trace_p6_three_N_representatives_zero` in `GlueTrace.lean`. It explicitly records the four cyclic representatives of the three-N choice stratum, with orbit weights 6, 6, 6, and 2. The representative products have K-run patterns (4,1,1), (3,2,1), (3,1,2), and (2,2,2), respectively. The proof instantiates the already established three-N word-zero lemma at those run lengths and closes the weighted sum algebraically. This is an explicit representative-level result; it does not yet prove that the ordered expansion list is partitioned by these cyclic representatives. Commit `ce276a2e2b118e99fbcdc8e2e43f859df9ded4f4`; await CI before treating this Lean addition as verified.
