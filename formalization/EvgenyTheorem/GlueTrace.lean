@@ -313,10 +313,10 @@ theorem sg_trace_p6_five_N_word_zero
     (blockK_BD (Hc m θ ax o)) a b c d e f
   · intro w w' hw hw' hcopy hne
     exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
-      b hb w w' hw hw' hcopy hne
+      b (by omega) w w' hw hw' hcopy hne
   · intro w w' hw hw' hcopy hne
     exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
-      d hd w w' hw hw' hcopy hne
+      d (by omega) w w' hw hw' hcopy hne
 
 
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
