@@ -2290,3 +2290,49 @@ is `K^3 * (K*N) * K * (K*N)`, which expands in factor order to
 The remaining periodic r=2 class is `001001`, with representative gap pattern
 (3,3) and orbit weight 3. Prove and compile the (4,2) local bridge before
 attempting any aggregate r=2 sum or any broader p=6 assembly.
+
+## 4bu. CI-confirmed p=6 two-insertion representative sum (2026-10-27)
+
+### Exact source result
+
+Commit `78182c829501b2d6694cc449c152f97cca979b0b` adds
+`sg_trace_p6_ordered_two_N_representatives_boundary` in
+`formalization/EvgenyTheorem/GlueTrace.lean`. It combines the three local
+cyclic-rotation bridges for the six-choice words with exactly two `K*N`
+choices:
+
+- gap pattern `(1,5)), orbit weight 6;
+- gap pattern `(2,4)), orbit weight 6;
+- periodic gap pattern `(3,3)), orbit weight 3.
+
+Their weights sum to (6+6+3=15=\binom{6}{2}). The aggregate theorem equates
+the weighted sum of those explicit ordered representatives to the first three
+r=2 terms in `sg_trace_p6_lower_even_strata_boundary`. All equalities preserve
+factor order and use the already proved local representative lemmas.
+
+### Verification for the exact commit
+
+The following runs for the exact SHA all completed successfully:
+
+- PR Lean run `40530050862`: full `Build formalization` succeeded.
+- Push Lean run `40530043083`: full `Build formalization` succeeded.
+- PR Tests run `40530050767`: Python 3.11 and 3.12 passed both fast tests and
+  slow level-7 convergence tests.
+- Push Tests run `40530042965`: Python 3.11 and 3.12 passed both fast tests and
+  slow level-7 convergence tests.
+
+### Scope and next target
+
+This closes the local representative bridge and weighted representative sum
+for the r=2 stratum. It does **not** prove that the 64 entries of
+`orderedWordExpansion K (K*N) 6` partition into the 14 cyclic classes, and
+does not prove the complete p=6 trace split, cancellation between axes, or
+induction in level.
+
+The next even stratum to bridge is r=4. Its three cyclic gap patterns are
+`(1,1,1,3)), `(1,1,2,2)), and periodic `(1,2,1,2)`, with respective
+orbit weights 6, 6, and 3 (total (15=\binom{6}{4})). Before adding source
+code, verify the representative products directly against the last three
+r=4 terms of `sg_trace_p6_lower_even_strata_boundary`, then add one local
+rotation lemma at a time and require a green full Lean build and both Python
+versions before proceeding.
