@@ -932,13 +932,13 @@ noncomputable def glueRHS6
     (K ^ 3) x x * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
   6 * (∑ x, if (sgGlue m).g x then
     ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
-      (K ^ 1) x x) * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+      (K ^ 1) x x) * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) ) else 0) +
   6 * (∑ x, if (sgGlue m).g x then
     ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
-      (K ^ 2) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+      (K ^ 2) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) ) else 0) +
   3 * (∑ x, if (sgGlue m).g x then
     ((K x x * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
-      (K ^ 1) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+      (K ^ 1) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) ) else 0) +
   Matrix.trace
     (K *
       Matrix.diagonal (fun y => if (sgGlue m).g y then
