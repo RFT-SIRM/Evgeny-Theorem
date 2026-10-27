@@ -74,6 +74,38 @@ theorem orient_transfer (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis) (o o' : Poi
     rw [ha p q hp hq hpq, ha' p q hp hq hpq]
     exact not_congr h3
 
+/-- Transfer of sixth-moment defects between orientations which agree on
+the ordered face edges. This is the p=6 counterpart of orient_transfer. -/
+theorem orient_transfer6 (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (ha : OAnti m o) (ha' : OAnti m o')
+    (h : ∀ f ∈ facesExact m, (o f.1 f.2.1 ↔ o' f.1 f.2.1)) :
+    defectO6 m θ ax ax' o = defectO6 m θ ax ax' o' := by
+  apply defectO6_congr
+  intro p q hpq hE hfl
+  have hm := EdgeB_mem m _ _ _ _ hE
+  have hp : p ∈ vertexOrder m := (mem_vertexOrder_iff m p).mpr hm.1
+  have hq : q ∈ vertexOrder m := (mem_vertexOrder_iff m q).mpr hm.2
+  have fl : ∀ a b : Point, (a, b) ∈ fluxEdges m →
+      ∃ f ∈ facesExact m, f.1 = a ∧ f.2.1 = b := by
+    intro a b hab
+    obtain ⟨f, hf, hfe⟩ := List.mem_map.mp hab
+    have hle := flux_edge_order m f hf
+    have h' : fluxEdge f = (f.1, f.2.1) := by simp [fluxEdge, hle]
+    rw [h'] at hfe
+    exact ⟨f, hf, (Prod.mk.inj hfe).1, (Prod.mk.inj hfe).2⟩
+  by_cases hle : p ≤ q
+  · rw [if_pos hle] at hfl
+    obtain ⟨f, hf, h1, h2⟩ := fl p q hfl
+    rw [← h1, ← h2]
+    exact h f hf
+  · rw [if_neg hle] at hfl
+    obtain ⟨f, hf, h1, h2⟩ := fl q p hfl
+    have h3 := h f hf
+    rw [h1, h2] at h3
+    rw [ha p q hp hq hpq, ha' p q hp hq hpq]
+    exact not_congr h3
+
 theorem le_iff_of_lt_iff {a b c d : ℕ} (h : b < a ↔ d < c) : a ≤ b ↔ c ≤ d := by
   first
     | exact not_lt.symm.trans ((not_congr h).trans not_lt)
