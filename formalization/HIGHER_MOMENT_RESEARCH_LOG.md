@@ -2478,9 +2478,9 @@ Commit `933d558159fafb747ddbd4207860cd601723ac6b` adds
 `glueRHS6_sgK_axis_congr_of_diag45` in
 `formalization/EvgenyTheorem/GlueCornerCube.lean`.
 
-Under `OAnti (m+1) o), the lemma proves
+Under `OAnti (m+1) o`, the lemma proves
 `glueRHS6 m (sgK m θ ax o) = glueRHS6 m (sgK m θ ax' o)`
-assuming, for every glued state `a),
+assuming, for every glued state `a`,
 
 - `(sgK m θ ax o ^ 4) a a = (sgK m θ ax' o ^ 4) a a`;
 - `(sgK m θ ax o ^ 5) a a = (sgK m θ ax' o ^ 5) a a`.
@@ -2489,7 +2489,7 @@ The lower boundary sums are compared pointwise using the existing corner identit
 
 ### Verification for the exact source commit
 
-All four CI workflows passed on commit `933d558159fafb747ddbd4207860cd601723ac6b):
+All four CI workflows passed on commit `933d558159fafb747ddbd4207860cd601723ac6b`:
 
 - Push Lean: run `40583936882`, full formalization build successful.
 - PR Lean: run `40583945447`, full formalization build successful.
