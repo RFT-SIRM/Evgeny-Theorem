@@ -2378,3 +2378,39 @@ formula with `A = sgK` and `B = sgK * N`, preserve factor order, and connect
 their weighted sum to that existing zero theorem. This will not yet be the
 full p=6 split: the r=0/r=6 endpoints and the final assembly of all cyclic
 classes must still be checked explicitly.
+
+## 4bw. CI-confirmed ordered r=3 representative bridge (2026-10-27)
+
+### Exact source result
+
+Commit `3c09a6fc1b2923f2589a6e1a36d91836ff03998d` adds
+`sg_trace_p6_ordered_three_N_representatives_zero` in
+`formalization/EvgenyTheorem/GlueTrace.lean`. It instantiates the existing
+three-N representative-zero theorem with the four ordered products from the
+generic p=6 cyclic expansion after substituting `A = sgK` and `B = sgK * N).
+The four orbit weights are 6, 6, 6, and 2; their sum is
+`20 = binomial(6, 3)`. Factor order is retained, including the periodic
+representative.
+
+### Verification for the exact commit
+
+All four CI runs for this exact SHA completed successfully:
+
+- PR Lean run `40555669712`: full `Build formalization` succeeded.
+- Push Lean run `40555653430`: full `Build formalization` succeeded.
+- PR Tests run `40555668065`: Python 3.11 and 3.12 passed both fast tests and
+  slow level-7 convergence tests.
+- Push Tests run `40555653330`: Python 3.11 and 3.12 passed both fast tests and
+  slow level-7 convergence tests.
+
+### Remaining assembly target
+
+The generic theorem `trace_orderedWordExpansion_six_cyclic` supplies all 14
+weighted cyclic classes. The r=2 and r=4 representative sums now match their
+corresponding boundary terms, and the weighted r=3 sum vanishes. The next
+target is an end-to-end p=6 identity: rewrite the generic cyclic trace sum using
+those bridges, kill the r=1 and r=5 classes with the existing vanishing lemmas,
+retain the r=0 term `trace(K^6)` and the r=6 term `trace((K*N)^6)`, then use
+`sg_trace_p6_all_even_strata_boundary` to express the complete even correction
+as the existing diagonal-corner sums. This is not yet a p=8 or p=10 result and
+does not assert level induction or axis invariance.
