@@ -493,6 +493,24 @@ theorem sg_trace_p6_ordered_two_N_4_2_representative
       [sgK m θ ax o, sgK m θ ax o, (sgGlue m).N])
 
 
+/-- The periodic two-pairing representative with equal K-gaps (3,3)
+is exactly the corresponding lower-even boundary trace. The six-choice word
+has orbit weight three; this lemma bridges only that representative. -/
+theorem sg_trace_p6_ordered_two_N_3_3_representative
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) =
+    Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) := by
+  simpa [pow_succ, pow_zero, Matrix.mul_assoc]
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
