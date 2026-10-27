@@ -511,6 +511,44 @@ theorem sg_trace_p6_ordered_two_N_3_3_representative
   simpa [pow_succ, pow_zero, Matrix.mul_assoc]
 
 
+/-- The three cyclic classes in the p=6 two-insertion stratum, with
+orbit weights 6, 6, and 3, give exactly the first three lower-even boundary
+trace terms. This is the representative sum, not the full 64-word partition. -/
+theorem sg_trace_p6_ordered_two_N_representatives_boundary
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    6 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    6 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) +
+    3 * Matrix.trace
+      (sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o * sgK m θ ax o *
+        (sgK m θ ax o * (sgGlue m).N)) =
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 1 * (sgGlue m).N *
+        sgK m θ ax o ^ 5 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) +
+    6 * Matrix.trace
+      (sgK m θ ax o ^ 2 * (sgGlue m).N *
+        sgK m θ ax o ^ 4 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) +
+    3 * Matrix.trace
+      (sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 3 * (sgGlue m).N *
+        sgK m θ ax o ^ 0) := by
+  rw [sg_trace_p6_ordered_two_N_5_1_representative m θ ax o,
+    sg_trace_p6_ordered_two_N_4_2_representative m θ ax o,
+    sg_trace_p6_ordered_two_N_3_3_representative m θ ax o]
+
+
 /-- Concrete p=6 lower-even-strata reduction for the Sierpinski glued
 operator. This discharges the abstract power-support premise from the
 geometric corner theorem, for m ≥ 3 and orientation-antisymmetric o. -/
