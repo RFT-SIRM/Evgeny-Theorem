@@ -1656,8 +1656,7 @@ theorem sg_trace_p10_eight_N_stratum_boundary
   apply trace_p10_eight_N_stratum_boundary (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
  /-- Concrete specialization of the exact two-N p=10 stratum.
@@ -1688,8 +1687,7 @@ theorem sg_trace_p10_two_N_stratum_boundary
   apply trace_p10_two_N_stratum_boundary (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
  /-- Concrete Sierpinski specialization of the (1,1,6,2) four-N
@@ -1713,8 +1711,7 @@ theorem sg_trace_p10_four_N_class_1162
   apply trace_p10_four_N_class_1162 (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
 /-- Concrete Sierpinski specialization of the (1,1,5,3) four-N
@@ -1738,8 +1735,7 @@ theorem sg_trace_p10_four_N_class_1153
   apply trace_p10_four_N_class_1153 (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
 /-- Concrete Sierpinski specialization of the (1,1,1,7) four-N
@@ -1762,8 +1758,7 @@ theorem sg_trace_p10_four_N_class_1117
   apply trace_p10_four_N_class_1117 (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
 /-- Concrete Sierpinski specialization of the (1,1,2,6) four-N
@@ -1786,8 +1781,7 @@ theorem sg_trace_p10_four_N_class_1126
   apply trace_p10_four_N_class_1126 (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
 /-- Concrete Sierpinski specialization of the (1,2,1,6) four-N
@@ -1810,8 +1804,7 @@ theorem sg_trace_p10_four_N_class_1216
   apply trace_p10_four_N_class_1216 (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
   intro n hn w w' hw hw' hcopy hne
-  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
-    n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
 /-- Convert the concrete p=10 top boundary contribution into a fifth-power
