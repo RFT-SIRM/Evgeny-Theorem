@@ -326,4 +326,161 @@ theorem glueRHS6_sgK_axis_congr_of_diag45
   unfold glueRHS6
   rw [hsum1, hsum2, hsum3, hsum4, hsum5, hsum6, htop]
 
+
+/-- The part of the p=6 boundary correction not determined by the first
+three diagonal powers. It keeps the two higher-power sums explicit instead
+of assuming that they are invariant under an axis change. -/
+noncomputable def glueRHS6_highPowerResidual
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  6 * ((∑ x, if (sgGlue m).g x then
+      (K ^ 1) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+    (∑ x, if (sgGlue m).g x then
+      (K' ^ 1) x x * (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) +
+  6 * ((∑ x, if (sgGlue m).g x then
+      (K ^ 2) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+    (∑ x, if (sgGlue m).g x then
+      (K' ^ 2) x x * (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0))
+
+/-- Exact residual formula for the sixth-moment boundary correction. Under
+orientation antisymmetry, powers one through three on glued diagonals and
+the top-stratum diagonal-cube term are axis-independent. Therefore the only
+terms left in the difference of glueRHS6 are its two higher-power sums,
+involving powers four and five. This theorem does not assume those sums
+vanish or agree. -/
+theorem glueRHS6_sgK_axis_residual_of_diag123
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    glueRHS6 m (sgK m θ ax o) - glueRHS6 m (sgK m θ ax' o) =
+      glueRHS6_highPowerResidual m (sgK m θ ax o) (sgK m θ ax' o) := by
+  classical
+  let K := sgK m θ ax o
+  let K' := sgK m θ ax' o
+  have hdiag0 : ∀ a, (sgGlue m).g a → K a a = K' a a := by
+    intro a ha
+    simp [K, K', sgK_diag]
+  have hdiag1 : ∀ a, (sgGlue m).g a → (K ^ 1) a a = (K' ^ 1) a a := by
+    intro a ha
+    simpa [pow_one] using hdiag0 a ha
+  have hdiag2 : ∀ a, (sgGlue m).g a → (K ^ 2) a a = (K' ^ 2) a a := by
+    intro a ha
+    simpa [pow_two] using (sgK_corner_data m θ ax ax' o hanti a ha).2.1
+  have hdiag3 : ∀ a, (sgGlue m).g a → (K ^ 3) a a = (K' ^ 3) a a := by
+    intro a ha
+    simpa [pow_succ, pow_two] using (sgK_corner_data m θ ax ax' o hanti a ha).1
+
+  have sumG_congr {f f' : WSG m → ℂ}
+      (hf : ∀ x, (sgGlue m).g x → f x = f' x) :
+      (∑ x, if (sgGlue m).g x then f x else 0) =
+        (∑ x, if (sgGlue m).g x then f' x else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp [hg, hf x hg]
+    · simp [hg]
+
+  have hsum3 :
+      (∑ x, if (sgGlue m).g x then
+        (K ^ 3) x x * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (K' ^ 3) x x * (K' ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag3 x hx, hdiag3 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum4 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 1) x x) * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 1) x x) * (K' ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag1 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag1 x hx, hdiag3 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum5 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 2) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 2) x x) * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag1 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag2 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum6 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 1) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 1) x x) * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag1 x hx]
+
+  have htop :
+      Matrix.trace
+        (K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+          K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+      Matrix.trace
+        (K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+          K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+    calc
+      Matrix.trace
+          (K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+          Matrix.trace (K * (sgGlue m).N * K * (sgGlue m).N *
+            K * (sgGlue m).N * K * (sgGlue m).N * K * (sgGlue m).N * K * (sgGlue m).N) := by
+            simpa [K] using
+              (sg_trace_p6_top_stratum_boundary m hm θ ax o hanti).symm
+      _ = ∑ x, if (sgGlue m).g x then
+            (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+            simpa [K] using
+              (sg_trace_p6_top_stratum_diagonal_cube m hm θ ax o hanti)
+      _ = ∑ x, if (sgGlue m).g x then
+            (K' x x * K' ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+            apply Finset.sum_congr rfl
+            intro x _
+            by_cases hg : (sgGlue m).g x
+            · have hgσ := (sgGlue m).g_σ x hg
+              simp only [if_pos hg]
+              rw [hdiag0 x hg, hdiag0 ((sgGlue m).σ x) hgσ]
+            · simp [hg]
+      _ = Matrix.trace (K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) := by
+            calc
+              _ = Matrix.trace (K' * (sgGlue m).N * K' * (sgGlue m).N *
+                K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N) := by
+                simpa [K'] using
+                  (sg_trace_p6_top_stratum_diagonal_cube m hm θ ax' o hanti).symm
+              _ = _ := by
+                simpa [K'] using
+                  (sg_trace_p6_top_stratum_boundary m hm θ ax' o hanti)
+
+  unfold glueRHS6 glueRHS6_highPowerResidual
+  rw [hsum3, hsum4, hsum5, hsum6, htop]
+  ring
+
 end EvgenyTheorem
