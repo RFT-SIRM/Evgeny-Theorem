@@ -206,3 +206,100 @@ theorem sameLocalIndexOrder_C (m : ℕ) :
   exact vIdx_succ_C_le_iff m a b
 
 end EvgenyTheorem
+
+
+/-!
+## Degree transport for the recursive copies
+
+The six glued states are exactly the points where two copies meet. Away
+from those excluded corner points, the recursive degree formula has a single
+nonzero copy contribution. These lemmas provide the degree-preservation part
+of the radius-two corner transport; they do not yet identify the oriented
+matrix entries on the exceptional corner edges.
+-/
+
+/-- Copy A preserves degree away from its two far corners, where another copy
+can contribute to the degree at the next level. -/
+theorem pdeg_succ_A_local
+    (m : ℕ) {p : Point} (hp : p ∈ vertexOrder m)
+    (hpX : p ≠ (2 ^ m, 0)) (hpY : p ≠ (0, 2 ^ m)) :
+    pdeg (m + 1) p = pdeg m p := by
+  rcases p with ⟨x, y⟩
+  have hsum : x + y ≤ 2 ^ m := vertexOrder_sum_le m (x, y) hp
+  have hA : (x, y) ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hp
+  have hB :
+      ¬ (2 ^ m ≤ x ∧ (x - 2 ^ m, y) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hxs, _⟩
+    have hx : x = 2 ^ m := by omega
+    have hy : y = 0 := by omega
+    exact hpX (Prod.ext hx hy)
+  have hC :
+      ¬ (2 ^ m ≤ y ∧ (x, y - 2 ^ m) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hys, _⟩
+    have hx : x = 0 := by omega
+    have hy : y = 2 ^ m := by omega
+    exact hpY (Prod.ext hx hy)
+  rw [pdeg_succ, if_pos hA, if_neg hB, if_neg hC]
+  simp
+
+/-- Copy B preserves degree away from its two glued corners, whose local
+coordinates are (0,0) and (0,2^m). -/
+theorem pdeg_succ_B_local
+    (m : ℕ) {p : Point} (hp : p ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpY : p ≠ (0, 2 ^ m)) :
+    pdeg (m + 1) (shiftPoint (2 ^ m) 1 0 p) = pdeg m p := by
+  rcases p with ⟨x, y⟩
+  simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+  have hsum : x + y ≤ 2 ^ m := vertexOrder_sum_le m (x, y) hp
+  have hpFin : (x, y) ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hp
+  have hA : (x + 2 ^ m, y) ∉ (vertexOrder m).toFinset := by
+    intro h
+    have hbound := vertexOrder_sum_le m (x + 2 ^ m, y) (List.mem_toFinset.mp h)
+    have hx : x = 0 := by omega
+    have hy : y = 0 := by omega
+    exact hp0 (Prod.ext hx hy)
+  have hB :
+      2 ^ m ≤ x + 2 ^ m ∧
+        ((x + 2 ^ m) - 2 ^ m, y) ∈ (vertexOrder m).toFinset := by
+    constructor
+    · omega
+    · simpa [Nat.add_sub_cancel_right] using hpFin
+  have hC :
+      ¬ (2 ^ m ≤ y ∧ (x + 2 ^ m, y - 2 ^ m) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hys, _⟩
+    have hx : x = 0 := by omega
+    have hy : y = 2 ^ m := by omega
+    exact hpY (Prod.ext hx hy)
+  rw [pdeg_succ, if_neg hA, if_pos hB, if_neg hC]
+  simp [Nat.add_sub_cancel_right]
+
+/-- Copy C preserves degree away from its two glued corners, whose local
+coordinates are (0,0) and (2^m,0). -/
+theorem pdeg_succ_C_local
+    (m : ℕ) {p : Point} (hp : p ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpX : p ≠ (2 ^ m, 0)) :
+    pdeg (m + 1) (shiftPoint (2 ^ m) 0 1 p) = pdeg m p := by
+  rcases p with ⟨x, y⟩
+  simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+  have hsum : x + y ≤ 2 ^ m := vertexOrder_sum_le m (x, y) hp
+  have hpFin : (x, y) ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hp
+  have hA : (x, y + 2 ^ m) ∉ (vertexOrder m).toFinset := by
+    intro h
+    have hbound := vertexOrder_sum_le m (x, y + 2 ^ m) (List.mem_toFinset.mp h)
+    have hx : x = 0 := by omega
+    have hy : y = 0 := by omega
+    exact hp0 (Prod.ext hx hy)
+  have hB :
+      ¬ (2 ^ m ≤ x ∧ (x - 2 ^ m, y + 2 ^ m) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hxs, _⟩
+    have hx : x = 2 ^ m := by omega
+    have hy : y = 0 := by omega
+    exact hpX (Prod.ext hx hy)
+  have hC :
+      2 ^ m ≤ y + 2 ^ m ∧
+        (x, (y + 2 ^ m) - 2 ^ m) ∈ (vertexOrder m).toFinset := by
+    constructor
+    · omega
+    · simpa [Nat.add_sub_cancel_right] using hpFin
+  rw [pdeg_succ, if_neg hA, if_neg hB, if_pos hC]
+  simp [Nat.add_sub_cancel_right]
