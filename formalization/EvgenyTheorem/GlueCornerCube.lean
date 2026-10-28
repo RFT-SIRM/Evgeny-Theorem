@@ -327,6 +327,28 @@ theorem glueRHS6_sgK_axis_congr_of_diag45
   rw [hsum1, hsum2, hsum3, hsum4, hsum5, hsum6, htop]
 
 
+/-- Expand the diagonal of a fourth power into a sum of two-step closed walks. -/
+theorem matrix_pow_four_diag_as_sum_sq
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) :
+    (K ^ 4) x x = ∑ y, (K ^ 2) x y * (K ^ 2) y x := by
+  have hp : K ^ 4 = K ^ 2 * K ^ 2 := by
+    calc
+      K ^ 4 = K ^ (2 + 2) := by norm_num
+      _ = K ^ 2 * K ^ 2 := pow_add K 2 2
+  rw [hp, Matrix.mul_apply]
+
+/-- Expand the diagonal of a fifth power into two-step and three-step paths. -/
+theorem matrix_pow_five_diag_as_sum_two_three
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) :
+    (K ^ 5) x x = ∑ y, (K ^ 2) x y * (K ^ 3) y x := by
+  have hp : K ^ 5 = K ^ 2 * K ^ 3 := by
+    calc
+      K ^ 5 = K ^ (2 + 3) := by norm_num
+      _ = K ^ 2 * K ^ 3 := pow_add K 2 3
+  rw [hp, Matrix.mul_apply]
+
 /-- The part of the p=6 boundary correction not determined by the first
 three diagonal powers. It keeps the two higher-power sums explicit instead
 of assuming that they are invariant under an axis change. -/
@@ -340,6 +362,29 @@ noncomputable def glueRHS6_highPowerResidual
       (K ^ 2) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
     (∑ x, if (sgGlue m).g x then
       (K' ^ 2) x x * (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0))
+
+/-- The high-power residual as explicit sums over intermediate states.
+The power-four and power-five factors are now exposed as two-step and
+three-step path sums; this is an algebraic expansion, not a level-stability
+claim. -/
+theorem glueRHS6_highPowerResidual_path_expansion
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ) :
+    glueRHS6_highPowerResidual m K K' =
+      6 * ((∑ x, if (sgGlue m).g x then
+          K x x * (∑ y, (K ^ 2) ((sgGlue m).σ x) y *
+            (K ^ 3) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          K' x x * (∑ y, (K' ^ 2) ((sgGlue m).σ x) y *
+            (K' ^ 3) y ((sgGlue m).σ x)) else 0)) +
+      6 * ((∑ x, if (sgGlue m).g x then
+          (K ^ 2) x x * (∑ y, (K ^ 2) ((sgGlue m).σ x) y *
+            (K ^ 2) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (K' ^ 2) x x * (∑ y, (K' ^ 2) ((sgGlue m).σ x) y *
+            (K' ^ 2) y ((sgGlue m).σ x)) else 0)) := by
+  unfold glueRHS6_highPowerResidual
+  simp only [pow_one, matrix_pow_five_diag_as_sum_two_three,
+    matrix_pow_four_diag_as_sum_sq]
 
 /-- Exact residual formula for the sixth-moment boundary correction. Under
 orientation antisymmetry, powers one through three on glued diagonals and
