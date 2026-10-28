@@ -144,6 +144,23 @@ theorem transfer_B (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis) (hanti : OAnti (
     vIdx m f.1 ≤ vIdx m f.2.1
   exact le_iff_of_lt_iff hb
 
+/-- Copy-B orientation transfer for the sixth-moment defect. -/
+theorem transfer_B6 (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (hanti : OAnti (m + 1) (oNum (m + 1))) :
+    defectO6 m θ ax ax' (oBo m (oNum (m + 1))) =
+      defectO6 m θ ax ax' (oNum m) := by
+  refine orient_transfer6 m θ ax ax' _ _ (oanti_B m _ hanti) (oNum_anti m) ?_
+  intro f hf
+  have hb := flipped_B m f hf
+  unfold flippedP at hb
+  change vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 f.2.1) <
+      vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 f.1) ↔
+    vIdx m f.2.1 < vIdx m f.1 at hb
+  show vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 f.1) ≤
+      vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 f.2.1) ↔
+    vIdx m f.1 ≤ vIdx m f.2.1
+  exact le_iff_of_lt_iff hb
+
 theorem transfer_C (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
     (hanti : OAnti (m + 1) (oNum (m + 1))) :
     defectO m θ ax ax' (oCo m (oNum (m + 1))) = defectO m θ ax ax' (oTil m) := by
