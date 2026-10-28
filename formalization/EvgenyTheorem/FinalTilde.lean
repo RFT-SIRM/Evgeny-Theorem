@@ -727,3 +727,28 @@ theorem Hc_C_num_eq_parent_til
 
 end EvgenyTheorem
 
+
+
+namespace EvgenyTheorem
+
+/-- At theta = pi, every Pauli-axis rotation has the exact Gaussian-integer form -iσ.
+This small local identity is a first stage for the finite-level p=6 base computation. -/
+theorem axisRotation_pi (a : Axis) :
+    axisRotation a Real.pi = -(Complex.I) • axisPauli a := by
+  unfold axisRotation su2Rotation
+  rw [Real.cos_pi_div_two, Real.sin_pi_div_two]
+  simp
+
+/-- Specialized flux-edge unitary at theta = pi, without unfolding the graph. -/
+theorem edgeUnitaryWithAxis_pi (m : ℕ) (axisOfIndex : ℕ → Axis)
+    (e : Point × Point) :
+    edgeUnitaryWithAxis m Real.pi axisOfIndex e =
+      if e ∈ fluxEdges m then
+        -(Complex.I) • axisPauli (axisOfIndex (fluxIndex m e))
+      else (1 : Matrix C2 C2 ℂ) := by
+  unfold edgeUnitaryWithAxis
+  split_ifs with he
+  · rw [axisRotation_pi]
+  · rfl
+
+end EvgenyTheorem
