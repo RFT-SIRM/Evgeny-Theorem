@@ -119,6 +119,19 @@ theorem transfer_A (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis) (hanti : OAnti (
   show vIdx (m + 1) f.1 ≤ vIdx (m + 1) f.2.1 ↔ vIdx m f.1 ≤ vIdx m f.2.1
   rw [vIdx_succ_of_mem h1, vIdx_succ_of_mem h2]
 
+/-- Copy-A orientation transfer for the sixth-moment defect.
+The A-copy keeps the parent's vertex-order orientation on every face edge. -/
+theorem transfer_A6 (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (hanti : OAnti (m + 1) (oNum (m + 1))) :
+    defectO6 m θ ax ax' (oNum (m + 1)) =
+      defectO6 m θ ax ax' (oNum m) := by
+  refine orient_transfer6 m θ ax ax' _ _ (oanti_A m _ hanti) (oNum_anti m) ?_
+  intro f hf
+  obtain ⟨h1, h2⟩ := face_endpoints_mem m f hf
+  show vIdx (m + 1) f.1 ≤ vIdx (m + 1) f.2.1 ↔
+    vIdx m f.1 ≤ vIdx m f.2.1
+  rw [vIdx_succ_of_mem h1, vIdx_succ_of_mem h2]
+
 theorem transfer_B (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis) (hanti : OAnti (m + 1) (oNum (m + 1))) :
     defectO m θ ax ax' (oBo m (oNum (m + 1))) = defectO m θ ax ax' (oNum m) := by
   refine orient_transfer m θ ax ax' _ _ (oanti_B m _ hanti) (oNum_anti m) ?_
