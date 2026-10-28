@@ -202,4 +202,26 @@ theorem defectO6_orientation_difference_succ
   rw [defectO6_succ_num m hm θ, defectO6_succ_til m hm θ]
   ring
 
+
+/-- Exact p=6 orientation-difference recurrence with each boundary residual
+rewritten as its established power-(1,5)/(2,4) residual. No cancellation is
+assumed. -/
+theorem defectO6_orientation_difference_succ_highPower
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    (defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) -
+      defectO6 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1))) =
+    (defectO6 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO6 m θ faceAxis (fun _ => 2) (oTil m)) +
+    (glueRHS6_highPowerResidual m
+        (sgK m θ faceAxis (oNum (m + 1)))
+        (sgK m θ (fun _ => 2) (oNum (m + 1))) -
+      glueRHS6_highPowerResidual m
+        (sgK m θ faceAxis (oTil (m + 1)))
+        (sgK m θ (fun _ => 2) (oTil (m + 1))) ) := by
+  rw [defectO6_orientation_difference_succ m hm θ,
+    glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
+      (oNum (m + 1)) (oNum_anti (m + 1),
+    glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
+      (oTil (m + 1)) (oTil_anti (m + 1)]
+
 end EvgenyTheorem
