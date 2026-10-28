@@ -2617,3 +2617,63 @@ transporting its A/B/C copies with the `cp1` corner conditions. Its
 `glueRHS6` difference must also remain explicit. Then compare the two
 recurrences; do not infer axis cancellation or level stabilization without
 a separate proof of the weighted boundary identity.
+
+## 2026-10-28 — Exact p=6 flipped-orientation recursion
+
+Verified source SHA: `e5954cbc047812b44ea5d5d255e775b1d03edd8f`
+(`Derive exact sixth-moment flipped-orientation recursion`).
+
+All four workflow runs completed successfully on this exact source SHA:
+
+- Push Lean: run `40631253169`, success (`Build formalization`).
+- PR Lean: run `40631258976`, success (`Build formalization`).
+- Push Tests: run `40631253045`, success.
+- PR Tests: run `40631258955`, success.
+
+The configured Lean command is `lake build EvgenyTheorem`. Python 3.11 and 3.12 passed the fast tests and slow level-7 convergence tests. A separate local no-argument `lake build` was not verified and must not be described as passing.
+
+### Mathematical result
+
+The newly compiled theorem `defectO6_succ_til` in `FinalTilde.lean` gives the exact recurrence, for `3 ≤ m`:
+
+`D6_til(m+1) = D6_num(m) + 2 * D6_til(m) + R6_til(m)`,
+
+where
+
+`R6_til(m) = glueRHS6(m, sgK(m, θ, faceAxis, oTil(m+1))) -`
+`            glueRHS6(m, sgK(m, θ, (fun _ => 2), oTil(m+1)))`.
+
+Together with `defectO6_succ_num`, this completes the pair of exact orientation recurrences. Both retain their own explicit boundary correction. The copy-C corner conditions in the tilde proof remain explicit; neither recurrence assumes cancellation.
+
+At this verified source state, the difference recurrence has not yet been formalized. No equality between `R6_num(m)` and `R6_til(m)`, no axis-independence, and no level stabilization is claimed.
+
+### Next p=6 obligation
+
+Subtract the two compiled recurrences in Lean to obtain the exact recurrence for the difference of orientation defects. Then investigate the actual weighted boundary-sum difference `R6_num(m) - R6_til(m)`; do not assume it is zero. Keep p=8 and p=10 out of scope until this p=6 obstruction is resolved.
+
+## 2026-10-28 — Exact p=6 orientation-difference recurrence
+
+Verified source SHA: `b94e37450275f0791bf48b223261273814c175e1`.
+
+All four workflows succeeded on this exact SHA:
+
+- PR Lean `40633583279`: success; the configured `Build formalization` step passed.
+- Push Lean `40633578221`: success.
+- PR Tests `40633583133`: success.
+- Push Tests `40633578247`: success; the Python 3.11 and 3.12 fast and slow level-7 convergence tests passed in both test workflows.
+
+The configured Lean command is `lake build EvgenyTheorem`. A separate local no-argument `lake build` was not verified.
+
+### Mathematical result
+
+The theorem `defectO6_orientation_difference_succ` has now been added to `FinalTilde.lean` and passed the Lean build. For `3 ≤ m`, it formally proves
+
+`F(m+1) = F(m) + R6_num(m) - R6_til(m)`,
+
+where `F(m) = D6_num(m) - D6_til(m)`; the two boundary residuals are exactly those in `defectO6_succ_num` and `defectO6_succ_til`. The proof rewrites by these two existing recurrences and closes the resulting complex-arithmetic identity with `ring`.
+
+This is only the exact difference recurrence. It does not establish `R6_num(m) = R6_til(m)`, zero residual, axis-independence, or stabilization.
+
+### Next p=6 obligation
+
+Analyze `R6_num(m) - R6_til(m)` via the actual weighted boundary sums. Keep the powers `(1,5)` and `(2,4)` terms explicit until their equality/cancellation follows from proved hypotheses. Do not introduce unproved diagonal-equality assumptions `h4` or `h5`, and do not switch to p=8/p=10 before the p=6 obstruction is resolved.

@@ -190,3 +190,28 @@ This table records the complete output of an exhaustive positive-composition enu
 - Next: prove the parallel recurrence for `oTil` with its special corner
   cases, retaining its own boundary residual, then compare the recurrences.
   No axis-independence or stabilization claim is made here.
+
+## 2026-10-28 — Exact p=6 flipped-orientation recursion
+
+- Verified source SHA: `e5954cbc047812b44ea5d5d255e775b1d03edd8f`.
+- The new `FinalTilde.lean` theorem `defectO6_succ_til` compiles and proves, for `3 ≤ m`,
+  `D6_til(m+1) = D6_num(m) + 2 * D6_til(m) + R6_til(m)`.
+- The residual remains explicit:
+  `R6_til(m) = glueRHS6(m, sgK(m, θ, faceAxis, oTil(m+1))) -`
+  `            glueRHS6(m, sgK(m, θ, (fun _ => 2), oTil(m+1)))`.
+  The earlier `defectO6_succ_num` has the matching form with coefficients 2 and 1 and its own residual.
+- All four CI workflows succeeded on this exact source SHA: Push Lean `40631253169`; PR Lean `40631258976`; Push Tests `40631253045`; PR Tests `40631258955`. Lean's configured `lake build EvgenyTheorem` passed; Python 3.11/3.12 fast and slow level-7 tests passed. A separate local no-argument `lake build` was not verified.
+- No residual equality, boundary cancellation, axis-independence, or stabilization is established by these recurrences.
+
+**Next:** formally subtract the two recurrences under their shared hypothesis `3 ≤ m`, keeping `R6_num(m) - R6_til(m)` explicit. Then analyze that weighted boundary difference without assuming it vanishes; remain focused on p=6.
+
+## 2026-10-28 — Exact p=6 orientation-difference recurrence
+
+- Verified source SHA: `b94e37450275f0791bf48b223261273814c175e1`.
+- All four workflows passed on that exact SHA: PR Lean `40633583279`; Push Lean `40633578221`; PR Tests `40633583133`; Push Tests `40633578247`. Both Python 3.11 and 3.12 passed fast tests and slow level-7 convergence. The configured Lean build is `lake build EvgenyTheorem`; a separate local no-argument `lake build` was not verified.
+- `FinalTilde.lean` now contains `defectO6_orientation_difference_succ`. For `3 ≤ m`, it proves
+  `F(m+1) = F(m) + R6_num(m) - R6_til(m)`,
+  where `F(m) = D6_num(m) - D6_til(m)). It is derived directly from the two compiled recurrences; no equality of residuals is assumed.
+- Remaining obstruction: no proof that `R6_num(m) - R6_til(m) = 0`; no axis-independence or stabilization is established.
+
+**Next:** expand the two residuals using `glueRHS6_sgK_axis_residual_of_diag123` and study the actual weighted sums involving powers `(1,5)` and `(2,4)`. Do not assume diagonal equalities for powers 4 and 5 and do not move to p=8/p=10.
