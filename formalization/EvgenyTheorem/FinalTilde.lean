@@ -858,6 +858,95 @@ theorem pHeO_succ_C_num_entry_til
         pHeO m θ ax (oTil m) p q i j at horient
       exact horient
 
+
+/-- At the outer corner O, all entries whose endpoints lie in the
+coordinate box [0,2]² agree with the parent-level operator. -/
+theorem pHeO_corner_O_box_entry
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+      pHeO m θ ax (oNum m) p q i j := by
+  obtain ⟨hp', hpX, hpY⟩ :=
+    corner_O_radius_two_transport m hm hp hpx hpy
+  obtain ⟨hq', _, _⟩ :=
+    corner_O_radius_two_transport m hm hq hqx hqy
+  exact pHeO_succ_A_num_entry m θ ax hp' hq' hpX hpY i j
+
+/-- At the outer corner X, entries inside the radius-two coordinate box
+pull back to copy B with the ordinary parent numbering orientation. -/
+theorem pHeO_corner_X_box_entry
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 2) (hpy : p.2 ≤ 2)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+        pHeO m θ ax (oNum m) p' q' i j := by
+  rcases (corner_X_radius_two_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', hpy', rfl⟩
+  rcases (corner_X_radius_two_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', hqx', hqy', rfl⟩
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  have hpY : p' ≠ (0, 2 ^ m) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  exact pHeO_succ_B_num_entry m θ ax hax hp' hq' hp0 hpY i j
+
+/-- At the outer corner Y, entries inside the radius-two coordinate box
+pull back to copy C with the exceptional corner-flipped orientation. -/
+theorem pHeO_corner_Y_box_entry
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : 2 ^ (m + 1) ≤ p.2 + 2)
+    (hqx : q.1 ≤ 2) (hqy : 2 ^ (m + 1) ≤ q.2 + 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 0 1 p' ∧
+      q = shiftPoint (2 ^ m) 0 1 q' ∧
+      pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+        pHeO m θ ax (oTil m) p' q' i j := by
+  rcases (corner_Y_radius_two_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', hpy', rfl⟩
+  rcases (corner_Y_radius_two_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', hqx', hqy', rfl⟩
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.2 = 0 := congrArg Prod.snd heq
+    omega
+  have hpX : p' ≠ (2 ^ m, 0) := by
+    intro heq
+    have hcoord : p'.2 = 0 := congrArg Prod.snd heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  exact pHeO_succ_C_num_entry_til m hm θ ax hax (oNum_anti (m + 1))
+    hp' hq' hp0 hpX i j
+
 end EvgenyTheorem
 
 

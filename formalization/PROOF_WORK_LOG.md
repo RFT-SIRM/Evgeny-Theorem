@@ -328,3 +328,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added pHeO_succ_B_num_entry: on the B copy, the same entry equality holds after the B shift, using axis periodicity and pulling the orientation back to oNum m.
 - Added pHeO_succ_C_num_entry_til: on the C copy, transported entries use oTil m, explicitly retaining the exceptional corner flip.
 - These are one-step entry identities, not yet power-four/five diagonal identities. The next proof must apply them to every factor in the closed-walk expansion and prove that the summation domains are bijectively reindexed by the coordinate-box equivalences.
+
+## 2026-10-28 — Corner-box matrix-entry interface
+
+- Rechecked that all six CI jobs on eaefa7ebe5d3c1f86409be01d34f39514d88c484 passed.
+- Added pHeO_corner_O_box_entry: in the O-corner coordinate box, level-(m+1) entries equal the parent entries with ordinary numbering orientation.
+- Added pHeO_corner_X_box_entry: the X-box entries are transported to copy B and parent oNum, under the explicit axis-periodicity hypothesis.
+- Added pHeO_corner_Y_box_entry: the Y-box entries are transported to copy C and parent oTil, under explicit axis periodicity; the exceptional orientation flip is retained.
+- These wrappers compose the previously proved geometric box lemmas with the entrywise copy lemmas. They are a local interface only; they do not yet compare any matrix-power diagonal or the high-power residual.
+- Next: prove that the sums over intermediate states in the K^4/K^5 diagonal expansions can be restricted to these boxes and reindexed via the coordinate-box equivalences.

@@ -2877,3 +2877,14 @@ K_{m+1}^{C}(p+2^m e_2,q+2^m e_2)=K_m^{\mathrm{til}}(p,q),
 under the stated local nonexceptional-corner hypotheses and the relevant axis periodicity. The C identity deliberately retains the oTil orientation rather than incorrectly simplifying it to oNum.
 
 Scope: these prove preservation of a single matrix entry. They do not prove equality of sums over length-four/five closed walks, since that additionally requires a bijection of contributing intermediate-state indices and preservation of all diagonal degree factors. The all-level residual identity remains open.
+
+## 4z. Corner-box entry interface for the high-power comparison
+
+After all six CI jobs passed on eaefa7ebe5d3c1f86409be01d34f39514d88c484, this change adds three wrappers in FinalTilde.lean:
+- O-box: identity transport into copy A, preserving oNum.
+- X-box: transport through copy B, preserving oNum when the B axis labels are periodic.
+- Y-box: transport through copy C, preserving oTil and therefore the exceptional corner-edge flip.
+
+Each result is a pointwise equality of a single spin-matrix entry for endpoints inside the corresponding radius-two coordinate box. These are the local hypotheses intended for the intermediate-state sums in matrix_pow_four_diag_as_sum_sq and matrix_pow_five_diag_as_sum_two_three.
+
+**Still open:** prove the support cutoff and reindex the sums of products of entries. No power-four/five diagonal equality, and no R_{m+1}=R_m identity, is claimed.
