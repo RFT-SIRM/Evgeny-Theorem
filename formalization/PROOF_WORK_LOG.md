@@ -287,3 +287,13 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added corner_diagonal_polynomials, using only the graph-radius-two ball and full graph degrees, plus test_outer_corner_power_blocks_stabilize_exactly_between_levels_three_and_four.
 - Justification for radius two: every term in a diagonal entry of H^n is a closed walk; at the k-th step its graph distance to the base is at most min(k,n-k) <= floor(n/2). Hence powers 4 and 5 cannot use vertices beyond graph distance two.
 - No Lean source was changed. The level-3/4 exact comparison identifies a smaller candidate interface for the all-level theorem; uniform transport of these rooted, axis-labelled radius-two neighborhoods is still to be proved.
+
+
+## 2026-10-28 — Exact p=6 residual path expansion
+
+- Audited PR #9 and branch `moment-6-8-10` before editing; both pointed to `0381bc85ca617ecffe19d7107d1f5b384802dfe0`.
+- Added in `GlueCornerCube.lean` the generic diagonal expansions `matrix_pow_four_diag_as_sum_sq` and `matrix_pow_five_diag_as_sum_two_three`, and the concrete residual expansion `glueRHS6_highPowerResidual_path_expansion`.
+- Exact content: expose the (K^4) and (K^5) terms as sums over intermediate states. This is a valid algebraic rewrite; no support cutoff or level comparison is built into it.
+- CI for the code commit: push Lean 40712822868 and PR Lean 40712833470 succeeded (the PR Lean cache-download attempt was retried after an infrastructure Broken pipe); push Tests 40712822818 and PR Tests 40712833222 succeeded, including Python 3.11 and 3.12.
+- **Still open:** prove that the weighted fourth/fifth-power corner sums are preserved between adjacent levels for the face-axis versus constant-axis operators. The support-distance bound alone does not supply a rooted, axis-labelled neighborhood map; no h4/h5 equality has been assumed.
+- Next mathematical task: construct the explicit radius-two corner-neighborhood transport, including full graph degrees and orientation labels, and use it to reindex the closed-walk sums. If this map cannot be established from the copy/face definitions, stop rather than add a speculative lemma.

@@ -2820,3 +2820,17 @@ This gives a sharper formal target than “identify the radius-five neighborhood
 The certificate now exposes corner_diagonal_polynomials, which calculates these blocks using exact polynomial arithmetic on radius-two balls. The regression test test_outer_corner_power_blocks_stabilize_exactly_between_levels_three_and_four checks all corners, both axis assignments, both flip states, and powers four and five by exact coefficient equality.
 
 **Formal implication:** this is a finite-level check and a candidate lemma interface, not yet an all-level proof. A Lean proof can aim to show that the radius-two, axis-labelled rooted neighborhoods (including degrees and the exceptional-edge orientation where relevant) are transported by the A/B/C copy embeddings. Existing faceAxis periodicity, copy-entry formulas, and orientation-order lemmas are relevant inputs. The remaining formal work is to establish the radius-two neighborhood equivalence uniformly for all m≥3, then reindex the closed matrix-product sums. Do not infer R_{m+1}=R_m for all levels from the finite comparison.
+
+
+## 4u. p=6 high-power path-sum expansion (Lean, commit 0381bc8)
+
+The PR now contains two generic exact identities:
+\[
+(K^4)_{xx}=\sum_y(K^2)_{xy}(K^2)_{yx},\qquad
+(K^5)_{xx}=\sum_y(K^2)_{xy}(K^3)_{yx}.
+\]
+The theorem `glueRHS6_highPowerResidual_path_expansion` substitutes these identities into the exact residual `glueRHS6_highPowerResidual`, exposing the intermediate-state sums for the weighted fourth/fifth-power corner terms.
+
+CI on `0381bc85ca617ecffe19d7107d1f5b384802dfe0` completed successfully: push Lean `40712822868`, PR Lean `40712833470`, push Python `40712822818`, PR Python `40712833222`. The PR Lean job initially failed while downloading Mathlib cache (`Broken pipe`, cache download incomplete); its rerun succeeded, including `Build formalization`. Both Python workflows passed on 3.11 and 3.12.
+
+**Scope:** this is an algebraic path expansion only. It neither cuts off the intermediate-state sums to a radius-two ball nor identifies the rooted, axis-labelled local neighborhoods between levels. In particular, it proves neither the required adjacent-level equality \(R_{m+1}=R_m\) nor equality of the weighted \(K^4\)/\(K^5\) corner diagonals. The path-support estimate is available, but an explicit level-to-level local map and a proof that it preserves edge labels, full vertex degrees, and orientation are still required. No assumption that the fourth- and fifth-power diagonals agree was added.
