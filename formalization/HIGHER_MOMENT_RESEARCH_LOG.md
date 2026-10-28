@@ -2865,3 +2865,15 @@ x+2\ge 2^{m+1}, y\le2
 and the coordinate-swapped C-copy statement for Y.
 
 These equivalences remove a one-way membership gap before using the copy shift to reindex the intermediate states in the high-power path sums. They do not by themselves prove edge-axis preservation, equality of all walk weights, equality of high-power diagonal blocks, or (R_{m+1}=R_m). The O/A box is handled by the existing identity-map localization theorem.
+
+## 4y. Entrywise transport with the actual recursive orientations
+
+After all six CI jobs passed on 1b702877b8ab228228e1ae128f6bc7aff0fb258b, three one-step transport lemmas were added in FinalTilde.lean:
+\[
+K_{m+1}^{A}(p,q)=K_m^{\mathrm{num}}(p,q),\quad
+K_{m+1}^{B}(p+2^m e_1,q+2^m e_1)=K_m^{\mathrm{num}}(p,q),\quad
+K_{m+1}^{C}(p+2^m e_2,q+2^m e_2)=K_m^{\mathrm{til}}(p,q),
+\]
+under the stated local nonexceptional-corner hypotheses and the relevant axis periodicity. The C identity deliberately retains the oTil orientation rather than incorrectly simplifying it to oNum.
+
+Scope: these prove preservation of a single matrix entry. They do not prove equality of sums over length-four/five closed walks, since that additionally requires a bijection of contributing intermediate-state indices and preservation of all diagonal degree factors. The all-level residual identity remains open.

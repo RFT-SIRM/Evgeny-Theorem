@@ -773,6 +773,91 @@ theorem Hc_C_num_eq_parent_til
         exact not_congr h3)
     x.1.1 y.1.1 x.2 y.2
 
+
+/-- Across copy A, the level-(m+1) numbering orientation restricts to
+the level-m numbering orientation on every old edge. -/
+theorem pHeO_succ_A_num_entry
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hpX : p ≠ (2 ^ m, 0)) (hpY : p ≠ (0, 2 ^ m))
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+      pHeO m θ ax (oNum m) p q i j := by
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+        pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_succ_A_local_entry m θ ax (oNum (m + 1))
+        hp hq hpX hpY i j
+    _ = pHeO m θ ax (oNum m) p q i j :=
+      pHeO_orient_congr m θ ax (oNum (m + 1)) (oNum m)
+        (by
+          intro a b hab hE hfl
+          have hm := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hm.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hm.2
+          unfold oNum
+          rw [vIdx_succ_of_mem ha, vIdx_succ_of_mem hb])
+        p q i j
+
+/-- Across copy B, the parent entry is transported with the parent numbering
+orientation, provided the axis labels are periodic over the B face block. -/
+theorem pHeO_succ_B_num_entry
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpY : p ≠ (0, 2 ^ m))
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 1))
+        (shiftPoint (2 ^ m) 1 0 p) (shiftPoint (2 ^ m) 1 0 q) i j =
+      pHeO m θ ax (oNum m) p q i j := by
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 1))
+        (shiftPoint (2 ^ m) 1 0 p) (shiftPoint (2 ^ m) 1 0 q) i j =
+        pHeO m θ ax (oBo m (oNum (m + 1))) p q i j :=
+      pHeO_succ_B_local_entry m θ ax (oNum (m + 1)) hax
+        hp hq hp0 hpY i j
+    _ = pHeO m θ ax (oNum m) p q i j :=
+      pHeO_orient_congr m θ ax (oBo m (oNum (m + 1))) (oNum m)
+        (by
+          intro a b hab hE hfl
+          have hm := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hm.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hm.2
+          exact oBo_num_iff_oNum m ha hb)
+        p q i j
+
+/-- Across copy C, the inherited numbering pulls back to the corner-flipped
+orientation oTil m. The exceptional orientation is retained explicitly. -/
+theorem pHeO_succ_C_num_entry_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hanti : OAnti (m + 1) (oNum (m + 1)))
+    {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpX : p ≠ (2 ^ m, 0))
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 1))
+        (shiftPoint (2 ^ m) 0 1 p) (shiftPoint (2 ^ m) 0 1 q) i j =
+      pHeO m θ ax (oTil m) p q i j := by
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 1))
+        (shiftPoint (2 ^ m) 0 1 p) (shiftPoint (2 ^ m) 0 1 q) i j =
+        pHeO m θ ax (oCo m (oNum (m + 1))) p q i j :=
+      pHeO_succ_C_local_entry m θ ax (oNum (m + 1)) hax
+        hp hq hp0 hpX i j
+    _ = pHeO m θ ax (oTil m) p q i j := by
+      have horient := Hc_C_num_eq_parent_til m (by omega) θ ax hanti
+        ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt m), i)
+        ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt m), j)
+      change pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+        pHeO m θ ax (oTil m) p q i j at horient
+      exact horient
+
 end EvgenyTheorem
 
 

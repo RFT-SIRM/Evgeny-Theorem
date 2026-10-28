@@ -320,3 +320,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added `corner_X_radius_two_box_iff` and `corner_Y_radius_two_box_iff`. Each proves that the corresponding level-(m+1) coordinate box is exactly the image of its parent-level box under the relevant copy shift, with the inequalities transported both ways.
 - These iff lemmas are the set-reindexing interface needed before reindexing intermediate states in the power-four/five path expansions. They concern coordinate boxes derived from support bounds, not an assertion that these boxes equal graph-metric balls.
 - **Still open:** show that the copy-entry transport preserves all entries needed along every contributing closed walk and reindex the weighted fourth/fifth-power sums. No (R_{m+1}=R_m) claim is made.
+
+## 2026-10-28 — Actual matrix-entry transport with recursive orientations
+
+- Rechecked the branch and confirmed all six CI jobs on 1b702877b8ab228228e1ae128f6bc7aff0fb258b passed before editing.
+- Added pHeO_succ_A_num_entry: on the old A copy, entries at level m+1 with oNum (m+1) agree with parent entries using oNum m.
+- Added pHeO_succ_B_num_entry: on the B copy, the same entry equality holds after the B shift, using axis periodicity and pulling the orientation back to oNum m.
+- Added pHeO_succ_C_num_entry_til: on the C copy, transported entries use oTil m, explicitly retaining the exceptional corner flip.
+- These are one-step entry identities, not yet power-four/five diagonal identities. The next proof must apply them to every factor in the closed-walk expansion and prove that the summation domains are bijectively reindexed by the coordinate-box equivalences.
