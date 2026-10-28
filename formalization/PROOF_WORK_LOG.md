@@ -230,3 +230,12 @@ This table records the complete output of an exhaustive positive-composition enu
 **Scope and remaining obligation:** the result is an exact finite-level computational certificate, not yet a Lean theorem connecting F(3, theta) to -6336 sin^2(theta/2) - 864 sin^3(theta/2). defectO6_orientation_difference_eq_level3 still only reduces the all-level orientation gap to F(3, theta); no zero claim is valid. The separate boundary residual in defectO6_succ_num_level3 still needs its own level-independence analysis. Keep p=8 and p=10 out of scope.
 
 **Next:** pursue a Lean bridge for the finite-level identity (or a proved explicit finite expression equivalent to it) before attempting to close the all-level p=6 recurrence. Do not replace F(3, theta) or the boundary residual by zero.
+
+
+## 2026-10-28 — Remove timed-out p=6 base-case proof attempt
+
+- Audited source SHA 175f87256a9d6c9a6dbb2cd7f401f3ef8de7201b.
+- Lean failed in formalization/EvgenyTheorem/FinalTilde.lean:741:2: simp/norm_num hit the deterministic 200,000-heartbeat limit while expanding all definitions for the level-three sixth-power trace at theta = pi.
+- The original draft also placed the declaration outside namespace EvgenyTheorem; although that placement was fixed, the all-at-once finite expansion remained too expensive. The failed theorem is removed rather than hidden behind an unlimited heartbeat setting.
+- The parent SHA bf4fa6f7d306f6fc5a5a738b55bdaa6e5be76bcc had all four CI workflows green. The all-angle symbolic result and its Python regression test remain in the computational layer, but they are not claimed as a Lean theorem.
+- Next: stage a finite-level Lean bridge through explicit graph/edge facts and specialized matrix-block computations; do not unfold the full graph/operator power in one tactic call. Keep p=6 as the sole target and keep the boundary residual as a separate open obligation.

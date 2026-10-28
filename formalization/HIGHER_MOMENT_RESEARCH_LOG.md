@@ -2707,3 +2707,12 @@ Validation is deliberately separated from the Lean theorem claim:
 - an independent dense-matrix regression test compares the symbolic formula with the production build_su2_bundle operator over positive and negative angles, including theta = pi, and explicitly checks that the exceptional edge is in the graph/flux-edge set and is ordered consistently with the Python vertex indices.
 
 **Formal scope:** this is an exact computational certificate for the finite level-3 expression, not yet a Lean proof of the identity for all theta. The existing Lean theorem defectO6_orientation_difference_eq_level3 proves F(m,theta)=F(3,theta) for m>=3, but the polynomial evaluation of F(3,theta) has not yet been connected to that Lean development. Thus the orientation gap must not be assumed to vanish. The separate level-independence of the sixth-moment boundary residual in the numbering-oriented recurrence remains open.
+
+
+## 4o. Lean base-case attempt rejected by the build
+
+At source SHA 175f87256a9d6c9a6dbb2cd7f401f3ef8de7201b, the proposed theorem defectO6_orientation_difference_level3_pi was added by unfolding the full sixth-power trace, the point operator, graph enumeration, and SU(2) edge definitions in one norm_num call. The Lean build failed at FinalTilde.lean:741:2: deterministic timeout in the simplifier at the 200,000-heartbeat limit. The preceding commit had also shown that the first draft was outside namespace EvgenyTheorem; that namespace placement was corrected, but the brute-force expansion still timed out.
+
+This attempt is removed in the follow-up cleanup. Do not work around the timeout by simply disabling the heartbeat limit or expanding every definition at once. The symbolic Python result remains a finite computational certificate only; no Lean theorem for the numeric level-three value was established by this attempt.
+
+Next proof direction: construct a staged finite-level bridge with small intermediate statements (the level-three vertex/edge enumeration, the specialized edge blocks at theta = pi, and the trace/power computation), and verify each stage before combining them. Keep the existing all-level reduction and the independent boundary-residual obligation separate.

@@ -727,21 +727,3 @@ theorem Hc_C_num_eq_parent_til
 
 end EvgenyTheorem
 
-
-
-namespace EvgenyTheorem
-
-/-- Exact finite check at theta = pi for the level-three orientation gap.
-This records the nonzero base value in the all-level reduction; it does not
-assert an all-angle formula or boundary-residual stabilization. -/
-theorem defectO6_orientation_difference_level3_pi :
-    (defectO6 3 Real.pi faceAxis (fun _ => 2) (oNum 3) -
-      defectO6 3 Real.pi faceAxis (fun _ => 2) (oTil 3)) = (-7200 : ℂ) := by
-  classical
-  norm_num [defectO6, Matrix.trace, Matrix.mul_apply, pOpO, pHeO, pdeg,
-    edgeUnitaryWithAxis, axisRotation, axisPauli, su2Rotation,
-    oNum, oTil, cp1, vIdx, vertexOrder, facesExact, shiftFace,
-    shiftPoint, fluxEdges, fluxEdge, faceAxis, EdgeB, InSG,
-    Real.cos_pi_div_two, Real.sin_pi_div_two, pow_succ, pow_zero]
-
-end EvgenyTheorem
