@@ -333,4 +333,85 @@ theorem corner_O_radius_two_transport
     simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
     omega
 
+
+/--
+The radius-two box around the outer corner X at level m+1 is contained
+in copy B. Its local vertices avoid the two B-copy corners at which the
+recursive degree can receive an extra contribution.
+-/
+theorem corner_X_radius_two_transport
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : 2 ^ (m + 1) ≤ z.1 + 2) (hy : z.2 ≤ 2) :
+    ∃ p ∈ vertexOrder m,
+      z = shiftPoint (2 ^ m) 1 0 p ∧
+        p ≠ (0, 0) ∧ p ≠ (0, 2 ^ m) := by
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hsep : 2 ^ m + 2 < 2 ^ (m + 1) := by
+    rw [pow_succ]
+    omega
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · have hbound := vertexOrder_sum_le m z hzA
+    omega
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    have hlocal : 2 ^ m ≤ p.1 + 2 := by
+      rw [pow_succ] at hx
+      omega
+    have hp0 : p ≠ (0, 0) := by
+      intro heq
+      have hpx : p.1 = 0 := congrArg Prod.fst heq
+      omega
+    have hpY : p ≠ (0, 2 ^ m) := by
+      intro heq
+      have hpx : p.1 = 0 := congrArg Prod.fst heq
+      omega
+    exact ⟨p, hp, rfl, hp0, hpY⟩
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    omega
+
+/--
+The radius-two box around the outer corner Y at level m+1 is contained
+in copy C. Its local vertices avoid the two C-copy corners at which the
+recursive degree can receive an extra contribution.
+-/
+theorem corner_Y_radius_two_transport
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : z.1 ≤ 2) (hy : 2 ^ (m + 1) ≤ z.2 + 2) :
+    ∃ p ∈ vertexOrder m,
+      z = shiftPoint (2 ^ m) 0 1 p ∧
+        p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0) := by
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hsep : 2 ^ m + 2 < 2 ^ (m + 1) := by
+    rw [pow_succ]
+    omega
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · have hbound := vertexOrder_sum_le m z hzA
+    omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    omega
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    have hlocal : 2 ^ m ≤ p.2 + 2 := by
+      rw [pow_succ] at hy
+      omega
+    have hp0 : p ≠ (0, 0) := by
+      intro heq
+      have hpy : p.2 = 0 := congrArg Prod.snd heq
+      omega
+    have hpX : p ≠ (2 ^ m, 0) := by
+      intro heq
+      have hpy : p.2 = 0 := congrArg Prod.snd heq
+      omega
+    exact ⟨p, hp, rfl, hp0, hpX⟩
+
 end EvgenyTheorem

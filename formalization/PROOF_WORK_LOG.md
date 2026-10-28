@@ -305,3 +305,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added `corner_O_radius_two_transport` in `CornerLocality.lean`: for (m\ge3), a level-(m+1) vertex with coordinates at most two lies in copy A and is not either far corner where the A-copy degree could change.
 - This is only the O/A geometric localization step. It proves no equality for powers four or five and no claim that (R_{m+1}=R_m).
 - **Next after CI:** prove the analogous X/B and Y/C localization statements. Then use those maps, entry transport, and the closed-walk radius-two bound to formalize the weighted power-four/five diagonal-sum comparison. Stop at any failed hypothesis or counterexample; do not infer all-level stability from finite checks.
+
+## 2026-10-28 — Outer-corner X/B and Y/C radius-two localization
+
+- Rechecked that PR #9 and `moment-6-8-10` were at `fd8bc0b6d71e5cb0213f02dd190989d435b3f44a`; both Lean build workflows and all push/PR Python 3.11/3.12 jobs passed.
+- Added `corner_X_radius_two_transport`: points in (V_{m+1}) satisfying (2^{m+1}\le x+2) and (y\le2) are in copy B, and the pulled-back point avoids ((0,0)) and ((0,2^m)).
+- Added `corner_Y_radius_two_transport`: points in (V_{m+1}) satisfying (x\le2) and (2^{m+1}\le y+2) are in copy C, and the pulled-back point avoids ((0,0)) and ((2^m,0)).
+- Together with `corner_O_radius_two_transport`, these are geometric localization statements only. They do not establish equality of fourth/fifth-power diagonal sums or (R_{m+1}=R_m).
+- Next after CI: use the three localizations with the copy entry lemmas to formulate the induced reindexing on local closed walks; keep full degrees and orientation labels explicit, and stop if the copy map fails to preserve any needed datum.

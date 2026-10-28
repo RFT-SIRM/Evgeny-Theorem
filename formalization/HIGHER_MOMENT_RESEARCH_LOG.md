@@ -2842,3 +2842,14 @@ The prior commit `7168a08dda3911840d9ad5694535529988f9d360` passed both Lean bui
 The new lemma `corner_O_radius_two_transport` formalizes one geometric case: for (m\ge3), if (z\in V_{m+1}) and (z_1,z_2\le2), then (z\in V_m), and (z) is neither ((2^m,0)) nor ((0,2^m)). Thus the coordinate box containing the graph-radius-two neighborhood of the outer corner O lies inside copy A and avoids the two degree-exception corners. This makes the A-copy entrywise transport applicable throughout that local box.
 
 **Scope:** only the O/A localization is formalized here. X/B and Y/C are still required, as is the reindexing of closed walks for powers four and five. No equality of high-power diagonal blocks or of (R_{m+1}) and (R_m) is claimed.
+
+## 4w. Outer corners X/B and Y/C: radius-two localization lemmas
+
+At commit `fd8bc0b6d71e5cb0213f02dd190989d435b3f44a`, all six Lean/Python checks passed. This change adds two structural Lean lemmas:
+
+- `corner_X_radius_two_transport` identifies points in the coordinate box (2^{m+1}\le x+2, y\le2) as B-copy images, with the pulled-back point avoiding the two degree-exception corners for B.
+- `corner_Y_radius_two_transport` identifies points in the coordinate box (x\le2, 2^{m+1}\le y+2) as C-copy images, with the pulled-back point avoiding the two degree-exception corners for C.
+
+Combined with `corner_O_radius_two_transport`, this covers the three outer-corner radius-two coordinate boxes at the level of copy membership and local degree exceptions.
+
+**Scope:** these lemmas do not yet give an edge-labelled graph isomorphism of the entire radius-two balls, do not compare walk weights, and do not prove (R_{m+1}=R_m). The remaining proof must use the copy entry transport and preserve edge axes, orientations, and full graph degrees while reindexing the closed-walk sums.
