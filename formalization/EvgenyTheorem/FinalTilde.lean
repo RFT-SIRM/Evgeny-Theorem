@@ -186,4 +186,20 @@ theorem defectO6_succ_til (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
   rw [eA, eB, eC]
   ring
 
+
+/-- Exact recurrence for the difference of the two sixth-moment orientation
+defects. The difference of the boundary residuals remains explicit. -/
+theorem defectO6_orientation_difference_succ
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    (defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) -
+      defectO6 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1))) =
+    (defectO6 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO6 m θ faceAxis (fun _ => 2) (oTil m)) +
+    ((glueRHS6 m (sgK m θ faceAxis (oNum (m + 1))) -
+        glueRHS6 m (sgK m θ (fun _ => 2) (oNum (m + 1))) ) -
+      (glueRHS6 m (sgK m θ faceAxis (oTil (m + 1))) -
+        glueRHS6 m (sgK m θ (fun _ => 2) (oTil (m + 1))) )) := by
+  rw [defectO6_succ_num m hm θ, defectO6_succ_til m hm θ]
+  ring
+
 end EvgenyTheorem
