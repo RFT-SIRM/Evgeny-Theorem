@@ -782,7 +782,6 @@ theorem pHeO_corner_flip_swap
   have hnle : ¬ q ≤ p := by
     intro h
     have hx := (Prod.mk_le_mk.mp h).1
-    dsimp [p, q] at hx
     omega
   have hbottom : vIdx m p < vIdx m q := by
     simpa [p, q] using bottom_lt m hm
@@ -798,7 +797,6 @@ theorem pHeO_corner_flip_swap
   have hcpRev : ¬ cp1 m q p := by
     rintro ⟨hfirst, _⟩
     have hx := congrArg Prod.fst hfirst
-    dsimp [p, q] at hx
     omega
   have htil : ¬ oTil m p q := by
     intro h

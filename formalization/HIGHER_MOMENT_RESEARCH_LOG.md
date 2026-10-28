@@ -2723,3 +2723,10 @@ Next proof direction: construct a staged finite-level bridge with small intermed
 At source SHA 704a9e82cc922dea5b55e231119c7df6b0862c49, Lean failed at `FinalTilde.lean:764:37` with `expected token`. The failing addition was `pHeO_pi_edge`; the error points into the proposition's locally named matrix `U`/conjugate-transpose expression. The general edge-entry identity was already available as `pHeO_edge_eq`, so this helper duplicated an existing result while introducing additional syntax risk. It is removed in the cleanup rather than trying another unverified syntax variant. Keep `axisRotation_pi` and `edgeUnitaryWithAxis_pi`, which were added in the preceding green commit.
 
 Next proof attempt must add a non-redundant bridge and be checked against the exact syntax and matrix conventions before commit. Do not claim that the level-three trace value has been proved in Lean.
+
+
+## 4q. Repair after the p6 corner-edge tactic stopped making progress
+
+On source SHA `f05145f7a8898d69c8d6646333f096a87133794a`, push and PR Lean both failed in `FinalTilde.lean:785:4` with `dsimp made no progress`. The fault was in the added `pHeO_corner_flip_swap` proof: the coordinate inequality had already reduced before `dsimp [p, q] at hx`, making the tactic invalid. The subsequent `hcpRev` branch used the same redundant simplification pattern, so both redundant `dsimp` calls are removed and the resulting arithmetic goals are left to `omega`. No new mathematical assumptions are added.
+
+The correction is kept narrowly scoped to this one lemma. Its proof is not considered accepted until the full Lean build and both Python CI jobs pass on the resulting SHA. The local container does not have Lean/Lake installed, so no local Lean compilation is claimed.

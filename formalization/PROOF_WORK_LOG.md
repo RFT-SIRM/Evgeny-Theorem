@@ -246,3 +246,10 @@ This table records the complete output of an exhaustive positive-composition enu
 - Audited CI on `704a9e82cc922dea5b55e231119c7df6b0862c49`: push Lean failed in `FinalTilde.lean:764:37` with `expected token`; this was a Lean parser failure, not a Python failure. The PR Lean run was additionally interrupted during Mathlib cache download, but the push build gave the source error.
 - Removed only `pHeO_pi_edge`, which restated the already-existing `pHeO_edge_eq` with a local `U` expression. Preserved `axisRotation_pi` and `edgeUnitaryWithAxis_pi` from the preceding all-green SHA `3d6a161db3e88993379a083af593ac38a6ab9b64`.
 - No all-level or numeric-base-case theorem is claimed. After cleanup, run the full Lean build and Python 3.11/3.12 tests for the new exact SHA before proceeding.
+
+
+## 2026-10-28 — Fix no-progress `dsimp` in corner-edge lemma
+
+- Source SHA `f05145f7a8898d69c8d6646333f096a87133794a` failed both push and PR Lean at `FinalTilde.lean:785:4` with `dsimp made no progress`.
+- Removed the redundant `dsimp [p, q] at hx` tactic from the `hnle` block and the same pattern from `hcpRev`; retained `omega` to close the arithmetic contradictions. No hypotheses or mathematical statements changed.
+- The correction needs full CI confirmation on its own SHA before further proof work.
