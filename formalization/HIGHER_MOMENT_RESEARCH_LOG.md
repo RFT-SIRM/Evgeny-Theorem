@@ -2897,3 +2897,13 @@ Commit 47f93b1b52e9cafd1f92c2d3756b979eb739ab90 passed all six configured CI che
 - Y-root: any nonzero (K^2)_{Y,y} has y_1 ≤ 2 and y_2+2 ≥ 2^m.
 
 These coordinate cutoffs identify the supported intermediate-state boxes in (K^4)_{xx}=Σ_y(K^2)_{xy}(K^2)_{yx} and (K^5)_{xx}=Σ_y(K^2)_{xy}(K^3)_{yx}. They do not prove reindexing or high-power equality by themselves.
+
+
+## 4ab. Correct orientation index for adjacent-level corner transport
+
+The level-to-level residual target compares sgK (m+1) with orientation oNum (m+2) to sgK m with orientation oNum (m+1). The earlier corner-box wrappers with oNum (m+1) on the larger graph are not, by themselves, the interface for that recurrence. This change adds oNum_succ_restrict and three wrappers that use the correct orientation indices and retain the actual B/C pullbacks:
+- O: oNum (m+2) at level m+1 to oNum (m+1) at parent level m.
+- X/B: oNum (m+2) to oBo m (oNum (m+1)).
+- Y/C: oNum (m+2) to oCo m (oNum (m+1)), preserving the exceptional C orientation.
+
+These statements are entrywise and include only the coordinate boxes already localized in CornerLocality.lean. The missing theorem is still the weighted closed-walk sum comparison for powers 4 and 5, and hence the all-level identity R_{m+1}=R_m.

@@ -345,3 +345,13 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Each follows from pOpO_pow_entry_coord_dist by specializing to n=2. It proves that a nonzero (K^2) corner-to-intermediate-state entry lies in its corresponding radius-two coordinate box.
 - These are support facts needed for the first factor in the fourth-/fifth-power diagonal expansions. They do not yet reindex the sums or establish high-power diagonal equality.
 - Next: combine the support cutoffs with the corner-box entry equalities and compare the two-step entries, before attempting the fourth-/fifth-power sums.
+
+
+## 2026-10-28 — Recursive-orientation index for level-to-level corner transport
+
+- Rechecked HEAD d8b39f489bd2d9c4c78a755c4953454442fe6126: all six configured Lean/Python checks passed in push and PR workflows.
+- Added oNum_succ_restrict, showing that oNum (m+2) restricts to oNum (m+1) on the entire level-(m+1) vertex set.
+- Added three corner-box entry transports for the actual adjacent-level residual comparison: the larger-level operator uses oNum (m+2), while the parent copy entries use oNum (m+1), oBo m (oNum (m+1)), and oCo m (oNum (m+1)), respectively.
+- The C-copy conclusion intentionally keeps oCo rather than replacing it prematurely by oNum; its exceptional orientation flip remains explicit.
+- This repairs the orientation index needed by the residual recurrence. These remain single-entry transport lemmas; no equality of fourth/fifth-power diagonal sums or R_{m+1}=R_m is claimed.
+- Next: use these entries and the radius-two support argument to prove the weighted local closed-walk sum comparison for powers four and five.

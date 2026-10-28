@@ -991,6 +991,176 @@ theorem pOpO_pow_two_corner_Y_support
   omega
 
 
+/-- The numbering orientation at level m+2 restricts to the one at level
+m+1 on every level-(m+1) vertex. This is the orientation index needed when
+comparing the p=6 residual at adjacent refinement levels. -/
+theorem oNum_succ_restrict (m : ℕ) {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1)) :
+    oNum (m + 2) p q ↔ oNum (m + 1) p q := by
+  unfold oNum
+  rw [vIdx_succ_of_mem hp, vIdx_succ_of_mem hq]
+
+/-- Across the O/A corner box, the entry at level m+1 with the orientation
+used by the next residual, oNum (m+2), agrees with the parent entry using
+oNum (m+1). -/
+theorem pHeO_corner_O_box_entry_next_num
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+      pHeO m θ ax (oNum (m + 1)) p q i j := by
+  obtain ⟨hp', hpX, hpY⟩ :=
+    corner_O_radius_two_transport m hm hp hpx hpy
+  obtain ⟨hq', _, _⟩ :=
+    corner_O_radius_two_transport m hm hq hqx hqy
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+        pHeO m θ ax (oNum (m + 2)) p q i j :=
+      pHeO_succ_A_local_entry m θ ax (oNum (m + 2))
+        hp' hq' hpX hpY i j
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_orient_congr m θ ax (oNum (m + 2)) (oNum (m + 1))
+        (by
+          intro a b hab hE hfl
+          have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hmEdge.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hmEdge.2
+          have ha' : a ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inl ha
+          have hb' : b ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inl hb
+          exact oNum_succ_restrict m ha' hb')
+        p q i j
+
+/-- Across the X/B corner box, the level-(m+1) entry using oNum (m+2)
+pulls back to the corresponding parent entry with its actual B-copy
+orientation, oBo m (oNum (m+1)). -/
+theorem pHeO_corner_X_box_entry_next_num
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 2) (hpy : p.2 ≤ 2)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+        pHeO m θ ax (oBo m (oNum (m + 1))) p' q' i j := by
+  rcases (corner_X_radius_two_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', hpy', rfl⟩
+  rcases (corner_X_radius_two_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', hqx', hqy', rfl⟩
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  have hpY : p' ≠ (0, 2 ^ m) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+      pHeO m θ ax (oBo m (oNum (m + 2))) p' q' i j :=
+        pHeO_succ_B_local_entry m θ ax (oNum (m + 2)) hax
+          hp' hq' hp0 hpY i j
+    _ = pHeO m θ ax (oBo m (oNum (m + 1))) p' q' i j :=
+      pHeO_orient_congr m θ ax (oBo m (oNum (m + 2)))
+        (oBo m (oNum (m + 1)))
+        (by
+          intro a b hab hE hfl
+          have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hmEdge.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hmEdge.2
+          have haB : shiftPoint (2 ^ m) 1 0 a ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inr (Or.inl (List.mem_map.mpr ⟨a, ha, rfl⟩))
+          have hbB : shiftPoint (2 ^ m) 1 0 b ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inr (Or.inl (List.mem_map.mpr ⟨b, hb, rfl⟩))
+          unfold oBo
+          exact oNum_succ_restrict m haB hbB)
+        p' q' i j
+
+/-- Across the Y/C corner box, the level-(m+1) entry using oNum (m+2)
+pulls back to the corresponding parent entry with its actual C-copy
+orientation, oCo m (oNum (m+1)); this deliberately preserves the C flip. -/
+theorem pHeO_corner_Y_box_entry_next_num
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : 2 ^ (m + 1) ≤ p.2 + 2)
+    (hqx : q.1 ≤ 2) (hqy : 2 ^ (m + 1) ≤ q.2 + 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 0 1 p' ∧
+      q = shiftPoint (2 ^ m) 0 1 q' ∧
+      pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+        pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j := by
+  rcases (corner_Y_radius_two_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', hpy', rfl⟩
+  rcases (corner_Y_radius_two_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', hqx', hqy', rfl⟩
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.2 = 0 := congrArg Prod.snd heq
+    omega
+  have hpX : p' ≠ (2 ^ m, 0) := by
+    intro heq
+    have hcoord : p'.2 = 0 := congrArg Prod.snd heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 2))
+        (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j =
+      pHeO m θ ax (oCo m (oNum (m + 2))) p' q' i j :=
+        pHeO_succ_C_local_entry m θ ax (oNum (m + 2)) hax
+          hp' hq' hp0 hpX i j
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j :=
+      pHeO_orient_congr m θ ax (oCo m (oNum (m + 2)))
+        (oCo m (oNum (m + 1)))
+        (by
+          intro a b hab hE hfl
+          have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hmEdge.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hmEdge.2
+          have haC : shiftPoint (2 ^ m) 0 1 a ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inr (Or.inr (List.mem_map.mpr ⟨a, ha, rfl⟩))
+          have hbC : shiftPoint (2 ^ m) 0 1 b ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inr (Or.inr (List.mem_map.mpr ⟨b, hb, rfl⟩))
+          unfold oCo
+          exact oNum_succ_restrict m haC hbC)
+        p' q' i j
+
+
+
 end EvgenyTheorem
 
 
