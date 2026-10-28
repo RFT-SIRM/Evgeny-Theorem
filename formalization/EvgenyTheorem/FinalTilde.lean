@@ -511,4 +511,18 @@ theorem glueRHS6_highPowerResidual_num_eq_til
   unfold glueRHS6_highPowerResidual
   rw [hsum15 ax, hsum15 ax', hsum24 ax, hsum24 ax']
 
+/-- The p=6 orientation difference is unchanged from level m to m+1.
+This follows from the exact difference recurrence and the proved invariance
+of the boundary residual under the single flipped edge. The common difference
+is not claimed to be zero. -/
+theorem defectO6_orientation_difference_succ_invariant
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    (defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) -
+      defectO6 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1))) =
+    (defectO6 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO6 m θ faceAxis (fun _ => 2) (oTil m)) := by
+  rw [defectO6_orientation_difference_succ_highPower m hm θ,
+    glueRHS6_highPowerResidual_num_eq_til m hm θ faceAxis (fun _ => 2)]
+  ring
+
 end EvgenyTheorem
