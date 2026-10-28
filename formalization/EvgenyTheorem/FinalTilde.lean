@@ -458,4 +458,58 @@ theorem sgK_pow_diag_eq_num_til_on_glue
       (sgK m θ ax (oTil (m + 1)) ^ n) w w :=
   sgK_pow_row_eq_num_til_on_glue m hm θ ax w hw n hn w
 
+
+
+/-- The p=6 boundary residual is independent of the single flipped edge.
+Every glued diagonal of powers up to five is unchanged, since a walk of length
+at most five from a glued corner cannot reach either endpoint of that edge. -/
+theorem glueRHS6_highPowerResidual_num_eq_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis) :
+    glueRHS6_highPowerResidual m
+        (sgK m θ ax (oNum (m + 1)))
+        (sgK m θ ax' (oNum (m + 1))) =
+      glueRHS6_highPowerResidual m
+        (sgK m θ ax (oTil (m + 1)))
+        (sgK m θ ax' (oTil (m + 1))) := by
+  classical
+  have hsum15 (a : ℕ → Axis) :
+      (∑ x, if (sgGlue m).g x then
+        (sgK m θ a (oNum (m + 1)) ^ 1) x x *
+          (sgK m θ a (oNum (m + 1)) ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (sgK m θ a (oTil (m + 1)) ^ 1) x x *
+          (sgK m θ a (oTil (m + 1)) ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgl : (sgGlue m).g x
+    · have hglσ := (sgGlue m).g_σ x hgl
+      simp only [hgl, ↓reduceIte]
+      rw [sgK_pow_diag_eq_num_til_on_glue m 1 hm θ a x hgl (by omega),
+        sgK_pow_diag_eq_num_til_on_glue m 5 hm θ a ((sgGlue m).σ x)
+          hglσ (by omega)]
+    · simp [hgl]
+  have hsum24 (a : ℕ → Axis) :
+      (∑ x, if (sgGlue m).g x then
+        (sgK m θ a (oNum (m + 1)) ^ 2) x x *
+          (sgK m θ a (oNum (m + 1)) ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (sgK m θ a (oTil (m + 1)) ^ 2) x x *
+          (sgK m θ a (oTil (m + 1)) ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgl : (sgGlue m).g x
+    · have hglσ := (sgGlue m).g_σ x hgl
+      simp only [hgl, ↓reduceIte]
+      rw [sgK_pow_diag_eq_num_til_on_glue m 2 hm θ a x hgl (by omega),
+        sgK_pow_diag_eq_num_til_on_glue m 4 hm θ a ((sgGlue m).σ x)
+          hglσ (by omega)]
+    · simp [hgl]
+  unfold glueRHS6_highPowerResidual
+  rw [hsum15 ax, hsum15 ax', hsum24 ax, hsum24 ax']
+  ring
+
 end EvgenyTheorem
