@@ -270,7 +270,7 @@ theorem Hc_num_til_row_eq_away
       (x.1.1 ≠ ((2 ^ m - 1, 0) : Point) ∧ x.1.1 ≠ (2 ^ m, 0))) :
     Hc m θ ax (oNum (m + 1)) c x y =
       Hc m θ ax (oTil (m + 1)) c x y := by
-  have hpow : 2 ^ (m + 1) = 2 ^ m * 2 := by rw [pow_succ]; rfl
+  have hpow : 2 ^ (m + 1) = 2 ^ m * 2 := by rw [pow_succ]
   have hs : 2 ≤ 2 ^ m :=
     calc 2 = 2 ^ 1 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) (by omega)
@@ -292,7 +292,7 @@ theorem Hc_num_til_row_eq_away
         have hx := congrArg Prod.fst hh
         simp only [Prod.fst] at hx
         omega
-      exact oNum_iff_oTil_of_left_away (m + 1) hpL hpR q
+      exact oNum_iff_oTil_of_left_away (m + 1) (p := x.1.1) (q := q) hpL hpR
   | B =>
       rcases hrow with hfalse | haway
       · exact (hfalse rfl).elim
@@ -334,12 +334,14 @@ theorem Hc_num_til_row_eq_away
           (shiftPoint (2 ^ m) 0 1 q)
       apply oNum_iff_oTil_of_left_away (m + 1)
       · intro hh
-        have hy := congrArg Prod.snd hh
-        simp [shiftPoint] at hy
+        have hy : x.1.1.2 + 2 ^ m = 0 := by
+          simpa [shiftPoint] using congrArg Prod.snd hh
+        have hpos : 0 < 2 ^ m := by positivity
         omega
       · intro hh
-        have hy := congrArg Prod.snd hh
-        simp [shiftPoint] at hy
+        have hy : x.1.1.2 + 2 ^ m = 0 := by
+          simpa [shiftPoint] using congrArg Prod.snd hh
+        have hpos : 0 < 2 ^ m := by positivity
         omega
 
 theorem sgK_num_til_row_eq_away_flip
@@ -353,7 +355,6 @@ theorem sgK_num_til_row_eq_away_flip
         Hc m θ ax (oNum (m + 1)) w.1 w.2 z.2 else 0) =
       (if w.1 = z.1 then
         Hc m θ ax (oTil (m + 1)) w.1 w.2 z.2 else 0)
-    rw [if_pos hcopy]
     have haway : w.1 ≠ GCopy.B ∨
         (w.2.1.1 ≠ ((2 ^ m - 1, 0) : Point) ∧
           w.2.1.1 ≠ (2 ^ m, 0)) := by
@@ -366,7 +367,8 @@ theorem sgK_num_til_row_eq_away_flip
           exact hw ⟨hb, h⟩
         exact ⟨fun h => hnot (Or.inl h), fun h => hnot (Or.inr h)⟩
       · exact Or.inl hb
-    exact Hc_num_til_row_eq_away m hm θ ax w.1 w.2 z.2 haway
+    simpa only [if_pos hcopy] using
+      Hc_num_til_row_eq_away m hm θ ax w.1 w.2 z.2 haway
   · simp [sgK, blockK, hcopy]
 
 theorem glued_B_point
@@ -375,10 +377,15 @@ theorem glued_B_point
   change ∃ w', glW m w w' at hw
   obtain ⟨w', hw⟩ := hw
   have hgl : gl m w.1 w.2.1.1 w'.1 w'.2.1.1 := hw.1
-  rw [hb] at hgl
-  rcases hgl with ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ |
-    ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ |
-    ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ <;> simp_all [GCopy]
+  have hgl' :
+      (w.2.1.1 = (0, 0) ∧ w'.1 = GCopy.A ∧
+        w'.2.1.1 = (2 ^ m, 0)) ∨
+      (w.2.1.1 = (0, 2 ^ m) ∧ w'.1 = GCopy.C ∧
+        w'.2.1.1 = (2 ^ m, 0)) := by
+    simpa [gl, hb] using hgl
+  rcases hgl' with ⟨hp, -, -⟩ | ⟨hp, -, -⟩
+  · exact Or.inl hp
+  · exact Or.inr hp
 
 theorem sgK_pow_zero_from_glue_to_flip
     (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
@@ -441,7 +448,8 @@ theorem sgK_pow_row_eq_num_til_on_glue
           m n hm θ ax (oTil (m + 1)) w y hw hflip hn4
         rw [hnum, htil]
         simp
-      · rw [ih hn4 y, sgK_num_til_row_eq_away_flip m hm θ ax y z hflip]
+      · have hn5 : n ≤ 5 := by omega
+        rw [ih hn5 y, sgK_num_til_row_eq_away_flip m hm θ ax y z hflip]
 
 theorem sgK_pow_diag_eq_num_til_on_glue
     (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
