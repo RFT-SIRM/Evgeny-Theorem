@@ -206,6 +206,61 @@ theorem transfer_C (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
       · exact h2 (hcp.mpr hh)
     · exact hcp' h
 
+/-- Copy-C orientation transfer for the sixth-moment defect.
+The boundary edge is handled by the same exceptional-corner clause as
+the established fourth-moment transfer. -/
+theorem transfer_C6 (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (hanti : OAnti (m + 1) (oNum (m + 1))) :
+    defectO6 m θ ax ax' (oCo m (oNum (m + 1))) =
+      defectO6 m θ ax ax' (oTil m) := by
+  refine orient_transfer6 m θ ax ax' _ _ (oanti_C m _ hanti) (oTil_anti m) ?_
+  intro f hf
+  obtain ⟨ha, hb⟩ := face_endpoints_mem m f hf
+  obtain ⟨hs1, hs2⟩ := flux_edge_shape m f hf
+  have hs : 1 ≤ 2 ^ m := Nat.one_le_two_pow
+  have hC := flipped_C m hm f hf
+  unfold flippedP at hC
+  change vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.2.1) <
+      vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.1) ↔
+    (vIdx m f.2.1 < vIdx m f.1 ∨ f.2.1 = (2 ^ m, 0)) at hC
+  have hcp : cp1 m f.1 f.2.1 ↔ f.2.1 = (2 ^ m, 0) := by
+    constructor
+    · exact fun h => h.2
+    · intro h
+      refine ⟨?_, h⟩
+      have h1 : f.2.1.1 = 2 ^ m := by rw [h]
+      have h2 : f.2.1.2 = 0 := by rw [h]
+      ext
+      · simp only; omega
+      · simp only; omega
+  have hcp' : ¬ cp1 m f.2.1 f.1 := by
+    rintro ⟨h1, h2⟩
+    have e1 : f.2.1.1 = 2 ^ m - 1 := by rw [h1]
+    have e2 : f.1.1 = 2 ^ m := by rw [h2]
+    omega
+  show vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.1) ≤
+      vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.2.1) ↔
+    oTil m f.1 f.2.1
+  have hle :
+      vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.1) ≤
+          vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.2.1) ↔
+        ¬ (vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.2.1) <
+          vIdx (m + 1) (shiftPoint (2 ^ m) 0 1 f.1)) :=
+    not_lt.symm
+  rw [hle, hC]
+  unfold oTil oNum
+  constructor
+  · intro h
+    left
+    exact ⟨not_lt.mp (not_or.mp h).1,
+      fun hh => (not_or.mp h).2 (hcp.mp hh), hcp'⟩
+  · intro h hh
+    rcases h with ⟨h1, h2, h3⟩ | h
+    · rcases hh with hh | hh
+      · exact absurd hh (not_lt.mpr h1)
+      · exact h2 (hcp.mpr hh)
+    · exact hcp' h
+
 theorem faceAxis_pow1 (m : ℕ) (hm : 1 ≤ m) : ∀ k, faceAxis (3 ^ m + k) = faceAxis k := by
   intro k
   obtain ⟨n, rfl⟩ : ∃ n, m = n + 1 := ⟨m - 1, by omega⟩
