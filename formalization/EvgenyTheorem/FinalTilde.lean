@@ -556,8 +556,6 @@ theorem defectO6_succ_num_level3
   rw [← defectO6_orientation_difference_eq_level3 m hm θ]
   ring
 
-/-- A nonzero point-operator entry can only preserve its geometric coordinate
-or traverse one graph edge, so each coordinate changes by at most one. -/
 /-- Full entrywise transport for copy A, including diagonal entries.
 Off-diagonal entries follow from the edge-copy identity; the diagonal case
 uses the local degree recurrence. -/
@@ -606,6 +604,8 @@ theorem pHeO_succ_C_local_entry
   · exact pHeO_succ_C m θ ax o hax hp hq hpq i j
 
 
+/-- A nonzero point-operator entry can only preserve its geometric coordinate
+or traverse one graph edge, so each coordinate changes by at most one. -/
 theorem pHeO_entry_coord_dist
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
