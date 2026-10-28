@@ -1,4 +1,5 @@
 import EvgenyTheorem.FinalArith
+import EvgenyTheorem.CornerLocality
 
 namespace EvgenyTheorem
 
@@ -643,7 +644,7 @@ theorem oBo_num_iff_oNum (m : ℕ) {p q : Point}
           vIdx m p ≤ vIdx m (0, 0)
       have hlocal : ¬ vIdx m p ≤ vIdx m (0, 0) := by
         rw [vIdx_origin]
-        have hpos := vIdx_pos_of_ne hp0
+        have hpos := vIdx_pos_of_ne (m := m) hp0
         omega
       have hparent :
           ¬ vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 p) ≤
