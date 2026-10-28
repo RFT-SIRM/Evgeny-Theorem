@@ -421,7 +421,7 @@ theorem sgK_pow_row_eq_num_til_on_glue
     (w : WSG m) (hw : (sgGlue m).g w) :
     ∀ n, n ≤ 5 → ∀ z,
       (sgK m θ ax (oNum (m + 1)) ^ n) w z =
-        (sgK m θ ax (oTil (m + 1) ^ n)) w z := by
+        (sgK m θ ax (oTil (m + 1)) ^ n) w z := by
   classical
   intro n
   induction n with
@@ -447,7 +447,7 @@ theorem sgK_pow_diag_eq_num_til_on_glue
     (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (w : WSG m) (hw : (sgGlue m).g w) (hn : n ≤ 5) :
     (sgK m θ ax (oNum (m + 1)) ^ n) w w =
-      (sgK m θ ax (oTil (m + 1) ^ n)) w w :=
+      (sgK m θ ax (oTil (m + 1)) ^ n) w w :=
   sgK_pow_row_eq_num_til_on_glue m hm θ ax w hw n hn w
 
 end EvgenyTheorem
