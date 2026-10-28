@@ -947,6 +947,50 @@ theorem pHeO_corner_Y_box_entry
   exact pHeO_succ_C_num_entry_til m hm θ ax hax (oNum_anti (m + 1))
     hp' hq' hp0 hpX i j
 
+
+/-- A nonzero two-step entry from the outer corner O can only reach
+the coordinate box [0,2]². -/
+theorem pOpO_pow_two_corner_O_support
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    {x y : Pt m × C2}
+    (hx : x.1.1 = (0, 0))
+    (hy : (pOpO m θ ax o ^ 2) x y ≠ 0) :
+    y.1.1.1 ≤ 2 ∧ y.1.1.2 ≤ 2 := by
+  have hdist := pOpO_pow_entry_coord_dist m θ ax o 2 x y hy
+  have hx1 : x.1.1.1 = 0 := congrArg Prod.fst hx
+  have hx2 : x.1.1.2 = 0 := congrArg Prod.snd hx
+  omega
+
+/-- A nonzero two-step entry from the outer corner X can only reach
+the coordinate box x ≥ 2^m - 2 and y ≤ 2. -/
+theorem pOpO_pow_two_corner_X_support
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    {x y : Pt m × C2}
+    (hx : x.1.1 = (2 ^ m, 0))
+    (hy : (pOpO m θ ax o ^ 2) x y ≠ 0) :
+    2 ^ m ≤ y.1.1.1 + 2 ∧ y.1.1.2 ≤ 2 := by
+  have hdist := pOpO_pow_entry_coord_dist m θ ax o 2 x y hy
+  have hx1 : x.1.1.1 = 2 ^ m := congrArg Prod.fst hx
+  have hx2 : x.1.1.2 = 0 := congrArg Prod.snd hx
+  omega
+
+/-- A nonzero two-step entry from the outer corner Y can only reach
+the coordinate box x ≤ 2 and y ≥ 2^m - 2. -/
+theorem pOpO_pow_two_corner_Y_support
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    {x y : Pt m × C2}
+    (hx : x.1.1 = (0, 2 ^ m))
+    (hy : (pOpO m θ ax o ^ 2) x y ≠ 0) :
+    y.1.1.1 ≤ 2 ∧ 2 ^ m ≤ y.1.1.2 + 2 := by
+  have hdist := pOpO_pow_entry_coord_dist m θ ax o 2 x y hy
+  have hx1 : x.1.1.1 = 0 := congrArg Prod.fst hx
+  have hx2 : x.1.1.2 = 2 ^ m := congrArg Prod.snd hx
+  omega
+
+
 end EvgenyTheorem
 
 

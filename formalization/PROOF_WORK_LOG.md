@@ -337,3 +337,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added pHeO_corner_Y_box_entry: the Y-box entries are transported to copy C and parent oTil, under explicit axis periodicity; the exceptional orientation flip is retained.
 - These wrappers compose the previously proved geometric box lemmas with the entrywise copy lemmas. They are a local interface only; they do not yet compare any matrix-power diagonal or the high-power residual.
 - Next: prove that the sums over intermediate states in the K^4/K^5 diagonal expansions can be restricted to these boxes and reindexed via the coordinate-box equivalences.
+
+## 2026-10-28 — Two-step support cutoffs at the three outer corners
+
+- Rechecked commit 47f93b1b52e9cafd1f92c2d3756b979eb739ab90: both Lean build jobs and all Python 3.11/3.12 push/PR tests passed.
+- Added pOpO_pow_two_corner_O_support, pOpO_pow_two_corner_X_support, and pOpO_pow_two_corner_Y_support.
+- Each follows from pOpO_pow_entry_coord_dist by specializing to n=2. It proves that a nonzero (K^2) corner-to-intermediate-state entry lies in its corresponding radius-two coordinate box.
+- These are support facts needed for the first factor in the fourth-/fifth-power diagonal expansions. They do not yet reindex the sums or establish high-power diagonal equality.
+- Next: combine the support cutoffs with the corner-box entry equalities and compare the two-step entries, before attempting the fourth-/fifth-power sums.

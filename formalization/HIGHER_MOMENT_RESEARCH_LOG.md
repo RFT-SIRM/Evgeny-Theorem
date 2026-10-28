@@ -2888,3 +2888,12 @@ After all six CI jobs passed on eaefa7ebe5d3c1f86409be01d34f39514d88c484, this c
 Each result is a pointwise equality of a single spin-matrix entry for endpoints inside the corresponding radius-two coordinate box. These are the local hypotheses intended for the intermediate-state sums in matrix_pow_four_diag_as_sum_sq and matrix_pow_five_diag_as_sum_two_three.
 
 **Still open:** prove the support cutoff and reindex the sums of products of entries. No power-four/five diagonal equality, and no R_{m+1}=R_m identity, is claimed.
+
+## 4aa. Two-step support cutoff at outer corners
+
+Commit 47f93b1b52e9cafd1f92c2d3756b979eb739ab90 passed all six configured CI checks. This change specializes pOpO_pow_entry_coord_dist to n=2, proving:
+- O-root: any nonzero (K^2)_{O,y} has y_1,y_2 ≤ 2.
+- X-root: any nonzero (K^2)_{X,y} has y_1+2 ≥ 2^m and y_2 ≤ 2.
+- Y-root: any nonzero (K^2)_{Y,y} has y_1 ≤ 2 and y_2+2 ≥ 2^m.
+
+These coordinate cutoffs identify the supported intermediate-state boxes in (K^4)_{xx}=Σ_y(K^2)_{xy}(K^2)_{yx} and (K^5)_{xx}=Σ_y(K^2)_{xy}(K^3)_{yx}. They do not prove reindexing or high-power equality by themselves.
