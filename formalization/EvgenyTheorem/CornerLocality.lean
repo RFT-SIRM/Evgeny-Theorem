@@ -414,4 +414,69 @@ theorem corner_Y_radius_two_transport
       omega
     exact ⟨p, hp, rfl, hp0, hpX⟩
 
+
+/--
+Exact reindexing interface for the X-corner coordinate box: the level-(m+1)
+box is precisely the image of the corresponding level-m box under copy B.
+This is a statement about coordinate boxes, not graph balls or walk sums.
+-/
+theorem corner_X_radius_two_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1)) :
+    (2 ^ (m + 1) ≤ z.1 + 2 ∧ z.2 ≤ 2) ↔
+      ∃ p, p ∈ vertexOrder m ∧
+        2 ^ m ≤ p.1 + 2 ∧ p.2 ≤ 2 ∧
+          z = shiftPoint (2 ^ m) 1 0 p := by
+  constructor
+  · rintro ⟨hx, hy⟩
+    obtain ⟨p, hp, hzEq, _, _⟩ :=
+      corner_X_radius_two_transport m hm hz hx hy
+    refine ⟨p, hp, ?_, ?_, hzEq⟩
+    · rw [hzEq] at hx
+      simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+      rw [pow_succ] at hx
+      omega
+    · rw [hzEq] at hy
+      simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hy
+      exact hy
+  · rintro ⟨p, hp, hpx, hpy, rfl⟩
+    constructor
+    · simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+      rw [pow_succ]
+      omega
+    · simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+      exact hpy
+
+/--
+Exact reindexing interface for the Y-corner coordinate box: the level-(m+1)
+box is precisely the image of the corresponding level-m box under copy C.
+This is a statement about coordinate boxes, not graph balls or walk sums.
+-/
+theorem corner_Y_radius_two_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1)) :
+    (z.1 ≤ 2 ∧ 2 ^ (m + 1) ≤ z.2 + 2) ↔
+      ∃ p, p ∈ vertexOrder m ∧
+        p.1 ≤ 2 ∧ 2 ^ m ≤ p.2 + 2 ∧
+          z = shiftPoint (2 ^ m) 0 1 p := by
+  constructor
+  · rintro ⟨hx, hy⟩
+    obtain ⟨p, hp, hzEq, _, _⟩ :=
+      corner_Y_radius_two_transport m hm hz hx hy
+    refine ⟨p, hp, ?_, ?_, hzEq⟩
+    · rw [hzEq] at hx
+      simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hx
+      exact hx
+    · rw [hzEq] at hy
+      simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+      rw [pow_succ] at hy
+      omega
+  · rintro ⟨p, hp, hpx, hpy, rfl⟩
+    constructor
+    · simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+      exact hpx
+    · simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+      rw [pow_succ]
+      omega
+
 end EvgenyTheorem

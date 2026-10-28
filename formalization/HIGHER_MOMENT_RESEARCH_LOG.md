@@ -2853,3 +2853,15 @@ At commit `fd8bc0b6d71e5cb0213f02dd190989d435b3f44a`, all six Lean/Python checks
 Combined with `corner_O_radius_two_transport`, this covers the three outer-corner radius-two coordinate boxes at the level of copy membership and local degree exceptions.
 
 **Scope:** these lemmas do not yet give an edge-labelled graph isomorphism of the entire radius-two balls, do not compare walk weights, and do not prove (R_{m+1}=R_m). The remaining proof must use the copy entry transport and preserve edge axes, orientations, and full graph degrees while reindexing the closed-walk sums.
+
+## 4x. Exact coordinate-box equivalences for X/B and Y/C
+
+On `d7ea5df9cf24f5a244e0ebbd04b9407112403f34`, the prior six CI checks passed. This change adds `corner_X_radius_two_box_iff` and `corner_Y_radius_two_box_iff`, expressing both directions of the local reindexing:
+[
+x+2\ge 2^{m+1}, y\le2
+\quad\Longleftrightarrow\quad
+(x,y)\text{ is a B-copy image of }(u,v), u+2\ge2^m, v\le2,
+]
+and the coordinate-swapped C-copy statement for Y.
+
+These equivalences remove a one-way membership gap before using the copy shift to reindex the intermediate states in the high-power path sums. They do not by themselves prove edge-axis preservation, equality of all walk weights, equality of high-power diagonal blocks, or (R_{m+1}=R_m). The O/A box is handled by the existing identity-map localization theorem.

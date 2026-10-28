@@ -313,3 +313,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added `corner_Y_radius_two_transport`: points in (V_{m+1}) satisfying (x\le2) and (2^{m+1}\le y+2) are in copy C, and the pulled-back point avoids ((0,0)) and ((2^m,0)).
 - Together with `corner_O_radius_two_transport`, these are geometric localization statements only. They do not establish equality of fourth/fifth-power diagonal sums or (R_{m+1}=R_m).
 - Next after CI: use the three localizations with the copy entry lemmas to formulate the induced reindexing on local closed walks; keep full degrees and orientation labels explicit, and stop if the copy map fails to preserve any needed datum.
+
+## 2026-10-28 — Exact coordinate-box reindexing for X/B and Y/C
+
+- Rechecked that PR #9 and `moment-6-8-10` were at `d7ea5df9cf24f5a244e0ebbd04b9407112403f34`; both Lean builds and Python 3.11/3.12 jobs in push and PR workflows passed.
+- Added `corner_X_radius_two_box_iff` and `corner_Y_radius_two_box_iff`. Each proves that the corresponding level-(m+1) coordinate box is exactly the image of its parent-level box under the relevant copy shift, with the inequalities transported both ways.
+- These iff lemmas are the set-reindexing interface needed before reindexing intermediate states in the power-four/five path expansions. They concern coordinate boxes derived from support bounds, not an assertion that these boxes equal graph-metric balls.
+- **Still open:** show that the copy-entry transport preserves all entries needed along every contributing closed walk and reindex the weighted fourth/fifth-power sums. No (R_{m+1}=R_m) claim is made.
