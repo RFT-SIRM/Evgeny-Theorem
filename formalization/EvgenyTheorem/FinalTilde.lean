@@ -224,4 +224,230 @@ theorem defectO6_orientation_difference_succ_highPower
     glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
       (oTil (m + 1)) (oTil_anti (m + 1))]
 
+
+
+/-- The one edge reversed by oTil, in the local coordinates of copy B. -/
+def p6FlipEndpoint (m : ℕ) (w : WSG m) : Prop :=
+  w.1 = GCopy.B ∧
+    (w.2.1.1 = ((2 ^ m - 1, 0) : Point) ∨ w.2.1.1 = (2 ^ m, 0))
+
+theorem oNum_iff_oTil_of_left_away
+    (n : ℕ) {p q : Point}
+    (hpL : p ≠ ((2 ^ n - 1, 0) : Point))
+    (hpR : p ≠ (2 ^ n, 0)) :
+    oNum n p q ↔ oTil n p q := by
+  have h1 : ¬ cp1 n p q := by
+    rintro ⟨hp, -⟩
+    exact hpL hp
+  have h2 : ¬ cp1 n q p := by
+    rintro ⟨-, hp⟩
+    exact hpR hp
+  exact (oTil_of_no_corner h1 h2).symm
+
+theorem pHeO_row_congr
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (p q : Point) (i j : C2)
+    (hrow : ∀ r, o p r ↔ o' p r) :
+    pHeO m θ ax o p q i j = pHeO m θ ax o' p q i j := by
+  classical
+  by_cases hpq : p = q
+  · subst q
+    simp [pHeO]
+  · by_cases hE : EdgeB m p.1 p.2 q.1 q.2 = true
+    · have hor := hrow q
+      by_cases ho : o p q
+      · have ho' : o' p q := hor.mp ho
+        simp [pHeO, hpq, hE, ho, ho']
+      · have ho' : ¬ o' p q := fun hh => ho (hor.mpr hh)
+        simp [pHeO, hpq, hE, ho, ho']
+    · simp [pHeO, hpq, hE]
+
+theorem Hc_num_til_row_eq_away
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (c : GCopy) (x y : Pt m × C2)
+    (hrow : c ≠ GCopy.B ∨
+      (x.1.1 ≠ ((2 ^ m - 1, 0) : Point) ∧ x.1.1 ≠ (2 ^ m, 0))) :
+    Hc m θ ax (oNum (m + 1)) c x y =
+      Hc m θ ax (oTil (m + 1)) c x y := by
+  have hpow : 2 ^ (m + 1) = 2 ^ m * 2 := by rw [pow_succ]; rfl
+  have hs : 2 ≤ 2 ^ m :=
+    calc 2 = 2 ^ 1 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) (by omega)
+  cases c with
+  | A =>
+      change pHeO m θ ax (oNum (m + 1)) x.1.1 y.1.1 x.2 y.2 =
+        pHeO m θ ax (oTil (m + 1)) x.1.1 y.1.1 x.2 y.2
+      apply pHeO_row_congr
+      intro q
+      have hpMem : x.1.1 ∈ vertexOrder m := List.mem_toFinset.mp x.1.2
+      have hsum := vertexOrder_sum_le m x.1.1 hpMem
+      have hpL : x.1.1 ≠ ((2 ^ (m + 1) - 1, 0) : Point) := by
+        intro hh
+        have hx := congrArg Prod.fst hh
+        simp only [Prod.fst] at hx
+        omega
+      have hpR : x.1.1 ≠ (2 ^ (m + 1), 0) := by
+        intro hh
+        have hx := congrArg Prod.fst hh
+        simp only [Prod.fst] at hx
+        omega
+      exact oNum_iff_oTil_of_left_away (m + 1) hpL hpR q
+  | B =>
+      rcases hrow with hfalse | haway
+      · exact (hfalse rfl).elim
+      · change pHeO m θ ax (oBo m (oNum (m + 1))) x.1.1 y.1.1 x.2 y.2 =
+          pHeO m θ ax (oBo m (oTil (m + 1))) x.1.1 y.1.1 x.2 y.2
+        apply pHeO_row_congr
+        intro q
+        change oNum (m + 1) (shiftPoint (2 ^ m) 1 0 x.1.1)
+            (shiftPoint (2 ^ m) 1 0 q) ↔
+          oTil (m + 1) (shiftPoint (2 ^ m) 1 0 x.1.1)
+            (shiftPoint (2 ^ m) 1 0 q)
+        apply oNum_iff_oTil_of_left_away (m + 1)
+        · intro hh
+          apply haway.1
+          apply Prod.ext
+          · have hx := congrArg Prod.fst hh
+            simp [shiftPoint] at hx
+            omega
+          · have hy := congrArg Prod.snd hh
+            simp [shiftPoint] at hy
+            omega
+        · intro hh
+          apply haway.2
+          apply Prod.ext
+          · have hx := congrArg Prod.fst hh
+            simp [shiftPoint] at hx
+            omega
+          · have hy := congrArg Prod.snd hh
+            simp [shiftPoint] at hy
+            omega
+  | C =>
+      change pHeO m θ ax (oCo m (oNum (m + 1))) x.1.1 y.1.1 x.2 y.2 =
+        pHeO m θ ax (oCo m (oTil (m + 1))) x.1.1 y.1.1 x.2 y.2
+      apply pHeO_row_congr
+      intro q
+      change oNum (m + 1) (shiftPoint (2 ^ m) 0 1 x.1.1)
+          (shiftPoint (2 ^ m) 0 1 q) ↔
+        oTil (m + 1) (shiftPoint (2 ^ m) 0 1 x.1.1)
+          (shiftPoint (2 ^ m) 0 1 q)
+      apply oNum_iff_oTil_of_left_away (m + 1)
+      · intro hh
+        have hy := congrArg Prod.snd hh
+        simp [shiftPoint] at hy
+        omega
+      · intro hh
+        have hy := congrArg Prod.snd hh
+        simp [shiftPoint] at hy
+        omega
+
+theorem sgK_num_til_row_eq_away_flip
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (w z : WSG m) (hw : ¬ p6FlipEndpoint m w) :
+    sgK m θ ax (oNum (m + 1)) w z =
+      sgK m θ ax (oTil (m + 1)) w z := by
+  classical
+  by_cases hcopy : w.1 = z.1
+  · change (if w.1 = z.1 then
+        Hc m θ ax (oNum (m + 1)) w.1 w.2 z.2 else 0) =
+      (if w.1 = z.1 then
+        Hc m θ ax (oTil (m + 1)) w.1 w.2 z.2 else 0)
+    rw [if_pos hcopy]
+    have haway : w.1 ≠ GCopy.B ∨
+        (w.2.1.1 ≠ ((2 ^ m - 1, 0) : Point) ∧
+          w.2.1.1 ≠ (2 ^ m, 0)) := by
+      by_cases hb : w.1 = GCopy.B
+      · right
+        have hnot : ¬
+            (w.2.1.1 = ((2 ^ m - 1, 0) : Point) ∨
+              w.2.1.1 = (2 ^ m, 0)) := by
+          intro h
+          exact hw ⟨hb, h⟩
+        exact ⟨fun h => hnot (Or.inl h), fun h => hnot (Or.inr h)⟩
+      · exact Or.inl hb
+    exact Hc_num_til_row_eq_away m hm θ ax w.1 w.2 z.2 haway
+  · simp [sgK, blockK, hcopy]
+
+theorem glued_B_point
+    (m : ℕ) {w : WSG m} (hw : (sgGlue m).g w) (hb : w.1 = GCopy.B) :
+    w.2.1.1 = (0, 0) ∨ w.2.1.1 = (0, 2 ^ m) := by
+  change ∃ w', glW m w w' at hw
+  obtain ⟨w', hw⟩ := hw
+  have hgl : gl m w.1 w.2.1.1 w'.1 w'.2.1.1 := hw.1
+  rw [hb] at hgl
+  rcases hgl with ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ |
+    ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ |
+    ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ <;> simp_all [GCopy]
+
+theorem sgK_pow_zero_from_glue_to_flip
+    (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w z : WSG m) (hw : (sgGlue m).g w)
+    (hz : p6FlipEndpoint m z) (hn : n ≤ 4) :
+    (sgK m θ ax o ^ n) w z = 0 := by
+  classical
+  by_cases hb : w.1 = GCopy.B
+  · have hpB : w.2.1.1 = (0, 0) ∨ w.2.1.1 = (0, 2 ^ m) :=
+      glued_B_point m hw hb
+    have hs : 7 ≤ 2 ^ m :=
+      calc 7 ≤ 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) (by omega)
+    rcases hz with ⟨hzB, hzpt⟩
+    have hxw : w.2.1.1.1 = 0 := by
+      rcases hpB with hp | hp <;> simp [hp]
+    rcases hzpt with hzpt | hzpt
+    · apply sgK_pow_entry_zero_of_coord_gap m n θ ax o w z
+      right
+      left
+      rw [hxw, congrArg Prod.fst hzpt]
+      omega
+    · apply sgK_pow_entry_zero_of_coord_gap m n θ ax o w z
+      right
+      left
+      rw [hxw, congrArg Prod.fst hzpt]
+      omega
+  · have hcopy : w.1 ≠ z.1 := by
+      intro h
+      apply hb
+      rw [hz.1] at h
+      exact h
+    change (blockK (Hc m θ ax o) ^ n) w z = 0
+    rw [blockK_pow_local]
+    simp [blockK, hcopy]
+
+theorem sgK_pow_row_eq_num_til_on_glue
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (w : WSG m) (hw : (sgGlue m).g w) :
+    ∀ n, n ≤ 5 → ∀ z,
+      (sgK m θ ax (oNum (m + 1)) ^ n) w z =
+        (sgK m θ ax (oTil (m + 1) ^ n)) w z := by
+  classical
+  intro n
+  induction n with
+  | zero =>
+      intro hn z
+      simp
+  | succ n ih =>
+      intro hn z
+      have hn4 : n ≤ 4 := by omega
+      rw [pow_succ, pow_succ, Matrix.mul_apply, Matrix.mul_apply]
+      apply Finset.sum_congr rfl
+      intro y hy
+      by_cases hflip : p6FlipEndpoint m y
+      · have hnum := sgK_pow_zero_from_glue_to_flip
+          m n hm θ ax (oNum (m + 1)) w y hw hflip hn4
+        have htil := sgK_pow_zero_from_glue_to_flip
+          m n hm θ ax (oTil (m + 1)) w y hw hflip hn4
+        rw [hnum, htil]
+        simp
+      · rw [ih hn4 y, sgK_num_til_row_eq_away_flip m hm θ ax y z hflip]
+
+theorem sgK_pow_diag_eq_num_til_on_glue
+    (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (w : WSG m) (hw : (sgGlue m).g w) (hn : n ≤ 5) :
+    (sgK m θ ax (oNum (m + 1)) ^ n) w w =
+      (sgK m θ ax (oTil (m + 1) ^ n)) w w :=
+  sgK_pow_row_eq_num_til_on_glue m hm θ ax w hw n hn w
+
 end EvgenyTheorem
