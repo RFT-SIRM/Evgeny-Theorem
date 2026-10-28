@@ -449,3 +449,76 @@ def test_exact_level3_p6_orientation_gap_polynomial():
         assert trace == expected_trace
         if not flip:
             assert trace == raw_trace_at_pi(3, 6, commuting)
+
+
+def _flip_corner_edge_orientation(H: np.ndarray, level: int) -> np.ndarray:
+    """Reverse one flux-edge block, matching the exceptional edge in Lean oTil."""
+    from graph.sg_graph import sg_tree_graph_with_faces
+
+    vertices, edges, faces = sg_tree_graph_with_faces(level)
+    left_point = (round((2**level - 1) / (2**level), 10), 0.0)
+    right_point = (1.0, 0.0)
+    left = vertices.index(left_point)
+    right = vertices.index(right_point)
+    edge = tuple(sorted((left, right)))
+
+    # The Lean exceptional edge is directed left-to-right by both coordinate
+    # order and vertex creation order; check rather than silently assume this.
+    assert left < right, (level, left_point, right_point, left, right)
+    assert edge in {tuple(sorted(e)) for e in edges}
+    assert edge in {
+        tuple(sorted((face[0], face[1]))) for face in faces
+    }
+
+    flipped = H.copy()
+    i = slice(2 * left, 2 * left + 2)
+    j = slice(2 * right, 2 * right + 2)
+    forward = flipped[i, j].copy()
+    reverse = flipped[j, i].copy()
+    flipped[i, j] = reverse
+    flipped[j, i] = forward
+    return flipped
+
+
+def _raw_trace_diff_with_corner_flip(
+    level: int, theta: float, p: int
+) -> float:
+    """Production-operator trace difference after reversing the corner flux edge."""
+    HC, _ = build_su2_bundle(level, theta, commuting=False)
+    HCp, _ = build_su2_bundle(level, theta, commuting=True)
+    HC = _flip_corner_edge_orientation(HC, level)
+    HCp = _flip_corner_edge_orientation(HCp, level)
+    return float(
+        np.trace(np.linalg.matrix_power(HC, p)).real
+        - np.trace(np.linalg.matrix_power(HCp, p)).real
+    )
+
+
+@pytest.mark.parametrize(
+    "theta",
+    [-2.0, -0.7, 0.0, 0.3, 0.7, 1.0, np.pi / 3, np.pi / 2, 2.0, np.pi],
+)
+def test_level3_p6_orientation_gap_matches_dense_operator(theta):
+    """Cross-check the symbolic F(3) polynomial against direct matrix powers."""
+    from computational.p6_level3_orientation_certificate import (
+        evaluate_polynomial,
+        orientation_gap_polynomial,
+    )
+
+    gap_poly = orientation_gap_polynomial(3)
+    c = np.cos(theta / 2)
+    s = np.sin(theta / 2)
+    predicted = evaluate_polynomial(gap_poly, c=c, s=s)
+    simplified = -6336 * s**2 - 864 * s**3
+
+    # F(3) = D_num(3) - D_til(3): both defects subtract the commuting control.
+    actual = (
+        raw_trace_diff(3, theta, 6)
+        - _raw_trace_diff_with_corner_flip(3, theta, 6)
+    )
+    assert np.isclose(predicted, simplified, rtol=1e-12, atol=1e-9), (
+        theta, predicted, simplified
+    )
+    assert np.isclose(actual, predicted, rtol=3e-9, atol=3e-4), (
+        theta, actual, predicted
+    )

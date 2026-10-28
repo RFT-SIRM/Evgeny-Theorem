@@ -2677,3 +2677,33 @@ This is only the exact difference recurrence. It does not establish `R6_num(m) =
 ### Next p=6 obligation
 
 Analyze `R6_num(m) - R6_til(m)` via the actual weighted boundary sums. Keep the powers `(1,5)` and `(2,4)` terms explicit until their equality/cancellation follows from proved hypotheses. Do not introduce unproved diagonal-equality assumptions `h4` or `h5`, and do not switch to p=8/p=10 before the p=6 obstruction is resolved.
+
+
+## 4n. Exact finite-level p=6 orientation gap at level 3
+
+**Verified source SHA:** 50129d9b78257b9f3b8cad0bdeeb4c7dcdae10c4  
+**CI for that exact SHA:** all four configured workflows succeeded: PR Lean 40673620120, push Lean 40673612855, PR Tests 40673620977, push Tests 40673612869. The Python workflows passed fast and slow tests on both Python 3.11 and 3.12; Lean completed lake build EvgenyTheorem.
+
+Let
+\[
+F(3,\theta)=D_6(3,\theta,o_{\rm num})-D_6(3,\theta,o_{\rm til}),
+\]
+where each D6 is the non-commuting trace Tr(H_C^6) minus the commuting-control trace Tr(H_C'^6), matching defectO6.
+
+A new exact symbolic finite-level certificate, computational/p6_level3_orientation_certificate.py, represents each 2x2 block as a polynomial in
+c = cos(theta/2) and s = sin(theta/2), with Gaussian-integer coefficients. It performs sparse exact matrix multiplication for level 3 and reverses only the exceptional flux-edge block corresponding to cp1 in oTil. The raw result is
+\[
+F(3,\theta)=-6192s^2-144c^2s^2-144s^4-864s^3.
+\]
+Using c^2+s^2=1, this simplifies to
+\[
+\boxed{F(3,\theta)=-6336s^2-864s^3.}
+\]
+In particular, F(3,pi) = -7200, so the finite-level orientation gap is not identically zero.
+
+Validation is deliberately separated from the Lean theorem claim:
+- at theta = pi, the unflipped traces agree with the pre-existing exact sparse Gaussian-integer certificate higher_moment_pi_certificate.py;
+- the test suite records the exact level-3 traces for both orientations and both axis assignments;
+- an independent dense-matrix regression test compares the symbolic formula with the production build_su2_bundle operator over positive and negative angles, including theta = pi, and explicitly checks that the exceptional edge is in the graph/flux-edge set and is ordered consistently with the Python vertex indices.
+
+**Formal scope:** this is an exact computational certificate for the finite level-3 expression, not yet a Lean proof of the identity for all theta. The existing Lean theorem defectO6_orientation_difference_eq_level3 proves F(m,theta)=F(3,theta) for m>=3, but the polynomial evaluation of F(3,theta) has not yet been connected to that Lean development. Thus the orientation gap must not be assumed to vanish. The separate level-independence of the sixth-moment boundary residual in the numbering-oriented recurrence remains open.

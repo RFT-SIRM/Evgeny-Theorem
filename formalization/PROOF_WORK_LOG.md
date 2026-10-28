@@ -215,3 +215,18 @@ This table records the complete output of an exhaustive positive-composition enu
 - Remaining obstruction: no proof that `R6_num(m) - R6_til(m) = 0`; no axis-independence or stabilization is established.
 
 **Next:** expand the two residuals using `glueRHS6_sgK_axis_residual_of_diag123` and study the actual weighted sums involving powers `(1,5)` and `(2,4)`. Do not assume diagonal equalities for powers 4 and 5 and do not move to p=8/p=10.
+
+
+## 2026-10-28 — Exact finite-level p=6 orientation gap
+
+- Audited PR #9 on branch moment-6-8-10; the parent before this follow-up was 50129d9b78257b9f3b8cad0bdeeb4c7dcdae10c4. No new branch, PR, or issue was created.
+- The symbolic certificate computational/p6_level3_orientation_certificate.py yields
+  F(3, theta) = -6192 s^2 - 144 c^2 s^2 - 144 s^4 - 864 s^3,
+  with s = sin(theta/2), hence F(3, theta) = -6336 s^2 - 864 s^3 using cos^2(theta/2) + sin^2(theta/2) = 1.
+- At theta = pi, F(3, pi) = -7200, which rules out treating the two orientation defects as equal by default.
+- The exact sparse certificate's unflipped traces are checked against the previously existing exact certificate at theta = pi. An additional regression test compares the symbolic level-3 formula against direct dense matrix powers from build_su2_bundle on a signed angle grid and verifies the exceptional edge orientation/index assumptions.
+- All four workflows passed on parent SHA 50129d9: PR Lean 40673620120, push Lean 40673612855, PR Tests 40673620977, push Tests 40673612869. The configured Lean check was lake build EvgenyTheorem; Python fast and slow tests passed under 3.11 and 3.12.
+
+**Scope and remaining obligation:** the result is an exact finite-level computational certificate, not yet a Lean theorem connecting F(3, theta) to -6336 sin^2(theta/2) - 864 sin^3(theta/2). defectO6_orientation_difference_eq_level3 still only reduces the all-level orientation gap to F(3, theta); no zero claim is valid. The separate boundary residual in defectO6_succ_num_level3 still needs its own level-independence analysis. Keep p=8 and p=10 out of scope.
+
+**Next:** pursue a Lean bridge for the finite-level identity (or a proved explicit finite expression equivalent to it) before attempting to close the all-level p=6 recurrence. Do not replace F(3, theta) or the boundary residual by zero.
