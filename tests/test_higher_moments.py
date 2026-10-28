@@ -415,3 +415,37 @@ def test_residual_transition_r5_r6_extended_angle_grid(power):
         assert np.isclose(
             residual5, residual6, rtol=3e-9, atol=3e-4
         ), (power, float(theta), residual5, residual6)
+
+
+def test_exact_level3_p6_orientation_gap_polynomial():
+    """The finite p=6 orientation gap is nonzero at theta=pi."""
+    from computational.p6_level3_orientation_certificate import (
+        evaluate_polynomial,
+        orientation_gap_polynomial,
+        trace_polynomial,
+    )
+    from computational.higher_moment_pi_certificate import raw_trace_at_pi
+
+    expected = {
+        (0, 2): (-6192, 0),
+        (2, 2): (-144, 0),
+        (0, 4): (-144, 0),
+        (0, 3): (-864, 0),
+    }
+    gap = orientation_gap_polynomial(3)
+    assert gap == expected
+    assert evaluate_polynomial(gap, c=0, s=1) == -7200
+    assert evaluate_polynomial(gap, c=1, s=0) == 0
+
+    expected_traces_at_pi = {
+        (False, False): 2080992,
+        (False, True): 2081856,
+        (True, False): 2120640,
+        (True, True): 2114304,
+    }
+    for (commuting, flip), expected_trace in expected_traces_at_pi.items():
+        trace = evaluate_polynomial(
+            trace_polynomial(3, commuting, flip), c=0, s=1)
+        assert trace == expected_trace
+        if not flip:
+            assert trace == raw_trace_at_pi(3, 6, commuting)
