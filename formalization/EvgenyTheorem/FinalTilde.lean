@@ -588,4 +588,72 @@ theorem pOpO_pow_entry_coord_dist
       exact pHeO_entry_coord_dist m θ ax o x.1.1 y.1.1 x.2 y.2
         (by simpa [pOpO] using hxy))
 
+/-- Pulling the numbering orientation at level m+1 back to copy B preserves
+the level-m order, including the shared origin. The origin remains earlier
+than every genuinely new B vertex. -/
+theorem oBo_num_iff_oNum (m : ℕ) {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m) :
+    oBo m (oNum (m + 1)) p q ↔ oNum m p q := by
+  by_cases hp0 : p = (0, 0)
+  · subst p
+    by_cases hq0 : q = (0, 0)
+    · subst q
+      simp [oBo, oNum]
+    · have hnew :
+          (vertexOrder m).length ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 q) := by
+        rw [vIdx_succ_B hq hq0]
+        omega
+      have horigin :
+          vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 (0, 0)) <
+            (vertexOrder m).length := by
+        have hs : shiftPoint (2 ^ m) 1 0 (0, 0) = (2 ^ m, 0) := by
+          simp [shiftPoint]
+        rw [hs, vIdx_succ_of_mem (cornerX_mem m)]
+        exact List.idxOf_lt_length_of_mem (cornerX_mem m)
+      change
+        vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 (0, 0)) ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 q) ↔
+          vIdx m (0, 0) ≤ vIdx m q
+      have hlocal : vIdx m (0, 0) ≤ vIdx m q := by
+        rw [vIdx_origin]
+        omega
+      have hparent :
+          vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 (0, 0)) ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 q) := by
+        omega
+      exact iff_of_true hparent hlocal
+  · by_cases hq0 : q = (0, 0)
+    · subst q
+      have hnew :
+          (vertexOrder m).length ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 p) := by
+        rw [vIdx_succ_B hp hp0]
+        omega
+      have horigin :
+          vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 (0, 0)) <
+            (vertexOrder m).length := by
+        have hs : shiftPoint (2 ^ m) 1 0 (0, 0) = (2 ^ m, 0) := by
+          simp [shiftPoint]
+        rw [hs, vIdx_succ_of_mem (cornerX_mem m)]
+        exact List.idxOf_lt_length_of_mem (cornerX_mem m)
+      change
+        vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 p) ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 (0, 0)) ↔
+          vIdx m p ≤ vIdx m (0, 0)
+      have hlocal : ¬ vIdx m p ≤ vIdx m (0, 0) := by
+        rw [vIdx_origin]
+        have hpos := vIdx_pos_of_ne hp0
+        omega
+      have hparent :
+          ¬ vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 p) ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 (0, 0)) := by
+        omega
+      exact iff_of_false hparent hlocal
+    · change
+        vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 p) ≤
+            vIdx (m + 1) (shiftPoint (2 ^ m) 1 0 q) ↔
+          vIdx m p ≤ vIdx m q
+      exact (vIdx_succ_B_le_iff m ⟨p, hp, hp0⟩ ⟨q, hq, hq0⟩).symm
+
 end EvgenyTheorem
