@@ -287,4 +287,23 @@ theorem defect_succ_num (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) :
     transfer_A m θ _ _ hanti, transfer_B m θ _ _ hanti, transfer_C m hm θ _ _ hanti]
   ring
 
+
+/-- Exact recursion for the sixth-moment defect in the standard orientation.
+The p=6 boundary difference remains as an explicit term; no cancellation
+or level stabilization is assumed here. -/
+theorem defectO6_succ_num (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
+      2 * defectO6 m θ faceAxis (fun _ => 2) (oNum m) +
+        defectO6 m θ faceAxis (fun _ => 2) (oTil m) +
+        (glueRHS6 m (sgK m θ faceAxis (oNum (m + 1))) -
+          glueRHS6 m (sgK m θ (fun _ => 2) (oNum (m + 1))) ) := by
+  have hanti := oNum_anti (m + 1)
+  rw [defectO6_succ m hm θ faceAxis (fun _ => 2) (oNum (m + 1)) hanti
+      (faceAxis_pow1 m (by omega)) (faceAxis_pow2 m (by omega))
+      (fun _ => rfl) (fun _ => rfl),
+    transfer_A6 m θ faceAxis (fun _ => 2) hanti,
+    transfer_B6 m θ faceAxis (fun _ => 2) hanti,
+    transfer_C6 m (by omega) θ faceAxis (fun _ => 2) hanti]
+  ring
+
 end EvgenyTheorem
