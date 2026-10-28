@@ -539,4 +539,20 @@ theorem defectO6_orientation_difference_eq_level3
   | succ n hn ih =>
       rw [defectO6_orientation_difference_succ_invariant n hn θ, ih]
 
+/-- The numbering-orientation sixth-moment recurrence has one explicit
+boundary residual after the orientation gap is reduced to level three.
+Thus the remaining affine-recurrence step is to show this residual is
+independent of m; no vanishing of the residual is assumed. -/
+theorem defectO6_succ_num_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
+      3 * defectO6 m θ faceAxis (fun _ => 2) (oNum m) -
+        (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+          defectO6 3 θ faceAxis (fun _ => 2) (oTil 3)) +
+        (glueRHS6 m (sgK m θ faceAxis (oNum (m + 1))) -
+          glueRHS6 m (sgK m θ (fun _ => 2) (oNum (m + 1))) ) := by
+  rw [defectO6_succ_num m hm θ]
+  rw [← defectO6_orientation_difference_eq_level3 m hm θ]
+  ring
+
 end EvgenyTheorem
