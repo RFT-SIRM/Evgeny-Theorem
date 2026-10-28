@@ -752,17 +752,6 @@ theorem edgeUnitaryWithAxis_pi (m : ℕ) (axisOfIndex : ℕ → Axis)
   · rfl
 
 
-/-- At theta = pi, the oriented point entry is given by the usual
-edge-unitary block, ready to combine with edgeUnitaryWithAxis_pi. -/
-theorem pHeO_pi_edge
-    (m : ℕ) (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
-    {p q : Point} (hpq : p ≠ q)
-    (hE : EdgeB m p.1 p.2 q.1 q.2 = true) (i j : C2) :
-    let e : Point × Point := if p ≤ q then (p, q) else (q, p)
-    let U : Matrix C2 C2 ℂ := edgeUnitaryWithAxis m Real.pi ax e
-    pHeO m Real.pi ax o p q i j =
-      if o p q then -(U i j) else -(Uᴴ i j) := by
-  dsimp only
-  exact pHeO_edge_eq m Real.pi ax o hpq hE i j
+
 
 end EvgenyTheorem

@@ -2716,3 +2716,10 @@ At source SHA 175f87256a9d6c9a6dbb2cd7f401f3ef8de7201b, the proposed theorem def
 This attempt is removed in the follow-up cleanup. Do not work around the timeout by simply disabling the heartbeat limit or expanding every definition at once. The symbolic Python result remains a finite computational certificate only; no Lean theorem for the numeric level-three value was established by this attempt.
 
 Next proof direction: construct a staged finite-level bridge with small intermediate statements (the level-three vertex/edge enumeration, the specialized edge blocks at theta = pi, and the trace/power computation), and verify each stage before combining them. Keep the existing all-level reduction and the independent boundary-residual obligation separate.
+
+
+## 4p. Reject redundant pHeO_pi_edge attempt after parser failure
+
+At source SHA 704a9e82cc922dea5b55e231119c7df6b0862c49, Lean failed at `FinalTilde.lean:764:37` with `expected token`. The failing addition was `pHeO_pi_edge`; the error points into the proposition's locally named matrix `U`/conjugate-transpose expression. The general edge-entry identity was already available as `pHeO_edge_eq`, so this helper duplicated an existing result while introducing additional syntax risk. It is removed in the cleanup rather than trying another unverified syntax variant. Keep `axisRotation_pi` and `edgeUnitaryWithAxis_pi`, which were added in the preceding green commit.
+
+Next proof attempt must add a non-redundant bridge and be checked against the exact syntax and matrix conventions before commit. Do not claim that the level-three trace value has been proved in Lean.

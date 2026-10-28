@@ -239,3 +239,10 @@ This table records the complete output of an exhaustive positive-composition enu
 - The original draft also placed the declaration outside namespace EvgenyTheorem; although that placement was fixed, the all-at-once finite expansion remained too expensive. The failed theorem is removed rather than hidden behind an unlimited heartbeat setting.
 - The parent SHA bf4fa6f7d306f6fc5a5a738b55bdaa6e5be76bcc had all four CI workflows green. The all-angle symbolic result and its Python regression test remain in the computational layer, but they are not claimed as a Lean theorem.
 - Next: stage a finite-level Lean bridge through explicit graph/edge facts and specialized matrix-block computations; do not unfold the full graph/operator power in one tactic call. Keep p=6 as the sole target and keep the boundary residual as a separate open obligation.
+
+
+## 2026-10-28 — Remove failing redundant oriented-entry helper
+
+- Audited CI on `704a9e82cc922dea5b55e231119c7df6b0862c49`: push Lean failed in `FinalTilde.lean:764:37` with `expected token`; this was a Lean parser failure, not a Python failure. The PR Lean run was additionally interrupted during Mathlib cache download, but the push build gave the source error.
+- Removed only `pHeO_pi_edge`, which restated the already-existing `pHeO_edge_eq` with a local `U` expression. Preserved `axisRotation_pi` and `edgeUnitaryWithAxis_pi` from the preceding all-green SHA `3d6a161db3e88993379a083af593ac38a6ab9b64`.
+- No all-level or numeric-base-case theorem is claimed. After cleanup, run the full Lean build and Python 3.11/3.12 tests for the new exact SHA before proceeding.
