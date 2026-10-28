@@ -555,4 +555,37 @@ theorem defectO6_succ_num_level3
   rw [← defectO6_orientation_difference_eq_level3 m hm θ]
   ring
 
+/-- A nonzero point-operator entry can only preserve its geometric coordinate
+or traverse one graph edge, so each coordinate changes by at most one. -/
+theorem pHeO_entry_coord_dist
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (p q : Point) (i j : C2)
+    (h : pHeO m θ ax o p q i j ≠ 0) :
+    p.1 ≤ q.1 + 1 ∧ q.1 ≤ p.1 + 1 ∧
+      p.2 ≤ q.2 + 1 ∧ q.2 ≤ p.2 + 1 := by
+  by_cases hpq : p = q
+  · subst q
+    exact ⟨by omega, by omega, by omega, by omega⟩
+  · by_cases hE : EdgeB m p.1 p.2 q.1 q.2 = true
+    · exact EdgeB_dist hE
+    · exact (h (pHeO_zero_of_not_edge m θ ax o hpq hE i j)).elim
+
+/-- Every nonzero entry of a power of pOpO is supported within coordinate
+distance equal to the power. This point-level locality estimate will be used
+to compare the fourth- and fifth-power diagonals at outer corners across levels. -/
+theorem pOpO_pow_entry_coord_dist
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    ∀ n (x y : Pt m × C2), (pOpO m θ ax o ^ n) x y ≠ 0 →
+      x.1.1.1 ≤ y.1.1.1 + n ∧ y.1.1.1 ≤ x.1.1.1 + n ∧
+      x.1.1.2 ≤ y.1.1.2 + n ∧ y.1.1.2 ≤ x.1.1.2 + n := by
+  exact pow_entry_coord_dist
+    (K := pOpO m θ ax o)
+    (coord := fun x : Pt m × C2 => x.1.1)
+    (by
+      intro x y hxy
+      exact pHeO_entry_coord_dist m θ ax o x.1.1 y.1.1 x.2 y.2
+        (by simpa [pOpO] using hxy))
+
 end EvgenyTheorem
