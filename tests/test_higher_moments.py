@@ -576,3 +576,25 @@ def test_exact_p6_boundary_residual_polynomial_levels_three_and_four():
     assert r3 == expected
     assert r4 == expected
     assert evaluate_polynomial(r3, c=0, s=1) == -1920
+
+
+def test_outer_corner_power_blocks_stabilize_exactly_between_levels_three_and_four():
+    """The radius-two corner blocks for powers 4 and 5 are exactly level-stable."""
+    from computational.p6_level3_orientation_certificate import (
+        corner_diagonal_polynomials,
+    )
+
+    for commuting in (False, True):
+        for flip_corner in (False, True):
+            level3 = corner_diagonal_polynomials(
+                3, commuting=commuting, flip_corner=flip_corner, max_power=5
+            )
+            level4 = corner_diagonal_polynomials(
+                4, commuting=commuting, flip_corner=flip_corner, max_power=5
+            )
+            for corner in ("O", "X", "Y"):
+                for power in (4, 5):
+                    assert level3[corner][power] == level4[corner][power], (
+                        commuting, flip_corner, corner, power,
+                        level3[corner][power], level4[corner][power]
+                    )

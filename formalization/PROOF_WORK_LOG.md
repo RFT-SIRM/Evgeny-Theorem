@@ -278,3 +278,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added test_exact_p6_boundary_residual_polynomial_levels_three_and_four to guard that specific finite-level calculation. It explicitly makes no all-level claim.
 - This still does not prove R_{m+1}=R_m for arbitrary m. The next formal lemma must show level-to-level equality of the weighted corner diagonal contributions from powers 4 and 5 by reindexing walks of length at most five in the rooted, axis-labelled local neighborhoods. Existing support and copy/axis lemmas are ingredients, not a substitute for that map.
 - No Lean source was changed; this step records and tests a finite exact calculation rather than asserting the theorem is closed.
+
+
+## 2026-10-28 — Radius-two local block check for p=6
+
+- Rechecked the prior SHA 2039b0e259fe688b7eb1e23129458c5209cc825d; its Lean build and both push/PR Python suites had completed successfully before this change.
+- Exact local sparse-polynomial calculations compare the full 2x2 corner diagonal blocks (H^4)vv and (H^5)vv for outer corners O, X, Y at levels 3 and 4, with cycling axes / constant axis and normal / flipped corner-edge orientation. All raw coefficient dictionaries agree.
+- Added corner_diagonal_polynomials, using only the graph-radius-two ball and full graph degrees, plus test_outer_corner_power_blocks_stabilize_exactly_between_levels_three_and_four.
+- Justification for radius two: every term in a diagonal entry of H^n is a closed walk; at the k-th step its graph distance to the base is at most min(k,n-k) <= floor(n/2). Hence powers 4 and 5 cannot use vertices beyond graph distance two.
+- No Lean source was changed. The level-3/4 exact comparison identifies a smaller candidate interface for the all-level theorem; uniform transport of these rooted, axis-labelled radius-two neighborhoods is still to be proved.

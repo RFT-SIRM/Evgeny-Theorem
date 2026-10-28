@@ -205,6 +205,114 @@ def evaluate_polynomial(poly: Polynomial, c: int, s: int) -> int:
     return value
 
 
+def corner_diagonal_polynomials(
+    level: int, commuting: bool, flip_corner: bool = False, max_power: int = 5
+) -> dict[str, dict[int, Block]]:
+    """Exact outer-corner diagonal blocks from a radius-two graph neighborhood.
+
+    For a closed walk of length n based at a corner, every visited vertex is at
+    graph distance at most min(k, n-k) <= floor(n/2) at its kth step. Thus for
+    n <= 5, the diagonal block is determined entirely by the radius-two ball.
+    Diagonal entries still use the full graph degree at each vertex in that ball.
+    """
+    if level < 1:
+        raise ValueError("corner neighborhoods require level >= 1")
+    if not 1 <= max_power <= 5:
+        raise ValueError("the radius-two certificate supports powers 1 through 5")
+
+    vertices, edges, faces = sg_tree_graph_with_faces(level)
+    n = len(vertices)
+    degree = [0] * n
+    neighbors = [set() for _ in range(n)]
+    for a, b in edges:
+        degree[a] += 1
+        degree[b] += 1
+        neighbors[a].add(b)
+        neighbors[b].add(a)
+
+    flux_axes = {
+        tuple(sorted((a, b))): (2 if commuting else i % 3)
+        for i, (a, b, _c) in enumerate(faces)
+    }
+    corner_points = {
+        "O": (0.0, 0.0),
+        "X": (1.0, 0.0),
+        "Y": (0.0, 1.0),
+    }
+    left_point = (round((2**level - 1) / (2**level), 10), 0.0)
+    right_point = (1.0, 0.0)
+    corner_edge = tuple(sorted((vertices.index(left_point), vertices.index(right_point))))
+    if corner_edge not in flux_axes:
+        raise ValueError("The exceptional corner edge is not a flux edge")
+
+    result: dict[str, dict[int, Block]] = {}
+    for corner_name, point in corner_points.items():
+        root = vertices.index(point)
+        ball = {root}
+        frontier = {root}
+        for _ in range(max_power // 2):
+            frontier = {
+                v for u in frontier for v in neighbors[u]
+            } - ball
+            ball |= frontier
+
+        local_vertices = sorted(ball)
+        local_index = {v: i for i, v in enumerate(local_vertices)}
+        root_local = local_index[root]
+        rows: list[dict[int, Block]] = [dict() for _ in local_vertices]
+        for vertex in local_vertices:
+            d = degree[vertex]
+            rows[local_index[vertex]][local_index[vertex]] = [
+                [_pconst((d, 0)), {}],
+                [{}, _pconst((d, 0))],
+            ]
+
+        for edge in edges:
+            a, b = sorted(edge)
+            if a not in ball or b not in ball:
+                continue
+            key = (a, b)
+            if key in flux_axes:
+                forward = _axis_edge_block(flux_axes[key])
+                reverse = _block_dagger(forward)
+                if flip_corner and key == corner_edge:
+                    forward, reverse = reverse, forward
+            else:
+                forward = [[_pconst((-1, 0)), {}],
+                           [{}, _pconst((-1, 0))]]
+                reverse = forward
+            rows[local_index[a]][local_index[b]] = forward
+            rows[local_index[b]][local_index[a]] = reverse
+
+        power = rows
+        corner_powers: dict[int, Block] = {}
+        for exponent in range(1, max_power + 1):
+            block = power[root_local].get(root_local, _block_zero())
+            corner_powers[exponent] = [
+                [dict(block[i][j]) for j in range(2)] for i in range(2)
+            ]
+            if exponent < max_power:
+                product: list[dict[int, Block]] = [
+                    dict() for _ in local_vertices
+                ]
+                for i, row in enumerate(power):
+                    accum: dict[int, Block] = {}
+                    for k, left in row.items():
+                        for j, right in rows[k].items():
+                            term = _block_mul(left, right)
+                            accum[j] = (
+                                _block_add(accum[j], term)
+                                if j in accum else term
+                            )
+                    product[i] = {
+                        j: block for j, block in accum.items()
+                        if any(block[r][c] for r in range(2) for c in range(2))
+                    }
+                power = product
+        result[corner_name] = corner_powers
+    return result
+
+
 if __name__ == "__main__":
     gap = orientation_gap_polynomial(3)
     print("Raw F(3) polynomial:", gap)
