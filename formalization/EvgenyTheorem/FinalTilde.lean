@@ -145,4 +145,45 @@ theorem defect_succ_til (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) :
   rw [eA, eB, eC]
   ring
 
+
+/-- Exact p=6 recursion for the flipped-corner orientation.
+The copy transports use the existing cp1 corner conditions, and the
+axis-dependent boundary difference remains explicit. -/
+theorem defectO6_succ_til (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1)) =
+      defectO6 m θ faceAxis (fun _ => 2) (oNum m) +
+        2 * defectO6 m θ faceAxis (fun _ => 2) (oTil m) +
+        (glueRHS6 m (sgK m θ faceAxis (oTil (m + 1))) -
+          glueRHS6 m (sgK m θ (fun _ => 2) (oTil (m + 1))) ) := by
+  have hanti := oTil_anti (m + 1)
+  rw [defectO6_succ m hm θ faceAxis (fun _ => 2) (oTil (m + 1)) hanti
+    (faceAxis_pow1 m (by omega)) (faceAxis_pow2 m (by omega))
+    (fun _ => rfl) (fun _ => rfl)]
+  have eA : defectO6 m θ faceAxis (fun _ => 2) (oTil (m + 1)) =
+      defectO6 m θ faceAxis (fun _ => 2) (oNum m) := by
+    refine orient_transfer6 m θ _ _ _ _ (oanti_A m _ hanti) (oNum_anti m) ?_
+    intro f hf
+    obtain ⟨h1, h2⟩ := face_endpoints_mem m f hf
+    obtain ⟨c1, c2⟩ := cp1_not_A m (by omega) h1 h2
+    exact (oTil_of_no_corner c1 c2).trans (faceA m f hf)
+  have eB : defectO6 m θ faceAxis (fun _ => 2) (oBo m (oTil (m + 1))) =
+      defectO6 m θ faceAxis (fun _ => 2) (oTil m) := by
+    refine orient_transfer6 m θ _ _ _ _ (oanti_B m _ hanti) (oTil_anti m) ?_
+    intro f hf
+    obtain ⟨hs1, hs2⟩ := flux_edge_shape m f hf
+    obtain ⟨k1, k2⟩ := cp1_shiftB m hs1
+    show oTil (m + 1) (shiftPoint (2 ^ m) 1 0 f.1)
+        (shiftPoint (2 ^ m) 1 0 f.2.1) ↔ oTil m f.1 f.2.1
+    exact oTil_transport (faceB m f hf) k1 k2
+  have eC : defectO6 m θ faceAxis (fun _ => 2) (oCo m (oTil (m + 1))) =
+      defectO6 m θ faceAxis (fun _ => 2) (oTil m) := by
+    refine orient_transfer6 m θ _ _ _ _ (oanti_C m _ hanti) (oTil_anti m) ?_
+    intro f hf
+    obtain ⟨c1, c2⟩ := cp1_shiftC m (p := f.1) (q := f.2.1)
+    show oTil (m + 1) (shiftPoint (2 ^ m) 0 1 f.1)
+        (shiftPoint (2 ^ m) 0 1 f.2.1) ↔ oTil m f.1 f.2.1
+    exact (oTil_of_no_corner c1 c2).trans (faceC m (by omega) f hf)
+  rw [eA, eB, eC]
+  ring
+
 end EvgenyTheorem
