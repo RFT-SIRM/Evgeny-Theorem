@@ -510,6 +510,5 @@ theorem glueRHS6_highPowerResidual_num_eq_til
     · simp [hgl]
   unfold glueRHS6_highPowerResidual
   rw [hsum15 ax, hsum15 ax', hsum24 ax, hsum24 ax']
-  ring
 
 end EvgenyTheorem
