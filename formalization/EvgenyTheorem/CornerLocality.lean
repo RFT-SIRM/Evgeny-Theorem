@@ -1,3 +1,4 @@
+import EvgenyTheorem.DegSplit
 import EvgenyTheorem.FlipC
 
 namespace EvgenyTheorem
