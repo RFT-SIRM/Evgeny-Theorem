@@ -2568,3 +2568,58 @@ theorem. Then test/prove the actual weighted-sum identity needed to make the
 residual vanish, or preserve a nonzero residual and identify the precise
 remaining recurrence obstruction. No axis-independence or level stabilization
 is claimed by this entry.
+
+
+## 2026-10-28 — Exact p=6 numbering-orientation recursion
+
+Verified source SHA: `49b8348813dec806ea54a36b45edbfdf0a7b39a8`.
+The preceding source commit `f29d043560d864a18286c01754368a1558d6f961`
+introduced `transfer_C6`; the current commit adds only
+`defectO6_succ_num` in `FinalOrient.lean`.
+
+### CI for SHA `49b8348813dec806ea54a36b45edbfdf0a7b39a8`
+
+All four workflows completed successfully on this exact SHA:
+
+- Push Lean: run `40629658155`, success; `Build formalization` passed.
+- PR Lean: run `40629662285`, success; `Build formalization` passed.
+- Push Tests: run `40629658177`, success; Python 3.11 and 3.12 fast and slow level-7 tests passed.
+- PR Tests: run `40629662414`, success; Python 3.11 and 3.12 fast and slow level-7 tests passed.
+
+The workflow's configured Lean build is `lake build EvgenyTheorem`. A separate
+local no-argument `lake build` was not verified because this execution
+container cannot resolve `github.com` for a checkout; do not describe that
+local command as passing.
+
+### Mathematical result
+
+The compiled theorem `defectO6_succ_num` states the exact recurrence
+[
+D^{(6)}_{m+1,mathrm{num}} =
+2D^{(6)}_{m,mathrm{num}} + D^{(6)}_{m,mathrm{til}}
++ R^{(6)}_m,
+]
+where the still-explicit boundary term is
+[
+R^{(6)}_m =
+\operatorname{glueRHS6}(m,\operatorname{sgK}(m,\theta,\mathrm{faceAxis},
+\operatorname{oNum}(m+1)))
+-
+\operatorname{glueRHS6}(m,\operatorname{sgK}(m,\theta,2,
+\operatorname{oNum}(m+1))).
+]
+This is obtained from the generic `defectO6_succ` and the three already
+compiled copy-orientation transfers `transfer_A6`, `transfer_B6`, and
+`transfer_C6`. The exceptional corner clause in copy C remains intact.
+
+This proves a recurrence with its exact boundary residual; it does **not**
+prove that the residual is zero, that the two axis-dependent boundary
+corrections agree, or that the sixth-moment defect is stabilized.
+
+### Next p=6 obligation
+
+After this commit's CI has passed, derive the matching exact recurrence for
+`oTil (m+1)`, carefully transporting its A/B/C copies with the `cp1`
+corner conditions. Its `glueRHS6) difference must also remain explicit.
+Then compare the two recurrences; do not infer axis cancellation or level
+stabilization without a separate proof of the weighted boundary identity.

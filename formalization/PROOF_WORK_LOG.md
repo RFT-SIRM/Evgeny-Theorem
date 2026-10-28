@@ -170,3 +170,24 @@ This table records the complete output of an exhaustive positive-composition enu
 - Next: resolve that convention match for the intended axis pair, then test
   the weighted residual identity under the actual hypotheses. Do not add a
   speculative lemma or switch to p=8/p=10 before this p=6 barrier is clear.
+
+
+## 2026-10-28 — Exact p=6 numbering-orientation recursion
+
+- Source commit: `49b8348813dec806ea54a36b45edbfdf0a7b39a8` adds
+  `defectO6_succ_num`; source changes in the previous commit completed
+  the A/B/C transfer lemmas for p=6.
+- CI at that exact SHA: Push Lean `40629658155` passed; PR Lean
+  `40629662285` passed; Push Tests `40629658177` passed; PR Tests
+  `40629662414` passed. Both Python 3.11 and 3.12 passed fast and slow
+  level-7 convergence tests.
+- The exact result is `D6_num(m+1) = 2*D6_num(m) + D6_til(m) + R6_num(m)),
+  with `R6_num(m)` the difference between the two `glueRHS6) corrections
+  for `faceAxis` and the constant axis 2. This boundary term has not been
+  shown to vanish.
+- CI's configured Lean command is `lake build EvgenyTheorem`; a separate
+  local no-argument `lake build` was not verified in this network-restricted
+  container.
+- Next: prove the parallel `oTil) recurrence with its special corner cases,
+  retaining its own boundary residual, then compare the recurrences. No
+  axis-independence or stabilization claim is made here.
