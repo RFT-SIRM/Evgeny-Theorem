@@ -522,3 +522,57 @@ def test_level3_p6_orientation_gap_matches_dense_operator(theta):
     assert np.isclose(actual, predicted, rtol=3e-9, atol=3e-4), (
         theta, actual, predicted
     )
+
+
+def test_exact_p6_boundary_residual_polynomial_levels_three_and_four():
+    """Exact symbolic check of R_3 = R_4, without an all-level claim."""
+    from computational.p6_level3_orientation_certificate import (
+        orientation_gap_polynomial,
+        trace_polynomial,
+        evaluate_polynomial,
+    )
+
+    def combine_polynomials(terms):
+        result = {}
+        for sign, polynomial in terms:
+            for monomial, coefficient in polynomial.items():
+                old = result.get(monomial, (0, 0))
+                value = (
+                    old[0] + sign * coefficient[0],
+                    old[1] + sign * coefficient[1],
+                )
+                if value == (0, 0):
+                    result.pop(monomial, None)
+                else:
+                    result[monomial] = value
+        return result
+
+    def delta(level):
+        return combine_polynomials([
+            (1, trace_polynomial(level, commuting=False)),
+            (-1, trace_polynomial(level, commuting=True)),
+        ])
+
+    # D_m is the face-axis minus constant-axis sixth-moment defect.
+    # The compiled recurrence uses R_m = D_{m+1} - 3 D_m + F_3.
+    f3 = orientation_gap_polynomial(3)
+
+    def boundary_residual(level):
+        return combine_polynomials([
+            (1, delta(level + 1)),
+            (-3, delta(level)),
+            (1, f3),
+        ])
+
+    expected = {
+        (0, 2): (-1776, 0),
+        (0, 3): (-96, 0),
+        (0, 4): (-48, 0),
+        (1, 2): (192, 0),
+        (2, 2): (-48, 0),
+    }
+    r3 = boundary_residual(3)
+    r4 = boundary_residual(4)
+    assert r3 == expected
+    assert r4 == expected
+    assert evaluate_polynomial(r3, c=0, s=1) == -1920

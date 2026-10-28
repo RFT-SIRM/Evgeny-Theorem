@@ -2778,3 +2778,34 @@ Q_{m+1}(K_{m+1}^{\mathrm{face}},K_{m+1}^{(2)})
 A valid proof must map the six glue states between adjacent levels and preserve the **weighted sums** of the power-four and power-five corner diagonals for both axis assignments. It may be possible to derive this from a rooted, axis-labelled local graph isomorphism for walks of length at most five, with the orientation transport checked on each involved edge. No such comparison lemma is present in the audited source. A support-distance estimate alone is insufficient, and no equality of fourth- or fifth-power diagonals is assumed here.
 
 **Disposition:** analysis only; no Lean theorem or source claim was added. The next mathematical action is to establish this finite-radius level-to-level comparison from the copy shifts and face/edge definitions, or to exhibit an exact counterexample for a specific weighted boundary sum. Do not advance the affine p=6 recurrence until this identity or an explicit alternative formula is proved.
+
+
+## 4s. Exact symbolic finite-level check of the p=6 boundary residual
+
+**Source audited before the check:** 21f3f093bbd6b021ee25e198055153594e4e8404; PR #9 head and branch moment-6-8-10 matched. On that SHA the PR Lean build and both Python test workflows completed successfully. The push Lean workflow did not run because that commit changed only Markdown files and its path filter excludes those changes. No Lean source was changed for this follow-up.
+
+Define D_m(theta) as the existing face-axis minus constant-axis sixth-moment defect with numbering orientation, and F_3(theta) as the finite level-three orientation gap. The established recurrence has boundary correction
+\[
+R_m(\theta)=D_{m+1}(\theta)-3D_m(\theta)+F_3(\theta).
+\]
+Using the existing exact symbolic block-polynomial certificate (integer coefficients in c=cos(theta/2) and s=sin(theta/2)), the independently evaluated finite traces are
+\[
+\begin{aligned}
+D_3={}&-38352s^2-384s^3-912s^4+4224cs^2-912c^2s^2,\\
+D_4={}&-110640s^2-384s^3-2640s^4+12864cs^2-2640c^2s^2,\\
+D_5={}&-327504s^2-384s^3-7824s^4+38784cs^2-7824c^2s^2,
+\end{aligned}
+\]
+while F_3=-6192s^2-864s^3-144s^4-144c^2s^2 in raw form. Exact polynomial arithmetic gives
+\[
+R_3=R_4=-1776s^2-96s^3-48s^4+192cs^2-48c^2s^2.
+\]
+Using c^2+s^2=1, this is
+\[
+R_3=R_4=s^2(-1824+192c-96s).
+\]
+At theta=pi, the value is -1920, matching the exact Gaussian-integer trace calculation. A separate sparse-matrix angle sweep for levels 3, 4, and 5 also found R_3 approximately R_4 at tested angles; that sweep is numerical, whereas the displayed level-3/4 comparison is an exact polynomial identity.
+
+**Scope:** this confirms only the adjacent finite-level identity R_3=R_4; it is not an induction on m, and no all-level Lean theorem is claimed. The new regression test test_exact_p6_boundary_residual_polynomial_levels_three_and_four keeps this finite algebra check reproducible.
+
+**Remaining proof obligation:** establish R_{m+1}=R_m uniformly for m>=3. The concrete bridge needed is level-to-level stability of the corner diagonal blocks of powers 1, 2, 4, and 5 for the face-axis and constant-axis operators, with numbering orientation on the ordinary corners and the oTil-transported orientation on its exceptional corner. Existing support-distance bounds, copy entry identities, edge-order preservation and faceAxis periodicity are the inputs; what is still missing is the formal reindexing/equality of the length-at-most-five corner-walk sums. Do not infer the all-level statement from the finite calculation.

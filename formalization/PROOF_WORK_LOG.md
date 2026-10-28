@@ -268,3 +268,13 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The exact target for the closed affine recurrence is R_{m+1}=R_m, where R_m=glueRHS6(m,K_m^face)-glueRHS6(m,K_m^(2)). By the existing residual reduction, this is equality of the corresponding weighted fourth/fifth-power sums Q_{m+1}=Q_m, not the same-level orientation equality already proved.
 - Existing locality lemmas bound support of powers but do not prove level-to-level equality of the weighted corner diagonal sums. The general axis-congruence lemma requires h4 and h5, which are not available; no pointwise fourth/fifth-power diagonal equality is assumed.
 - No Lean source was changed. The mathematical blocker is now stated precisely: construct and prove a level-to-level map of the six glue states that preserves the weighted p=6 corner sums for powers 4 and 5, using the recursive copy geometry, face-axis periodicity, and orientation transport—or find an exact counterexample. Do not assume R_m=0 or that the orientation gap vanishes.
+
+
+## 2026-10-28 — Exact p=6 boundary-residual polynomial at levels 3 and 4
+
+- Before editing, rechecked that PR #9 and moment-6-8-10 both pointed to 21f3f093bbd6b021ee25e198055153594e4e8404. The PR Lean run and both Python test runs on that SHA were completed successfully.
+- Recomputed the finite-level trace polynomials with exact sparse 2x2-block arithmetic. The residual in the current recurrence is R_m=D_{m+1}-3D_m+F_3.
+- Exact symbolic calculation gives R_3=R_4=-1776s^2-96s^3-48s^4+192cs^2-48c^2s^2=s^2(-1824+192c-96s), where c=cos(theta/2), s=sin(theta/2). At theta=pi, this evaluates to -1920 and agrees with the existing exact integer trace certificate.
+- Added test_exact_p6_boundary_residual_polynomial_levels_three_and_four to guard that specific finite-level calculation. It explicitly makes no all-level claim.
+- This still does not prove R_{m+1}=R_m for arbitrary m. The next formal lemma must show level-to-level equality of the weighted corner diagonal contributions from powers 4 and 5 by reindexing walks of length at most five in the rooted, axis-labelled local neighborhoods. Existing support and copy/axis lemmas are ingredients, not a substitute for that map.
+- No Lean source was changed; this step records and tests a finite exact calculation rather than asserting the theorem is closed.
