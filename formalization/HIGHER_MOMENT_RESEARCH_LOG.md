@@ -2730,3 +2730,51 @@ Next proof attempt must add a non-redundant bridge and be checked against the ex
 On source SHA `f05145f7a8898d69c8d6646333f096a87133794a`, push and PR Lean both failed in `FinalTilde.lean:785:4` with `dsimp made no progress`. The fault was in the added `pHeO_corner_flip_swap` proof: the coordinate inequality had already reduced before `dsimp [p, q] at hx`, making the tactic invalid. The subsequent `hcpRev` branch used the same redundant simplification pattern, so both redundant `dsimp` calls are removed and the resulting arithmetic goals are left to `omega`. No new mathematical assumptions are added.
 
 The correction is kept narrowly scoped to this one lemma. Its proof is not considered accepted until the full Lean build and both Python CI jobs pass on the resulting SHA. The local container does not have Lean/Lake installed, so no local Lean compilation is claimed.
+
+
+## 4r. Level-stabilization of the p=6 boundary residual: exact remaining identity
+
+**Audited source HEAD:** c520176fd62d7163af4e1fc98da416664535212b. The branch and PR head matched this SHA during the audit. Both Lean workflows passed (40695698377, 40695708138, with configured lake build EvgenyTheorem); both Tests workflows passed (40695698241, 40695708135, Python 3.11 and 3.12).
+
+For \(m\ge3\), set
+\[
+K_m^{\mathrm{face}}=\operatorname{sgK}(m,\theta,\mathrm{faceAxis},oNum(m+1)),\quad
+K_m^{(2)}=\operatorname{sgK}(m,\theta,(\lambda\_,2),oNum(m+1)),
+\]
+and write \(R_m=\operatorname{glueRHS6}(m,K_m^{\mathrm{face}})-\operatorname{glueRHS6}(m,K_m^{(2)})\).
+The compiled theorem defectO6_succ_num_level3 gives
+\[
+D_{m+1}=3D_m-F_3(\theta)+R_m,\qquad
+F_3(\theta)=D_3^{num}-D_3^{til}.
+\]
+Thus the level-independent affine recurrence sought in this branch requires the adjacent-level identity
+\[
+\boxed{R_{m+1}=R_m\quad(m\ge3)}
+\]
+(or an equally explicit proved formula for \(R_m\)); it does **not** require \(R_m=0\).
+
+The existing theorem glueRHS6_sgK_axis_residual_of_diag123 reduces \(R_m\) to glueRHS6_highPowerResidual, which is exactly
+\[
+\begin{aligned}
+Q_m(K,K')={}&6\Big(\sum_{g_m(x)}K_{xx}(K^5)_{\sigma x,\sigma x}
+-\sum_{g_m(x)}K'_{xx}(K'^5)_{\sigma x,\sigma x}\Big)\\
+&+6\Big(\sum_{g_m(x)}(K^2)_{xx}(K^4)_{\sigma x,\sigma x}
+-\sum_{g_m(x)}(K'^2)_{xx}(K'^4)_{\sigma x,\sigma x}\Big).
+\end{aligned}
+\]
+Here the sums use the exact glue predicate \(g_m\), and \(\sigma\) is the partner-corner involution from sgGlue m. Diagonal powers one and two on glued states are already axis-independent by sgK_corner_data; the remaining axis-sensitive data are the weighted fifth- and fourth-power diagonals.
+
+**What is already proved and what it does not imply:**
+- glueRHS6_highPowerResidual_num_eq_til proves the residual is invariant when oNum (m+1) is changed to oTil (m+1) at the **same fixed level m**, using locality for powers at most five. It does not compare level m with level m+1.
+- defectO6_orientation_difference_succ_highPower rewrites the adjacent-level orientation-difference recurrence using Q_m; defectO6_orientation_difference_succ_invariant and defectO6_orientation_difference_eq_level3 follow because the two orientations' Q_m values agree at the same level. These statements do not establish R_{m+1}=R_m for the numbering-orientation axis residual.
+- glueRHS6_sgK_axis_congr_of_diag45 is conditional on pointwise hypotheses h4 and h5. Those hypotheses have not been proved for faceAxis versus the constant axis 2, and they must not be introduced as assumptions.
+- pHeO_entry_coord_dist and pOpO_pow_entry_coord_dist bound the coordinate support of nonzero entries by the power. They give a locality bound, not equality of matrix-power diagonal entries across different levels. faceAxis_shift_by_three_pow preserves axis labels under the recursive face-copy offsets, but by itself does not supply the required level-to-level rooted-neighborhood identification.
+
+**Exact open step:** prove directly
+\[
+Q_{m+1}(K_{m+1}^{\mathrm{face}},K_{m+1}^{(2)})
+=Q_m(K_m^{\mathrm{face}},K_m^{(2)}).
+\]
+A valid proof must map the six glue states between adjacent levels and preserve the **weighted sums** of the power-four and power-five corner diagonals for both axis assignments. It may be possible to derive this from a rooted, axis-labelled local graph isomorphism for walks of length at most five, with the orientation transport checked on each involved edge. No such comparison lemma is present in the audited source. A support-distance estimate alone is insufficient, and no equality of fourth- or fifth-power diagonals is assumed here.
+
+**Disposition:** analysis only; no Lean theorem or source claim was added. The next mathematical action is to establish this finite-radius level-to-level comparison from the copy shifts and face/edge definitions, or to exhibit an exact counterexample for a specific weighted boundary sum. Do not advance the affine p=6 recurrence until this identity or an explicit alternative formula is proved.

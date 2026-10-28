@@ -258,3 +258,13 @@ This table records the complete output of an exhaustive positive-composition enu
 ## 2026-10-28 — Restore last green Lean source after failed corner lemma
 
 Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `FinalTilde.lean:800:4`: `omega could not prove the goal` inside the newly added `pHeO_corner_flip_swap`. This shows the attempted proof lacks a justified arithmetic fact about `vIdx`; it must not be patched with more guessed tactics. The Lean source is restored byte-for-byte to the known-green version at `421875e543039e25c1273d958d0595858aec74bb` (blob `a04830a861a3220cee3e8ffce0e9a4323aefc200`), removing the entire failed lemma. This restores the previously passing proof state; the mathematical bridge remains open. Research log keeps the failed-attempt history.
+
+
+## 2026-10-28 — Exact remaining equality for p=6 boundary residual stabilization
+
+- Rechecked PR #9 HEAD and moment-6-8-10: both were exactly c520176fd62d7163af4e1fc98da416664535212b; no concurrent branch movement was observed.
+- All four CI runs for this SHA completed successfully: Push Lean 40695698377, PR Lean 40695708138, Push Tests 40695698241, PR Tests 40695708135. The configured Lean command was lake build EvgenyTheorem; Tests passed on Python 3.11 and 3.12.
+- Inspected defectO6_succ_num_level3, defectO6_orientation_difference_succ_highPower, glueRHS6_highPowerResidual, glueRHS6_sgK_axis_residual_of_diag123, glueRHS6_highPowerResidual_num_eq_til, and glueRHS6_sgK_axis_congr_of_diag45.
+- The exact target for the closed affine recurrence is R_{m+1}=R_m, where R_m=glueRHS6(m,K_m^face)-glueRHS6(m,K_m^(2)). By the existing residual reduction, this is equality of the corresponding weighted fourth/fifth-power sums Q_{m+1}=Q_m, not the same-level orientation equality already proved.
+- Existing locality lemmas bound support of powers but do not prove level-to-level equality of the weighted corner diagonal sums. The general axis-congruence lemma requires h4 and h5, which are not available; no pointwise fourth/fifth-power diagonal equality is assumed.
+- No Lean source was changed. The mathematical blocker is now stated precisely: construct and prove a level-to-level map of the six glue states that preserves the weighted p=6 corner sums for powers 4 and 5, using the recursive copy geometry, face-axis periodicity, and orientation transport—or find an exact counterexample. Do not assume R_m=0 or that the orientation gap vanishes.
