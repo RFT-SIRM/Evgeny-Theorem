@@ -680,4 +680,49 @@ theorem Hc_B_num_eq_parent
       exact oBo_num_iff_oNum m hp hq)
     x.1.1 y.1.1 x.2 y.2
 
+/-- The C-copy kernel at level m, with numbering inherited from level m+1,
+is the parent kernel with the corner-flipped orientation oTil m.
+The exceptional edge ending at (2^m, 0) is handled by faceC. -/
+theorem Hc_C_num_eq_parent_til
+    (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hanti : OAnti (m + 1) (oNum (m + 1)))
+    (x y : Pt m × C2) :
+    Hc m θ ax (oNum (m + 1)) GCopy.C x y =
+      pOpO m θ ax (oTil m) x y := by
+  change pHeO m θ ax (oCo m (oNum (m + 1)))
+      x.1.1 y.1.1 x.2 y.2 =
+    pHeO m θ ax (oTil m) x.1.1 y.1.1 x.2 y.2
+  exact pHeO_orient_congr m θ ax
+    (oCo m (oNum (m + 1))) (oTil m)
+    (by
+      intro p q hpq hE hfl
+      have hmE := EdgeB_mem m p.1 p.2 q.1 q.2 hE
+      have hp : p ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m p).mpr hmE.1
+      have hq : q ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m q).mpr hmE.2
+      have fl : ∀ a b : Point, (a, b) ∈ fluxEdges m →
+          ∃ f ∈ facesExact m, f.1 = a ∧ f.2.1 = b := by
+        intro a b hab
+        obtain ⟨f, hf, hfe⟩ := List.mem_map.mp hab
+        have hle := flux_edge_order m f hf
+        have h' : fluxEdge f = (f.1, f.2.1) := by
+          simp [fluxEdge, hle]
+        rw [h'] at hfe
+        exact ⟨f, hf, (Prod.mk.inj hfe).1, (Prod.mk.inj hfe).2⟩
+      have hantiCo : OAnti m (oCo m (oNum (m + 1))) :=
+        oanti_C m _ hanti
+      by_cases hle : p ≤ q
+      · rw [if_pos hle] at hfl
+        obtain ⟨f, hf, h1, h2⟩ := fl p q hfl
+        rw [← h1, ← h2]
+        exact faceC m hm f hf
+      · rw [if_neg hle] at hfl
+        obtain ⟨f, hf, h1, h2⟩ := fl q p hfl
+        have h3 := faceC m hm f hf
+        rw [h1, h2] at h3
+        rw [hantiCo p q hp hq hpq, oTil_anti m p q hp hq hpq]
+        exact not_congr h3)
+    x.1.1 y.1.1 x.2 y.2
+
 end EvgenyTheorem
