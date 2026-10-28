@@ -2834,3 +2834,11 @@ The theorem `glueRHS6_highPowerResidual_path_expansion` substitutes these identi
 CI on `0381bc85ca617ecffe19d7107d1f5b384802dfe0` completed successfully: push Lean `40712822868`, PR Lean `40712833470`, push Python `40712822818`, PR Python `40712833222`. The PR Lean job initially failed while downloading Mathlib cache (`Broken pipe`, cache download incomplete); its rerun succeeded, including `Build formalization`. Both Python workflows passed on 3.11 and 3.12.
 
 **Scope:** this is an algebraic path expansion only. It neither cuts off the intermediate-state sums to a radius-two ball nor identifies the rooted, axis-labelled local neighborhoods between levels. In particular, it proves neither the required adjacent-level equality \(R_{m+1}=R_m\) nor equality of the weighted \(K^4\)/\(K^5\) corner diagonals. The path-support estimate is available, but an explicit level-to-level local map and a proof that it preserves edge labels, full vertex degrees, and orientation are still required. No assumption that the fourth- and fifth-power diagonals agree was added.
+
+## 4v. Uniform local transport — first outer corner (Lean, radius two)
+
+The prior commit `7168a08dda3911840d9ad5694535529988f9d360` passed both Lean build workflows and all Python 3.11/3.12 push/PR test jobs. Its three `pHeO_succ_*_local_entry` results provide entrywise transfer for each copy when the local degree is unchanged.
+
+The new lemma `corner_O_radius_two_transport` formalizes one geometric case: for (m\ge3), if (z\in V_{m+1}) and (z_1,z_2\le2), then (z\in V_m), and (z) is neither ((2^m,0)) nor ((0,2^m)). Thus the coordinate box containing the graph-radius-two neighborhood of the outer corner O lies inside copy A and avoids the two degree-exception corners. This makes the A-copy entrywise transport applicable throughout that local box.
+
+**Scope:** only the O/A localization is formalized here. X/B and Y/C are still required, as is the reindexing of closed walks for powers four and five. No equality of high-power diagonal blocks or of (R_{m+1}) and (R_m) is claimed.

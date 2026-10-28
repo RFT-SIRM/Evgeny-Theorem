@@ -302,4 +302,35 @@ theorem pdeg_succ_C_local
   rw [pdeg_succ, if_neg hA, if_neg hB, if_pos hC]
   simp [Nat.add_sub_cancel_right]
 
+
+/--
+For m ≥ 3, every level-(m+1) vertex with both coordinates at most two lies
+in the old A copy. These coordinate bounds contain the radius-two
+neighborhood of O and avoid the two corners where A-copy degrees can change.
+-/
+theorem corner_O_radius_two_transport
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : z.1 ≤ 2) (hy : z.2 ≤ 2) :
+    z ∈ vertexOrder m ∧
+      z ≠ (2 ^ m, 0) ∧ z ≠ (0, 2 ^ m) := by
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · refine ⟨hzA, ?_, ?_⟩
+    · intro heq
+      have hcoord : z.1 = 2 ^ m := congrArg Prod.fst heq
+      omega
+    · intro heq
+      have hcoord : z.2 = 2 ^ m := congrArg Prod.snd heq
+      omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    omega
+
 end EvgenyTheorem

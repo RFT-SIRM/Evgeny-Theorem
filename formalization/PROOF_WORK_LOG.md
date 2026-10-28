@@ -297,3 +297,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - CI for the code commit: push Lean 40712822868 and PR Lean 40712833470 succeeded (the PR Lean cache-download attempt was retried after an infrastructure Broken pipe); push Tests 40712822818 and PR Tests 40712833222 succeeded, including Python 3.11 and 3.12.
 - **Still open:** prove that the weighted fourth/fifth-power corner sums are preserved between adjacent levels for the face-axis versus constant-axis operators. The support-distance bound alone does not supply a rooted, axis-labelled neighborhood map; no h4/h5 equality has been assumed.
 - Next mathematical task: construct the explicit radius-two corner-neighborhood transport, including full graph degrees and orientation labels, and use it to reindex the closed-walk sums. If this map cannot be established from the copy/face definitions, stop rather than add a speculative lemma.
+
+## 2026-10-28 — Verified copy-entry transport; start radius-two localization
+
+- The repair commit `7168a08dda3911840d9ad5694535529988f9d360` passed all six checks: both configured Lean builds, plus Python 3.11 and 3.12 in push and pull-request workflows.
+- The three compiled entrywise lemmas `pHeO_succ_A_local_entry`, `pHeO_succ_B_local_entry`, and `pHeO_succ_C_local_entry` combine the existing off-diagonal copy-entry identities with the already proved local degree equalities.
+- Added `corner_O_radius_two_transport` in `CornerLocality.lean`: for (m\ge3), a level-(m+1) vertex with coordinates at most two lies in copy A and is not either far corner where the A-copy degree could change.
+- This is only the O/A geometric localization step. It proves no equality for powers four or five and no claim that (R_{m+1}=R_m).
+- **Next after CI:** prove the analogous X/B and Y/C localization statements. Then use those maps, entry transport, and the closed-walk radius-two bound to formalize the weighted power-four/five diagonal-sum comparison. Stop at any failed hypothesis or counterexample; do not infer all-level stability from finite checks.
