@@ -558,6 +558,54 @@ theorem defectO6_succ_num_level3
 
 /-- A nonzero point-operator entry can only preserve its geometric coordinate
 or traverse one graph edge, so each coordinate changes by at most one. -/
+/-- Full entrywise transport for copy A, including diagonal entries.
+Off-diagonal entries follow from the edge-copy identity; the diagonal case
+uses the local degree recurrence. -/
+theorem pHeO_succ_A_local_entry
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hpX : p ≠ (2 ^ m, 0)) (hpY : p ≠ (0, 2 ^ m))
+    (i j : C2) :
+    pHeO (m + 1) θ ax o p q i j = pHeO m θ ax o p q i j := by
+  by_cases hpq : p = q
+  · subst q
+    simp only [pHeO_diag, pdeg_succ_A_local m hp hpX hpY]
+  · exact pHeO_succ_A m θ ax o hp hq hpq i j
+
+/-- Full entrywise transport for copy B, including diagonal entries. -/
+theorem pHeO_succ_B_local_entry
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpY : p ≠ (0, 2 ^ m))
+    (i j : C2) :
+    pHeO (m + 1) θ ax o
+        (shiftPoint (2 ^ m) 1 0 p) (shiftPoint (2 ^ m) 1 0 q) i j =
+      pHeO m θ ax (oBo m o) p q i j := by
+  by_cases hpq : p = q
+  · subst q
+    simp only [pHeO_diag, pdeg_succ_B_local m hp hp0 hpY]
+  · exact pHeO_succ_B m θ ax o hax hp hq hpq i j
+
+/-- Full entrywise transport for copy C, including diagonal entries. -/
+theorem pHeO_succ_C_local_entry
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) (o : Point → Point → Prop)
+    [DecidableRel o] (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder m) (hq : q ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpX : p ≠ (2 ^ m, 0))
+    (i j : C2) :
+    pHeO (m + 1) θ ax o
+        (shiftPoint (2 ^ m) 0 1 p) (shiftPoint (2 ^ m) 0 1 q) i j =
+      pHeO m θ ax (oCo m o) p q i j := by
+  by_cases hpq : p = q
+  · subst q
+    simp only [pHeO_diag, pdeg_succ_C_local m hp hp0 hpX]
+  · exact pHeO_succ_C m θ ax o hax hp hq hpq i j
+
+
 theorem pHeO_entry_coord_dist
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
