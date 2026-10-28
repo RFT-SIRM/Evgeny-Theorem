@@ -220,8 +220,8 @@ theorem defectO6_orientation_difference_succ_highPower
         (sgK m θ (fun _ => 2) (oTil (m + 1))) ) := by
   rw [defectO6_orientation_difference_succ m hm θ,
     glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
-      (oNum (m + 1)) (oNum_anti (m + 1),
+      (oNum (m + 1)) (oNum_anti (m + 1)),
     glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
-      (oTil (m + 1)) (oTil_anti (m + 1)]
+      (oTil (m + 1)) (oTil_anti (m + 1))]
 
 end EvgenyTheorem
