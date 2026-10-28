@@ -32,6 +32,14 @@ jobs:
         uses: leanprover/lean-action@v1
         timeout-minutes: 10
         continue-on-error: true
+      - name: Clean up orphaned Lean processes after failed setup
+        if: steps.lean_first.outcome == 'failure'
+        run: |
+          pkill -TERM -x lean || true
+          pkill -TERM -x lake || true
+          sleep 2
+          pkill -KILL -x lean || true
+          pkill -KILL -x lake || true
       - name: Retry Lean setup after transient download failure
         id: lean_retry
         if: steps.lean_first.outcome == 'failure'
