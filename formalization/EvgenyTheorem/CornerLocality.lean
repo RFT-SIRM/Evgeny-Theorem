@@ -205,9 +205,6 @@ theorem sameLocalIndexOrder_C (m : ℕ) :
   intro a b
   exact vIdx_succ_C_le_iff m a b
 
-end EvgenyTheorem
-
-
 /-!
 ## Degree transport for the recursive copies
 
@@ -303,3 +300,5 @@ theorem pdeg_succ_C_local
     · simpa [Nat.add_sub_cancel_right] using hpFin
   rw [pdeg_succ, if_neg hA, if_neg hB, if_pos hC]
   simp [Nat.add_sub_cancel_right]
+
+end EvgenyTheorem
