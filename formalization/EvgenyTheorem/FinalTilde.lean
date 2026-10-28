@@ -657,4 +657,27 @@ theorem oBo_num_iff_oNum (m : ℕ) {p q : Point}
           vIdx m p ≤ vIdx m q
       exact (vIdx_succ_B_le_iff m ⟨p, hp, hp0⟩ ⟨q, hq, hq0⟩).symm
 
+/-- The B-copy kernel at level m, with the numbering orientation inherited
+from level m+1, is exactly the parent kernel with orientation oNum m.
+The proof uses the copy-B orientation equivalence only on actual graph edges. -/
+theorem Hc_B_num_eq_parent
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (x y : Pt m × C2) :
+    Hc m θ ax (oNum (m + 1)) GCopy.B x y =
+      pOpO m θ ax (oNum m) x y := by
+  change pHeO m θ ax (oBo m (oNum (m + 1)))
+      x.1.1 y.1.1 x.2 y.2 =
+    pHeO m θ ax (oNum m) x.1.1 y.1.1 x.2 y.2
+  exact pHeO_orient_congr m θ ax
+    (oBo m (oNum (m + 1))) (oNum m)
+    (by
+      intro p q hpq hE hfl
+      have hm := EdgeB_mem m p.1 p.2 q.1 q.2 hE
+      have hp : p ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m p).mpr hm.1
+      have hq : q ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m q).mpr hm.2
+      exact oBo_num_iff_oNum m hp hq)
+    x.1.1 y.1.1 x.2 y.2
+
 end EvgenyTheorem
