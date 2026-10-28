@@ -525,4 +525,18 @@ theorem defectO6_orientation_difference_succ_invariant
     glueRHS6_highPowerResidual_num_eq_til m hm θ faceAxis (fun _ => 2)]
   ring
 
+/-- At every level m ≥ 3, the orientation difference is the same as its
+level-three value. This packages the adjacent-level invariance into a single
+reduction to the finite base level; it does not assert that the value is zero. -/
+theorem defectO6_orientation_difference_eq_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    (defectO6 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO6 m θ faceAxis (fun _ => 2) (oTil m)) =
+    (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+      defectO6 3 θ faceAxis (fun _ => 2) (oTil 3)) := by
+  induction m, hm using Nat.le_induction with
+  | base => rfl
+  | succ n hn ih =>
+      rw [defectO6_orientation_difference_succ_invariant n hn θ, ih]
+
 end EvgenyTheorem
