@@ -1048,19 +1048,17 @@ theorem pHeO_til_eq_num_of_level_domain
     (p q : Point) (i j : C2) :
     pHeO n θ ax (oTil (n + 1)) p q i j =
       pHeO n θ ax (oNum (n + 1)) p q i j := by
-  apply pHeO_orient_congr n θ ax (oTil (n + 1)) (oNum (n + 1))
-  · intro a b hab hE hfl
-    have hmEdge := EdgeB_mem n a.1 a.2 b.1 b.2 hE
-    have ha : a ∈ vertexOrder n :=
-      (mem_vertexOrder_iff n a).mpr hmEdge.1
-    have hb : b ∈ vertexOrder n :=
-      (mem_vertexOrder_iff n b).mpr hmEdge.2
-    exact oTil_of_no_corner (cp1_not_A n hn ha hb).1
-      (cp1_not_A n hn ha hb).2
-  · exact p
-  · exact q
-  · exact i
-  · exact j
+  exact pHeO_orient_congr n θ ax (oTil (n + 1)) (oNum (n + 1))
+    (by
+      intro a b hab hE hfl
+      have hmEdge := EdgeB_mem n a.1 a.2 b.1 b.2 hE
+      have ha : a ∈ vertexOrder n :=
+        (mem_vertexOrder_iff n a).mpr hmEdge.1
+      have hb : b ∈ vertexOrder n :=
+        (mem_vertexOrder_iff n b).mpr hmEdge.2
+      obtain ⟨h1, h2⟩ := cp1_not_A n hn ha hb
+      exact oTil_of_no_corner h1 h2)
+    p q i j
 
 /-- Across the O/A corner box, the level-(m+1) entry using the actual
 tilde orientation pulls back to the parent-level entry using its tilde
