@@ -1997,7 +1997,20 @@ private theorem glueRHS6_sum_ite_eq_subtype
         ∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0 := by
           exact (Fintype.sum_subtype_add_sum_subtype p
             (fun x => if p x then f x else 0)).symm
-    _ = _ := by simp
+    _ = _ := by
+      have hpos :
+          (∑ x : {x // p x}, if p x.1 then f x.1 else 0) =
+            ∑ x : {x // p x}, f x.1 := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        exact if_pos x.2
+      have hneg :
+          (∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0) = 0 := by
+        apply Finset.sum_eq_zero
+        intro x hx
+        exact if_neg x.2
+      rw [hpos, hneg]
+      exact add_zero _
 
 /-- Reindex a glued-partner diagonal-power sum across adjacent levels, assuming
 the pointwise power entry is preserved by the explicit root pullback. The

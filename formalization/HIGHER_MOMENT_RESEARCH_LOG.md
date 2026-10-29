@@ -3083,3 +3083,12 @@ No local power identity or all-level stability result is claimed by this commit.
 The first implementation of the outer partner-sum bridge used `simp` to turn `∑ x, if p x then f x else 0` into a subtype sum. Lean 4.33.1 reported a type error while simplifying matrix-power summands at `FinalTilde.lean:2008` and `2025` on commit `3c336ea123d0a2f54045f7ca34d1a153e28c97ea`.
 
 The correction isolates this index-set conversion in `glueRHS6_sum_ite_eq_subtype`, using `Fintype.sum_subtype_add_sum_subtype` and leaving the summand opaque. This is a proof-engineering repair only. The outer-root reindexing bridge still assumes pointwise transport of the fourth- and fifth-power diagonal entries; those local identities and the all-level equality (R_{m+1}=R_m) remain unproved.
+
+
+## 2026-10-29 — Diagnose the subtype-sum `simp made no progress` failure
+
+- Failure checkpoint: `8b6ce39ee047c5a10a51bfb331890eb9daf453ae`; both push Lean [40854423177](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40854423177) and PR Lean [40854431160](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40854431160) failed at `FinalTilde.lean:2000:16`.
+- The failing step was the last `simp` in `glueRHS6_sum_ite_eq_subtype`. It did not use the dependent proof fields of the two subtypes to reduce the conditional summands, so no simplification progress was available.
+- The correction explicitly uses the property field for each subtype: `if_pos x.2) on `{x // p x}`, and `if_neg x.2) with `Finset.sum_eq_zero` on `{x // ¬ p x}`. It then closes addition by zero directly. This is an index-set proof repair only.
+- No fourth-/fifth-power entry transport has been established by this fix; the bridge remains conditional and adjacent-level residual stability `R_{m+1}=R_m` is still open.
+- Verification status for the correction: pending new-SHA CI. Do not proceed to another source theorem until the full Lean build passes.

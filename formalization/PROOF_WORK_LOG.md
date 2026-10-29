@@ -519,3 +519,13 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Commit `3c336ea123d0a2f54045f7ca34d1a153e28c97ea` failed both Lean builds at the conversion between a conditional sum and a glued-state subtype sum, at `FinalTilde.lean:2008` and `2025`. The diagnostic was `simp made no progress` with an ill-typed intermediate involving `(Ahi ^ n) ((sgGlue ...).σ w)`; the same error appeared for `Alo).
 - Replaced the two broad `simp` conversions with the dedicated lemma `glueRHS6_sum_ite_eq_subtype`, proved directly from `Fintype.sum_subtype_add_sum_subtype`. The summand is passed as an opaque function, so this step only converts the index set and does not unfold matrix powers.
 - This correction does not change the residual theorem, power-entry hypotheses, or mathematical scope. The next CI result must confirm that the entire Lean formalization builds; no further theorem expansion is justified before that result.
+
+
+## 2026-10-29 — Repair subtype-sum proof after the 8b6ce39e Lean failure
+
+- Source checkpoint: `8b6ce39ee047c5a10a51bfb331890eb9daf453ae`.
+- Both full Lean workflows failed on that exact checkpoint: push run [40854423177](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40854423177) and PR run [40854431160](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40854431160). The first compiler error was `FinalTilde.lean:2000:16: simp made no progress`.
+- Replaced the generic final `simp` in `glueRHS6_sum_ite_eq_subtype` with explicit `Finset.sum_congr` and `if_pos x.2` on the positive subtype, plus `Finset.sum_eq_zero` and `if_neg x.2` on the negative subtype. The remaining `+ 0) is closed by `add_zero`.
+- The theorem statement and mathematical scope are unchanged. This only proves the finite index-set conversion; it does not prove the fourth-/fifth-power transport or `R_{m+1}=R_m`.
+- CI for the correction is pending; no success is claimed before inspecting the new SHA's full Lean build and the four push/PR workflows.
+- Next: first verify this patch with the complete configured Lean build. If Lean passes, continue with the already identified local matrix-power-entry transport; if it fails, repair the first new Lean error before further source changes.
