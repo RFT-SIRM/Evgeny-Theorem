@@ -1412,7 +1412,7 @@ theorem pHeO_corner_Y_box_entry_next_til
   change pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j =
     pHeO m θ ax (oTil m) p' q' i j at hCnum
   have hcpM := cp1_not_O_radius_two m hm hpx' hqx'
-  have hcpM1 := cp1_not_A m hm hp' hq'
+  have hcpM1 := cp1_not_A m (by omega) hp' hq'
   have hnum : oNum m p' q' ↔ oNum (m + 1) p' q' := by
     unfold oNum
     rw [vIdx_succ_of_mem hp', vIdx_succ_of_mem hq']
@@ -1447,24 +1447,25 @@ theorem sgK_A_Y_entry_next_til
     (hpx : p.1 ≤ 2) (hpy : 2 ^ (m + 1) ≤ p.2 + 2)
     (hqx : q.1 ≤ 2) (hqy : 2 ^ (m + 1) ≤ q.2 + 2)
     (i j : C2) :
-    ∃ p' q' : Point,
-      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
-      p = shiftPoint (2 ^ m) 0 1 p' ∧
-      q = shiftPoint (2 ^ m) 0 1 q' ∧
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 0 1 p'.1 ∧
+      q = shiftPoint (2 ^ m) 0 1 q'.1 ∧
       sgK (m + 1) θ ax (oTil (m + 2))
         (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
         (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
       sgK m θ ax (oTil (m + 1))
-        (GCopy.A, ((⟨p', List.mem_toFinset.mpr hp'⟩ : Pt m), i))
-        (GCopy.A, ((⟨q', List.mem_toFinset.mpr hq'⟩ : Pt m), j)) := by
+        (GCopy.A, (p', i))
+        (GCopy.A, (q', j)) := by
   rcases pHeO_corner_Y_box_entry_next_til m hm θ ax hax
       hp hq hpx hpy hqx hqy i j with
-    ⟨p', q', hp', hq', rfl, rfl, hentry⟩
-  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
   change pHeO (m + 1) θ ax (oTil (m + 2))
-      (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j =
-    pHeO m θ ax (oTil (m + 1)) p' q' i j
+      (shiftPoint (2 ^ m) 0 1 p0) (shiftPoint (2 ^ m) 0 1 q0) i j =
+    pHeO m θ ax (oTil (m + 1)) p0 q0 i j
   exact hentry
+
 
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
