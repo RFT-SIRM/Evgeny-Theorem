@@ -1,3 +1,4 @@
+import EvgenyTheorem.DegSplit
 import EvgenyTheorem.FlipC
 
 namespace EvgenyTheorem
@@ -204,5 +205,278 @@ theorem sameLocalIndexOrder_C (m : ℕ) :
       (fun x => shiftPoint (2 ^ m) 0 1 x.1) := by
   intro a b
   exact vIdx_succ_C_le_iff m a b
+
+/-!
+## Degree transport for the recursive copies
+
+The six glued states are exactly the points where two copies meet. Away
+from those excluded corner points, the recursive degree formula has a single
+nonzero copy contribution. These lemmas provide the degree-preservation part
+of the radius-two corner transport; they do not yet identify the oriented
+matrix entries on the exceptional corner edges.
+-/
+
+/-- Copy A preserves degree away from its two far corners, where another copy
+can contribute to the degree at the next level. -/
+theorem pdeg_succ_A_local
+    (m : ℕ) {p : Point} (hp : p ∈ vertexOrder m)
+    (hpX : p ≠ (2 ^ m, 0)) (hpY : p ≠ (0, 2 ^ m)) :
+    pdeg (m + 1) p = pdeg m p := by
+  rcases p with ⟨x, y⟩
+  have hsum : x + y ≤ 2 ^ m := vertexOrder_sum_le m (x, y) hp
+  have hA : (x, y) ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hp
+  have hB :
+      ¬ (2 ^ m ≤ x ∧ (x - 2 ^ m, y) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hxs, _⟩
+    have hx : x = 2 ^ m := by omega
+    have hy : y = 0 := by omega
+    exact hpX (Prod.ext hx hy)
+  have hC :
+      ¬ (2 ^ m ≤ y ∧ (x, y - 2 ^ m) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hys, _⟩
+    have hx : x = 0 := by omega
+    have hy : y = 2 ^ m := by omega
+    exact hpY (Prod.ext hx hy)
+  rw [pdeg_succ, if_pos hA, if_neg hB, if_neg hC]
+  simp
+
+/-- Copy B preserves degree away from its two glued corners, whose local
+coordinates are (0,0) and (0,2^m). -/
+theorem pdeg_succ_B_local
+    (m : ℕ) {p : Point} (hp : p ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpY : p ≠ (0, 2 ^ m)) :
+    pdeg (m + 1) (shiftPoint (2 ^ m) 1 0 p) = pdeg m p := by
+  rcases p with ⟨x, y⟩
+  simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+  have hsum : x + y ≤ 2 ^ m := vertexOrder_sum_le m (x, y) hp
+  have hpFin : (x, y) ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hp
+  have hA : (x + 2 ^ m, y) ∉ (vertexOrder m).toFinset := by
+    intro h
+    have hbound := vertexOrder_sum_le m (x + 2 ^ m, y) (List.mem_toFinset.mp h)
+    have hx : x = 0 := by omega
+    have hy : y = 0 := by omega
+    exact hp0 (Prod.ext hx hy)
+  have hB :
+      2 ^ m ≤ x + 2 ^ m ∧
+        ((x + 2 ^ m) - 2 ^ m, y) ∈ (vertexOrder m).toFinset := by
+    constructor
+    · omega
+    · simpa [Nat.add_sub_cancel_right] using hpFin
+  have hC :
+      ¬ (2 ^ m ≤ y ∧ (x + 2 ^ m, y - 2 ^ m) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hys, _⟩
+    have hx : x = 0 := by omega
+    have hy : y = 2 ^ m := by omega
+    exact hpY (Prod.ext hx hy)
+  rw [pdeg_succ, if_neg hA, if_pos hB, if_neg hC]
+  simp [Nat.add_sub_cancel_right]
+
+/-- Copy C preserves degree away from its two glued corners, whose local
+coordinates are (0,0) and (2^m,0). -/
+theorem pdeg_succ_C_local
+    (m : ℕ) {p : Point} (hp : p ∈ vertexOrder m)
+    (hp0 : p ≠ (0, 0)) (hpX : p ≠ (2 ^ m, 0)) :
+    pdeg (m + 1) (shiftPoint (2 ^ m) 0 1 p) = pdeg m p := by
+  rcases p with ⟨x, y⟩
+  simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+  have hsum : x + y ≤ 2 ^ m := vertexOrder_sum_le m (x, y) hp
+  have hpFin : (x, y) ∈ (vertexOrder m).toFinset := List.mem_toFinset.mpr hp
+  have hA : (x, y + 2 ^ m) ∉ (vertexOrder m).toFinset := by
+    intro h
+    have hbound := vertexOrder_sum_le m (x, y + 2 ^ m) (List.mem_toFinset.mp h)
+    have hx : x = 0 := by omega
+    have hy : y = 0 := by omega
+    exact hp0 (Prod.ext hx hy)
+  have hB :
+      ¬ (2 ^ m ≤ x ∧ (x - 2 ^ m, y + 2 ^ m) ∈ (vertexOrder m).toFinset) := by
+    rintro ⟨hxs, _⟩
+    have hx : x = 2 ^ m := by omega
+    have hy : y = 0 := by omega
+    exact hpX (Prod.ext hx hy)
+  have hC :
+      2 ^ m ≤ y + 2 ^ m ∧
+        (x, (y + 2 ^ m) - 2 ^ m) ∈ (vertexOrder m).toFinset := by
+    constructor
+    · omega
+    · simpa [Nat.add_sub_cancel_right] using hpFin
+  rw [pdeg_succ, if_neg hA, if_neg hB, if_pos hC]
+  simp [Nat.add_sub_cancel_right]
+
+
+/--
+For m ≥ 3, every level-(m+1) vertex with both coordinates at most two lies
+in the old A copy. These coordinate bounds contain the radius-two
+neighborhood of O and avoid the two corners where A-copy degrees can change.
+-/
+theorem corner_O_radius_two_transport
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : z.1 ≤ 2) (hy : z.2 ≤ 2) :
+    z ∈ vertexOrder m ∧
+      z ≠ (2 ^ m, 0) ∧ z ≠ (0, 2 ^ m) := by
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · refine ⟨hzA, ?_, ?_⟩
+    · intro heq
+      have hcoord : z.1 = 2 ^ m := congrArg Prod.fst heq
+      omega
+    · intro heq
+      have hcoord : z.2 = 2 ^ m := congrArg Prod.snd heq
+      omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    omega
+
+
+/--
+The radius-two box around the outer corner X at level m+1 is contained
+in copy B. Its local vertices avoid the two B-copy corners at which the
+recursive degree can receive an extra contribution.
+-/
+theorem corner_X_radius_two_transport
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : 2 ^ (m + 1) ≤ z.1 + 2) (hy : z.2 ≤ 2) :
+    ∃ p ∈ vertexOrder m,
+      z = shiftPoint (2 ^ m) 1 0 p ∧
+        p ≠ (0, 0) ∧ p ≠ (0, 2 ^ m) := by
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hsep : 2 ^ m + 2 < 2 ^ (m + 1) := by
+    rw [pow_succ]
+    omega
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · have hbound := vertexOrder_sum_le m z hzA
+    omega
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    have hlocal : 2 ^ m ≤ p.1 + 2 := by
+      rw [pow_succ] at hx
+      omega
+    have hp0 : p ≠ (0, 0) := by
+      intro heq
+      have hpx : p.1 = 0 := congrArg Prod.fst heq
+      omega
+    have hpY : p ≠ (0, 2 ^ m) := by
+      intro heq
+      have hpx : p.1 = 0 := congrArg Prod.fst heq
+      omega
+    exact ⟨p, hp, rfl, hp0, hpY⟩
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    omega
+
+/--
+The radius-two box around the outer corner Y at level m+1 is contained
+in copy C. Its local vertices avoid the two C-copy corners at which the
+recursive degree can receive an extra contribution.
+-/
+theorem corner_Y_radius_two_transport
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : z.1 ≤ 2) (hy : 2 ^ (m + 1) ≤ z.2 + 2) :
+    ∃ p ∈ vertexOrder m,
+      z = shiftPoint (2 ^ m) 0 1 p ∧
+        p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0) := by
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hsep : 2 ^ m + 2 < 2 ^ (m + 1) := by
+    rw [pow_succ]
+    omega
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · have hbound := vertexOrder_sum_le m z hzA
+    omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    omega
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    have hlocal : 2 ^ m ≤ p.2 + 2 := by
+      rw [pow_succ] at hy
+      omega
+    have hp0 : p ≠ (0, 0) := by
+      intro heq
+      have hpy : p.2 = 0 := congrArg Prod.snd heq
+      omega
+    have hpX : p ≠ (2 ^ m, 0) := by
+      intro heq
+      have hpy : p.2 = 0 := congrArg Prod.snd heq
+      omega
+    exact ⟨p, hp, rfl, hp0, hpX⟩
+
+
+/--
+Exact reindexing interface for the X-corner coordinate box: the level-(m+1)
+box is precisely the image of the corresponding level-m box under copy B.
+This is a statement about coordinate boxes, not graph balls or walk sums.
+-/
+theorem corner_X_radius_two_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1)) :
+    (2 ^ (m + 1) ≤ z.1 + 2 ∧ z.2 ≤ 2) ↔
+      ∃ p, p ∈ vertexOrder m ∧
+        2 ^ m ≤ p.1 + 2 ∧ p.2 ≤ 2 ∧
+          z = shiftPoint (2 ^ m) 1 0 p := by
+  constructor
+  · rintro ⟨hx, hy⟩
+    obtain ⟨p, hp, hzEq, _, _⟩ :=
+      corner_X_radius_two_transport m hm hz hx hy
+    refine ⟨p, hp, ?_, ?_, hzEq⟩
+    · rw [hzEq] at hx
+      simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+      rw [pow_succ] at hx
+      omega
+    · rw [hzEq] at hy
+      simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hy
+      exact hy
+  · rintro ⟨p, hp, hpx, hpy, rfl⟩
+    constructor
+    · simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+      rw [pow_succ]
+      omega
+    · simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+      exact hpy
+
+/--
+Exact reindexing interface for the Y-corner coordinate box: the level-(m+1)
+box is precisely the image of the corresponding level-m box under copy C.
+This is a statement about coordinate boxes, not graph balls or walk sums.
+-/
+theorem corner_Y_radius_two_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1)) :
+    (z.1 ≤ 2 ∧ 2 ^ (m + 1) ≤ z.2 + 2) ↔
+      ∃ p, p ∈ vertexOrder m ∧
+        p.1 ≤ 2 ∧ 2 ^ m ≤ p.2 + 2 ∧
+          z = shiftPoint (2 ^ m) 0 1 p := by
+  constructor
+  · rintro ⟨hx, hy⟩
+    obtain ⟨p, hp, hzEq, _, _⟩ :=
+      corner_Y_radius_two_transport m hm hz hx hy
+    refine ⟨p, hp, ?_, ?_, hzEq⟩
+    · rw [hzEq] at hx
+      simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hx
+      exact hx
+    · rw [hzEq] at hy
+      simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+      rw [pow_succ] at hy
+      omega
+  · rintro ⟨p, hp, hpx, hpy, rfl⟩
+    constructor
+    · simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+      exact hpx
+    · simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+      rw [pow_succ]
+      omega
 
 end EvgenyTheorem

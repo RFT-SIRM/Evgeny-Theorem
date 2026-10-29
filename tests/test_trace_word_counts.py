@@ -603,3 +603,310 @@ def test_even_pairing_cyclic_class_counts_are_pinned():
             assert ledger_by_r[r]["cyclic_class_count"] == class_count
             assert ledger_by_r[r]["word_count"] == word_count
 
+
+
+def test_two_pairing_gap_classes_match_boundary_power_exponents():
+    """The r=2 necklace gaps determine the middle power in trace_two_N_powers."""
+    expected = {
+        6: {
+            (0, 4): (1, 5, 6),
+            (1, 3): (2, 4, 6),
+            (2, 2): (3, 3, 3),
+        },
+        8: {
+            (0, 6): (1, 7, 8),
+            (1, 5): (2, 6, 8),
+            (2, 4): (3, 5, 8),
+            (3, 3): (4, 4, 4),
+        },
+        10: {
+            (0, 8): (1, 9, 10),
+            (1, 7): (2, 8, 10),
+            (2, 6): (3, 7, 10),
+            (3, 5): (4, 6, 10),
+            (4, 4): (5, 5, 5),
+        },
+    }
+    for p, expected_rows in expected.items():
+        rows = [
+            row for row in word_inventory(p)["classes"]
+            if row["kn_factor_count"] == 2
+        ]
+        actual = {}
+        for row in rows:
+            gaps = tuple(row["cyclic_gap_representative"])
+            assert len(gaps) == 2 and sum(gaps) == p - 2
+            a, b = (gaps[0] + 1, gaps[1] + 1)
+            actual[gaps] = (a, b, row["orbit_size"])
+            assert a + b == p
+            assert row["representative"].count("K*N") == 2
+        assert actual == expected_rows
+        assert sum(weight for _a, _b, weight in actual.values()) == p * (p - 1) // 2
+
+
+def test_gap_composition_inventory_matches_even_stratum_multiplicities():
+    from math import comb
+    from computational.trace_word_counts import gap_composition_inventory
+
+    expected = {
+        (6, 2): (5, 3, 15),
+        (6, 4): (10, 3, 15),
+        (6, 6): (1, 1, 1),
+        (8, 2): (7, 4, 28),
+        (8, 4): (35, 10, 70),
+        (8, 6): (21, 4, 28),
+        (8, 8): (1, 1, 1),
+        (10, 2): (9, 5, 45),
+        (10, 4): (84, 22, 210),
+        (10, 6): (126, 22, 210),
+        (10, 8): (36, 5, 45),
+        (10, 10): (1, 1, 1),
+    }
+    for (p, r), (ordered, classes, total) in expected.items():
+        got = gap_composition_inventory(p, r)
+        assert got["ordered_gap_tuples"] == ordered
+        assert got["cyclic_gap_classes"] == classes
+        assert got["word_weight_total"] == total == comb(p, r)
+        assert all(row["word_orbit_weight"] > 0 for row in got["classes"])
+
+
+def test_gap_orbit_weights_match_binary_necklace_orbits_class_by_class():
+    from computational.trace_word_counts import gap_composition_inventory
+
+    for p in (6, 8, 10):
+        words = word_inventory(p)["classes"]
+        for r in range(1, p + 1):
+            binary_weights = sorted(
+                int(row["orbit_size"])
+                for row in words
+                if int(row["kn_factor_count"]) == r
+            )
+            gap_weights = sorted(
+                int(row["word_orbit_weight"])
+                for row in gap_composition_inventory(p, r)["classes"]
+            )
+            assert gap_weights == binary_weights, (
+                f"p={p}, r={r}: gap-orbit weights {gap_weights} "
+                f"do not match binary-word orbit weights {binary_weights}"
+            )
+
+
+def test_reversal_gap_inventory_preserves_exact_even_stratum_weights():
+    from math import comb
+    from computational.trace_word_counts import reversal_gap_inventory
+
+    expected = {
+        (6, 2): (3, 15),
+        (6, 4): (3, 15),
+        (6, 6): (1, 1),
+        (8, 2): (4, 28),
+        (8, 4): (8, 70),
+        (8, 6): (4, 28),
+        (8, 8): (1, 1),
+        (10, 2): (5, 45),
+        (10, 4): (16, 210),
+        (10, 6): (16, 210),
+        (10, 8): (5, 45),
+        (10, 10): (1, 1),
+    }
+    for (p, r), (classes, total) in expected.items():
+        got = reversal_gap_inventory(p, r)
+        assert got["reversal_class_count"] == classes
+        assert got["word_weight_total"] == total == comb(p, r)
+        assert got["cyclic_gap_class_count"] >= got["reversal_class_count"]
+        assert all(row["cyclic_class_count"] in (1, 2) for row in got["classes"])
+
+
+def test_reversal_pairing_report_pins_fixed_and_paired_weights():
+    from math import comb
+    from computational.trace_word_counts import reversal_gap_pairing_report
+
+    expected = {
+        (6, 2): (3, 0, 15, 0),
+        (6, 4): (3, 0, 15, 0),
+        (6, 6): (1, 0, 1, 0),
+        (8, 2): (4, 0, 28, 0),
+        (8, 4): (6, 2, 38, 32),
+        (8, 6): (4, 0, 28, 0),
+        (8, 8): (1, 0, 1, 0),
+        (10, 2): (5, 0, 45, 0),
+        (10, 4): (10, 6, 90, 120),
+        (10, 6): (10, 6, 90, 120),
+        (10, 8): (5, 0, 45, 0),
+        (10, 10): (1, 0, 1, 0),
+    }
+    for (p, r), (fixed_n, paired_n, fixed_w, paired_w) in expected.items():
+        report = reversal_gap_pairing_report(p, r)
+        assert report["fixed_cyclic_class_count"] == fixed_n
+        assert report["paired_orbit_count"] == paired_n
+        assert report["fixed_word_weight"] == fixed_w
+        assert report["paired_word_weight"] == paired_w
+        assert report["total_word_weight"] == fixed_w + paired_w == comb(p, r)
+
+
+def test_full_word_reversal_inventory_preserves_necklace_weights():
+    from computational.trace_word_counts import reversal_word_inventory
+
+    expected = {
+        6: (14, 13, 64),
+        8: (36, 30, 256),
+        10: (108, 78, 1024),
+    }
+    for p, (cyclic_count, reversal_count, total_words) in expected.items():
+        report = reversal_word_inventory(p)
+        assert report["cyclic_class_count"] == cyclic_count
+        assert report["reversal_class_count"] == reversal_count
+        assert report["word_weight_total"] == total_words == 2**p
+        assert all(
+            row["cyclic_class_count"] in (1, 2)
+            for row in report["classes"]
+        )
+        for row in report["classes"]:
+            assert row["word_weight"] > 0
+            assert row["kn_factor_count"] == sum(
+                factor == "K*N" for factor in row["representative"]
+            )
+
+
+def test_full_word_reversal_strata_inventory_matches_binomial_weights():
+    from math import comb
+    from computational.trace_word_counts import reversal_word_strata_inventory
+
+    expected = {
+        6: {
+            2: (3, 3, 0, 15, 0),
+            3: (4, 3, 1, 8, 12),
+            4: (3, 3, 0, 15, 0),
+        },
+        8: {
+            2: (4, 4, 0, 28, 0),
+            3: (7, 5, 2, 24, 32),
+            4: (10, 8, 2, 38, 32),
+            5: (7, 5, 2, 24, 32),
+            6: (4, 4, 0, 28, 0),
+        },
+        10: {
+            2: (5, 5, 0, 45, 0),
+            3: (12, 8, 4, 40, 80),
+            4: (22, 16, 6, 90, 120),
+            5: (26, 16, 10, 52, 200),
+            6: (22, 16, 6, 90, 120),
+            7: (12, 8, 4, 40, 80),
+            8: (5, 5, 0, 45, 0),
+        },
+    }
+    for p, strata_expected in expected.items():
+        report = reversal_word_strata_inventory(p)
+        by_r = {row["kn_factor_count"]: row for row in report["strata"]}
+        assert report["word_weight_total"] == 2**p
+        for r, (cyclic, reversal, pairs, fixed_weight, paired_weight) in strata_expected.items():
+            row = by_r[r]
+            assert row["cyclic_class_count"] == cyclic
+            assert row["reversal_class_count"] == reversal
+            assert row["paired_orbit_count"] == pairs
+            assert row["fixed_word_weight"] == fixed_weight
+            assert row["paired_word_weight"] == paired_weight
+            assert row["word_weight_total"] == comb(p, r)
+
+
+def test_expanded_operator_word_inventory_preserves_stratum_weights():
+    from math import comb
+    from computational.trace_word_counts import expanded_operator_word_inventory
+
+    expected_classes = {
+        6: {1: 1, 2: 3, 3: 3, 4: 3, 5: 1},
+        8: {1: 1, 2: 4, 3: 5, 4: 8, 5: 5, 6: 4, 7: 1},
+        10: {1: 1, 2: 5, 3: 8, 4: 16, 5: 16, 6: 16, 7: 8, 8: 5, 9: 1},
+    }
+    for p, strata_expected in expected_classes.items():
+        report = expanded_operator_word_inventory(p)
+        assert report["factor_word_count"] == report["expected_factor_word_count"] == 2**p
+        by_r = {row["r"]: row for row in report["strata"]}
+        for r, class_count in strata_expected.items():
+            row = by_r[r]
+            assert row["expanded_length"] == p + r
+            assert row["expanded_K_count"] == p
+            assert row["expanded_N_count"] == r
+            assert row["reversal_class_count"] == class_count
+            assert row["factor_word_weight"] == comb(p, r)
+            assert row["expected_factor_word_count"] == comb(p, r)
+
+
+def test_adjoint_factor_word_inventory_is_stratumwise_involution():
+    from math import comb
+    from computational.trace_word_counts import adjoint_factor_word_inventory
+
+    expected = {
+        6: {
+            0: (1, 1, 0, 1), 1: (1, 1, 0, 6), 2: (3, 3, 0, 15),
+            3: (4, 2, 1, 8), 4: (3, 3, 0, 15), 5: (1, 1, 0, 6), 6: (1, 1, 0, 1),
+        },
+        8: {
+            0: (1, 1, 0, 1), 1: (1, 1, 0, 8), 2: (4, 4, 0, 28),
+            3: (7, 3, 2, 24), 4: (10, 6, 2, 38), 5: (7, 3, 2, 24),
+            6: (4, 4, 0, 28), 7: (1, 1, 0, 8), 8: (1, 1, 0, 1),
+        },
+        10: {
+            0: (1, 1, 0, 1), 1: (1, 1, 0, 10), 2: (5, 5, 0, 45),
+            3: (12, 4, 4, 40), 4: (22, 10, 6, 90), 5: (26, 6, 10, 52),
+            6: (22, 10, 6, 90), 7: (12, 4, 4, 40), 8: (5, 5, 0, 45),
+            9: (1, 1, 0, 10), 10: (1, 1, 0, 1),
+        },
+    }
+    for p, strata_expected in expected.items():
+        report = adjoint_factor_word_inventory(p)
+        assert report["is_combinatorial_involution"]
+        for row in report["strata"]:
+            r = row["r"]
+            cyclic, fixed_classes, paired_orbits, fixed_weight = strata_expected[r]
+            assert row["word_count"] == comb(p, r)
+            assert row["image_word_count"] == cyclic
+            assert row["cyclic_class_count"] == cyclic
+            assert row["fixed_cyclic_class_count"] == fixed_classes
+            assert row["paired_orbit_count"] == paired_orbits
+            assert row["fixed_word_weight"] == fixed_weight
+            assert row["paired_word_weight"] == comb(p, r) - fixed_weight
+            assert row["preserves_stratum"]
+            assert row["involution_on_cyclic_classes"]
+            assert row["fixed_canonical_word_count"] == fixed_weight
+
+def test_p10_eight_pairing_gap_classes_pin_exact_representatives_and_weights():
+    """Pin the five r=8 cyclic gap classes before any Lean boundary assembly."""
+    from computational.trace_word_counts import gap_composition_inventory
+
+    got = gap_composition_inventory(10, 8)
+    actual = {
+        tuple(row["gaps"]): int(row["word_orbit_weight"])
+        for row in got["classes"]
+    }
+    expected = {
+        (0, 0, 0, 0, 0, 0, 0, 2): 10,
+        (0, 0, 0, 0, 0, 0, 1, 1): 10,
+        (0, 0, 0, 0, 0, 1, 0, 1): 10,
+        (0, 0, 0, 0, 1, 0, 0, 1): 10,
+        (0, 0, 0, 1, 0, 0, 0, 1): 5,
+    }
+    assert actual == expected
+    assert got["ordered_gap_tuples"] == 36
+    assert got["cyclic_gap_classes"] == 5
+    assert got["word_weight_total"] == 45
+    assert got["word_weight_total"] == got["expected_word_count"]
+
+
+def test_p10_six_pairing_gap_classes_pin_distinct_weights():
+    """The 111313 class has weight 10; periodic 113113 has weight 5."""
+    from computational.trace_word_counts import gap_composition_inventory
+
+    got = gap_composition_inventory(10, 6)
+    by_powers = {
+        tuple(int(gap) + 1 for gap in row["gaps"]): int(row["word_orbit_weight"])
+        for row in got["classes"]
+    }
+    assert by_powers[(1, 1, 1, 3, 1, 3)] == 10
+    assert by_powers[(1, 1, 3, 1, 1, 3)] == 5
+    assert by_powers[(1, 1, 1, 3, 2, 2)] == 10
+    assert by_powers[(1, 1, 1, 4, 1, 2)] == 10
+    assert by_powers[(1, 1, 2, 1, 1, 4)] == 10
+    assert got["ordered_gap_tuples"] == 126
+    assert got["cyclic_gap_classes"] == 22
+    assert got["word_weight_total"] == 210 == got["expected_word_count"]

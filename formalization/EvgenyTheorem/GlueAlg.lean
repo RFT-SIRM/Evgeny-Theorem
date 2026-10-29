@@ -25,9 +25,74 @@ def GlueDiag {cp : W → ι} (G : GlueData cp) (X : Matrix W W ℂ) : Prop :=
 
 attribute [instance] GlueData.dg
 
+
+/-- A partner involution on the glued locus lets us exchange the two factors
+in a boundary sum. Unlike a permutation of all of W, this uses only the
+involution law actually provided by GlueData. -/
+theorem glued_sum_partner_product_swap {cp : W → ι} (G : GlueData cp)
+    (f h : W → ℂ) :
+    (∑ x : {w // G.g w}, f x.1 * h (G.σ x.1)) =
+      ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
+  let e : Equiv.Perm {w // G.g w} :=
+    { toFun := fun x => ⟨G.σ x.1, G.g_σ x.1 x.2⟩
+      invFun := fun x => ⟨G.σ x.1, G.g_σ x.1 x.2⟩
+      left_inv := by
+        intro x
+        apply Subtype.ext
+        exact G.σσ x.1 x.2
+      right_inv := by
+        intro x
+        apply Subtype.ext
+        exact G.σσ x.1 x.2 }
+  calc
+    (∑ x : {w // G.g w}, f x.1 * h (G.σ x.1)) =
+        ∑ x : {w // G.g w}, (fun y => f y.1 * h (G.σ y.1)) (e x) := by
+          symm
+          exact Equiv.sum_comp e (fun y => f y.1 * h (G.σ y.1))
+    _ = ∑ x : {w // G.g w}, f (G.σ x.1) * h x.1 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          change f (G.σ x.1) * h (G.σ (G.σ x.1)) =
+            f (G.σ x.1) * h x.1
+          rw [G.σσ x.1 x.2]
+    _ = ∑ x : {w // G.g w}, h x.1 * f (G.σ x.1) := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          exact mul_comm _ _
+
 /-- The pairing matrix. -/
 noncomputable def GlueData.N {cp : W → ι} (G : GlueData cp) : Matrix W W ℂ :=
   fun w a => if G.g w ∧ a = G.σ w then 1 else 0
+
+/-- The pairing matrix is self-adjoint: the involution law for the partner map
+makes its graph symmetric, and all nonzero entries are real. This is the
+adjoint premise needed to reverse expanded K/N words by complex conjugation. -/
+theorem GlueData.N_hermitian {cp : W → ι} (G : GlueData cp) :
+    Matrix.conjTranspose G.N = G.N := by
+  classical
+  ext w a
+  simp only [Matrix.conjTranspose_apply, GlueData.N]
+  by_cases hright : G.g w ∧ a = G.σ w
+  · rcases hright with ⟨hw, hwa⟩
+    have ha : G.g a := by
+      rw [hwa]
+      exact G.g_σ w hw
+    have haw : w = G.σ a := by
+      rw [hwa]
+      exact (G.σσ w hw).symm
+    have hleft : G.g a ∧ w = G.σ a := ⟨ha, haw⟩
+    have hright' : G.g w ∧ a = G.σ w := ⟨hw, hwa⟩
+    simp only [if_pos hleft, if_pos hright', star_one]
+  · have hleft : ¬ (G.g a ∧ w = G.σ a) := by
+      rintro ⟨ha, haw⟩
+      apply hright
+      constructor
+      · rw [haw]
+        exact G.g_σ a ha
+      · calc
+          a = G.σ (G.σ a) := (G.σσ a ha).symm
+          _ = G.σ w := by rw [haw]
+    simp only [if_neg hleft, if_neg hright, star_zero]
 
 /-- Block diagonality with respect to the copy map `cp`. -/
 def BD (cp : W → ι) (M : Matrix W W ℂ) : Prop := ∀ w w', cp w ≠ cp w' → M w w' = 0
@@ -1008,6 +1073,211 @@ theorem trace_ten_N_powers_boundary {cp : W → ι} (G : GlueData cp)
         K ^ i] : List (Matrix W W ℂ))
       ([K ^ k] : List (Matrix W W ℂ)) (K ^ j) (BD_pow K hK j) hkgJ)
 
+
+/-- The cyclic four-N class (1,1,6,2) has four distinct cyclic
+rotations, hence multiplicity ten. This is a boundary-sum reduction only;
+no cancellation with other strata is asserted. -/
+theorem trace_p10_four_N_class_1162 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 6 * G.N * K ^ 2 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 6) y x else 0) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 6 2 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 2 (by omega) w w' hw hw' hcopy hne)]
+
+/-- Another four-N cyclic class in the tenth-moment expansion. The run
+lengths (1,1,5,3) have four distinct cyclic rotations, hence multiplicity
+10. This is a class-level boundary reduction only; it does not assert that
+different cyclic classes cancel. -/
+theorem trace_p10_four_N_class_1153 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 5 * G.N * K ^ 3 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 5) y x else 0) *
+        (K ^ 3) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 5 3 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 3 (by omega) w w' hw hw' hcopy hne)]
+
+/-- One four-N cyclic class in the tenth-moment expansion. The run lengths
+(1,1,1,7) have cyclic orbit size four, hence multiplicity 10 among the
+length-ten words. This records its exact boundary-kernel expression; it does
+not identify it with any other class or claim cancellation. -/
+theorem trace_p10_four_N_class_1117 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 7 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 7) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 1 7 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 7 (by omega) w w' hw hw' hcopy hne)]
+
+
+/-- A second four-N cyclic class in the tenth-moment expansion. The run
+lengths (1,1,2,6) have four distinct cyclic rotations, so the word
+multiplicity is 10. This gives the class's boundary-sum form without
+identifying it with other classes or asserting cancellation. -/
+theorem trace_p10_four_N_class_1126 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 6 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 2) y x else 0) *
+        (K ^ 6) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 2 6 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 6 (by omega) w w' hw hw' hcopy hne)]
+
+
+/-- The cyclic four-N class (1,2,1,6) has four distinct cyclic rotations,
+hence multiplicity ten among the length-ten words. This records its exact
+boundary-sum expression and does not assert cancellation with other classes. -/
+theorem trace_p10_four_N_class_1216 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 6 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 2) (G.σ y) (G.σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 6) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 2 1 6 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 6 (by omega) w w' hw hw' hcopy hne)]
+
+/-- A third four-N cyclic class in the tenth-moment expansion. The run
+lengths (1,1,3,5) have four distinct cyclic rotations, giving multiplicity
+10 among length-ten words. No identification with other classes or
+cancellation is asserted. -/
+theorem trace_p10_four_N_class_1135 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 5 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 3) y x else 0) *
+        (K ^ 5) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 3 5 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 5 (by omega) w w' hw hw' hcopy hne)]
+
+
+/-- The cyclic four-N class (1,1,4,4) has four distinct cyclic
+rotations, hence multiplicity ten. It is distinct from the alternating
+class (1,4,1,4), whose multiplicity is five. -/
+theorem trace_p10_four_N_class_1144 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 4 * G.N * K ^ 4 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 1) (G.σ y) (G.σ y)) *
+          (K ^ 4) y x else 0) *
+        (K ^ 4) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 1 4 4 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 4 (by omega) w w' hw hw' hcopy hne)]
+
+/-- The cyclic four-N class (1,2,2,5) has four distinct cyclic rotations,
+hence multiplicity ten among the length-ten words. This is a boundary-sum
+reduction only; it does not assert cancellation with other classes. -/
+theorem trace_p10_four_N_class_1225 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 5 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 2) (G.σ y) (G.σ y)) *
+          (K ^ 2) y x else 0) *
+        (K ^ 5) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 2 2 5 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 5 (by omega) w w' hw hw' hcopy hne)]
+
+/-- The cyclic four-N class (1,4,1,4) has two distinct cyclic rotations,
+hence multiplicity five. The nested boundary-sum formula preserves the exact order of factors. -/
+theorem trace_p10_four_N_class_1414 {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    5 * Matrix.trace
+      (K ^ 1 * G.N * K ^ 4 * G.N * K ^ 1 * G.N * K ^ 4 * G.N * K ^ 0) =
+    5 * (∑ x, if G.g x then
+      (∑ y, if G.g y then
+        ((K ^ 0 * K ^ 1) x y * (K ^ 4) (G.σ y) (G.σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 4) (G.σ x) (G.σ x) else 0) := by
+  rw [trace_four_N_powers_explicit G K hK 1 4 1 4 0
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 4 (by omega) w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg 4 (by omega) w w' hw hw' hcopy hne)]
+
 /-- **Gluing identity.** -/
 theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
     (hkg : ∀ w w', G.g w → G.g w' → cp w = cp w' → w ≠ w' → K w w' = 0)
@@ -1055,6 +1325,713 @@ theorem glue_trace4 {cp : W → ι} (G : GlueData cp) (K : Matrix W W ℂ) (hbd 
       ∑ a, if G.g a then (K * K * K) a a * K (G.σ a) (G.σ a) else 0 := r3
   rw [r3']
   ring
+
+
+
+/-- Block diagonality across copies plus the glued-corner hypothesis
+implies that K has no off-diagonal entries anywhere on the glued locus. -/
+theorem glued_offdiag_of_BD {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ)
+    (hbd : BD cp K)
+    (hkg : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0) :
+    ∀ x y, G.g x → G.g y → x ≠ y → K x y = 0 := by
+  intro x y gx gy hne
+  by_cases hc : cp x = cp y
+  · exact hkg x y gx gy hc hne
+  · exact hbd x y hc
+
+/-- If the restriction of K to glued points is diagonal, a nested boundary
+sum collapses to its diagonal kernel. This isolates the support step needed
+before comparing the p=6 four-pairing terms. -/
+theorem glued_boundary_kernel_sum_diagonal {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ)
+    (hKoff : ∀ x y, G.g x → G.g y → x ≠ y → K x y = 0)
+    (F : W → W → ℂ) (H : W → ℂ) :
+    (∑ x, if G.g x then
+      (∑ y, if G.g y then K x y * F y x else 0) * H x else 0) =
+      ∑ x, if G.g x then K x x * F x x * H x else 0 := by
+  classical
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases gx : G.g x
+  · simp only [gx, if_pos]
+    have hinner :
+        (∑ y, if G.g y then K x y * F y x else 0) = K x x * F x x := by
+      rw [Finset.sum_eq_single x]
+      · simp [gx]
+      · intro y hy hne
+        by_cases gy : G.g y
+        · simp [gy, hKoff x y gx gy hne.symm]
+        · simp [gy]
+      · simp
+    rw [hinner]
+  · simp [gx]
+
+/-- Convenient form of the diagonal collapse: its support premise follows
+from the standard block-diagonal and glued-corner hypotheses. -/
+theorem glued_boundary_kernel_sum_diagonal_of_BD {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hbd : BD cp K)
+    (hkg : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
+    (F : W → W → ℂ) (H : W → ℂ) :
+    (∑ x, if G.g x then
+      (∑ y, if G.g y then K x y * F y x else 0) * H x else 0) =
+      ∑ x, if G.g x then K x x * F x x * H x else 0 := by
+  exact glued_boundary_kernel_sum_diagonal G K
+    (glued_offdiag_of_BD G K hbd hkg) F H
+
+/-- Four-pairing words whose left boundary power is K have a fully
+diagonal two-boundary kernel. The remaining powers may be arbitrary; only
+the middle and right powers need the usual glued-corner vanishing. -/
+theorem trace_four_N_powers_diagonal_left_one {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (b c d : ℕ)
+    (hkgK : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y → K x y = 0)
+    (hkgB : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
+      (K ^ b) x y = 0)
+    (hkgD : ∀ x y, G.g x → G.g y → cp x = cp y → x ≠ y →
+      (K ^ d) x y = 0) :
+    Matrix.trace (K ^ 1 * G.N * K ^ b * G.N * K ^ c * G.N * K ^ d * G.N * K ^ 0) =
+      ∑ x, if G.g x then
+        (K x x * (K ^ b) (G.σ x) (G.σ x) * (K ^ c) x x) *
+          (K ^ d) (G.σ x) (G.σ x) else 0 := by
+  have hexp := trace_four_N_powers_explicit G K hK 1 b c d 0 hkgB hkgD
+  rw [hexp]
+  have hcollapse := glued_boundary_kernel_sum_diagonal_of_BD
+    G K hK hkgK
+    (fun y x => (K ^ b) (G.σ y) (G.σ y) * (K ^ c) y x)
+    (fun x => (K ^ d) (G.σ x) (G.σ x))
+  simpa [pow_zero, Matrix.one_mul, mul_assoc] using hcollapse
+
+/-- Exact weighted boundary reduction for the two lower even strata of the
+sixth moment. The coefficients 6, 6, 3 are the orbit multiplicities of the
+cyclic classes; no reversal-pair equality is assumed. This lemma only exposes
+the boundary kernels. Comparing them for two concrete operators is a separate
+geometric obligation. -/
+theorem trace_p6_lower_even_strata_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+    6 * (∑ x, if G.g x then
+      (K ^ 1) x x * (K ^ 5) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K ^ 2) x x * (K ^ 4) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) := by
+  have h21 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 1) x x * (K ^ 5) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_two_N_powers G K 1 5 0 (BD_pow K hK 5) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 5 (by omega) w w' hw hw' hcopy hne))
+  have h22 :
+      Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 2) x x * (K ^ 4) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 2 4 0 (BD_pow K hK 4) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 4 (by omega) w w' hw hw' hcopy hne))
+  have h23 :
+      Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 3 3 0 (BD_pow K hK 3) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h41 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+        K ^ 3 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          ((K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+            (K ^ 3) (G.σ x) (G.σ x)) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_four_N_powers_diagonal_left_one G K hK 1 1 3
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h42 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N *
+        K ^ 2 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          ((K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
+            (K ^ 2) (G.σ x) (G.σ x)) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_four_N_powers_diagonal_left_one G K hK 1 2 2
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h43 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N *
+        K ^ 2 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          ((K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+            (K ^ 2) (G.σ x) (G.σ x)) else 0 := by
+    simpa [pow_zero, pow_one] using
+      (trace_four_N_powers_diagonal_left_one G K hK 2 1 2
+        (by intro w w' hw hw' hcopy hne; simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  rw [h21, h22, h23, h41, h42, h43]
+
+
+
+
+/-- Boundary kernel for one eight-N word in the tenth-moment expansion.
+It packages the exact diagonalized product from the general eight-pairing lemma. -/
+def trace_p10_eight_N_boundary_term {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (a b c d e f g h : ℕ) : ℂ :=
+  ∑ x, if G.g x then
+    (([K ^ 0, K ^ a, Matrix.diagonal (fun y => if G.g y then (K ^ b) (G.σ y) (G.σ y) else 0), K ^ c, Matrix.diagonal (fun y => if G.g y then (K ^ d) (G.σ y) (G.σ y) else 0), K ^ e,
+      Matrix.diagonal (fun y => if G.g y then (K ^ f) (G.σ y) (G.σ y) else 0), K ^ g] : List (Matrix W W ℂ)).prod) x x *
+      (K ^ h) (G.σ x) (G.σ x) else 0
+
+/-- Complete eight-N stratum of the tenth moment, grouped into its five
+cyclic-composition classes. Their multiplicities are 10, 10, 10, 10, and 5;
+the final coefficient accounts for the periodic class (1,1,1,2,1,1,1,2).
+This is an exact boundary reduction, not a cancellation claim. -/
+theorem trace_p10_eight_N_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 1 3 +
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 2 2 +
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 2 1 2 +
+    10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 2 1 1 2 +
+    5 * trace_p10_eight_N_boundary_term G K 1 1 2 1 1 1 1 2 := by
+  have h11111113 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 1 3 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 1 1 1 3 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h11111122 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 2 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 1 1 2 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h11111212 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 1 2 1 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 1 2 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h11112112 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 1 2 1 1 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 1 1 2 1 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h11121112 :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 2 1 1 1 1 2 := by
+    simpa [trace_p10_eight_N_boundary_term, pow_zero] using
+      (trace_eight_N_powers_boundary G K hK 1 1 2 1 1 1 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  rw [h11111113, h11111122, h11111212, h11112112, h11121112]
+
+/-- The unique ten-N word in the tenth-moment expansion reduces to
+its explicit boundary sum. This is the r=10 stratum; it makes no claim
+about cancellation with the other strata. -/
+theorem trace_p10_ten_N_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+      K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+      K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N *
+      K ^ 1 * G.N * K ^ 0) =
+    ∑ x, if G.g x then
+      (([K ^ 0, K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1,
+        Matrix.diagonal (fun y => if G.g y then (K ^ 1) (G.σ y) (G.σ y) else 0),
+        K ^ 1] : List (Matrix W W ℂ)).prod) x x *
+      (K ^ 1) (G.σ x) (G.σ x) else 0 := by
+  simpa [pow_zero] using
+    (trace_ten_N_powers_boundary G K hK
+      1 1 1 1 1 1 1 1 1 1 0
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne))
+
+/-- The two-N stratum of the tenth moment, grouped by cyclic rotations.
+The five classes of positive run lengths are (1,9), (2,8), (3,7),
+(4,6), and (5,5), with multiplicities 10, 10, 10, 10, and 5.
+This theorem only reduces these five trace classes to boundary sums. -/
+theorem trace_p10_two_N_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 9 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    10 * Matrix.trace (K ^ 1 * G.N * K ^ 9 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * G.N * K ^ 8 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 3 * G.N * K ^ 7 * G.N * K ^ 0) +
+    10 * Matrix.trace (K ^ 4 * G.N * K ^ 6 * G.N * K ^ 0) +
+    5 * Matrix.trace (K ^ 5 * G.N * K ^ 5 * G.N * K ^ 0) =
+    10 * (∑ x, if G.g x then
+      (K ^ 1) x x * (K ^ 9) (G.σ x) (G.σ x) else 0) +
+    10 * (∑ x, if G.g x then
+      (K ^ 2) x x * (K ^ 8) (G.σ x) (G.σ x) else 0) +
+    10 * (∑ x, if G.g x then
+      (K ^ 3) x x * (K ^ 7) (G.σ x) (G.σ x) else 0) +
+    10 * (∑ x, if G.g x then
+      (K ^ 4) x x * (K ^ 6) (G.σ x) (G.σ x) else 0) +
+    5 * (∑ x, if G.g x then
+      (K ^ 5) x x * (K ^ 5) (G.σ x) (G.σ x) else 0) := by
+  have h19 :
+      Matrix.trace (K ^ 1 * G.N * K ^ 9 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 1) x x * (K ^ 9) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 1 9 0 (BD_pow K hK 9) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 9 (by omega) w w' hw hw' hcopy hne))
+  have h28 :
+      Matrix.trace (K ^ 2 * G.N * K ^ 8 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 2) x x * (K ^ 8) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 2 8 0 (BD_pow K hK 8) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 8 (by omega) w w' hw hw' hcopy hne))
+  have h37 :
+      Matrix.trace (K ^ 3 * G.N * K ^ 7 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 3) x x * (K ^ 7) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 3 7 0 (BD_pow K hK 7) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 7 (by omega) w w' hw hw' hcopy hne))
+  have h46 :
+      Matrix.trace (K ^ 4 * G.N * K ^ 6 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 4) x x * (K ^ 6) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 4 6 0 (BD_pow K hK 6) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 6 (by omega) w w' hw hw' hcopy hne))
+  have h55 :
+      Matrix.trace (K ^ 5 * G.N * K ^ 5 * G.N * K ^ 0) =
+        ∑ x, if G.g x then
+          (K ^ 5) x x * (K ^ 5) (G.σ x) (G.σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers G K 5 5 0 (BD_pow K hK 5) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg 5 (by omega) w w' hw hw' hcopy hne))
+  rw [h19, h28, h37, h46, h55]
+
+/-- The top even stratum of the sixth moment is a three-step boundary trace.
+This specialization deliberately does not assert vanishing: its value must be
+compared with the other even strata (or with the corresponding operator's
+boundary correction). -/
+theorem trace_p6_top_stratum_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    Matrix.trace (K * G.N * K * G.N * K * G.N *
+      K * G.N * K * G.N * K * G.N) =
+    Matrix.trace (K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0)) := by
+  simpa [pow_zero, pow_one] using
+    (trace_six_N_powers_boundary G K hK 1 1 1 1 1 1 0
+      (by
+        intro w w' hw hw' hcopy hne
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+      (by
+        intro w w' hw hw' hcopy hne
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne))
+      (by
+        intro w w' hw hw' hcopy hne
+        simpa [pow_one] using (hkg 1 (by omega) w w' hw hw' hcopy hne)))
+
+
+
+/-- The boundary contribution associated with two pairing insertions
+at powers \(K^a\) and \(K^b\). This is only a finite endpoint sum, not
+a claim that it vanishes or is axis-independent. -/
+def gluedPowerGapSum {cp : W → ι} (G : GlueData cp)
+    (K : Matrix W W ℂ) (a b : ℕ) : ℂ :=
+  ∑ x, if G.g x then
+    (K ^ a) x x * (K ^ b) (G.σ x) (G.σ x) else 0
+
+/-- The complete p=6 two-pairing stratum is the exact weighted gap sum
+\(B_{6,2}=3(E_1+E_2+E_3+E_4+E_5)\). The proof uses the existing two-N
+boundary formula and trace cyclicity only; it does not claim cancellation
+against the r=4 or r=6 strata. -/
+theorem trace_p6_two_N_gap_sum {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N) +
+    6 * Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N) +
+    3 * Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N) =
+      3 * (gluedPowerGapSum G K 1 5 +
+        gluedPowerGapSum G K 2 4 +
+        gluedPowerGapSum G K 3 3 +
+        gluedPowerGapSum G K 4 2 +
+        gluedPowerGapSum G K 5 1) := by
+  have htrace (a b : ℕ) (ha : a ≤ 5) (hb : b ≤ 5) :
+      Matrix.trace (K ^ a * G.N * K ^ b * G.N) =
+        gluedPowerGapSum G K a b := by
+    have h := trace_two_N_powers G K a b 0
+      (BD_pow K hK b) (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+    simpa [gluedPowerGapSum, pow_zero, Matrix.mul_assoc] using h
+  have hswap (a b : ℕ) (ha : a ≤ 5) (hb : b ≤ 5) :
+      gluedPowerGapSum G K a b = gluedPowerGapSum G K b a := by
+    calc
+      gluedPowerGapSum G K a b =
+          Matrix.trace (K ^ a * G.N * K ^ b * G.N) :=
+        (htrace a b ha hb).symm
+      _ = Matrix.trace ((K ^ a * G.N) * (K ^ b * G.N)) := by
+        simp only [Matrix.mul_assoc]
+      _ = Matrix.trace ((K ^ b * G.N) * (K ^ a * G.N)) :=
+        Matrix.trace_mul_comm _ _
+      _ = Matrix.trace (K ^ b * G.N * K ^ a * G.N) := by
+        simp only [Matrix.mul_assoc]
+      _ = gluedPowerGapSum G K b a :=
+        htrace b a hb ha
+  rw [htrace 1 5 (by omega) (by omega),
+    htrace 2 4 (by omega) (by omega),
+    htrace 3 3 (by omega) (by omega),
+    hswap 4 2 (by omega) (by omega),
+    hswap 5 1 (by omega) (by omega)]
+  ring
+
+
+/-- The complete even-stratum contribution at moment six, assembled with the
+exact cyclic multiplicities. The lower two strata are expanded into their
+boundary sums; the top stratum is retained as its exact diagonal-sandwich
+trace. This is an assembly identity only: it makes no cancellation claim. -/
+theorem trace_p6_all_even_strata_boundary {cp : W → ι}
+    (G : GlueData cp) (K : Matrix W W ℂ) (hK : BD cp K)
+    (hkg : ∀ n, n ≤ 5 → ∀ w w', G.g w → G.g w' → cp w = cp w' →
+      w ≠ w' → (K ^ n) w w' = 0) :
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 5 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 2 * G.N * K ^ 4 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 3 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) +
+    6 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
+    3 * Matrix.trace (K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
+    Matrix.trace (K * G.N * K * G.N * K * G.N * K * G.N * K * G.N * K * G.N) =
+    6 * (∑ x, if G.g x then
+      (K ^ 1) x x * (K ^ 5) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K ^ 2) x x * (K ^ 4) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K ^ 3) x x * (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 3) (G.σ x) (G.σ x) else 0) +
+    6 * (∑ x, if G.g x then
+      (K x x * (K ^ 1) (G.σ x) (G.σ x) * (K ^ 2) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) +
+    3 * (∑ x, if G.g x then
+      (K x x * (K ^ 2) (G.σ x) (G.σ x) * (K ^ 1) x x) *
+        (K ^ 2) (G.σ x) (G.σ x) else 0) +
+    Matrix.trace (K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0) *
+      K * Matrix.diagonal (fun y =>
+      if G.g y then K (G.σ y) (G.σ y) else 0)) := by
+  rw [trace_p6_lower_even_strata_boundary G K hK hkg,
+    trace_p6_top_stratum_boundary G K hK hkg]
+
+
+/-- Multiplication on the right by a diagonal matrix weights the diagonal
+entries before taking the trace. -/
+theorem trace_mul_diagonal_eq_sum (A : Matrix W W ℂ) (d : W → ℂ) :
+    Matrix.trace (A * Matrix.diagonal d) = ∑ x, A x x * d x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+
+
+/-- A supported diagonal factor converts a diagonal-entry sum into a trace,
+without expanding the matrix product that precedes it. -/
+theorem trace_list_prod_mul_diagonal_supported_sum
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (M : List (Matrix X X ℂ)) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    Matrix.trace (M.prod * Matrix.diagonal d) =
+      ∑ x, if g x then M.prod x x * d x else 0 := by
+  classical
+  have htrace :
+      Matrix.trace (M.prod * Matrix.diagonal d) =
+        ∑ x, M.prod x x * d x := by
+    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+  rw [htrace]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hg : g x
+  · simp [hg]
+  · simp [hg, hd x hg]
+
+
+/-- Normalize the eight-factor list used by the p=8 boundary reduction.
+Kept separate from the operator-specific theorem so Lean checks only this
+short matrix-product identity here. -/
+theorem prod_p8_alternating_kernel_diagonal_word
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+      List (Matrix X X ℂ)).prod =
+      K * D * K * D * K * D * K := by
+  simp only [List.prod_cons, List.prod_nil, pow_zero, pow_one,
+    Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
+
+
+/-- Generic p=8 boundary-sum bridge. The supported sum is exactly the trace
+of the alternating four-kernel/four-diagonal word; this theorem contains no
+operator-specific hypotheses and does not assert that the trace collapses
+further to a fourth-power sum. -/
+theorem trace_p8_supported_boundary_sum_as_alternating_trace
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    Matrix.trace
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+          List (Matrix X X ℂ)).prod * Matrix.diagonal d) =
+      ∑ x, if g x then
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+          List (Matrix X X ℂ)).prod) x x * d x else 0 := by
+  exact trace_list_prod_mul_diagonal_supported_sum g
+    ([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+      Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+      List (Matrix X X ℂ)) d hd
+
+
+/-- Reassociate the alternating eight-factor trace as a fourth power.
+This is a purely algebraic normalization; it makes no claim about the
+operator-specific boundary sum. -/
+theorem trace_K_D_alternating_eight_eq_four
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    Matrix.trace (K * D * K * D * K * D * K * D) =
+      Matrix.trace ((K * D) ^ 4) := by
+  rw [pow_succ, pow_succ, pow_succ]
+  simp only [pow_one, Matrix.mul_assoc]
+
+
+/-- Combine the support restriction and matrix-word normalization: the
+supported p=8 boundary sum is the fourth-power trace of the kernel-diagonal
+product. This remains a generic algebraic identity, not an operator-specific
+cancellation theorem. -/
+theorem trace_p8_supported_boundary_sum_as_fourth_power
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    (∑ x, if g x then
+      (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+        List (Matrix X X ℂ)).prod) x x * d x else 0) =
+      Matrix.trace ((K * Matrix.diagonal d) ^ 4) := by
+  calc
+    (∑ x, if g x then
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+          List (Matrix X X ℂ)).prod) x x * d x else 0)
+        = Matrix.trace
+            (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+              Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1] :
+              List (Matrix X X ℂ)).prod * Matrix.diagonal d) := by
+              symm
+              exact trace_p8_supported_boundary_sum_as_alternating_trace
+                g K d hd
+    _ = Matrix.trace
+          (K * Matrix.diagonal d * K * Matrix.diagonal d *
+            K * Matrix.diagonal d * K * Matrix.diagonal d) := by
+          rw [prod_p8_alternating_kernel_diagonal_word]
+    _ = Matrix.trace ((K * Matrix.diagonal d) ^ 4) := by
+          exact trace_K_D_alternating_eight_eq_four K (Matrix.diagonal d)
+
+
+/-- Normalize the ten-factor list used by the p=10 boundary reduction.
+The list contains five kernel factors and four explicit diagonal factors;
+the final diagonal weight is supplied by right multiplication. -/
+theorem prod_p10_alternating_kernel_diagonal_word
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    ([K ^ 0, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1, D, K ^ 1] :
+      List (Matrix X X ℂ)).prod =
+      K * D * K * D * K * D * K * D * K := by
+  simp only [List.prod_cons, List.prod_nil, pow_zero, pow_one,
+    Matrix.one_mul, Matrix.mul_one, Matrix.mul_assoc]
+
+
+/-- Reassociate the alternating ten-factor trace as a fifth power. -/
+theorem trace_K_D_alternating_ten_eq_five
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (K D : Matrix X X ℂ) :
+    Matrix.trace (K * D * K * D * K * D * K * D * K * D) =
+      Matrix.trace ((K * D) ^ 5) := by
+  rw [pow_succ, pow_succ, pow_succ, pow_succ]
+  simp only [pow_one, Matrix.mul_assoc]
+
+
+/-- Convert a supported p=10 boundary sum to the fifth-power trace of
+the kernel-diagonal product. This is an algebraic bridge only; it does not
+claim cancellation with lower boundary strata. -/
+theorem trace_p10_supported_boundary_sum_as_fifth_power
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (K : Matrix X X ℂ) (d : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0) :
+    (∑ x, if g x then
+      (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+        Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)).prod) x x * d x else 0) =
+      Matrix.trace ((K * Matrix.diagonal d) ^ 5) := by
+  calc
+    (∑ x, if g x then
+        (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+          Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)).prod) x x * d x else 0)
+        = Matrix.trace
+            (([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+              Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+              Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)).prod *
+              Matrix.diagonal d) := by
+              symm
+              exact trace_list_prod_mul_diagonal_supported_sum g
+                ([K ^ 0, K ^ 1, Matrix.diagonal d, K ^ 1,
+                  Matrix.diagonal d, K ^ 1, Matrix.diagonal d, K ^ 1,
+                  Matrix.diagonal d, K ^ 1] : List (Matrix X X ℂ)) d hd
+    _ = Matrix.trace
+          (K * Matrix.diagonal d * K * Matrix.diagonal d *
+            K * Matrix.diagonal d * K * Matrix.diagonal d *
+            K * Matrix.diagonal d) := by
+          rw [prod_p10_alternating_kernel_diagonal_word]
+    _ = Matrix.trace ((K * Matrix.diagonal d) ^ 5) := by
+          exact trace_K_D_alternating_ten_eq_five K (Matrix.diagonal d)
+
+/-- The trace of a diagonal matrix is the finite sum of its diagonal weights. -/
+theorem trace_diagonal_eq_sum (d : W → ℂ) :
+    Matrix.trace (Matrix.diagonal d) = ∑ x, d x := by
+  simp [Matrix.trace, Matrix.diagonal_apply]
+
+/-- The trace of a product of two diagonal matrices is the sum
+of the pointwise products of their weights. -/
+theorem trace_diagonal_mul_diagonal_eq_sum (d e : W → ℂ) :
+    Matrix.trace (Matrix.diagonal d * Matrix.diagonal e) =
+      ∑ x, d x * e x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+
+/-- Entrywise formula for a diagonal sandwich. -/
+theorem diagonal_sandwich_apply
+    (d : W → ℂ) (K : Matrix W W ℂ) (x y : W) :
+    (Matrix.diagonal d * K * Matrix.diagonal d) x y =
+      d x * K x y * d y := by
+  classical
+  simp [Matrix.mul_apply, Matrix.diagonal_apply]
+
+/-- If a diagonal weight is supported on a set on which K has no
+off-diagonal entries, then sandwiching K by that weight is diagonal.
+This is the local matrix fact needed to collapse the p=6 top boundary trace. -/
+theorem diagonal_sandwich_offdiag_zero
+    (g : W → Prop)
+    (d : W → ℂ) (K : Matrix W W ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    ∀ x y, x ≠ y →
+      (Matrix.diagonal d * K * Matrix.diagonal d) x y = 0 := by
+  classical
+  intro x y hxy
+  simp only [Matrix.mul_apply, Matrix.diagonal_apply]
+  by_cases hx : g x
+  · by_cases hy : g y
+    · have hzero : K x y = 0 := hK x y hx hy hxy
+      simp [hzero]
+    · have hdy : d y = 0 := hd y hy
+      simp [hdy]
+  · have hdx : d x = 0 := hd x hx
+    simp [hdx]
+
+
+/-- Trace formula for a diagonal sandwich. The support of the diagonal weight
+and off-diagonal vanishing of K on that support make the sandwich diagonal;
+its trace is therefore the finite sum of its diagonal entries. -/
+theorem trace_diagonal_sandwich_eq_sum
+    (g : W → Prop) [DecidablePred g] (d : W → ℂ) (K : Matrix W W ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    Matrix.trace (Matrix.diagonal d * K * Matrix.diagonal d) =
+      ∑ x, if g x then d x * K x x * d x else 0 := by
+  classical
+  have hdiag :
+      Matrix.diagonal d * K * Matrix.diagonal d =
+        Matrix.diagonal (fun x => d x * K x x * d x) := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      rw [Matrix.diagonal_apply]
+      simp [diagonal_sandwich_apply]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero g d K hd hK x y hxy
+  rw [hdiag, trace_diagonal_eq_sum]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hg : g x
+  · simp [hg]
+  · simp [hg, hd x hg]
+
+
 
 end GlueAlg
 

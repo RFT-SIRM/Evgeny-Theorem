@@ -2,13 +2,14 @@ name: Lean formalization
 
 on:
   push:
-    branches: [main]
+    branches: [main, moment-6-8-10]
     paths:
       - "formalization/**/*.lean"
       - "lakefile.toml"
       - "lean-toolchain"
       - "lake-manifest.json"
       - ".github/workflows/lean-formalization.yml"
+      - "tests/test_higher_moments.py"
   pull_request:
     branches: [main]
     paths:
@@ -17,20 +18,22 @@ on:
       - "lean-toolchain"
       - "lake-manifest.json"
       - ".github/workflows/lean-formalization.yml"
+      - "tests/test_higher_moments.py"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Lean (first attempt)
-        id: lean_first
+      - name: Set up Lean toolchain and Mathlib cache
         uses: leanprover/lean-action@v1
-        continue-on-error: true
-      - name: Retry Lean setup after transient download failure
-        id: lean_retry
-        if: steps.lean_first.outcome == 'failure'
-        uses: leanprover/lean-action@v1
+        timeout-minutes: 20
+        with:
+          auto-config: false
+          build: false
+          test: false
+          lint: false
       - name: Build formalization
         run: lake build EvgenyTheorem

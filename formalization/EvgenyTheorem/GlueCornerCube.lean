@@ -1,4 +1,5 @@
 import EvgenyTheorem.GlueCornerGeom
+import EvgenyTheorem.GlueTrace
 
 namespace EvgenyTheorem
 
@@ -125,5 +126,608 @@ theorem sgK_corner_data (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis) (o : Point 
     · exact cube_axis_indep m θ ax ax' (oCo m o) (oanti_C m o hanti) x hx i
   · rw [sgK_sq_diag m θ ax o hanti, sgK_sq_diag m θ ax' o hanti]
   · rw [sgK_diag, sgK_diag]
+
+
+/-- The sum of cubic diagonal entries over glued states is independent of
+ the axis assignment. The pointwise corner identity is supplied by
+ sgK_corner_data; the result concerns the diagonal cube contribution only. -/
+theorem sgK_glued_cube_diag_sum_axis_indep
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ a, if (sgGlue m).g a then
+      (sgK m θ ax o * sgK m θ ax o * sgK m θ ax o) a a else 0) =
+    (∑ a, if (sgGlue m).g a then
+      (sgK m θ ax' o * sgK m θ ax' o * sgK m θ ax' o) a a else 0) := by
+  apply Finset.sum_congr rfl
+  intro a ha
+  by_cases hg : (sgGlue m).g a
+  · simp only [hg, ↓reduceIte]
+    exact (sgK_corner_data m θ ax ax' o hanti a hg).1
+  · simp [hg]
+
+
+/-- The full fourth-moment corner correction is independent of the axis
+assignment, by the pointwise corner identities for powers one through three. -/
+theorem cornerTerm_sgK_axis_indep
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    cornerTerm m (sgK m θ ax o) = cornerTerm m (sgK m θ ax' o) := by
+  apply cornerTerm_congr
+  exact sgK_corner_data m θ ax ax' o hanti
+
+
+/-- Conditional axis-congruence of the sixth-moment boundary correction.
+The already established diagonal identities for powers one through three,
+together with the explicit hypotheses for powers four and five, determine
+all six lower boundary sums. The top stratum is evaluated by the proved
+diagonal-cube reduction. This lemma does not assert that the power-four or
+power-five hypotheses hold for arbitrary axis assignments. -/
+theorem glueRHS6_sgK_axis_congr_of_diag45
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (h4 : ∀ a, (sgGlue m).g a →
+      (sgK m θ ax o ^ 4) a a = (sgK m θ ax' o ^ 4) a a)
+    (h5 : ∀ a, (sgGlue m).g a →
+      (sgK m θ ax o ^ 5) a a = (sgK m θ ax' o ^ 5) a a) :
+    glueRHS6 m (sgK m θ ax o) = glueRHS6 m (sgK m θ ax' o) := by
+  classical
+  let K := sgK m θ ax o
+  let K' := sgK m θ ax' o
+  have hdiag0 : ∀ a, (sgGlue m).g a → K a a = K' a a := by
+    intro a ha
+    simp [K, K', sgK_diag]
+  have hdiag1 : ∀ a, (sgGlue m).g a → (K ^ 1) a a = (K' ^ 1) a a := by
+    intro a ha
+    simpa [pow_one] using hdiag0 a ha
+  have hdiag2 : ∀ a, (sgGlue m).g a → (K ^ 2) a a = (K' ^ 2) a a := by
+    intro a ha
+    simpa [pow_two] using (sgK_corner_data m θ ax ax' o hanti a ha).2.1
+  have hdiag3 : ∀ a, (sgGlue m).g a → (K ^ 3) a a = (K' ^ 3) a a := by
+    intro a ha
+    simpa [pow_succ, pow_two] using (sgK_corner_data m θ ax ax' o hanti a ha).1
+  have hdiag4 : ∀ a, (sgGlue m).g a → (K ^ 4) a a = (K' ^ 4) a a := by
+    intro a ha
+    simpa [K, K'] using h4 a ha
+  have hdiag5 : ∀ a, (sgGlue m).g a → (K ^ 5) a a = (K' ^ 5) a a := by
+    intro a ha
+    simpa [K, K'] using h5 a ha
+
+  have sumG_congr {f f' : WSG m → ℂ}
+      (hf : ∀ x, (sgGlue m).g x → f x = f' x) :
+      (∑ x, if (sgGlue m).g x then f x else 0) =
+        (∑ x, if (sgGlue m).g x then f' x else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp [hg, hf x hg]
+    · simp [hg]
+
+  have hsum1 :
+      (∑ x, if (sgGlue m).g x then
+        (K ^ 1) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (K' ^ 1) x x * (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag1 x hx, hdiag5 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum2 :
+      (∑ x, if (sgGlue m).g x then
+        (K ^ 2) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (K' ^ 2) x x * (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag2 x hx, hdiag4 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum3 :
+      (∑ x, if (sgGlue m).g x then
+        (K ^ 3) x x * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (K' ^ 3) x x * (K' ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag3 x hx, hdiag3 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum4 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 1) x x) * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 1) x x) * (K' ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag1 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag1 x hx, hdiag3 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum5 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 2) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 2) x x) * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag1 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag2 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum6 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 1) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 1) x x) * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag1 x hx]
+
+  have htop :
+      Matrix.trace
+        (K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+          K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+      Matrix.trace
+        (K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+          K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+    calc
+      Matrix.trace
+          (K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+          Matrix.trace (K * (sgGlue m).N * K * (sgGlue m).N *
+            K * (sgGlue m).N * K * (sgGlue m).N * K * (sgGlue m).N * K * (sgGlue m).N) := by
+            simpa [K] using
+              (sg_trace_p6_top_stratum_boundary m hm θ ax o hanti).symm
+      _ = ∑ x, if (sgGlue m).g x then
+            (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+            simpa [K] using
+              (sg_trace_p6_top_stratum_diagonal_cube m hm θ ax o hanti)
+      _ = ∑ x, if (sgGlue m).g x then
+            (K' x x * K' ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+            apply Finset.sum_congr rfl
+            intro x _
+            by_cases hg : (sgGlue m).g x
+            · have hgσ := (sgGlue m).g_σ x hg
+              simp only [if_pos hg]
+              rw [hdiag0 x hg, hdiag0 ((sgGlue m).σ x) hgσ]
+            · simp [hg]
+      _ = Matrix.trace (K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+            calc
+              _ = Matrix.trace (K' * (sgGlue m).N * K' * (sgGlue m).N *
+                K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N) := by
+                simpa [K'] using
+                  (sg_trace_p6_top_stratum_diagonal_cube m hm θ ax' o hanti).symm
+              _ = _ := by
+                simpa [K'] using
+                  (sg_trace_p6_top_stratum_boundary m hm θ ax' o hanti)
+
+  unfold glueRHS6
+  rw [hsum1, hsum2, hsum3, hsum4, hsum5, hsum6, htop]
+
+
+/-- Expand the diagonal of a fourth power into a sum of two-step closed walks. -/
+theorem matrix_pow_four_diag_as_sum_sq
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) :
+    (K ^ 4) x x = ∑ y, (K ^ 2) x y * (K ^ 2) y x := by
+  have hp : K ^ 4 = K ^ 2 * K ^ 2 := by
+    calc
+      K ^ 4 = K ^ (2 + 2) := by norm_num
+      _ = K ^ 2 * K ^ 2 := pow_add K 2 2
+  rw [hp, Matrix.mul_apply]
+
+/-- Expand the diagonal of a fifth power into two-step and three-step paths. -/
+theorem matrix_pow_five_diag_as_sum_two_three
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) :
+    (K ^ 5) x x = ∑ y, (K ^ 2) x y * (K ^ 3) y x := by
+  have hp : K ^ 5 = K ^ 2 * K ^ 3 := by
+    calc
+      K ^ 5 = K ^ (2 + 3) := by norm_num
+      _ = K ^ 2 * K ^ 3 := pow_add K 2 3
+  rw [hp, Matrix.mul_apply]
+
+/-- The part of the p=6 boundary correction not determined by the first
+three diagonal powers. It keeps the two higher-power sums explicit instead
+of assuming that they are invariant under an axis change. -/
+noncomputable def glueRHS6_highPowerResidual
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  6 * ((∑ x, if (sgGlue m).g x then
+      (K ^ 1) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+    (∑ x, if (sgGlue m).g x then
+      (K' ^ 1) x x * (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) +
+  6 * ((∑ x, if (sgGlue m).g x then
+      (K ^ 2) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+    (∑ x, if (sgGlue m).g x then
+      (K' ^ 2) x x * (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0))
+
+/-- The high-power residual as explicit sums over intermediate states.
+The power-four and power-five factors are now exposed as two-step and
+three-step path sums; this is an algebraic expansion, not a level-stability
+claim. -/
+theorem glueRHS6_highPowerResidual_path_expansion
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ) :
+    glueRHS6_highPowerResidual m K K' =
+      6 * ((∑ x, if (sgGlue m).g x then
+          K x x * (∑ y, (K ^ 2) ((sgGlue m).σ x) y *
+            (K ^ 3) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          K' x x * (∑ y, (K' ^ 2) ((sgGlue m).σ x) y *
+            (K' ^ 3) y ((sgGlue m).σ x)) else 0)) +
+      6 * ((∑ x, if (sgGlue m).g x then
+          (K ^ 2) x x * (∑ y, (K ^ 2) ((sgGlue m).σ x) y *
+            (K ^ 2) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (K' ^ 2) x x * (∑ y, (K' ^ 2) ((sgGlue m).σ x) y *
+            (K' ^ 2) y ((sgGlue m).σ x)) else 0)) := by
+  unfold glueRHS6_highPowerResidual
+  simp only [pow_one, matrix_pow_five_diag_as_sum_two_three,
+    matrix_pow_four_diag_as_sum_sq]
+
+
+/-- Restrict the fourth-power diagonal path sum to any finite set that
+contains the support of the two-step row from the root. -/
+theorem matrix_pow_four_diag_as_sum_sq_of_support
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) (S : Finset W)
+    (hsupport : ∀ y, y ∉ S → (K ^ 2) x y = 0) :
+    (K ^ 4) x x =
+      ∑ y ∈ S, (K ^ 2) x y * (K ^ 2) y x := by
+  rw [matrix_pow_four_diag_as_sum_sq]
+  symm
+  apply Finset.sum_subset (Finset.subset_univ S)
+  intro y _ hyS
+  simp [hsupport y hyS]
+
+/-- Restrict the fifth-power diagonal path sum to any finite set that
+contains the support of the two-step row from the root. -/
+theorem matrix_pow_five_diag_as_sum_two_three_of_support
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) (S : Finset W)
+    (hsupport : ∀ y, y ∉ S → (K ^ 2) x y = 0) :
+    (K ^ 5) x x =
+      ∑ y ∈ S, (K ^ 2) x y * (K ^ 3) y x := by
+  rw [matrix_pow_five_diag_as_sum_two_three]
+  symm
+  apply Finset.sum_subset (Finset.subset_univ S)
+  intro y _ hyS
+  simp [hsupport y hyS]
+
+/-- The p=6 high-power residual written using finite intermediate-state
+sets. Each set need only contain the support of the corresponding K² row
+from the glued partner. This leaves the choice of geometric corner boxes
+explicit for the later level-to-level reindexing proof. -/
+theorem glueRHS6_highPowerResidual_local_path_expansion
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ)
+    (S : WSG m → Finset (WSG m))
+    (hK : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+      (K ^ 2) ((sgGlue m).σ x) y = 0)
+    (hK' : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+      (K' ^ 2) ((sgGlue m).σ x) y = 0) :
+    glueRHS6_highPowerResidual m K K' =
+      6 * ((∑ x, if (sgGlue m).g x then
+          K x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K ^ 2) ((sgGlue m).σ x) y * (K ^ 3) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          K' x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K' ^ 2) ((sgGlue m).σ x) y * (K' ^ 3) y ((sgGlue m).σ x)) else 0)) +
+      6 * ((∑ x, if (sgGlue m).g x then
+          (K ^ 2) x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K ^ 2) ((sgGlue m).σ x) y * (K ^ 2) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (K' ^ 2) x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K' ^ 2) ((sgGlue m).σ x) y * (K' ^ 2) y ((sgGlue m).σ x)) else 0)) := by
+  classical
+  have hsum15 (A : Matrix (WSG m) (WSG m) ℂ)
+      (hA : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+        (A ^ 2) ((sgGlue m).σ x) y = 0) :
+      (∑ x, if (sgGlue m).g x then
+        A x x * (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+          (A ^ 3) y ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        A x x * (∑ y ∈ S ((sgGlue m).σ x),
+          (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 3) y ((sgGlue m).σ x)) else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp only [hg, ↓reduceIte]
+      have hlocal :
+          (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 3) y ((sgGlue m).σ x)) =
+          ∑ y ∈ S ((sgGlue m).σ x),
+            (A ^ 2) ((sgGlue m).σ x) y *
+              (A ^ 3) y ((sgGlue m).σ x) := by
+        calc
+          _ = (A ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) :=
+            (matrix_pow_five_diag_as_sum_two_three A ((sgGlue m).σ x)).symm
+          _ = _ :=
+            matrix_pow_five_diag_as_sum_two_three_of_support A
+              ((sgGlue m).σ x) (S ((sgGlue m).σ x)) (hA x hg)
+      rw [hlocal]
+    · simp [hg]
+  have hsum24 (A : Matrix (WSG m) (WSG m) ℂ)
+      (hA : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+        (A ^ 2) ((sgGlue m).σ x) y = 0) :
+      (∑ x, if (sgGlue m).g x then
+        (A ^ 2) x x * (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+          (A ^ 2) y ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (A ^ 2) x x * (∑ y ∈ S ((sgGlue m).σ x),
+          (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 2) y ((sgGlue m).σ x)) else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp only [hg, ↓reduceIte]
+      have hlocal :
+          (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 2) y ((sgGlue m).σ x)) =
+          ∑ y ∈ S ((sgGlue m).σ x),
+            (A ^ 2) ((sgGlue m).σ x) y *
+              (A ^ 2) y ((sgGlue m).σ x) := by
+        calc
+          _ = (A ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) :=
+            (matrix_pow_four_diag_as_sum_sq A ((sgGlue m).σ x)).symm
+          _ = _ :=
+            matrix_pow_four_diag_as_sum_sq_of_support A
+              ((sgGlue m).σ x) (S ((sgGlue m).σ x)) (hA x hg)
+      rw [hlocal]
+    · simp [hg]
+  rw [glueRHS6_highPowerResidual_path_expansion,
+    hsum15 K hK, hsum15 K' hK', hsum24 K hK, hsum24 K' hK']
+
+
+
+/-- The finite coordinate box of radius two about a state of the glued
+copy operator. The copy coordinate is retained so the set cannot mix
+different blocks of the block-diagonal operator. -/
+def sgK_radius_two_support (m : ℕ) (w : WSG m) : Finset (WSG m) :=
+  Finset.univ.filter fun w' =>
+    w'.1 = w.1 ∧
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 2 ∧
+    w'.2.1.1.1 ≤ w.2.1.1.1 + 2 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 2 ∧
+    w'.2.1.1.2 ≤ w.2.1.1.2 + 2
+
+/-- Any nonzero two-step entry of sgK lies in the copy-preserving
+radius-two support set. The coordinate bounds use the generic locality
+estimate; equality of copy indices follows from block diagonality. -/
+theorem sgK_pow_two_entry_mem_radius_two
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m)
+    (h : (sgK m θ ax o ^ 2) w w' ≠ 0) :
+    w' ∈ sgK_radius_two_support m w := by
+  apply Finset.mem_filter.mpr
+  refine ⟨Finset.mem_univ _, ?_⟩
+  have hdist := sgK_pow_entry_coord_dist m θ ax o 2 w w' h
+  have hcopy : w'.1 = w.1 := by
+    by_contra hne
+    have hne' : w.1 ≠ w'.1 := fun heq => hne heq.symm
+    have hzero : (sgK m θ ax o ^ 2) w w' = 0 := by
+      change (blockK (Hc m θ ax o) ^ 2) w w' = 0
+      rw [blockK_pow_local]
+      simp [blockK, hne']
+    exact h hzero
+  exact ⟨hcopy, hdist.1, hdist.2.1, hdist.2.2.1, hdist.2.2.2⟩
+
+/-- The two-step row of sgK vanishes outside the finite radius-two
+support set. This is the concrete support hypothesis needed by the
+finite-support residual expansion. -/
+theorem sgK_pow_two_entry_zero_outside_radius_two
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m)
+    (h' : w' ∉ sgK_radius_two_support m w) :
+    (sgK m θ ax o ^ 2) w w' = 0 := by
+  by_contra hzero
+  exact h' (sgK_pow_two_entry_mem_radius_two m θ ax o w w' hzero)
+
+/-- The p=6 high-power residual for concrete glued-copy operators, written
+using the copy-preserving radius-two support proved above. This is a finite
+path-sum formula only; it does not claim that the sums agree between levels. -/
+theorem glueRHS6_highPowerResidual_sgK_radius_two_path_expansion
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    glueRHS6_highPowerResidual m (sgK m θ ax o) (sgK m θ ax' o) =
+      6 * ((∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax o ^ 3) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (sgK m θ ax' o) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax' o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax' o ^ 3) y ((sgGlue m).σ x)) else 0)) +
+      6 * ((∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o ^ 2) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax o ^ 2) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (sgK m θ ax' o ^ 2) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax' o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax' o ^ 2) y ((sgGlue m).σ x)) else 0)) := by
+  classical
+  have hK : ∀ x, (sgGlue m).g x → ∀ y,
+      y ∉ sgK_radius_two_support m ((sgGlue m).σ x) →
+        (sgK m θ ax o ^ 2) ((sgGlue m).σ x) y = 0 := by
+    intro x hx y hy
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      m θ ax o ((sgGlue m).σ x) y hy
+  have hK' : ∀ x, (sgGlue m).g x → ∀ y,
+      y ∉ sgK_radius_two_support m ((sgGlue m).σ x) →
+        (sgK m θ ax' o ^ 2) ((sgGlue m).σ x) y = 0 := by
+    intro x hx y hy
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      m θ ax' o ((sgGlue m).σ x) y hy
+  simpa using
+    (glueRHS6_highPowerResidual_local_path_expansion
+      m (sgK m θ ax o) (sgK m θ ax' o)
+      (sgK_radius_two_support m) hK hK')
+
+
+/-- Exact residual formula for the sixth-moment boundary correction. Under
+orientation antisymmetry, powers one through three on glued diagonals and
+the top-stratum diagonal-cube term are axis-independent. Therefore the only
+terms left in the difference of glueRHS6 are its two higher-power sums,
+involving powers four and five. This theorem does not assume those sums
+vanish or agree. -/
+theorem glueRHS6_sgK_axis_residual_of_diag123
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    glueRHS6 m (sgK m θ ax o) - glueRHS6 m (sgK m θ ax' o) =
+      glueRHS6_highPowerResidual m (sgK m θ ax o) (sgK m θ ax' o) := by
+  classical
+  let K := sgK m θ ax o
+  let K' := sgK m θ ax' o
+  have hdiag0 : ∀ a, (sgGlue m).g a → K a a = K' a a := by
+    intro a ha
+    simp [K, K', sgK_diag]
+  have hdiag1 : ∀ a, (sgGlue m).g a → (K ^ 1) a a = (K' ^ 1) a a := by
+    intro a ha
+    simpa [pow_one] using hdiag0 a ha
+  have hdiag2 : ∀ a, (sgGlue m).g a → (K ^ 2) a a = (K' ^ 2) a a := by
+    intro a ha
+    simpa [pow_two] using (sgK_corner_data m θ ax ax' o hanti a ha).2.1
+  have hdiag3 : ∀ a, (sgGlue m).g a → (K ^ 3) a a = (K' ^ 3) a a := by
+    intro a ha
+    simpa [pow_succ, pow_two] using (sgK_corner_data m θ ax ax' o hanti a ha).1
+
+  have sumG_congr {f f' : WSG m → ℂ}
+      (hf : ∀ x, (sgGlue m).g x → f x = f' x) :
+      (∑ x, if (sgGlue m).g x then f x else 0) =
+        (∑ x, if (sgGlue m).g x then f' x else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp [hg, hf x hg]
+    · simp [hg]
+
+  have hsum3 :
+      (∑ x, if (sgGlue m).g x then
+        (K ^ 3) x x * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (K' ^ 3) x x * (K' ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag3 x hx, hdiag3 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum4 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 1) x x) * (K ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 1) x x) * (K' ^ 3) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag1 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag1 x hx, hdiag3 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum5 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 2) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 1) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 2) x x) * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag1 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag2 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx)]
+
+  have hsum6 :
+      (∑ x, if (sgGlue m).g x then
+        ((K x x * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K ^ 1) x x) * (K ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        ((K' x x * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+          (K' ^ 1) x x) * (K' ^ 2) ((sgGlue m).σ x) ((sgGlue m).σ x)) else 0) := by
+    apply sumG_congr
+    intro x hx
+    rw [hdiag0 x hx, hdiag2 ((sgGlue m).σ x) ((sgGlue m).g_σ x hx),
+      hdiag1 x hx]
+
+  have htop :
+      Matrix.trace
+        (K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+          K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+      Matrix.trace
+        (K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+          K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+          K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+    calc
+      Matrix.trace
+          (K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+          Matrix.trace (K * (sgGlue m).N * K * (sgGlue m).N *
+            K * (sgGlue m).N * K * (sgGlue m).N * K * (sgGlue m).N * K * (sgGlue m).N) := by
+            simpa [K] using
+              (sg_trace_p6_top_stratum_boundary m hm θ ax o hanti).symm
+      _ = ∑ x, if (sgGlue m).g x then
+            (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+            simpa [K] using
+              (sg_trace_p6_top_stratum_diagonal_cube m hm θ ax o hanti)
+      _ = ∑ x, if (sgGlue m).g x then
+            (K' x x * K' ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 3 else 0 := by
+            apply Finset.sum_congr rfl
+            intro x _
+            by_cases hg : (sgGlue m).g x
+            · have hgσ := (sgGlue m).g_σ x hg
+              simp only [if_pos hg]
+              rw [hdiag0 x hg, hdiag0 ((sgGlue m).σ x) hgσ]
+            · simp [hg]
+      _ = Matrix.trace (K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+            K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+            K' * Matrix.diagonal (fun y => if (sgGlue m).g y then
+              K' ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+            calc
+              _ = Matrix.trace (K' * (sgGlue m).N * K' * (sgGlue m).N *
+                K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N * K' * (sgGlue m).N) := by
+                simpa [K'] using
+                  (sg_trace_p6_top_stratum_diagonal_cube m hm θ ax' o hanti).symm
+              _ = _ := by
+                simpa [K'] using
+                  (sg_trace_p6_top_stratum_boundary m hm θ ax' o hanti)
+
+  unfold glueRHS6 glueRHS6_highPowerResidual
+  rw [hsum3, hsum4, hsum5, hsum6, htop]
+  ring
 
 end EvgenyTheorem

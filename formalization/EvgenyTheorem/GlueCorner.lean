@@ -128,6 +128,20 @@ theorem sgK_hkg (m : ℕ) (hm : 1 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (o : Poi
   · exact Hc_zero_edge m θ ax o w.1 w.2 w'.2 hp
       (corners_far hm (glued_corner hw) (glued_corner hw') hp)
 
+/-- Any two distinct glued states have zero one-step sgK coupling.
+Within one copy this is sgK_hkg; across different copies it follows from
+the block-diagonal definition of sgK. -/
+theorem sgK_glued_offdiag (m : ℕ) (hm : 1 ≤ m) (θ : ℝ)
+    (ax : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m) (hw : (sgGlue m).g w) (hw' : (sgGlue m).g w')
+    (hne : w ≠ w') :
+    sgK m θ ax o w w' = 0 := by
+  by_cases hc : w.1 = w'.1
+  · exact sgK_hkg m hm θ ax o w w' hw hw' hc hne
+  · have hz : sgK m θ ax o w w' = 0 := by
+      simp [sgK, blockK, hc]
+    exact hz
+
 /-! ### `hu2` -/
 
 theorem blockK_mul_same {ι X : Type*} [Fintype ι] [DecidableEq ι] [Fintype X] [DecidableEq X]
@@ -217,6 +231,36 @@ theorem Hc_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
       change Matrix.conjTranspose (pOpO m θ ax (oCo m o)) =
         pOpO m θ ax (oCo m o)
       exact pOpO_hermitian_of_OAnti m θ ax (oCo m o) (oanti_C m o hanti)
+
+/-- The concrete glued operator is Hermitian whenever the orientation
+relation is antisymmetric at the parent level. -/
+theorem sgK_hermitian_of_OAnti (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.conjTranspose (sgK m θ ax o) = sgK m θ ax o := by
+  ext w w'
+  by_cases hc : w.1 = w'.1
+  · have hH := Hc_hermitian_of_OAnti m θ ax o hanti w'.1
+    have hentry := congrFun (congrFun hH w.2) w'.2
+    simpa [sgK, blockK, Matrix.conjTranspose_apply, hc] using hentry
+  · have hrev : w'.1 ≠ w.1 := by
+      intro h
+      exact hc h.symm
+    simp [sgK, blockK, Matrix.conjTranspose_apply, hc, hrev]
+
+/-- Reversing any expanded K/N word conjugates its trace in the concrete
+glued model. This records the exact adjoint symmetry needed for the reversal
+orbits in the p=6,8,10 ledger; it does not claim that each trace is real. -/
+theorem trace_sgK_N_word_reverse_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (xs : List (Matrix (WSG m) (WSG m) ℂ))
+    (hxs : ∀ M, M ∈ xs → M = sgK m θ ax o ∨ M = (sgGlue m).N) :
+    star (Matrix.trace xs.prod) = Matrix.trace xs.reverse.prod := by
+  exact trace_K_N_word_reverse (sgK m θ ax o) ((sgGlue m).N)
+    (sgK_hermitian_of_OAnti m θ ax o hanti)
+    (GlueData.N_hermitian (sgGlue m)) xs hxs
 
 /-- For every natural power, the same-point opposite-spin entry in a glued
 copy vanishes under the original level's orientation-antisymmetry hypothesis.
@@ -491,6 +535,66 @@ theorem sgK_pow_zero_of_distinct_glued_corner_coords
   · apply sgK_pow_entry_zero_of_coord_gap
     exact Or.inr (Or.inr (Or.inr (by omega)))
 
+/-- Reusable same-copy off-diagonal vanishing for powers of the concrete
+glued operator. The proof splits the partner-coordinate case, handled by
+GlueDiag, from distinct geometric corners, handled by the path-length bound. -/
+theorem sgK_pow_hkg_of_OAnti
+    (m n : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) (hn : n < 2 ^ m) :
+    ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro w w' hw hw' hcopy hne
+  have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
+  by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
+  · exact hdiag w w' hw hw' hcopy hpartner hne
+  · have h1 := (glW_sgσ hw).1
+    have h2 := (glW_sgσ hw').1
+    have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
+      intro hsame
+      have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
+      have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
+        simpa [hcopy, hsame] using h2
+      have huniq := gl_unique m h1' h2'
+      exact hpartner huniq.1
+    exact sgK_pow_zero_of_distinct_glued_corner_coords
+      m n hn θ ax o w w' hw hw' hcoord
+
+/-- Concrete p=6 support bridge: for levels m ≥ 3, all powers through
+degree five satisfy the same-copy glued-corner vanishing premise used by
+the abstract lower-even-strata trace formula. Distinct corner coordinates
+are separated by 2^m > 5; equal partner coordinates are handled by GlueDiag. -/
+theorem sgK_pow_hkg_up_to_five_of_OAnti
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    ∀ n, n ≤ 5 → ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro n hn w w' hw hw' hcopy hne
+  have hside : 5 < 2 ^ m := by
+    calc
+      5 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
+    (by omega) w w' hw hw' hcopy hne
+
+/-- Concrete p=10 support bridge: for levels m ≥ 4, every power through
+degree nine satisfies the same-copy glued-corner vanishing premise. The
+geometric path-length bound is strict because 9 < 2^4 ≤ 2^m. -/
+theorem sgK_pow_hkg_up_to_nine_of_OAnti
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    ∀ n, n ≤ 9 → ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro n hn w w' hw hw' hcopy hne
+  have hside : 9 < 2 ^ m := by
+    calc
+      9 < 2 ^ 4 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
+    (by omega) w w' hw hw' hcopy hne
+
 /-- Under orientation antisymmetry, the glued corner lemma supplies the
 middle-power hypothesis required to annihilate every ordered three-pairing
 trace word whose middle exponent is below the geometric bound. -/
@@ -548,21 +652,8 @@ theorem trace_four_N_powers_explicit_of_OAnti
   have hkg : ∀ n, n < 2 ^ m →
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
-    intro n hn w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m n θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m n hn θ ax o w w' hw hw' hcoord
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
   exact trace_four_N_powers_explicit (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e (hkg b hb) (hkg d hd)
 
@@ -579,24 +670,7 @@ theorem trace_three_N_word_zero_of_OAnti
     Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
       sgK m θ ax o ^ b * (sgGlue m).N *
       sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d) = 0 := by
-  have hkg : ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
-      w.1 = w'.1 → w ≠ w' →
-      (sgK m θ ax o ^ b) w w' = 0 := by
-    intro w w' hw hw' hcopy hne
-    have hdiag := sgK_pow_GlueDiag_of_OAnti m b θ ax o hanti
-    by_cases hpartner : (sgσ m w).1 = (sgσ m w').1
-    · exact hdiag w w' hw hw' hcopy hpartner hne
-    · have h1 := (glW_sgσ hw).1
-      have h2 := (glW_sgσ hw').1
-      have hcoord : w.2.1.1 ≠ w'.2.1.1 := by
-        intro hsame
-        have h1' : gl m w.1 w.2.1.1 (sgσ m w).1 (sgσ m w).2.1.1 := h1
-        have h2' : gl m w.1 w.2.1.1 (sgσ m w').1 (sgσ m w').2.1.1 := by
-          simpa [hcopy, hsame] using h2
-        have huniq := gl_unique m h1' h2'
-        exact hpartner huniq.1
-      exact sgK_pow_zero_of_distinct_glued_corner_coords
-        m b hb θ ax o w w' hw hw' hcoord
+  have hkg := sgK_pow_hkg_of_OAnti m b θ ax o hanti hb
   have hbd : BD (fun w : WSG m => w.1) (sgK m θ ax o) := blockK_BD _
   have hxs : ∀ A, A ∈ ([sgK m θ ax o ^ a] : List (Matrix (WSG m) (WSG m) ℂ)) →
       BD (fun w : WSG m => w.1) A := by
@@ -655,5 +729,185 @@ theorem trace_five_N_powers_zero_of_OAnti
   exact trace_five_N_powers_zero (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e f (hkg b hb) (hkg d hd)
 
+
+end EvgenyTheorem
+
+
+namespace EvgenyTheorem
+
+
+/-- Concrete seven-pairing vanishing theorem. The three selected middle
+powers are below the side length, so their corner-off-diagonal hypotheses
+follow from orientation antisymmetry and the geometric support bound. -/
+theorem trace_seven_N_powers_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m) (hf : f < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ g * (sgGlue m).N * sgK m θ ax o ^ h) = 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
+  exact trace_seven_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g h (hkg b hb) (hkg d hd) (hkg f hf)
+
+
+/-- Concrete nine-pairing vanishing theorem. The four selected middle
+powers are below the side length, so their corner-off-diagonal hypotheses
+follow from orientation antisymmetry and the geometric support bound. -/
+theorem trace_nine_N_powers_zero_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m)
+    (hf : f < 2 ^ m) (hh : h < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ g * (sgGlue m).N *
+      sgK m θ ax o ^ h * (sgGlue m).N *
+      sgK m θ ax o ^ i * (sgGlue m).N * sgK m θ ax o ^ j) = 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
+  exact trace_nine_N_powers_zero (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g h i j
+    (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh)
+
+
+/-- Six-pairing boundary reduction for the concrete glued operator.
+The three corner hypotheses are discharged from orientation antisymmetry
+and the geometric distance bound, provided b, d, f are below the side length.
+This is a boundary identity, not a vanishing theorem. -/
+theorem trace_six_N_powers_boundary_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m) (hf : f < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N * sgK m θ ax o ^ g) =
+    Matrix.trace (sgK m θ ax o ^ g * sgK m θ ax o ^ a *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (sgK m θ ax o ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      sgK m θ ax o ^ c *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (sgK m θ ax o ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+      sgK m θ ax o ^ e *
+      Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (sgK m θ ax o ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
+  exact trace_six_N_powers_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g (hkg b hb) (hkg d hd) (hkg f hf)
+
+
+/-- Eight-pairing boundary reduction for the concrete glued operator.
+All four corner hypotheses are derived from OAnti and the geometric distance
+bound. The conclusion is the explicit endpoint sum from
+`trace_eight_N_powers_boundary`; it is not a cancellation theorem. -/
+theorem trace_eight_N_powers_boundary_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m)
+    (hf : f < 2 ^ m) (hh : h < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ g * (sgGlue m).N *
+      sgK m θ ax o ^ h * (sgGlue m).N * sgK m θ ax o ^ i) =
+      ∑ x, if (sgGlue m).g x then
+        (([sgK m θ ax o ^ i, sgK m θ ax o ^ a,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ c,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ e,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ g] : List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
+          (sgK m θ ax o ^ h) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
+  exact trace_eight_N_powers_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g h i
+    (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh)
+
+
+/-- Ten-pairing boundary reduction for the concrete glued operator.
+The five corner hypotheses are discharged from OAnti and the geometric
+distance bound. The conclusion is the endpoint-sum formula from
+`trace_ten_N_powers_boundary`; no cancellation is asserted. -/
+theorem trace_ten_N_powers_boundary_of_OAnti
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j k : ℕ)
+    (hb : b < 2 ^ m) (hd : d < 2 ^ m)
+    (hf : f < 2 ^ m) (hh : h < 2 ^ m) (hj : j < 2 ^ m) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ g * (sgGlue m).N *
+      sgK m θ ax o ^ h * (sgGlue m).N *
+      sgK m θ ax o ^ i * (sgGlue m).N *
+      sgK m θ ax o ^ j * (sgGlue m).N * sgK m θ ax o ^ k) =
+      ∑ x, if (sgGlue m).g x then
+        (([sgK m θ ax o ^ k, sgK m θ ax o ^ a,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ c,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ e,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ g,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ h) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ i] : List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
+          (sgK m θ ax o ^ j) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+  have hkg : ∀ n, n < 2 ^ m →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti hn
+  exact trace_ten_N_powers_boundary (sgGlue m) (sgK m θ ax o)
+    (blockK_BD _) a b c d e f g h i j k
+    (hkg b hb) (hkg d hd) (hkg f hf) (hkg h hh) (hkg j hj)
 
 end EvgenyTheorem

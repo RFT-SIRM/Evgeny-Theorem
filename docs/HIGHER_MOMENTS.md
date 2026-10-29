@@ -4,48 +4,76 @@
 
 **H⁴** has an exact closed form. See [THEOREM.md](../THEOREM.md).
 
-**H⁶, H⁸, H¹⁰** are an open research program. This document records
-what is currently established, what is not, and what the next steps are.
+**H⁶** has an explicit all-angle recurrence and closed form for every level
+`m ≥ 2`. The recurrence for `m ≥ 3` is Lean-proved; the finite transition
+`m = 2 → 3` and coefficient formula are certified by exact symbolic
+polynomial arithmetic in the Python regression suite. That base transition is
+not yet a Lean-kernel theorem. **H⁸ and H¹⁰** remain an open research program.
 
 ---
 
 ## H⁶: Structural results
 
-### 1. Growth law (established numerically to machine precision)
+### 1. All-angle recurrence and explicit closed form (combined Lean + exact certificate)
 
-For all tested `(m, θ)`:
-Δ_m(H⁶, θ) = α(θ)·3^m + β(θ)
+Write
+`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`,
+`c = cos(θ/2)`, and `s = sin(θ/2)`.
 
-Verification: coefficients `α`, `β` fitted from `m = 4, 5` predict `m = 3`
-with error below `10⁻⁸` across all tested θ values.
+The Lean proof establishes the recurrence for every angle and `m ≥ 3`.
+The exact Gaussian-integer polynomial certificate in
+`tests/test_higher_moments.py` checks the finite `m = 2 → 3` transition
+by expanding the exact level-2 and level-3 trace polynomials and reducing only
+with `c² + s² = 1`. Together these results give, for every angle and `m ≥ 2`,
 
-No quadratic term `3^(2m)` is present. The coefficient of `9^m` in a
-3-point fit using `m = 3, 4, 5` is below `10⁻¹⁵` relative to the linear term.
+$$
+D_{m+1}(\theta)=3D_m(\theta)+C_6(\theta),
+$$
 
-### 2. Recurrence pattern (numerically observed; proof remains open)
+with the explicit coefficient
 
-For `m ≥ 2`, the tested data are consistent with
-Δ_m(H⁶, θ) = 3 · Δ_{m−1}(H⁶, θ) + C(θ),
+$$
+C_6(\theta)=4512s^2+192cs^2+768s^3.
+$$
 
-where `C(θ)` appears independent of `m`. This is a finite-level numerical observation: checking `Δ_m − 3·Δ_{m−1}` at `m = 2, 3, 4, 5` does **not** prove the recurrence for all levels or all angles. An analytic derivation and a reproducible exact certificate remain open.
+The level-two value is
 
-### 3. Candidate exact value at θ = π: C(π) = 5280
+$$
+D_2(\theta)=-14592s^2+1344cs^2-384s^3.
+$$
 
-At `θ = π`, the computed recurrence constant is `5280 = 2⁵ · 3 · 5 · 11`. The integer is a candidate exact value supported by the calculations; this document does not claim an independent symbolic proof of the recurrence or of `C(π)`.
+Thus the all-level closed form is
 
-| θ | C(θ) |
-|---|------|
-| 0 | 0 (exact) |
-| π/6 | 327.985… |
-| π/4 | 729.785… |
-| π/3 | 1265.569… |
-| π/2 | 2595.411… |
-| 2π/3 | 3954.831… |
-| **π** | **5280** (exact integer) |
+$$
+D_m(\theta)=3^{m-2}D_2(\theta)
++\frac{3^{m-2}-1}{2}C_6(\theta),
+\qquad m\ge2,
+$$
 
-At `θ = π`, the fitted growth law gives the candidate values `α(π) = −4112/3`, `β(π) = −2640`; these remain computationally inferred rather than Lean-proved identities.
+or, fully expanded,
 
-### 4. Path-class zero pattern on SG(1) (finite-level result)
+$$
+D_m(\theta)=-(12336\cdot3^{m-2}+2256)s^2
++(1440\cdot3^{m-2}-96)cs^2-384s^3.
+$$
+
+At `θ = π`, this gives `C₆(π) = 5280`, agreeing with the exact sparse
+Gaussian-integer certificates.
+
+**Proof boundary:** `defectO6_num_growth_recurrence` in
+`formalization/EvgenyTheorem/FinalTilde.lean` is Lean-proved for `m ≥ 3`.
+The exceptional finite base transition is established by exact symbolic Python
+polynomial arithmetic and regression tests, not currently by Lean's kernel.
+No floating-point sampling is used for that polynomial identity.
+
+### 2. Exact symbolic base-transition certificate
+
+The certificate pins the raw level-two defect polynomial, verifies
+`D₃ - 3D₂ = C₆(θ)`, and checks that the adjusted residual
+`D_{m+1} - 3D_m + F₃` has the same exact polynomial at `m = 2` and `m = 3`.
+This is the one finite bridge needed to extend the Lean recurrence to `m ≥ 2`.
+
+### 3. Path-class zero pattern on SG(1) (finite-level result)
 
 On `SG(1)` (6 vertices, 9 edges, 3 triangles), closed walks of length 6 were classified computationally by which triangles they visit. Their contribution to
 `Δ(H⁶) = Tr(H_C⁶) − Tr(H_C′⁶)` is reported as follows:
@@ -61,22 +89,24 @@ In these finite-level calculations, only paths sampling all three rotation axes 
 The physical reason: for two axes, `Tr([R_a, R_b] · M) = 0` — the
 pairwise commutator leaves no trace. All three axes are required.
 
-### 5. Why H⁶ has no closed form of the H⁴ type
+### 4. Why H⁶ differs from the simpler H⁴ formula
 
-H⁴ has an exact closed form because every contributing walk performs
-exactly one triangular traversal, producing the same function `−4·sin²(θ/2)`.
+H⁴ has the particularly simple factor `−4·sin²(θ/2)` per contributing
+triangular traversal. H⁶ still has an explicit level-growth closed form, but
+its coefficient contains several trigonometric monomials. The contributing
+three-triangle class `{0,1,2}` contains 486 walks with different sequences of
+rotation axes; the exact level-growth formula above comes from the recurrence
+and finite symbolic base certificate, not from identifying those walks with
+one common H⁴ contribution.
 
-H⁶ has a single contributing path class `{0,1,2}`, but that class
-contains 486 distinct walks with different sequences of rotation axes
-whose SU(2) holonomies do not collapse to a finite trigonometric polynomial.
+### 5. What remains open
 
-### 6. What remains open
+- Formalize the exact finite level-2-to-3 base transition in Lean, so the combined H⁶ result is kernel-checked end to end.
+- Derive the corresponding all-angle recurrence and closed forms for H⁸ and H¹⁰.
 
-- Analytical expression for `C(θ)` at general `θ`.
-- Symbolic computation of all 486 walk contributions.
-- Whether `C(θ)` admits a closed form in any variable.
-
----
+The path-class inventory and exact sparse certificate remain useful for
+simplifying the finite coefficient; they are not needed to claim the all-level
+affine law for H⁶ when `m ≥ 3`.---
 
 ## H⁸ and H¹⁰: Numerical results
 

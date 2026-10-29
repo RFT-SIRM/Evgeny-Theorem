@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from moments.moments import raw_trace_diff_H4
 from operators.operators import build_su2_bundle
@@ -51,3 +52,608 @@ def test_h10_theta_pi_over_2_current_convention():
         assert np.isclose(actual, value, rtol=1e-11, atol=1e-5), (
             level, actual, value
         )
+
+
+def test_higher_moment_residuals_at_theta_pi_levels_2_to_5():
+    """Recompute R_m = Delta_m - 3 Delta_(m-1) from operator matrices."""
+    expected = {
+        6: [5256.0, 5280.0, 5280.0, 5280.0],
+        8: [268960.0, 277504.0, 277504.0, 277504.0],
+        10: [4006040.0, 4507520.0, 4507520.0, 4507520.0],
+    }
+    for power, residuals in expected.items():
+        deltas = {
+            level: raw_trace_diff(level, np.pi, power)
+            for level in range(1, 6)
+        }
+        actual = [
+            deltas[level] - 3 * deltas[level - 1]
+            for level in range(2, 6)
+        ]
+        assert np.allclose(actual, residuals, rtol=1e-11, atol=1e-5), (
+            power, actual, residuals
+        )
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+@pytest.mark.parametrize("theta", [0.3, 0.7, 1.0, np.pi / 3, np.pi / 2, 2.0, np.pi])
+def test_finite_base_transition_R3_equals_R4(power, theta):
+    """Direct matrix calculation of the finite transition R_3 = R_4."""
+    d2 = raw_trace_diff(2, theta, power)
+    d3 = raw_trace_diff(3, theta, power)
+    d4 = raw_trace_diff(4, theta, power)
+    r3 = d3 - 3 * d2
+    r4 = d4 - 3 * d3
+    assert np.isclose(r3, r4, rtol=2e-10, atol=2e-6), (
+        power, theta, r3, r4
+    )
+
+
+@pytest.mark.parametrize("level", [1, 2, 3])
+@pytest.mark.parametrize("commuting", [False, True])
+def test_exact_sparse_pi_operator_matches_production_operator(level, commuting):
+    """Cross-check the exact certificate's operator builder against production.
+
+    This guards the finite Gaussian-integer certificate against silently
+    drifting from graph ordering, face-edge assignment, Pauli-axis convention,
+    or the Hermitian-conjugate block used by build_su2_bundle.
+    """
+    from computational.higher_moment_pi_certificate import operator_at_pi
+    from operators.operators import build_su2_bundle
+    from graph.sg_graph import sg_tree_graph_with_faces
+
+    exact_rows = operator_at_pi(level, commuting)
+    production, vertices = build_su2_bundle(level, np.pi, commuting=commuting)
+    dimension = 2 * vertices
+    assert len(exact_rows) == dimension
+    assert production.shape == (dimension, dimension)
+    assert dimension == 2 * len(sg_tree_graph_with_faces(level)[0])
+    for i in range(dimension):
+        for j in range(dimension):
+            expected = exact_rows[i].get(j, (0, 0))
+            actual = production[i, j]
+            assert np.isclose(actual.real, expected[0], atol=1e-12), (
+                level, commuting, i, j, actual, expected
+            )
+            assert np.isclose(actual.imag, expected[1], atol=1e-12), (
+                level, commuting, i, j, actual, expected
+            )
+
+
+@pytest.mark.parametrize("level", [1, 2, 3])
+@pytest.mark.parametrize("power", [6, 8, 10])
+@pytest.mark.parametrize("commuting", [False, True])
+def test_published_exact_certificate_trace_matches_independent_test_trace(
+    level, power, commuting
+):
+    """Compare two independently implemented exact sparse trace calculations."""
+    from computational.higher_moment_pi_certificate import raw_trace_at_pi
+
+    certificate_trace = raw_trace_at_pi(level, power, commuting)
+    independent_trace = _exact_sparse_trace_power_pi(level, power, commuting)
+    assert certificate_trace == independent_trace, (
+        level, power, commuting, certificate_trace, independent_trace
+    )
+
+
+@pytest.mark.parametrize("power,expected_residual", [
+    (6, 5280),
+    (8, 277504),
+    (10, 4507520),
+])
+def test_published_certificate_level_six_transition_exactly(power, expected_residual):
+    """Extend the exact residual-stabilization check through level six."""
+    from computational.higher_moment_pi_certificate import certificate
+
+    data = certificate()[power]
+    deltas = [
+        _exact_sparse_trace_power_pi(level, power, False)
+        - _exact_sparse_trace_power_pi(level, power, True)
+        for level in range(1, 7)
+    ]
+    residuals = [
+        deltas[level - 1] - 3 * deltas[level - 2]
+        for level in range(2, 7)
+    ]
+    assert data["delta_levels_1_to_6"] == deltas
+    assert data["residual_levels_2_to_6"] == residuals
+    assert residuals[2:] == [expected_residual] * 3
+
+
+def _gaussian_add(a, b):
+    return (a[0] + b[0], a[1] + b[1])
+
+
+def _gaussian_mul(a, b):
+    return (a[0] * b[0] - a[1] * b[1],
+            a[0] * b[1] + a[1] * b[0])
+
+
+def _gaussian_neg(a):
+    return (-a[0], -a[1])
+
+
+def _gaussian_conj(a):
+    return (a[0], -a[1])
+
+
+def _exact_sparse_operator_pi(level, commuting):
+    """Build H(theta=pi) with exact Gaussian-integer entries."""
+    from graph.sg_graph import sg_tree_graph_with_faces
+
+    vertices, edges, faces = sg_tree_graph_with_faces(level)
+    n = len(vertices)
+    degree = [0] * n
+    for a, b in edges:
+        degree[a] += 1
+        degree[b] += 1
+
+    zero, one = (0, 0), (1, 0)
+    identity = [[one, zero], [zero, one]]
+    pauli = [
+        [[zero, one], [one, zero]],
+        [[zero, (0, -1)], [(0, 1), zero]],
+        [[one, zero], [zero, (-1, 0)]],
+    ]
+    edge_blocks = {tuple(sorted(edge)): identity for edge in edges}
+    for index, (a, b, _c) in enumerate(faces):
+        axis = 2 if commuting else index % 3
+        # U = -i sigma_axis; all entries are Gaussian integers.
+        edge_blocks[tuple(sorted((a, b)))] = [
+            [(entry[1], -entry[0]) for entry in row]
+            for row in pauli[axis]
+        ]
+
+    matrix = {}
+    for vertex in range(n):
+        for spin in range(2):
+            matrix[(2 * vertex + spin, 2 * vertex + spin)] = (degree[vertex], 0)
+    for (a, b), block in edge_blocks.items():
+        for i in range(2):
+            for j in range(2):
+                value = _gaussian_neg(block[i][j])
+                if value != zero:
+                    key = (2 * a + i, 2 * b + j)
+                    matrix[key] = _gaussian_add(matrix.get(key, zero), value)
+                value = _gaussian_neg(_gaussian_conj(block[j][i]))
+                if value != zero:
+                    key = (2 * b + i, 2 * a + j)
+                    matrix[key] = _gaussian_add(matrix.get(key, zero), value)
+    return {key: value for key, value in matrix.items() if value != zero}, 2 * n
+
+
+def _exact_sparse_product(left, right):
+    """Sparse matrix product over Z[i], with arbitrary-precision integers."""
+    right_rows = {}
+    for (i, j), value in right.items():
+        right_rows.setdefault(i, []).append((j, value))
+    product = {}
+    zero = (0, 0)
+    for (i, k), a in left.items():
+        for j, b in right_rows.get(k, ()):
+            key = (i, j)
+            product[key] = _gaussian_add(
+                product.get(key, zero), _gaussian_mul(a, b)
+            )
+    return {key: value for key, value in product.items() if value != zero}
+
+
+def _exact_sparse_trace_power_pi(level, power, commuting):
+    matrix, dimension = _exact_sparse_operator_pi(level, commuting)
+    result = {(i, i): (1, 0) for i in range(dimension)}
+    for _ in range(power):
+        result = _exact_sparse_product(result, matrix)
+    trace = (0, 0)
+    for i in range(dimension):
+        trace = _gaussian_add(trace, result.get((i, i), (0, 0)))
+    assert trace[1] == 0
+    return trace[0]
+
+
+@pytest.mark.parametrize("power,expected", [
+    (6, [-6744, -14976, -39648, -113664, -335712]),
+    (8, [-547552, -1373696, -3843584, -11253248, -33482240]),
+    (10, [-32992520, -94971520, -280407040, -836713600, -2505633280]),
+])
+def test_exact_gaussian_integer_trace_defects_at_theta_pi(power, expected):
+    """Exact sparse arithmetic certificate for Delta_m^(p)(pi), levels 1..5."""
+    actual = []
+    for level in range(1, 6):
+        actual.append(
+            _exact_sparse_trace_power_pi(level, power, False)
+            - _exact_sparse_trace_power_pi(level, power, True)
+        )
+    assert actual == expected
+
+
+@pytest.mark.parametrize("power,cycling,common_axis", [
+    (6, 2080992, 2120640),
+    (8, 89944892, 93788476),
+    (10, 4082500316, 4362907356),
+])
+def test_exact_level_three_traces_disprove_unrestricted_axis_pattern_equality(
+    power, cycling, common_axis
+):
+    """Pin both exact traces at theta=pi, not just their difference.
+
+    The level-three graph has 42 vertices.  These Gaussian-integer traces
+    show that cycling x/y/z axes and using a common z axis do not give equal
+    traces individually for p=6,8,10.  This rules out the overly broad
+    identity that the two arbitrary axis patterns have the same full trace;
+    it does not rule out the stabilized level-residual identities.
+    """
+    actual_cycling = _exact_sparse_trace_power_pi(3, power, False)
+    actual_common_axis = _exact_sparse_trace_power_pi(3, power, True)
+    assert actual_cycling == cycling
+    assert actual_common_axis == common_axis
+    assert actual_cycling - actual_common_axis == {
+        6: -39648,
+        8: -3843584,
+        10: -280407040,
+    }[power]
+
+
+@pytest.mark.parametrize("power,expected_residual", [
+    (6, 5280),
+    (8, 277504),
+    (10, 4507520),
+])
+def test_exact_residual_stabilizes_from_level_three_at_theta_pi(power, expected_residual):
+    """Check the finite pi-angle transition by exact integer arithmetic."""
+    deltas = [
+        _exact_sparse_trace_power_pi(level, power, False)
+        - _exact_sparse_trace_power_pi(level, power, True)
+        for level in range(1, 6)
+    ]
+    residuals = [deltas[level - 1] - 3 * deltas[level - 2]
+                 for level in range(2, 6)]
+    assert residuals[1:] == [expected_residual] * 3
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_finite_residual_transition_on_dense_angle_grid(power):
+    """Numerically stress-test R3=R4; this is not an all-angle proof."""
+    for theta in np.linspace(0.05, 2 * np.pi - 0.05, 17):
+        d2 = raw_trace_diff(2, float(theta), power)
+        d3 = raw_trace_diff(3, float(theta), power)
+        d4 = raw_trace_diff(4, float(theta), power)
+        r3 = d3 - 3 * d2
+        r4 = d4 - 3 * d3
+        assert np.isclose(r3, r4, rtol=3e-10, atol=3e-5), (
+            power, float(theta), r3, r4
+        )
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_finite_residual_stabilization_levels_three_to_five_angle_grid(power):
+    """Numerically check R3=R4=R5 on a fixed non-singular angle grid."""
+    for theta in np.linspace(0.07, 2 * np.pi - 0.07, 11):
+        deltas = {
+            level: raw_trace_diff(level, float(theta), power)
+            for level in (2, 3, 4, 5)
+        }
+        residuals = {
+            level: deltas[level] - 3 * deltas[level - 1]
+            for level in (3, 4, 5)
+        }
+        assert np.isclose(residuals[3], residuals[4],
+                          rtol=5e-10, atol=5e-5), (
+            power, float(theta), residuals
+        )
+        assert np.isclose(residuals[4], residuals[5],
+                          rtol=5e-10, atol=5e-5), (
+            power, float(theta), residuals
+        )
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_residual_transition_through_level_six_angle_grid(power):
+    """Extend the numerical recurrence check to R5=R6 at several angles."""
+    for theta in (0.23, 0.91, np.pi / 2, 2.4, np.pi):
+        deltas = {
+            level: raw_trace_diff(level, float(theta), power)
+            for level in (4, 5, 6)
+        }
+        r5 = deltas[5] - 3 * deltas[4]
+        r6 = deltas[6] - 3 * deltas[5]
+        assert np.isclose(r5, r6, rtol=2e-9, atol=2e-4), (
+            power, float(theta), r5, r6
+        )
+
+
+@pytest.mark.parametrize("power,expected_residual,expected_delta6", [
+    (6, 5280, -1001856),
+    (8, 277504, -100169216),
+    (10, 4507520, -7512392320),
+])
+def test_exact_residual_transition_level_six_at_theta_pi(
+    power, expected_residual, expected_delta6
+):
+    """Exact Gaussian-integer check of R6=R5, without floating-point tolerances."""
+    deltas = {}
+    for level in range(1, 7):
+        deltas[level] = (
+            _exact_sparse_trace_power_pi(level, power, False)
+            - _exact_sparse_trace_power_pi(level, power, True)
+        )
+    residuals = {
+        level: deltas[level] - 3 * deltas[level - 1]
+        for level in range(2, 7)
+    }
+    assert deltas[6] == expected_delta6
+    assert residuals[5] == expected_residual
+    assert residuals[6] == expected_residual
+
+
+@pytest.mark.parametrize("power,coefficient,constant", [
+    (6, -37008, -2640),
+    (8, -3704832, -138752),
+    (10, -278153280, -2253760),
+])
+def test_exact_pi_angle_candidate_formula_levels_three_to_six(
+    power, coefficient, constant
+):
+    """Check the candidate affine-in-3^m formula on exact levels 3..6 only."""
+    for level in range(3, 7):
+        delta = (
+            _exact_sparse_trace_power_pi(level, power, False)
+            - _exact_sparse_trace_power_pi(level, power, True)
+        )
+        assert delta == coefficient * (3 ** (level - 3)) + constant
+
+
+@pytest.mark.parametrize("power", [6, 8, 10])
+def test_residual_transition_r5_r6_extended_angle_grid(power):
+    """Check the next-level residual transition across an independent angle grid."""
+    for theta in np.linspace(0.11, 2 * np.pi - 0.11, 9):
+        deltas = {
+            level: raw_trace_diff(level, float(theta), power)
+            for level in (4, 5, 6)
+        }
+        residual5 = deltas[5] - 3 * deltas[4]
+        residual6 = deltas[6] - 3 * deltas[5]
+        assert np.isclose(
+            residual5, residual6, rtol=3e-9, atol=3e-4
+        ), (power, float(theta), residual5, residual6)
+
+
+def test_exact_level3_p6_orientation_gap_polynomial():
+    """The finite p=6 orientation gap is nonzero at theta=pi."""
+    from computational.p6_level3_orientation_certificate import (
+        evaluate_polynomial,
+        orientation_gap_polynomial,
+        trace_polynomial,
+    )
+    from computational.higher_moment_pi_certificate import raw_trace_at_pi
+
+    expected = {
+        (0, 2): (-6192, 0),
+        (2, 2): (-144, 0),
+        (0, 4): (-144, 0),
+        (0, 3): (-864, 0),
+    }
+    gap = orientation_gap_polynomial(3)
+    assert gap == expected
+    assert evaluate_polynomial(gap, c=0, s=1) == -7200
+    assert evaluate_polynomial(gap, c=1, s=0) == 0
+
+    expected_traces_at_pi = {
+        (False, False): 2080992,
+        (False, True): 2081856,
+        (True, False): 2120640,
+        (True, True): 2114304,
+    }
+    for (commuting, flip), expected_trace in expected_traces_at_pi.items():
+        trace = evaluate_polynomial(
+            trace_polynomial(3, commuting, flip), c=0, s=1)
+        assert trace == expected_trace
+        if not flip:
+            assert trace == raw_trace_at_pi(3, 6, commuting)
+
+
+def _flip_corner_edge_orientation(H: np.ndarray, level: int) -> np.ndarray:
+    """Reverse one flux-edge block, matching the exceptional edge in Lean oTil."""
+    from graph.sg_graph import sg_tree_graph_with_faces
+
+    vertices, edges, faces = sg_tree_graph_with_faces(level)
+    left_point = (round((2**level - 1) / (2**level), 10), 0.0)
+    right_point = (1.0, 0.0)
+    left = vertices.index(left_point)
+    right = vertices.index(right_point)
+    edge = tuple(sorted((left, right)))
+
+    # The Lean exceptional edge is directed left-to-right by both coordinate
+    # order and vertex creation order; check rather than silently assume this.
+    assert left < right, (level, left_point, right_point, left, right)
+    assert edge in {tuple(sorted(e)) for e in edges}
+    assert edge in {
+        tuple(sorted((face[0], face[1]))) for face in faces
+    }
+
+    flipped = H.copy()
+    i = slice(2 * left, 2 * left + 2)
+    j = slice(2 * right, 2 * right + 2)
+    forward = flipped[i, j].copy()
+    reverse = flipped[j, i].copy()
+    flipped[i, j] = reverse
+    flipped[j, i] = forward
+    return flipped
+
+
+def _raw_trace_diff_with_corner_flip(
+    level: int, theta: float, p: int
+) -> float:
+    """Production-operator trace difference after reversing the corner flux edge."""
+    HC, _ = build_su2_bundle(level, theta, commuting=False)
+    HCp, _ = build_su2_bundle(level, theta, commuting=True)
+    HC = _flip_corner_edge_orientation(HC, level)
+    HCp = _flip_corner_edge_orientation(HCp, level)
+    return float(
+        np.trace(np.linalg.matrix_power(HC, p)).real
+        - np.trace(np.linalg.matrix_power(HCp, p)).real
+    )
+
+
+@pytest.mark.parametrize(
+    "theta",
+    [-2.0, -0.7, 0.0, 0.3, 0.7, 1.0, np.pi / 3, np.pi / 2, 2.0, np.pi],
+)
+def test_level3_p6_orientation_gap_matches_dense_operator(theta):
+    """Cross-check the symbolic F(3) polynomial against direct matrix powers."""
+    from computational.p6_level3_orientation_certificate import (
+        evaluate_polynomial,
+        orientation_gap_polynomial,
+    )
+
+    gap_poly = orientation_gap_polynomial(3)
+    c = np.cos(theta / 2)
+    s = np.sin(theta / 2)
+    predicted = evaluate_polynomial(gap_poly, c=c, s=s)
+    simplified = -6336 * s**2 - 864 * s**3
+
+    # F(3) = D_num(3) - D_til(3): both defects subtract the commuting control.
+    actual = (
+        raw_trace_diff(3, theta, 6)
+        - _raw_trace_diff_with_corner_flip(3, theta, 6)
+    )
+    assert np.isclose(predicted, simplified, rtol=1e-12, atol=1e-9), (
+        theta, predicted, simplified
+    )
+    assert np.isclose(actual, predicted, rtol=3e-9, atol=3e-4), (
+        theta, actual, predicted
+    )
+
+
+def test_exact_p6_base_transition_and_coefficient_polynomial():
+    """Exact symbolic certificate of the H6 base transition R_2 = R_3."""
+    from computational.p6_level3_orientation_certificate import (
+        orientation_gap_polynomial,
+        trace_polynomial,
+        evaluate_polynomial,
+    )
+
+    def combine_polynomials(terms):
+        result = {}
+        for sign, polynomial in terms:
+            for monomial, coefficient in polynomial.items():
+                old = result.get(monomial, (0, 0))
+                value = (
+                    old[0] + sign * coefficient[0],
+                    old[1] + sign * coefficient[1],
+                )
+                if value == (0, 0):
+                    result.pop(monomial, None)
+                else:
+                    result[monomial] = value
+        return result
+
+    def reduce_unit_circle(polynomial):
+        """Canonicalize c^2 = 1 - s^2 using exact integer coefficients."""
+        result = dict(polynomial)
+        while any(pc >= 2 for pc, _ps in result):
+            pc, ps = next((pc, ps) for pc, ps in result if pc >= 2)
+            coefficient = result.pop((pc, ps))
+            for target, sign in (((pc - 2, ps), 1), ((pc - 2, ps + 2), -1)):
+                old = result.get(target, (0, 0))
+                value = (
+                    old[0] + sign * coefficient[0],
+                    old[1] + sign * coefficient[1],
+                )
+                if value == (0, 0):
+                    result.pop(target, None)
+                else:
+                    result[target] = value
+        return result
+
+    delta_cache = {}
+
+    def delta(level):
+        if level not in delta_cache:
+            delta_cache[level] = combine_polynomials([
+                (1, trace_polynomial(level, commuting=False)),
+                (-1, trace_polynomial(level, commuting=True)),
+            ])
+        return delta_cache[level]
+
+    # F_3 = D_num(3) - D_til(3), the finite orientation gap in the Lean proof.
+    f3 = orientation_gap_polynomial(3)
+
+    # The stabilized recurrence gives D_(m+1) - 3 D_m + F_3 = R_3 for m >= 3.
+    # This certificate checks the missing base transition at m=2 exactly.
+    def boundary_residual(level):
+        return combine_polynomials([
+            (1, delta(level + 1)),
+            (-3, delta(level)),
+            (1, f3),
+        ])
+
+    expected_r = {
+        (0, 2): (-1776, 0),
+        (0, 3): (-96, 0),
+        (0, 4): (-48, 0),
+        (1, 2): (192, 0),
+        (2, 2): (-48, 0),
+    }
+    r2 = boundary_residual(2)  # D_3 - 3 D_2 + F_3
+    r3 = boundary_residual(3)  # D_4 - 3 D_3 + F_3
+    assert r2 == expected_r
+    assert r3 == expected_r
+    assert evaluate_polynomial(r2, c=0, s=1) == -1920
+
+    expected_d2_raw = {
+        (0, 2): (-14256, 0),
+        (0, 3): (-384, 0),
+        (0, 4): (-336, 0),
+        (1, 2): (1344, 0),
+        (2, 2): (-336, 0),
+    }
+    expected_d2_simplified = {
+        (0, 2): (-14592, 0),
+        (0, 3): (-384, 0),
+        (1, 2): (1344, 0),
+    }
+    assert delta(2) == expected_d2_raw
+    assert reduce_unit_circle(delta(2)) == expected_d2_simplified
+
+    # Hence C_6 = D_3 - 3 D_2 = R_2 - F_3, with no numeric angle sampling.
+    c6 = combine_polynomials([
+        (1, delta(3)),
+        (-3, delta(2)),
+    ])
+    expected_c6_raw = {
+        (0, 2): (4416, 0),
+        (0, 3): (768, 0),
+        (0, 4): (96, 0),
+        (1, 2): (192, 0),
+        (2, 2): (96, 0),
+    }
+    expected_c6_simplified = {
+        (0, 2): (4512, 0),
+        (0, 3): (768, 0),
+        (1, 2): (192, 0),
+    }
+    assert c6 == expected_c6_raw
+    assert reduce_unit_circle(c6) == expected_c6_simplified
+    assert evaluate_polynomial(c6, c=0, s=1) == 5280
+
+
+def test_outer_corner_power_blocks_stabilize_exactly_between_levels_three_and_four():
+    """The radius-two corner blocks for powers 4 and 5 are exactly level-stable."""
+    from computational.p6_level3_orientation_certificate import (
+        corner_diagonal_polynomials,
+    )
+
+    for commuting in (False, True):
+        for flip_corner in (False, True):
+            level3 = corner_diagonal_polynomials(
+                3, commuting=commuting, flip_corner=flip_corner, max_power=5
+            )
+            level4 = corner_diagonal_polynomials(
+                4, commuting=commuting, flip_corner=flip_corner, max_power=5
+            )
+            for corner in ("O", "X", "Y"):
+                for power in (4, 5):
+                    assert level3[corner][power] == level4[corner][power], (
+                        commuting, flip_corner, corner, power,
+                        level3[corner][power], level4[corner][power]
+                    )
