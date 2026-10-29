@@ -2173,41 +2173,12 @@ private theorem glueRHS6_sum_ite_eq_subtype
 
 
 
-/-- Version of the conditional-sum conversion indexed by the actual finite-set
-subtype `S`. Using `S` as the index type fixes its canonical Fintype instance,
-so it composes directly with equivalences `S ≃ T` of finite supports. -/
-private theorem glueRHS6_sum_ite_eq_finset_subtype
-    {α : Type*} [Fintype α] [DecidableEq α]
-    (S : Finset α) (f : α → ℂ) :
-    (∑ x, if x ∈ S then f x else 0) =
-      ∑ x : S, f x.1 := by
-  classical
-  calc
-    (∑ x, if x ∈ S then f x else 0) =
-        ∑ x : {x // x ∈ S}, f x.1 :=
-      glueRHS6_sum_ite_eq_subtype (fun x : α => x ∈ S) f
-    _ = ∑ x : S, f x.1 := by
-      let e : {x // x ∈ S} ≃ S where
-        toFun x := ⟨x.1, x.2⟩
-        invFun x := ⟨x.1, x.2⟩
-        left_inv x := by cases x; rfl
-        right_inv x := by cases x; rfl
-      simpa [e] using
-        (Equiv.sum_comp e (fun x : S => f x.1))
-
-
-/-- Generic path-transport lemma for the fourth- and fifth-power diagonal
-entries. If two finite matrices have matching one-step entries on bijective
-finite supports around their roots, and both the first- and second-power root
-rows/columns vanish outside those supports, then the fourth- and fifth-power
-root diagonals agree. This exposes exactly the local hypotheses needed for
-the concrete radius-two corner transport. -/
 private theorem matrix_pow_four_five_diag_transport_of_local_entries
     {X Y : Type*} [Fintype X] [DecidableEq X]
       [Fintype Y] [DecidableEq Y]
     (A : Matrix X X ℂ) (B : Matrix Y Y ℂ)
     (x : X) (y : Y) (S : Finset X) (T : Finset Y)
-    (e : S ≃ T)
+    (e : {z // z ∈ S} ≃ {z // z ∈ T})
     (hx : x ∈ S) (hy : y ∈ T)
     (hroot : e ⟨x, hx⟩ = ⟨y, hy⟩)
     (hentry : ∀ a b, ∀ ha : a ∈ S, ∀ hb : b ∈ S,
@@ -2225,7 +2196,7 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
   classical
   have hrootVal : (e ⟨x, hx⟩).1 = y := congrArg Subtype.val hroot
   have hA2row : ∀ z, z ∈ S →
-      (A ^ 2) x z = ∑ t : S, A x t.1 * A t.1 z := by
+      (A ^ 2) x z = ∑ t : {t // t ∈ S}, A x t.1 * A t.1 z := by
     intro z hz
     calc
       (A ^ 2) x z = ∑ t, A x t * A t z := by
@@ -2236,10 +2207,10 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : t ∈ S
         · simp [hmem]
         · simp [hmem, hArow1 t hmem]
-      _ = ∑ t : S, A x t.1 * A t.1 z :=
-        glueRHS6_sum_ite_eq_finset_subtype S (fun t => A x t * A t z)
+      _ = ∑ t : {t // t ∈ S}, A x t.1 * A t.1 z :=
+        glueRHS6_sum_ite_eq_subtype (fun t : X => t ∈ S) (fun t => A x t * A t z)
   have hA2col : ∀ z, z ∈ S →
-      (A ^ 2) z x = ∑ t : S, A z t.1 * A t.1 x := by
+      (A ^ 2) z x = ∑ t : {t // t ∈ S}, A z t.1 * A t.1 x := by
     intro z hz
     calc
       (A ^ 2) z x = ∑ t, A z t * A t x := by
@@ -2250,10 +2221,10 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : t ∈ S
         · simp [hmem]
         · simp [hmem, hAcol1 t hmem]
-      _ = ∑ t : S, A z t.1 * A t.1 x :=
-        glueRHS6_sum_ite_eq_finset_subtype S (fun t => A z t * A t x)
+      _ = ∑ t : {t // t ∈ S}, A z t.1 * A t.1 x :=
+        glueRHS6_sum_ite_eq_subtype (fun t : X => t ∈ S) (fun t => A z t * A t x)
   have hB2row : ∀ z, z ∈ T →
-      (B ^ 2) y z = ∑ t : T, B y t.1 * B t.1 z := by
+      (B ^ 2) y z = ∑ t : {t // t ∈ T}, B y t.1 * B t.1 z := by
     intro z hz
     calc
       (B ^ 2) y z = ∑ t, B y t * B t z := by
@@ -2264,10 +2235,10 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : t ∈ T
         · simp [hmem]
         · simp [hmem, hBrow1 t hmem]
-      _ = ∑ t : T, B y t.1 * B t.1 z :=
-        glueRHS6_sum_ite_eq_finset_subtype T (fun t => B y t * B t z)
+      _ = ∑ t : {t // t ∈ T}, B y t.1 * B t.1 z :=
+        glueRHS6_sum_ite_eq_subtype (fun t : Y => t ∈ T) (fun t => B y t * B t z)
   have hB2col : ∀ z, z ∈ T →
-      (B ^ 2) z y = ∑ t : T, B z t.1 * B t.1 y := by
+      (B ^ 2) z y = ∑ t : {t // t ∈ T}, B z t.1 * B t.1 y := by
     intro z hz
     calc
       (B ^ 2) z y = ∑ t, B z t * B t y := by
@@ -2278,22 +2249,22 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : t ∈ T
         · simp [hmem]
         · simp [hmem, hBcol1 t hmem]
-      _ = ∑ t : T, B z t.1 * B t.1 y :=
-        glueRHS6_sum_ite_eq_finset_subtype T (fun t => B z t * B t y)
+      _ = ∑ t : {t // t ∈ T}, B z t.1 * B t.1 y :=
+        glueRHS6_sum_ite_eq_subtype (fun t : Y => t ∈ T) (fun t => B z t * B t y)
   have hA2row_transport : ∀ z (hz : z ∈ S),
       (A ^ 2) x z = (B ^ 2) y (e ⟨z, hz⟩).1 := by
     intro z hz
     rw [hA2row z hz, hB2row (e ⟨z, hz⟩).1 (e ⟨z, hz⟩).2]
     calc
-      (∑ t : S, A x t.1 * A t.1 z) =
-          ∑ t : S,
+      (∑ t : {t // t ∈ S}, A x t.1 * A t.1 z) =
+          ∑ t : {t // t ∈ S},
             B y (e t).1 * B (e t).1 (e ⟨z, hz⟩).1 := by
         apply Finset.sum_congr rfl
         intro t ht
         have hxt := hentry x t.1 hx t.2
         have htz := hentry t.1 z t.2 hz
         rw [hxt, htz, hrootVal]
-      _ = ∑ t : T, B y t.1 * B t.1 (e ⟨z, hz⟩).1 :=
+      _ = ∑ t : {t // t ∈ T}, B y t.1 * B t.1 (e ⟨z, hz⟩).1 :=
         Equiv.sum_comp e (fun t : T =>
           B y t.1 * B t.1 (e ⟨z, hz⟩).1)
   have hA2col_transport : ∀ z (hz : z ∈ S),
@@ -2301,20 +2272,20 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
     intro z hz
     rw [hA2col z hz, hB2col (e ⟨z, hz⟩).1 (e ⟨z, hz⟩).2]
     calc
-      (∑ t : S, A z t.1 * A t.1 x) =
-          ∑ t : S,
+      (∑ t : {t // t ∈ S}, A z t.1 * A t.1 x) =
+          ∑ t : {t // t ∈ S},
             B (e ⟨z, hz⟩).1 (e t).1 * B (e t).1 y := by
         apply Finset.sum_congr rfl
         intro t ht
         have hzt := hentry z t.1 hz t.2
         have htx := hentry t.1 x t.2 hx
         rw [hzt, htx, hrootVal]
-      _ = ∑ t : T,
+      _ = ∑ t : {t // t ∈ T},
           B (e ⟨z, hz⟩).1 t.1 * B t.1 y :=
         Equiv.sum_comp e (fun t : T =>
           B (e ⟨z, hz⟩).1 t.1 * B t.1 y)
   have hA4 : (A ^ 4) x x =
-      ∑ z : S, (A ^ 2) x z.1 * (A ^ 2) z.1 x := by
+      ∑ z : {z // z ∈ S}, (A ^ 2) x z.1 * (A ^ 2) z.1 x := by
     calc
       (A ^ 4) x x = ∑ z, (A ^ 2) x z * (A ^ 2) z x :=
         matrix_pow_four_diag_as_sum_sq A x
@@ -2325,10 +2296,10 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : z ∈ S
         · simp [hmem]
         · simp [hmem, hArow2 z hmem, hAcol2 z hmem]
-      _ = ∑ z : S, (A ^ 2) x z.1 * (A ^ 2) z.1 x :=
-        glueRHS6_sum_ite_eq_finset_subtype S (fun z => (A ^ 2) x z * (A ^ 2) z x)
+      _ = ∑ z : {z // z ∈ S}, (A ^ 2) x z.1 * (A ^ 2) z.1 x :=
+        glueRHS6_sum_ite_eq_subtype (fun z : X => z ∈ S) (fun z => (A ^ 2) x z * (A ^ 2) z x)
   have hB4 : (B ^ 4) y y =
-      ∑ z : T, (B ^ 2) y z.1 * (B ^ 2) z.1 y := by
+      ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 2) z.1 y := by
     calc
       (B ^ 4) y y = ∑ z, (B ^ 2) y z * (B ^ 2) z y :=
         matrix_pow_four_diag_as_sum_sq B y
@@ -2339,23 +2310,23 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : z ∈ T
         · simp [hmem]
         · simp [hmem, hBrow2 z hmem, hBcol2 z hmem]
-      _ = ∑ z : T, (B ^ 2) y z.1 * (B ^ 2) z.1 y :=
-        glueRHS6_sum_ite_eq_finset_subtype T (fun z => (B ^ 2) y z * (B ^ 2) z y)
+      _ = ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 2) z.1 y :=
+        glueRHS6_sum_ite_eq_subtype (fun z : Y => z ∈ T) (fun z => (B ^ 2) y z * (B ^ 2) z y)
   have hfourSum :
-      (∑ z : S, (A ^ 2) x z.1 * (A ^ 2) z.1 x) =
-      ∑ z : T, (B ^ 2) y z.1 * (B ^ 2) z.1 y := by
+      (∑ z : {z // z ∈ S}, (A ^ 2) x z.1 * (A ^ 2) z.1 x) =
+      ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 2) z.1 y := by
     calc
-      _ = ∑ z : S,
+      _ = ∑ z : {z // z ∈ S},
           (B ^ 2) y (e z).1 * (B ^ 2) (e z).1 y := by
         apply Finset.sum_congr rfl
         intro z hz
         rw [hA2row_transport z z.2, hA2col_transport z z.2]
-      _ = ∑ z : T, (B ^ 2) y z.1 * (B ^ 2) z.1 y :=
+      _ = ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 2) z.1 y :=
         Equiv.sum_comp e (fun z : T =>
           (B ^ 2) y z.1 * (B ^ 2) z.1 y)
   have hA3col : ∀ z, z ∈ S →
       (A ^ 3) z x =
-        ∑ t : S, A z t.1 * (A ^ 2) t.1 x := by
+        ∑ t : {t // t ∈ S}, A z t.1 * (A ^ 2) t.1 x := by
     intro z hz
     have hpow3A : A ^ 3 = A * A ^ 2 := by
       simpa using (pow_succ' A 2)
@@ -2368,11 +2339,11 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : t ∈ S
         · simp [hmem]
         · simp [hmem, hAcol2 t hmem]
-      _ = ∑ t : S, A z t.1 * (A ^ 2) t.1 x :=
-        glueRHS6_sum_ite_eq_finset_subtype S (fun t => A z t * (A ^ 2) t x)
+      _ = ∑ t : {t // t ∈ S}, A z t.1 * (A ^ 2) t.1 x :=
+        glueRHS6_sum_ite_eq_subtype (fun t : X => t ∈ S) (fun t => A z t * (A ^ 2) t x)
   have hB3col : ∀ z, z ∈ T →
       (B ^ 3) z y =
-        ∑ t : T, B z t.1 * (B ^ 2) t.1 y := by
+        ∑ t : {t // t ∈ T}, B z t.1 * (B ^ 2) t.1 y := by
     intro z hz
     have hpow3B : B ^ 3 = B * B ^ 2 := by
       simpa using (pow_succ' B 2)
@@ -2385,27 +2356,27 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : t ∈ T
         · simp [hmem]
         · simp [hmem, hBcol2 t hmem]
-      _ = ∑ t : T, B z t.1 * (B ^ 2) t.1 y :=
-        glueRHS6_sum_ite_eq_finset_subtype T (fun t => B z t * (B ^ 2) t y)
+      _ = ∑ t : {t // t ∈ T}, B z t.1 * (B ^ 2) t.1 y :=
+        glueRHS6_sum_ite_eq_subtype (fun t : Y => t ∈ T) (fun t => B z t * (B ^ 2) t y)
   have hA3col_transport : ∀ z (hz : z ∈ S),
       (A ^ 3) z x = (B ^ 3) (e ⟨z, hz⟩).1 y := by
     intro z hz
     rw [hA3col z hz, hB3col (e ⟨z, hz⟩).1 (e ⟨z, hz⟩).2]
     calc
-      (∑ t : S, A z t.1 * (A ^ 2) t.1 x) =
-          ∑ t : S,
+      (∑ t : {t // t ∈ S}, A z t.1 * (A ^ 2) t.1 x) =
+          ∑ t : {t // t ∈ S},
             B (e ⟨z, hz⟩).1 (e t).1 * (B ^ 2) (e t).1 y := by
         apply Finset.sum_congr rfl
         intro t ht
         have hzt := hentry z t.1 hz t.2
         have htx := hA2col_transport t.1 t.2
         rw [hzt, htx]
-      _ = ∑ t : T,
+      _ = ∑ t : {t // t ∈ T},
           B (e ⟨z, hz⟩).1 t.1 * (B ^ 2) t.1 y :=
         Equiv.sum_comp e (fun t : T =>
           B (e ⟨z, hz⟩).1 t.1 * (B ^ 2) t.1 y)
   have hA5 : (A ^ 5) x x =
-      ∑ z : S, (A ^ 2) x z.1 * (A ^ 3) z.1 x := by
+      ∑ z : {z // z ∈ S}, (A ^ 2) x z.1 * (A ^ 3) z.1 x := by
     calc
       (A ^ 5) x x = ∑ z, (A ^ 2) x z * (A ^ 3) z x :=
         matrix_pow_five_diag_as_sum_two_three A x
@@ -2416,10 +2387,10 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : z ∈ S
         · simp [hmem]
         · simp [hmem, hArow2 z hmem]
-      _ = ∑ z : S, (A ^ 2) x z.1 * (A ^ 3) z.1 x :=
-        glueRHS6_sum_ite_eq_finset_subtype S (fun z => (A ^ 2) x z * (A ^ 3) z x)
+      _ = ∑ z : {z // z ∈ S}, (A ^ 2) x z.1 * (A ^ 3) z.1 x :=
+        glueRHS6_sum_ite_eq_subtype (fun z : X => z ∈ S) (fun z => (A ^ 2) x z * (A ^ 3) z x)
   have hB5 : (B ^ 5) y y =
-      ∑ z : T, (B ^ 2) y z.1 * (B ^ 3) z.1 y := by
+      ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 3) z.1 y := by
     calc
       (B ^ 5) y y = ∑ z, (B ^ 2) y z * (B ^ 3) z y :=
         matrix_pow_five_diag_as_sum_two_three B y
@@ -2430,18 +2401,18 @@ private theorem matrix_pow_four_five_diag_transport_of_local_entries
         by_cases hmem : z ∈ T
         · simp [hmem]
         · simp [hmem, hBrow2 z hmem]
-      _ = ∑ z : T, (B ^ 2) y z.1 * (B ^ 3) z.1 y :=
-        glueRHS6_sum_ite_eq_finset_subtype T (fun z => (B ^ 2) y z * (B ^ 3) z y)
+      _ = ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 3) z.1 y :=
+        glueRHS6_sum_ite_eq_subtype (fun z : Y => z ∈ T) (fun z => (B ^ 2) y z * (B ^ 3) z y)
   have hfiveSum :
-      (∑ z : S, (A ^ 2) x z.1 * (A ^ 3) z.1 x) =
-      ∑ z : T, (B ^ 2) y z.1 * (B ^ 3) z.1 y := by
+      (∑ z : {z // z ∈ S}, (A ^ 2) x z.1 * (A ^ 3) z.1 x) =
+      ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 3) z.1 y := by
     calc
-      _ = ∑ z : S,
+      _ = ∑ z : {z // z ∈ S},
           (B ^ 2) y (e z).1 * (B ^ 3) (e z).1 y := by
         apply Finset.sum_congr rfl
         intro z hz
         rw [hA2row_transport z z.2, hA3col_transport z z.2]
-      _ = ∑ z : T, (B ^ 2) y z.1 * (B ^ 3) z.1 y :=
+      _ = ∑ z : {z // z ∈ T}, (B ^ 2) y z.1 * (B ^ 3) z.1 y :=
         Equiv.sum_comp e (fun z : T =>
           (B ^ 2) y z.1 * (B ^ 3) z.1 y)
   exact ⟨by rw [hA4, hfourSum, ← hB4],

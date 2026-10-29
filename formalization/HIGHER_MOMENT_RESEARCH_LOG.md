@@ -3123,3 +3123,10 @@ This reduces the next concrete step to a single clean interface: prove one-step 
 The first compile attempt of `matrix_pow_four_five_diag_transport_of_local_entries` exposed a mismatch between the predicate-subtype Fintype and Mathlib's canonical `Finset.Subtype.fintype S`. The correction introduces a conversion lemma whose codomain is indexed by `S) itself, changes the support equivalence to `S ≃ T), and uses the same canonical subtype instances throughout the power-2, power-3, power-4, and power-5 sums. The `K^3=K K^2) step is also isolated as a named equality.
 
 No concrete entry-transport theorem is claimed by this repair; full Lean verification on the new commit is pending.
+
+
+## 2026-10-29 — Remove type mismatch in support-subtype path sums
+
+The attempt to force finite-set subtypes through a locally defined equivalence failed because the type-level notation `S) did not elaborate as the intended subtype in that declaration. The fix removes the helper and consistently uses the proposition-indexed subtype `{x // x ∈ S}` at every stage, including the support equivalence, power-2/path sums, and fourth/fifth diagonal reindexings. This gives the sum conversion theorem and the matrix-power proof one uniform Fintype representation.
+
+The previous full Lean run on SHA `969085624e95167efe13f5b45341f97c03b4acba` failed with this mismatch (push and PR). Verification of the correction is pending; no higher-moment transport is claimed yet.

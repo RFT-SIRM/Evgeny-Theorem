@@ -563,3 +563,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The concrete errors were Fintype-instance mismatches: the generic helper emitted sums over predicate subtypes using `Subtype.fintype`, while the theorem's finite-support sums were elaborated using `Finset.Subtype.fintype S`. Subsequent `K^3) rewrite failures came from the same type instability in the surrounding goals.
 - Added `glueRHS6_sum_ite_eq_finset_subtype`, explicitly bridging to the canonical finite-set subtype `S), changed the support equivalence to `S ≃ T), and changed every path sum to use those canonical finite-set subtypes. Replaced the brittle inline `rw) for `K^3=K*K^2) with a named matrix-power equality.
 - This is a proof-engineering correction to the generic path transport only. The concrete `sgK) local-entry hypotheses and all-level residual stability remain open. CI for the correction is pending.
+
+
+## 2026-10-29 — Repair second Lean failure in the abstract path-transport theorem
+
+- Full Lean push [40859648802](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40859648802) and PR [40859654599](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40859654599) failed on `969085624e95167efe13f5b45341f97c03b4acba`.
+- The first errors were in the newly added helper for finite-set subtypes: `S) cannot be used as a type in the locally constructed equivalence, because the intended subtype instances were not definitionally aligned. This cascaded into the unknown helper constant and multiple sum-type mismatches.
+- Removed that helper and restored a single consistent representation for each support throughout the generic power-transport theorem: predicate subtypes `{x // x ∈ S}` and `{y // y ∈ T}`, with the corresponding `Equiv). Every restricted power sum and each `Equiv.sum_comp) now use those same predicate-subtype types as `glueRHS6_sum_ite_eq_subtype`.
+- Kept the `K^3 = K * K^2) equality as a named rewrite to avoid the prior malformed inline rewrite. This patch only repairs the abstract matrix proof and does not yet instantiate concrete `sgK) entry transport. New Lean verification pending.
