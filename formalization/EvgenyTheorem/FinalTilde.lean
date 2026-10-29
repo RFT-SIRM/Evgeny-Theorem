@@ -1538,7 +1538,7 @@ noncomputable def sgK_root_lift_pt (m : ℕ) (p : Pt m) : Pt (m + 1) :=
     (m : ℕ) {p : Pt (m + 1)} (hp : p.1 = ((0, 0) : Point)) :
     (sgK_root_pullback_pt m p).1 = (0, 0) := by
   have hpos : 0 < 2 ^ (m + 1) := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := (Nat.ne_of_gt hpos).symm
   simp [sgK_root_pullback_pt, hp, hne]
 
 @[simp] theorem sgK_root_pullback_pt_X
@@ -1550,14 +1550,14 @@ noncomputable def sgK_root_lift_pt (m : ℕ) (p : Pt m) : Pt (m + 1) :=
     (m : ℕ) {p : Pt (m + 1)} (hp : p.1 = ((0, 2 ^ (m + 1)) : Point)) :
     (sgK_root_pullback_pt m p).1 = (0, 2 ^ m) := by
   have hpos : 0 < 2 ^ (m + 1) := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := (Nat.ne_of_gt hpos).symm
   simp [sgK_root_pullback_pt, hp, hne]
 
 @[simp] theorem sgK_root_lift_pt_O
     (m : ℕ) {p : Pt m} (hp : p.1 = ((0, 0) : Point)) :
     (sgK_root_lift_pt m p).1 = (0, 0) := by
   have hpos : 0 < 2 ^ m := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ m := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ m := (Nat.ne_of_gt hpos).symm
   simp [sgK_root_lift_pt, hp, hne]
 
 @[simp] theorem sgK_root_lift_pt_X
@@ -1569,7 +1569,7 @@ noncomputable def sgK_root_lift_pt (m : ℕ) (p : Pt m) : Pt (m + 1) :=
     (m : ℕ) {p : Pt m} (hp : p.1 = ((0, 2 ^ m) : Point)) :
     (sgK_root_lift_pt m p).1 = (0, 2 ^ (m + 1)) := by
   have hpos : 0 < 2 ^ m := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ m := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ m := (Nat.ne_of_gt hpos).symm
   simp [sgK_root_lift_pt, hp, hne]
 
 /-- The corresponding corner reindexing of all three-copy states. -/
@@ -1589,7 +1589,7 @@ theorem sgK_root_pullback_glW (m : ℕ) {w w' : WSG (m + 1)}
   change gl (m + 1) c p.1 c' p'.1 ∧ i = i' at h
   rcases h with ⟨hgl, hspin⟩
   have hpos : 0 < 2 ^ (m + 1) := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := (Nat.ne_of_gt hpos).symm
   rcases hgl with
     ⟨rfl, hp, rfl, hp'⟩ |
     ⟨rfl, hp, rfl, hp'⟩ |
@@ -1600,7 +1600,7 @@ theorem sgK_root_pullback_glW (m : ℕ) {w w' : WSG (m + 1)}
   all_goals
     change gl m _ (sgK_root_pullback_pt m p).1 _ (sgK_root_pullback_pt m p').1 ∧ i = i'
     constructor
-    · simp [gl, sgK_root_pullback_pt, hp, hp', hne]
+    · simp [gl, sgK_root_pullback, sgK_root_pullback_pt, hp, hp', hne]
     · exact hspin
 
 /-- Lifting a glued pair also preserves the gluing relation. -/
@@ -1612,7 +1612,7 @@ theorem sgK_root_lift_glW (m : ℕ) {w w' : WSG m}
   change gl m c p.1 c' p'.1 ∧ i = i' at h
   rcases h with ⟨hgl, hspin⟩
   have hpos : 0 < 2 ^ m := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ m := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ m := (Nat.ne_of_gt hpos).symm
   rcases hgl with
     ⟨rfl, hp, rfl, hp'⟩ |
     ⟨rfl, hp, rfl, hp'⟩ |
@@ -1623,7 +1623,7 @@ theorem sgK_root_lift_glW (m : ℕ) {w w' : WSG m}
   all_goals
     change gl (m + 1) _ (sgK_root_lift_pt m p).1 _ (sgK_root_lift_pt m p').1 ∧ i = i'
     constructor
-    · simp [gl, sgK_root_lift_pt, hp, hp', hne]
+    · simp [gl, sgK_root_lift, sgK_root_lift_pt, hp, hp', hne]
     · exact hspin
 
 theorem sgK_root_pullback_g (m : ℕ) {w : WSG (m + 1)}
@@ -1663,7 +1663,7 @@ theorem sgK_root_pullback_lift (m : ℕ) {w : WSG m}
     obtain ⟨w', hgl⟩ := hw
     exact glued_point m w.1 w.2.1.1 ⟨w'.1, w'.2.1.1, hgl.1⟩
   have hpos : 0 < 2 ^ m := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ m := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ m := (Nat.ne_of_gt hpos).symm
   rcases hcorner with hcorner | hcorner | hcorner
   all_goals
     apply Prod.ext
@@ -1683,7 +1683,7 @@ theorem sgK_root_lift_pullback (m : ℕ) {w : WSG (m + 1)}
     obtain ⟨w', hgl⟩ := hw
     exact glued_point (m + 1) w.1 w.2.1.1 ⟨w'.1, w'.2.1.1, hgl.1⟩
   have hpos : 0 < 2 ^ (m + 1) := by positivity
-  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := Nat.ne_of_gt hpos
+  have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := (Nat.ne_of_gt hpos).symm
   rcases hcorner with hcorner | hcorner | hcorner
   all_goals
     apply Prod.ext
