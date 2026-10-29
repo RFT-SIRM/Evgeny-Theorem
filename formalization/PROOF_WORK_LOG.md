@@ -626,3 +626,10 @@ The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean bui
 - The full Lean build for `5432adb45c528017f44921820a74a4de66000fb4` failed at three places in the newly added C/O lemma. Source review found a genuine logical overgeneralization: the helper `pHeO_til_eq_num_same_index` asserted global agreement of `oTil n` and `oNum n) on level-n entries, but `cp1 n` can be an actual edge at that level, so the statement is not justified.
 - Removed that false global helper. The C/O proof now changes `oTil) to `oNum) only for endpoints inside the O radius-two box, invoking `cp1_not_O_radius_two` at levels `m) and `m+1). Also supplied `by omega` where `Hc_C_num_eq_parent_til` requires `1 ≤ m`, rather than incorrectly passing `3 ≤ m`.
 - The proof still uses the existing shifted-C exclusion `cp1_shiftC` for the copy wrapper and `Hc_C_num_eq_parent_til` for the actual C orientation. This is narrower and mathematically correct; new SHA full Lean verification is pending.
+
+
+## 2026-10-29 — Add C/X entry transport after green checkpoint
+
+- Checkpoint `7cbfc568d479708a59dd8bbde6d9349c76fb7be4` has both Lean workflow runs and both test workflow runs green.
+- Added `sgK_C_X_entry_next_til` for the C-copy at the X corner. It uses the existing X-box tilde transport for the point-level operator and the existing `Hc_C_num_eq_parent_til` theorem on both levels. The only `oTil)-to-`oNum) changes are across a C-shift, justified by `cp1_shiftC`, so this does not assume the exceptional edge is absent globally.
+- This fills the C/X side of the glued B/Y–C/X pair; the B/Y state transport is still missing. The proof is local to the radius-two X box and does not yet prove the fourth/fifth-power diagonal transport. New-SHA full Lean CI pending.

@@ -3176,3 +3176,8 @@ The C-copy at an O-local coordinate box has an orientation path already availabl
 ## 2026-10-29 — Scope correction for exceptional orientation
 
 The failed C/O attempt exposed the key constraint: `oTil n = oNum n` is not a global statement on the level-n graph because the exceptional edge `cp1 n` can be present. Therefore removed the global same-index entry lemma and converted orientations only locally inside the O box, using the proven coordinate-bound exclusion `cp1_not_O_radius_two`. At the C-shift level, `cp1_shiftC` remains the correct tool because the shifted points exclude the exceptional edge at the next level. New Lean CI is required before proceeding.
+
+
+## 2026-10-29 — C/X block entry transport
+
+The C/X entry bridge now composes the verified point-level X-box tilde transport with `Hc_C_num_eq_parent_til`. At the high and low levels, the C-copy pullback means orientation changes can be justified using `cp1_shiftC` only; this preserves the exceptional-edge semantics. The companion B/Y bridge is still required before assembling the cross-level fourth/fifth-power diagonal equalities.

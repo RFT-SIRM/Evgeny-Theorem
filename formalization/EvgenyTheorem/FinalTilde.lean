@@ -1561,6 +1561,89 @@ theorem sgK_C_O_entry_next_til
         p q i j (hLowOrient p q)).symm
 
 
+
+/-- The C-block entry transport near X. First pass from the high C-copy
+orientation to its parent tilde orientation using `Hc_C_num_eq_parent_til);
+then use the already-established X-corner point transport. The low C-copy
+orientation is converted back through the same C-shift argument. -/
+theorem sgK_C_X_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 2) (hpy : p.2 ≤ 2)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+      q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.C, (p', i))
+        (GCopy.C, (q', j)) := by
+  rcases pHeO_corner_X_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+  have hHighOrient : ∀ a b : Point,
+      oCo (m + 1) (oTil (m + 2)) a b ↔
+        oCo (m + 1) (oNum (m + 2)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC (m + 1) (p := a) (q := b)
+    change oTil (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b) ↔
+      oNum (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hHighC :
+      pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := by
+    have h := Hc_C_num_eq_parent_til (m + 1) (by omega) θ ax
+      (oNum_anti (m + 2))
+      ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i)
+      ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)
+    change pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j at h
+    exact h
+  have hLowOrient : ∀ a b : Point,
+      oCo m (oTil (m + 1)) a b ↔ oCo m (oNum (m + 1)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC m (p := a) (q := b)
+    change oTil (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b) ↔
+      oNum (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hLowC :
+      pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
+        pHeO m θ ax (oTil m) p0 q0 i j := by
+    have h := Hc_C_num_eq_parent_til m hm θ ax
+      (oNum_anti (m + 1))
+      ((⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m), i)
+      ((⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), j)
+    change pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
+      pHeO m θ ax (oTil m) p0 q0 i j at h
+    exact h
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
+  change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j
+  calc
+    pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
+        p q i j (hHighOrient p q)
+    _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
+    _ = pHeO m θ ax (oTil m) p0 q0 i j := hentry
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j := hLowC.symm
+    _ = pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
+        p0 q0 i j (hLowOrient p0 q0)).symm
+
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/
