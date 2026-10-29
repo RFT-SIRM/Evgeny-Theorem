@@ -648,3 +648,10 @@ The full Lean build for `acd33bc3465cc21367034412e852b662d74a5272` failed becaus
 ## 2026-10-29 — Preserve X-box endpoints in the C/X wrapper context
 
 The CI log for `b32e3c7f26282933f6894044a13821c1aa09ce21` showed the C/X wrapper using `p) and `q` after an `rcases ... with ... rfl, rfl` pattern had substituted those variables away. Changed the destructuring to retain the equalities as `hpEq) and `hqEq), and returned those equalities with the parent-state witnesses. The underlying point-entry theorem and orientation argument are unchanged. Re-run full Lean CI on the new SHA.
+
+
+## 2026-10-29 — Add B/Y state transport for the third glued-root pair
+
+- Added `sgK_B_Y_entry_next_til` using the green-checkpoint point-level Y/C transport together with the B-copy orientation facts `oBo_num_iff_oNum`, `oNum_succ_restrict`, `cp1_shift`/radius-two edge exclusions.
+- The proof converts orientations only where the exceptional edge is excluded by the local coordinate bound or B-shift geometry; it does not assert global equivalence of `oTil) and `oNum).
+- This is the final missing one-entry bridge among the six sides of the three gluing pairs (A/X↔B/O, A/Y↔C/O, B/Y↔C/X). After full Lean verification, the next step is to use the six bridges on radius-two neighborhoods to prove the fourth/fifth-power diagonal transports required by `glueRHS6_highPowerResidual_eq_of_corner_power_transport`. New SHA CI pending.

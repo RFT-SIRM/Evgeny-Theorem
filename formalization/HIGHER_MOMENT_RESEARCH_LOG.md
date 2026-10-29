@@ -3196,3 +3196,8 @@ CI for `acd33bc3465cc21367034412e852b662d74a5272` reported that `pHeO_corner_X_b
 ## 2026-10-29 — C/X wrapper endpoint substitution bug
 
 The source error was caused by the two `rfl) patterns in the existential elimination, which eliminated the original endpoint names used by the subsequent orientation conversion proof. The fix keeps the equalities as named hypotheses and uses them as the output coordinate witnesses. This removes the cascade of unknown-identifier errors without changing any mathematical claim.
+
+
+## 2026-10-29 — B/Y state transport closes local corner coverage
+
+The B/Y case completes the six local entry transports around the three glued-root pairs. It composes the established `pHeO_corner_Y_box_entry_next_til` with the B-copy orientation reduction. The high B pullback becomes the high-level `oTil) relation using the no-corner bound after B shift and the restriction lemma; the parent B pullback reduces to `oNum m), which matches parent `oTil(m+1)) on this Y-local box because `cp1(m+1)) is excluded there. Only after Lean confirms this local bridge should the proof lift these entry equalities to fourth/fifth powers.
