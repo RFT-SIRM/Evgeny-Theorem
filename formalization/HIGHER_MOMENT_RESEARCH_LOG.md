@@ -3003,3 +3003,28 @@ The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pai
 - Restored `FinalTilde.lean` to its exact contents at the green checkpoint. This drops the X-corner equivalence experiment but keeps the already-compiled O-corner equivalence. Historical log entries are preserved.
 - The next mathematical objective is the actual p=6 obstruction: prove equality of matrix-entry weights for the relevant short paths / powered entries before attempting to reindex the finite sums. Another coordinate-support equivalence alone is not sufficient. Verify the rollback CI before proceeding.
 
+## 2026-10-29 — p=6 closure plan from the verified green checkpoint
+
+**Verified starting point.** PR #9 remains open on `moment-6-8-10`, HEAD `e561dea2c14260be9a5baf69cc1f18c92b68b0a5`. All four workflows passed at this exact SHA: Lean Push [40832777791](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40832777791), Lean PR [40832786909](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40832786909), Python Push [40832777784](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40832777784), and Python PR [40832786910](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40832786910). The source file `FinalTilde.lean` is identical to the green source blob `ac2b244e9b4622e5ecb2fa292d178e2e13d1e805` from `f1e769c...`.
+
+**Closure target (single central theorem).** Prove adjacent-level stability of the p=6 high-power boundary residual:
+`glueRHS6_highPowerResidual (m+1) (sgK (m+1) θ faceAxis (oNum (m+2))) (sgK (m+1) θ (fun _ => 2) (oNum (m+2))) = glueRHS6_highPowerResidual m (sgK m θ faceAxis (oNum (m+1))) (sgK m θ (fun _ => 2) (oNum (m+1)))`
+for `m ≥ 3`. This is the missing step after the already-compiled theorem `defectO6_succ_num_level3`; no general p=6 closure should be claimed until this identity is Lean-proved.
+
+**Why this is the right target.** `defectO6_orientation_difference_eq_level3` already makes the orientation gap constant across levels. Therefore the numbering-orientation defect satisfies `D_{m+1}=3D_m-F_3(θ)+R_m(θ)`, where `R_m` is exactly the high-power residual above. Prove `R_{m+1}=R_m); then the recurrence has a fixed additive term and can be solved with the existing `affine_three_recurrence` in `FinalArith.lean`. The computational p=6 exact-polynomial test shows (R_3=R_4) at finite symbolic levels, but is only regression evidence, not the general theorem.
+
+**Reusable components.**
+- `glueRHS6_highPowerResidual_sgK_radius_two_path_expansion` in `GlueCornerCube.lean` rewrites the fifth-/fourth-power diagonal factors into finite radius-two sums of `K²` and `K³) path entries.
+- `sgK_pow_two_entry_zero_outside_radius_two` proves the required finite support for the (K²) row.
+- `pHeO_corner_O_box_entry_next_num`, `pHeO_corner_X_box_entry_next_num`, and `pHeO_corner_Y_box_entry_next_num` already transport the base operator entry across the O/A, X/B, and Y/C boxes. The C/Y case deliberately retains `oCo`/`oTil).
+- `defectO6_orientation_difference_eq_level3`, `defectO6_succ_num_level3`, and `affine_three_recurrence` supply the algebraic endgame after residual stability.
+
+**Proof construction plan.**
+1. Show the 12 glued states (three copy-pairings times two spin states, with both endpoints in the sum) correspond bijectively at adjacent levels and that the partner map `sgGlue.σ` commutes with this correspondence.
+2. Pull each radius-two support back by an explicit coordinate formula: O uses identity; X subtracts `2^m` from the x coordinate; Y subtracts `2^m` from the y coordinate. Preserve copy/spin coordinates. The support equivalence is a means to the end, not the target.
+3. Lift base-entry preservation to the particular (K²) and (K³) entries in the residual path sum. Use the one-step coordinate locality and the fact that the full closed path has length at most five, so only the radius-two corner box is visited. Avoid claiming equality of arbitrary (K²/K³) entries for arbitrary pairs in the box; prove only the path entries actually used in the diagonal residual.
+4. Apply `Finset.sum_bij` (or equivalent explicit finite-sum reindexing) first to intermediate states (y), then to glued states (x), to prove (R_{m+1}=R_m).
+5. Substitute the residual identity in `defectO6_succ_num_level3`, then use `affine_three_recurrence` for the all-level recurrence. Separately decide whether an explicit trigonometric formula for the level-three constant is required; Python exact symbolic certificates alone do not discharge that Lean theorem.
+
+**Failure guard.** The failed X-equivalence experiment at `6a4a6b31...` and its `Classical.choose` repair at `8ba29464...` showed that extracting an existential witness while constructing data in Type is invalid or brittle. Define the inverse point explicitly and eliminate existential facts only inside Prop-valued membership proofs, or avoid the Type-valued equivalence and prove the finite-sum bijection directly. No source-code change is allowed until its exact mathematical role in the residual proof is identified. Leave CI durations/configuration unchanged.
+
