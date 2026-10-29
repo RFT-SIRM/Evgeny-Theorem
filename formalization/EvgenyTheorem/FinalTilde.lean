@@ -1039,6 +1039,63 @@ theorem pHeO_corner_O_box_entry_next_num
           exact oNum_succ_restrict m ha' hb')
         p q i j
 
+
+/-- The O/A corner-entry transport for the actual tilde orientations used by
+the adjacent-level residual. In the radius-two O box, the exceptional cp1
+edge cannot occur at either orientation level, so oTil reduces to oNum and
+the existing numbered transport applies. -/
+theorem pHeO_corner_O_box_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+      pHeO m θ ax (oTil (m + 1)) p q i j := by
+  have hpowHi : 2 < 2 ^ (m + 2) - 1 := by
+    have hmHi : 3 ≤ m + 2 := by omega
+    have hbound : 3 ≤ 2 ^ (m + 2) := by
+      calc
+        3 ≤ 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ (m + 2) := Nat.pow_le_pow_right (by norm_num) hmHi
+    omega
+  have hpowLo : 2 < 2 ^ (m + 1) - 1 := by
+    have hmLo : 3 ≤ m + 1 := by omega
+    have hbound : 3 ≤ 2 ^ (m + 1) := by
+      calc
+        3 ≤ 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ (m + 1) := Nat.pow_le_pow_right (by norm_num) hmLo
+    omega
+  have hhi : ¬ cp1 (m + 2) p q := by
+    intro h
+    have hpEq : p.1 = 2 ^ (m + 2) - 1 := congrArg Prod.fst h.1
+    omega
+  have hhi' : ¬ cp1 (m + 2) q p := by
+    intro h
+    have hqEq : q.1 = 2 ^ (m + 2) - 1 := congrArg Prod.fst h.1
+    omega
+  have hlo : ¬ cp1 (m + 1) p q := by
+    intro h
+    have hpEq : p.1 = 2 ^ (m + 1) - 1 := congrArg Prod.fst h.1
+    omega
+  have hlo' : ¬ cp1 (m + 1) q p := by
+    intro h
+    have hqEq : q.1 = 2 ^ (m + 1) - 1 := congrArg Prod.fst h.1
+    omega
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_rel_congr (m + 1) θ ax (oTil (m + 2)) (oNum (m + 2))
+        p q i j (oTil_of_no_corner hhi hhi')
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_box_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil (m + 1)) p q i j :=
+      (pHeO_rel_congr m θ ax (oTil (m + 1)) (oNum (m + 1))
+        p q i j (oTil_of_no_corner hlo hlo')).symm
+
+
 /-- Across the X/B corner box, the level-(m+1) entry using oNum (m+2)
 pulls back to the corresponding parent entry with its actual B-copy
 orientation, oBo m (oNum (m+1)). -/

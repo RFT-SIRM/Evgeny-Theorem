@@ -580,3 +580,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The audit confirmed this private block was not used to prove any concrete `sgK) power entry or the residual bridge. It was infrastructure with unproved concrete hypotheses, not progress on `R_{m+1}=R_m`.
 - Removed only the new generic block; preserved the previously compiled corner/support/orientation lemmas and retained the earlier failed attempts in this log. This returns `FinalTilde.lean` to the last known green source state at checkpoint `f388e6209c76900f442fd65b8146414bd0c2b719` while preserving chronological journal history.
 - Next step after green Lean verification: formulate the concrete map between each glued partner root's high-level and parent-level `sgK) support. Prove one-step entry preservation for same-copy state pairs for O/A, X/B, and Y/C with axis periodicity and exact orientations; only then derive the two path sums. Do not reintroduce a generic power lemma until its finite-sum types have been validated and its concrete hypotheses can be instantiated immediately.
+
+
+## 2026-10-29 — Add the actual-tilde O-box entry transport after green Lean
+
+- Starting checkpoint `2bf84fea6a42708a84f6d701075c17d64663d99c` was verified green in full Lean push [40861768230](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40861768230) and Lean PR [40861775093](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40861775093).
+- Added `pHeO_corner_O_box_entry_next_til` immediately before the existing X-box entry transport. Its statement matches the adjacent-level residual indices: high operator level `m+1) with orientation `oTil (m+2)), low operator level `m) with orientation `oTil (m+1)).
+- The proof explicitly excludes `cp1) in both directions from the O box bounds `x≤2), first at level `m+2) and then `m+1). Thus `oTil) is equivalent to `oNum) at both levels; it composes the existing `pHeO_corner_O_box_entry_next_num` equality with `pHeO_rel_congr`. It adds no assumptions and does not claim any power-entry equality.
+- This is a local O/A point-entry result only. The one-step `sgK) equality for the paired whole state spaces, the B/C cases, and powers 4/5 remain open. Full Lean CI on the new SHA is pending.

@@ -3139,3 +3139,10 @@ The last attempted block `matrix_pow_four_five_diag_transport_of_local_entries` 
 The unfinished abstraction was removed from `FinalTilde.lean`; previously compiled O/X/Y support and orientation lemmas remain. This restores that source file to its last fully Lean-green version at `f388e6209c76900f442fd65b8146414bd0c2b719`, while keeping the chronology. It is not a branch reset and does not remove the earlier geometry lemmas.
 
 Next mathematical work must start from the concrete high-root `sgK) support and its parent correspondence. O/A, X/B, and Y/C must preserve copy label, point, spin, exact `oNum/oTil/oBo/oCo) conventions, and axis periodicity. Then prove one-step entry equality on all support pairs and only afterwards derive the finite path sums. `R_{m+1}=R_m` remains unproved.
+
+
+## 2026-10-29 — Exact O-box point-entry transport for the residual tilde orientations
+
+The current green checkpoint already had `pHeO_corner_O_box_entry_next_num`, but it did not state the exact orientation pair required by the adjacent-level residual. Added `pHeO_corner_O_box_entry_next_til`: on the O radius-two box, the exceptional edge `cp1 n) has x-coordinate `2^n-1), which is strictly greater than 2 for the two relevant levels `n=m+1,m+2). Therefore both `oTil) relations coincide with `oNum) on the local pair, and the numbered transport gives the desired equality.
+
+The proof keeps both levels and both orientations explicit. It transports point-operator entries only; it does not yet lift the result to `sgK) on glued-root states or imply equality of the fourth/fifth powers. The next concrete check is to use the root copy label to specialize this point-entry result to the A-block of `sgK), then handle the shifted B/C blocks separately. New-SHA Lean verification is pending.
