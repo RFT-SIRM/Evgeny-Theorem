@@ -487,3 +487,9 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Scope: geometrical support correspondence only. It does not identify `sgK` entries or powers and does not prove (R_{m+1}=R_m). The new SHA's full Lean build and Python push/PR workflows must pass before the next change.
 - Next: make the three O/X/Y support equivalences serve one concrete purpose: reindex the finite (K^2/K^3) path sums, proving the entrywise transfer needed for (R_{m+1}=R_m). Preserve the actual C-copy `oCo`/`oTil` orientation.
 
+## 2026-10-29 — Verify Y/C support reindexing and select the next p=6 proof obligation
+
+- Verified PR #9 head `e72f4634fb59d88555eaa279e606012dbd495979` (commit: `Add explicit Y-corner support reindexing`). The PR remains open on `moment-6-8-10`; no new branch, PR, or issue was created.
+- At this exact SHA, PR Lean run [40838416882](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40838416882) passed its complete configured `Build formalization` step. PR Tests run [40838416691](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40838416691) passed fast and slow tests on Python 3.11 and 3.12.
+- The Y/C support equivalence now compiles alongside the O/A and X/B support correspondences. These are finite-state/support reindexings only. They do not establish preservation of the `sgK` matrix weights, the `K^2/K^3` path factors, or adjacent-level residual stability.
+- Next proof obligation remains the p=6 residual identity, not another support lemma: transport the exact short-path matrix-entry products across the three corner copies, keeping the C-copy orientation `oCo` explicit, and then reindex the inner path sums and outer `sgGlue` sum. Only after that identity is proved may the affine recurrence be closed. Do not claim p=6 closure, and do not switch to p=8/p=10.
