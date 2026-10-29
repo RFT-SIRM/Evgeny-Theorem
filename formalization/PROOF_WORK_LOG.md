@@ -588,3 +588,8 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added `pHeO_corner_O_box_entry_next_til` immediately before the existing X-box entry transport. Its statement matches the adjacent-level residual indices: high operator level `m+1) with orientation `oTil (m+2)), low operator level `m) with orientation `oTil (m+1)).
 - The proof explicitly excludes `cp1) in both directions from the O box bounds `x≤2), first at level `m+2) and then `m+1). Thus `oTil) is equivalent to `oNum) at both levels; it composes the existing `pHeO_corner_O_box_entry_next_num` equality with `pHeO_rel_congr`. It adds no assumptions and does not claim any power-entry equality.
 - This is a local O/A point-entry result only. The one-step `sgK) equality for the paired whole state spaces, the B/C cases, and powers 4/5 remain open. Full Lean CI on the new SHA is pending.
+
+
+## 2026-10-29 — Fix failed O-box tilde transport proof
+
+The Lean build for `3fec4bd1c1e02b1f2c16ab146c46b48b7c434e03` failed at the new O-box lemma for two concrete reasons: the power bound was too weak, and the higher-level `pHeO_rel_congr` was unavailable in this module's imports. The follow-up commit `1b99dc16f912bce2fe04cd65c6ee26fcbd7afc09` changes the bound to `4 ≤ 2^n` and adds a private local congruence proof using the low-level diagonal, edge, and non-edge lemmas already in the dependency chain. New SHA CI is pending; do not proceed to other transport cases until the Lean build is green.
