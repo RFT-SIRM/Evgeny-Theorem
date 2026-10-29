@@ -3076,3 +3076,10 @@ This is a proved reduction, not an all-level stability theorem: `R_{m+1}=R_m` is
 The next formal interface is now explicit. The existing glued-root equivalence and `sgK_root_pullback_sigma` suffice to reindex a sum of partner-root diagonal power entries from level (m+1) to level (m), provided those entries agree pointwise under root pullback. The new bridge theorem `glueRHS6_highPowerResidual_eq_of_corner_power_transport` then turns the four required local identities (powers 4 and 5, for face-axis and constant-axis operators) into (R_{m+1}=R_m), with the exact diagonal hypotheses for powers 1 and 2 made explicit.
 
 No local power identity or all-level stability result is claimed by this commit. The next mathematical step is to establish those four pointwise identities using the radius-two path expansions, support correspondences, and entry/axis/orientation transport, while preserving the C-copy exceptional orientation.
+
+
+## 2026-10-29 — Explicit finite-sum conversion after the outer-bridge Lean failure
+
+The first implementation of the outer partner-sum bridge used `simp` to turn `∑ x, if p x then f x else 0` into a subtype sum. Lean 4.33.1 reported a type error while simplifying matrix-power summands at `FinalTilde.lean:2008` and `2025` on commit `3c336ea123d0a2f54045f7ca34d1a153e28c97ea`.
+
+The correction isolates this index-set conversion in `glueRHS6_sum_ite_eq_subtype`, using `Fintype.sum_subtype_add_sum_subtype` and leaving the summand opaque. This is a proof-engineering repair only. The outer-root reindexing bridge still assumes pointwise transport of the fourth- and fifth-power diagonal entries; those local identities and the all-level equality (R_{m+1}=R_m) remain unproved.

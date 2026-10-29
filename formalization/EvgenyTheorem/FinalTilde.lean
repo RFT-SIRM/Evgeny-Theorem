@@ -1982,6 +1982,23 @@ end EvgenyTheorem
 
 namespace EvgenyTheorem
 
+/-- A conditional finite sum with zero terms off a predicate is exactly
+the sum over the predicate subtype. Keeping the summand opaque avoids
+unfolding matrix powers during this purely finite-index conversion. -/
+private theorem glueRHS6_sum_ite_eq_subtype
+    {α : Type*} [Fintype α] (p : α → Prop) [DecidablePred p]
+    (f : α → ℂ) :
+    (∑ x, if p x then f x else 0) =
+      ∑ x : {x // p x}, f x.1 := by
+  classical
+  calc
+    (∑ x, if p x then f x else 0) =
+      (∑ x : {x // p x}, if p x.1 then f x.1 else 0) +
+        ∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0 := by
+          exact (Fintype.sum_subtype_add_sum_subtype p
+            (fun x => if p x then f x else 0)).symm
+    _ = _ := by simp
+
 /-- Reindex a glued-partner diagonal-power sum across adjacent levels, assuming
 the pointwise power entry is preserved by the explicit root pullback. The
 partner-map compatibility is used here, so this theorem handles the outer
@@ -2005,7 +2022,9 @@ private theorem glueRHS6_glued_partner_power_sum_transport
         (Ahi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) else 0) =
       ∑ w : {w // (sgGlue (m + 1)).g w},
         (Ahi ^ n) ((sgGlue (m + 1)).σ w.1) ((sgGlue (m + 1)).σ w.1) := by
-          simp
+          exact glueRHS6_sum_ite_eq_subtype
+            (fun w : WSG (m + 1) => (sgGlue (m + 1)).g w)
+            (fun w => (Ahi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w))
     _ = ∑ w : {w // (sgGlue (m + 1)).g w},
         (Alo ^ n)
           ((sgGlue m).σ (sgK_root_pullback m w.1))
@@ -2022,7 +2041,9 @@ private theorem glueRHS6_glued_partner_power_sum_transport
               (Alo ^ n) ((sgGlue m).σ w.1) ((sgGlue m).σ w.1))
     _ = ∑ w, if (sgGlue m).g w then
         (Alo ^ n) ((sgGlue m).σ w) ((sgGlue m).σ w) else 0 := by
-          simp
+          exact (glueRHS6_sum_ite_eq_subtype
+            (fun w : WSG m => (sgGlue m).g w)
+            (fun w => (Alo ^ n) ((sgGlue m).σ w) ((sgGlue m).σ w))).symm
 
 /-- The remaining outer-sum step in the p=6 residual proof. If the local
 fourth- and fifth-power diagonal entries transport at every glued partner

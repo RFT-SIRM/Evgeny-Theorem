@@ -512,3 +512,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added `glueRHS6_highPowerResidual_eq_of_corner_power_transport`. It combines the already-proved diagonal reduction with four pointwise transport hypotheses (powers 4 and 5 for each of the two operators) to derive the exact adjacent-level residual equality. It deliberately does not assert these local power equalities.
 - This isolates the remaining mathematical core: prove the fourth- and fifth-power diagonal entries agree under the explicit root pullback on every glued partner root, for the concrete face-axis and constant-axis operators. The theorem is a sum-reindexing bridge, not yet the all-level p=6 closure.
 - New commit CI must finish its full Lean build; Python results are checked but do not gate further mathematical analysis.
+
+
+## 2026-10-29 — Fix the first outer-sum bridge elaboration failure
+
+- Commit `3c336ea123d0a2f54045f7ca34d1a153e28c97ea` failed both Lean builds at the conversion between a conditional sum and a glued-state subtype sum, at `FinalTilde.lean:2008` and `2025`. The diagnostic was `simp made no progress` with an ill-typed intermediate involving `(Ahi ^ n) ((sgGlue ...).σ w)`; the same error appeared for `Alo).
+- Replaced the two broad `simp` conversions with the dedicated lemma `glueRHS6_sum_ite_eq_subtype`, proved directly from `Fintype.sum_subtype_add_sum_subtype`. The summand is passed as an opaque function, so this step only converts the index set and does not unfold matrix powers.
+- This correction does not change the residual theorem, power-entry hypotheses, or mathematical scope. The next CI result must confirm that the entire Lean formalization builds; no further theorem expansion is justified before that result.
