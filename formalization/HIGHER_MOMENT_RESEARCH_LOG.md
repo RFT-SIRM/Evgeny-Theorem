@@ -3250,3 +3250,8 @@ The A-copy Y-corner specialization uses `sgK_radius_two_support_Y_equiv` togethe
 ## 2026-10-29 — B/Y fourth/fifth diagonal transport
 
 The B-copy Y-corner case is now added using `sgK_radius_two_support_Y_equiv` and `sgK_B_Y_entry_next_til`. Like A/Y, it uses the inverse Y shift `(x,y)\mapsto(x,y-2^m)`, with support bounds (x\le2) and (2^{m+1}\le y+2). The shared finite-neighborhood power lemma reduces the (K^4/K^5) diagonal equality to the checked local bridge plus first-/second-power zero-outside-support conditions. This remains an endpoint specialization, not yet a uniform glued-root statement or a closed sixth-moment residual.
+
+
+## 2026-10-29 — Remove duplicated declarations from the B/Y insertion
+
+The Lean failure on `ca06a7b4b8d37c1696fcbe927d720d34a7f9996b` came from copying past the end of A/Y and duplicating the generic support-equivalence wrapper plus the existing B/O and C/O specializations. Removed that repeated tail while preserving the new B/Y specialization and the original declarations. The reported failure was duplicate declarations, not a type error in the B/Y theorem. Do not proceed to C/X until both full Lean builds pass on the cleaned SHA.

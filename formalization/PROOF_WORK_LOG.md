@@ -723,3 +723,10 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added `sgK_B_Y_diag_four_five_transport`, reusing the Y-radius-two support equivalence and the existing `sgK_B_Y_entry_next_til` bridge. The coordinate pullback subtracts `2^m` from y, preserving x and spin; the proof supplies the finite-support first-/second-power vanishing premises needed by the matrix-power lemma.
 - No new mathematical assumptions were introduced. This handles B/Y only; C/X and applying the endpoint cases to the residual hypotheses remain.
 - **Next gate:** inspect both full Lean build results on this SHA before adding C/X or wiring the `h4/h5` assumptions into `glueRHS6_highPowerResidual_eq_of_corner_power_transport`.
+
+
+## 2026-10-29 — Correct the B/Y insertion boundary found by Lean CI
+
+- The first B/Y commit `ca06a7b4b8d37c1696fcbe927d720d34a7f9996b` failed push Lean build because the insertion accidentally copied the trailing generic wrapper and B/O/C/O theorems a second time. CI reported only duplicate declaration errors for those three existing declarations; it did not report a type error in the B/Y proof.
+- Removed only that duplicate tail. The original wrapper, B/O, and C/O declarations remain, as do both A/Y and B/Y specializations and the main high-power residual theorem.
+- The current SHA must pass both full Lean builds before moving to C/X.
