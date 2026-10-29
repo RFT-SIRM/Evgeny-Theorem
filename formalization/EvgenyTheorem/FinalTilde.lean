@@ -1741,3 +1741,240 @@ theorem edgeUnitaryWithAxis_pi (m : ℕ) (axisOfIndex : ℕ → Axis)
 
 
 end EvgenyTheorem
+
+
+namespace EvgenyTheorem
+
+/-- Every outer corner has degree two at every refinement level. -/
+theorem pdeg_corner_O_eq_two (m : ℕ) : pdeg m ((0, 0) : Point) = 2 := by
+  induction m with
+  | zero => decide
+  | succ m ih =>
+      have hp : ((0, 0) : Point) ∈ vertexOrder m := corner00_mem m
+      have hpX : ((0, 0) : Point) ≠ ((2 ^ m, 0) : Point) := by
+        intro h
+        have hx := congrArg Prod.fst h
+        have hpos : 0 < 2 ^ m := by positivity
+        omega
+      have hpY : ((0, 0) : Point) ≠ ((0, 2 ^ m) : Point) := by
+        intro h
+        have hy := congrArg Prod.snd h
+        have hpos : 0 < 2 ^ m := by positivity
+        omega
+      exact (pdeg_succ_A_local m hp hpX hpY).trans ih
+
+/-- The right outer corner also has degree two at every level. -/
+theorem pdeg_corner_X_eq_two (m : ℕ) : pdeg m ((2 ^ m, 0) : Point) = 2 := by
+  induction m with
+  | zero => decide
+  | succ m ih =>
+      have hp : ((2 ^ m, 0) : Point) ∈ vertexOrder m := cornerX_mem m
+      have hpos : 0 < 2 ^ m := by positivity
+      have hp0 : ((2 ^ m, 0) : Point) ≠ (0, 0) := by
+        intro h
+        have hx := congrArg Prod.fst h
+        omega
+      have hpY : ((2 ^ m, 0) : Point) ≠ ((0, 2 ^ m) : Point) := by
+        intro h
+        have hx := congrArg Prod.fst h
+        omega
+      have hshift : ((2 ^ (m + 1), 0) : Point) =
+          shiftPoint (2 ^ m) 1 0 ((2 ^ m, 0) : Point) := by
+        simp [shiftPoint, pow_succ]
+        omega
+      calc
+        pdeg (m + 1) ((2 ^ (m + 1), 0) : Point) =
+            pdeg (m + 1) (shiftPoint (2 ^ m) 1 0 ((2 ^ m, 0) : Point)) := by
+              rw [hshift]
+        _ = pdeg m ((2 ^ m, 0) : Point) :=
+          pdeg_succ_B_local m hp hp0 hpY
+        _ = 2 := ih
+
+/-- The upper outer corner also has degree two at every level. -/
+theorem pdeg_corner_Y_eq_two (m : ℕ) : pdeg m ((0, 2 ^ m) : Point) = 2 := by
+  induction m with
+  | zero => decide
+  | succ m ih =>
+      have hp : ((0, 2 ^ m) : Point) ∈ vertexOrder m := cornerY_mem m
+      have hpos : 0 < 2 ^ m := by positivity
+      have hp0 : ((0, 2 ^ m) : Point) ≠ (0, 0) := by
+        intro h
+        have hy := congrArg Prod.snd h
+        omega
+      have hpX : ((0, 2 ^ m) : Point) ≠ ((2 ^ m, 0) : Point) := by
+        intro h
+        have hy := congrArg Prod.snd h
+        omega
+      have hshift : ((0, 2 ^ (m + 1)) : Point) =
+          shiftPoint (2 ^ m) 0 1 ((0, 2 ^ m) : Point) := by
+        simp [shiftPoint, pow_succ]
+        omega
+      calc
+        pdeg (m + 1) ((0, 2 ^ (m + 1)) : Point) =
+            pdeg (m + 1) (shiftPoint (2 ^ m) 0 1 ((0, 2 ^ m) : Point)) := by
+              rw [hshift]
+        _ = pdeg m ((0, 2 ^ m) : Point) :=
+          pdeg_succ_C_local m hp hp0 hpX
+        _ = 2 := ih
+
+/-- A state participating in a gluing pair is located at one of the three
+outer corners, so its underlying vertex degree is exactly two. -/
+theorem pdeg_glued_state_eq_two
+    (m : ℕ) {w : WSG m} (hw : (sgGlue m).g w) :
+    pdeg m w.2.1.1 = 2 := by
+  obtain ⟨w', hww'⟩ := hw
+  have hcorner := glued_point m w.1 w.2.1.1
+    ⟨w'.1, w'.2.1.1, hww'.1⟩
+  rcases hcorner with h | h | h
+  · rw [h]
+    exact pdeg_corner_O_eq_two m
+  · rw [h]
+    exact pdeg_corner_X_eq_two m
+  · rw [h]
+    exact pdeg_corner_Y_eq_two m
+
+/-- Algebraic reduction of the p=6 high-power residual. If K and K' have
+diagonal values 2 and squared-diagonal values 6 on every glued state, the
+residual is exactly 12 times the difference of the fifth-power corner sums
+plus 36 times the difference of the fourth-power corner sums. The partner
+map sigma is retained here for the later finite-sum transport. -/
+theorem glueRHS6_highPowerResidual_diagonal_reduce
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ)
+    (hdiag1 : ∀ x, (sgGlue m).g x → K x x = 2)
+    (hdiag2 : ∀ x, (sgGlue m).g x → (K ^ 2) x x = 6)
+    (hdiag1' : ∀ x, (sgGlue m).g x → K' x x = 2)
+    (hdiag2' : ∀ x, (sgGlue m).g x → (K' ^ 2) x x = 6) :
+    glueRHS6_highPowerResidual m K K' =
+      12 *
+        ((∑ x, if (sgGlue m).g x then
+            (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+          (∑ x, if (sgGlue m).g x then
+            (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) +
+      36 *
+        ((∑ x, if (sgGlue m).g x then
+            (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+          (∑ x, if (sgGlue m).g x then
+            (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) := by
+  classical
+  unfold glueRHS6_highPowerResidual
+  have h5 : (∑ x, if (sgGlue m).g x then
+      (K ^ 1) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      2 * (∑ x, if (sgGlue m).g x then
+        (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    calc
+      _ = ∑ x, if (sgGlue m).g x then
+            (2 : ℂ) * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x
+          · simp [hx, hdiag1 x hx]
+          · simp [hx]
+      _ = ∑ x, (2 : ℂ) *
+            (if (sgGlue m).g x then
+              (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x <;> simp [hx]
+      _ = 2 * (∑ x, if (sgGlue m).g x then
+            (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          rw [← Finset.mul_sum]
+  have h5' : (∑ x, if (sgGlue m).g x then
+      (K' ^ 1) x x * (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      2 * (∑ x, if (sgGlue m).g x then
+        (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    calc
+      _ = ∑ x, if (sgGlue m).g x then
+            (2 : ℂ) * (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x
+          · simp [hx, hdiag1' x hx]
+          · simp [hx]
+      _ = ∑ x, (2 : ℂ) *
+            (if (sgGlue m).g x then
+              (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x <;> simp [hx]
+      _ = 2 * (∑ x, if (sgGlue m).g x then
+            (K' ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          rw [← Finset.mul_sum]
+  have h4 : (∑ x, if (sgGlue m).g x then
+      (K ^ 2) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      6 * (∑ x, if (sgGlue m).g x then
+        (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    calc
+      _ = ∑ x, if (sgGlue m).g x then
+            (6 : ℂ) * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x
+          · simp [hx, hdiag2 x hx]
+          · simp [hx]
+      _ = ∑ x, (6 : ℂ) *
+            (if (sgGlue m).g x then
+              (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x <;> simp [hx]
+      _ = 6 * (∑ x, if (sgGlue m).g x then
+            (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          rw [← Finset.mul_sum]
+  have h4' : (∑ x, if (sgGlue m).g x then
+      (K' ^ 2) x x * (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) =
+      6 * (∑ x, if (sgGlue m).g x then
+        (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    calc
+      _ = ∑ x, if (sgGlue m).g x then
+            (6 : ℂ) * (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x
+          · simp [hx, hdiag2' x hx]
+          · simp [hx]
+      _ = ∑ x, (6 : ℂ) *
+            (if (sgGlue m).g x then
+              (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          apply Finset.sum_congr rfl
+          intro x _
+          by_cases hx : (sgGlue m).g x <;> simp [hx]
+      _ = 6 * (∑ x, if (sgGlue m).g x then
+            (K' ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+          rw [← Finset.mul_sum]
+  rw [h5, h5', h4, h4']
+  ring
+
+/-- Specialization to the concrete Sierpinski-gasket operator. This is an
+exact reduction to weighted corner sums; it does not assert level stability. -/
+theorem glueRHS6_highPowerResidual_sgK_corner_reduce
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    glueRHS6_highPowerResidual m (sgK m θ ax o) (sgK m θ ax' o) =
+      12 *
+        ((∑ x, if (sgGlue m).g x then
+            (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+          (∑ x, if (sgGlue m).g x then
+            (sgK m θ ax' o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) +
+      36 *
+        ((∑ x, if (sgGlue m).g x then
+            (sgK m θ ax o ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) -
+          (∑ x, if (sgGlue m).g x then
+            (sgK m θ ax' o ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)) := by
+  apply glueRHS6_highPowerResidual_diagonal_reduce
+  · intro x hx
+    rw [sgK_diag m θ ax o x, pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro x hx
+    rw [pow_two, sgK_sq_diag m θ ax o hanti x,
+      pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro x hx
+    rw [sgK_diag m θ ax' o x, pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro x hx
+    rw [pow_two, sgK_sq_diag m θ ax' o hanti x,
+      pdeg_glued_state_eq_two m hx]
+    norm_num
+
+end EvgenyTheorem

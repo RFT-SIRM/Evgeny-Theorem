@@ -3054,3 +3054,18 @@ Added `sgK_radius_two_Y_parent_support` and `sgK_radius_two_support_Y_equiv` in 
 
 The all-level proof still requires showing that the high-level and parent-level base entries agree for all states in these supports under the nested orientations of `Hc), then transporting (K²/K³) factors and reindexing the outer `sgGlue` sum. The C orientation must remain `oCo`/`oTil`; no general (R_{m+1}=R_m) result is claimed. New-SHA CI is pending.
 
+
+
+## 2026-10-29 — Algebraic corner-sum form of the p=6 residual
+
+On every glued state the underlying vertex is one of the three outer corners O, X, Y. The corner degree is two at all levels (proved by recursion using the A/B/C local-degree lemmas), so `sgK_diag` gives `K_{xx}=2` and `sgK_sq_diag` gives `(K^2)_{xx}=2^2+2=6), independently of the axis assignment.
+
+The new Lean theorem `glueRHS6_highPowerResidual_sgK_corner_reduce` therefore gives the exact identity
+[
+R_m=12left(sum_{g(x)}(K^5)_{sigma x,sigma x}-sum_{g(x)}(K'^5)_{sigma x,sigma x}ight)
++36left(sum_{g(x)}(K^4)_{sigma x,sigma x}-sum_{g(x)}(K'^4)_{sigma x,sigma x}ight).
+]
+This isolates the sole remaining dependence on the chosen axis assignment into the fourth- and fifth-power corner diagonal sums. Keeping `σ` explicit makes the already-proved root-map compatibility available for the next reindexing step.
+
+This is a proved reduction, not an all-level stability theorem: `R_{m+1}=R_m` is still open. Next, compare the individual/cumulative fourth- and fifth-power corner diagonal contributions using radius-two path expansions and entry transports, taking special care with nested B/C copy orientation; do not promote the finite `R_3=R_4` certificate to a general proof.
+

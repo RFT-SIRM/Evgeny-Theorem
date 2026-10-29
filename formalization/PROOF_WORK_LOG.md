@@ -493,3 +493,13 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - At this exact SHA, PR Lean run [40838416882](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40838416882) passed its complete configured `Build formalization` step. PR Tests run [40838416691](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40838416691) passed fast and slow tests on Python 3.11 and 3.12.
 - The Y/C support equivalence now compiles alongside the O/A and X/B support correspondences. These are finite-state/support reindexings only. They do not establish preservation of the `sgK` matrix weights, the `K^2/K^3` path factors, or adjacent-level residual stability.
 - Next proof obligation remains the p=6 residual identity, not another support lemma: transport the exact short-path matrix-entry products across the three corner copies, keeping the C-copy orientation `oCo` explicit, and then reindex the inner path sums and outer `sgGlue` sum. Only after that identity is proved may the affine recurrence be closed. Do not claim p=6 closure, and do not switch to p=8/p=10.
+
+
+## 2026-10-29 — Reduce the p=6 residual to corner-power sums
+
+- Starting source SHA `94f86686314b7d1d9fbb1780f477b9fc09dc3ea8` has a successful full PR Lean build (run [40848277996](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40848277996)) and successful Tests workflow (run [40848278170](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40848278170), Python 3.11 and 3.12).
+- Added uniform degree-two lemmas for the O/X/Y outer corners and derived that every state in `sgGlue m` has underlying point degree two.
+- Added a generic algebraic reduction under the exact diagonal hypotheses `K x x = 2` and `(K^2) x x = 6` on glued states. The concrete `sgK` corollary proves those hypotheses from `sgK_diag` and `sgK_sq_diag`.
+- The residual is now expressed exactly as `12 * (Σ_g K^5(σx,σx) - Σ_g K'^5(σx,σx)) + 36 * (Σ_g K^4(σx,σx) - Σ_g K'^4(σx,σx))`. The partner map is deliberately retained, ready for the existing `sgK_root_pullback_sigma) compatibility theorem.
+- Scope: this is an exact algebraic reduction, not the all-level identity `R_{m+1}=R_m`. The remaining proof must compare these power-4 and power-5 diagonal sums across the rooted radius-two corner maps, including recursive axis labels and the C-copy exceptional orientation. New-SHA CI is pending.
+
