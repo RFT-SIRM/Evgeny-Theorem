@@ -437,3 +437,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added `sgK_radius_two_X_parent_support` and `sgK_radius_two_support_X_equiv` to `FinalTilde.lean`. The map uses the explicit inverse of the B-copy shift, and the existing X-box characterization to prove the parent coordinate belongs to `vertexOrder m`; the inverse uses the existing B-copy map into `vertexOrder (m+1)`.
 - Scope is still geometric: the equivalence preserves the copy label and spin, but does not establish any `sgK` matrix-entry equality or weighted path-sum equality. CI for the new source SHA is pending; do not continue to the Y/C case until the exact-SHA Lean and Python results are checked.
 
+## 2026-10-29 — Fix existential elimination in the X-corner equivalence
+
+- The current PR-head Lean logs failed at `FinalTilde.lean:1296:27` inside `sgK_radius_two_support_X_equiv`. The proof used `rcases` to extract the witness from an existential proposition while constructing a value in a subtype (Type). Lean correctly rejects eliminating `Exists` into data.
+- Replaced that extraction by `Classical.choose hz.2` for the witness and `Classical.choose_spec hz.2` for its proof, then destructured only the resulting proposition. The X-equivalence statement and its intended witness are unchanged.
+- Failing Lean runs on the inspected head: push [40831707714](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40831707714), PR [40831712607](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40831712607). This is the only reported Lean error in those logs; new-SHA CI is pending.
+- Do not extend to Y or matrix-weight transport until the full Lean build passes on the corrected SHA. No level-stability claim is made.
+

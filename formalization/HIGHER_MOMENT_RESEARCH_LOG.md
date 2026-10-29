@@ -2990,3 +2990,9 @@ The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pai
 - Added an X-corner finite-state equivalence `sgK_radius_two_support_X_equiv` and parent support predicate `sgK_radius_two_X_parent_support`. The inverse is expressed using the coordinate inverse of `shiftPoint (2^m) 1 0`; the existing support-box theorem supplies the bounds and parent membership.
 - This is not a claim that the (K^2)/(K^3) path weights are preserved, nor does it prove (R_{m+1}=R_m). The C/Y equivalence and all entrywise weight transport remain open. CI for the new source SHA is pending.
 
+## 2026-10-29 — Fix existential elimination in the X-corner equivalence
+
+- Full Lean logs for source SHA `6a4a6b31fccceb30d3450dc97fb74df24d7aab17` identify the first failure at `FinalTilde.lean:1296:27`: `Exists.casesOn` cannot eliminate an existential proof into a data-valued subtype. The failing construct was `rcases hz with ...` in the forward function of the X-corner equivalence.
+- Replaced witness destructuring in the Type-valued branch with `Classical.choose` and `Classical.choose_spec`. This is an elaboration repair only; no mathematical assertion was strengthened.
+- The corrected SHA must pass a full Lean build and push/PR Python 3.11/3.12 workflows before further work. The Y-corner support equivalence and all matrix-entry/weight preservation claims remain open.
+

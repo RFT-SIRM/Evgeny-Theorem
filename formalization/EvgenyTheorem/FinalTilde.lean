@@ -1293,7 +1293,10 @@ noncomputable def sgK_radius_two_support_X_equiv
   · intro z
     let p : Point := (z.1.2.1.1.1 - 2 ^ m, z.1.2.1.1.2)
     have hz := (sgK_radius_two_support_X_box_iff m hm hw).mp z.2
-    rcases hz with ⟨hcopy, ⟨q, hq, hqx, hqy, hpoint⟩⟩
+    have hcopy := hz.1
+    let q : Point := Classical.choose hz.2
+    have hqdata := Classical.choose_spec hz.2
+    rcases hqdata with ⟨hq, hqx, hqy, hpoint⟩
     have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
       have h := congrArg Prod.fst hpoint
       simpa [shiftPoint] using h
