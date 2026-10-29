@@ -3218,3 +3218,10 @@ The new `matrix_pow_four_five_diag_eq_of_local_equiv` isolates the finite algebr
 On parent SHA `373773bcc96773381f5d712d503338f98c0ab027`, the PR and push Lean builds both failed in `FinalTilde.lean` for two source-level reasons: a detached doc-comment before the new support-sum helper, and an incompatibility between the generic predicate-subtype enumeration `Subtype.fintype` and the finite-set subtype enumeration `Finset.Subtype.fintype S`. The doc-comment is now attached to the theorem it documents. The support-sum helper explicitly proves equality of the two corresponding `Finset.univ` finsets before invoking `glueRHS6_sum_ite_eq_subtype`.
 
 This change only repairs the generic finite-index conversion. The lemma `matrix_pow_four_five_diag_eq_of_local_equiv` remains conditional on local entry matching and one-/two-step row/column vanishing. No concrete (K^4/K^5) diagonal equality for `sgK`, no equality of sixth-moment residuals, and no completed sixth-moment theorem is claimed. The next gate is a successful full Lean build in both push and PR workflows on the new SHA. After that, instantiate the already available radius-two support equivalences and local corner-entry bridges to obtain the actual `h4/h5` obligations.
+
+
+## 2026-10-29 — Concrete A/X instance of fourth/fifth diagonal transport
+
+The generic finite-neighborhood algebra helper has now been specialized to a root in copy A at corner X. The specialization is intended to obtain the (K^4) and (K^5) diagonal equalities by combining the existing X radius-two state equivalence with `sgK_A_X_entry_next_til`. The one-step and two-step row/column vanishing obligations are separately discharged using `sgK_entry_coord_dist`, the symmetric radius-two support, and `sgK_pow_two_entry_zero_outside_radius_two`.
+
+This is a single corner/copy case only. It does not yet provide the uniform `h4/h5` hypotheses for all six endpoints of the glued pairs or establish stability of the sixth-moment residual. The current SHA must pass full Lean push and PR builds before the remaining five cases are added.

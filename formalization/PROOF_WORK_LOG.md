@@ -677,3 +677,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Addressed the exact `Fintype` mismatch: `glueRHS6_sum_ite_eq_subtype` enumerates the predicate subtype with `Subtype.fintype`, while the finite-support target uses `Finset.Subtype.fintype S`. The helper now proves the two `Finset.univ` enumerations equal extensionally before applying the generic conversion; no matrix-entry assumption is changed.
 - This is a compile repair for a conditional algebraic lemma. It does not yet instantiate the radius-two supports, prove concrete fourth/fifth-power transport for `sgK`, or close the sixth-moment residual.
 - **Next:** inspect both Lean workflows on the resulting SHA. Do not proceed to support instantiation until both full Lean builds pass; then derive and verify the concrete `h4/h5` hypotheses.
+
+
+## 2026-10-29 — First concrete fourth/fifth-power diagonal transport specialization
+
+- On SHA `65a7bab622bb6f726cd2dff8cd48f6cf39d5532f), both full Lean workflows succeeded: [push](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40888848540) and [PR](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40888859164). At log update time, the Python suites were still running; Python 3.12 had completed successfully in both push and PR runs.
+- Added a concrete specialization of `matrix_pow_four_five_diag_eq_of_local_equiv` for the A-copy X corner. It assembles the existing X support equivalence, the checked `sgK_A_X_entry_next_til` bridge, and explicit first-/second-power zero-outside-support conditions. The proof does not assume arbitrary local matrix equality and does not infer power equality from entry equality without finite path-sum expansions.
+- This is only the A/X case, not yet a theorem for every glued partner root. The analogous B/O, A/Y, C/O, B/Y, and C/X cases still need to be assembled, after which the result must be applied to `σ w` in the residual transport theorem.
+- New push/PR Lean and Python workflows are pending on the current SHA.
