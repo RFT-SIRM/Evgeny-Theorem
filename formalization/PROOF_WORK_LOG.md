@@ -529,3 +529,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The theorem statement and mathematical scope are unchanged. This only proves the finite index-set conversion; it does not prove the fourth-/fifth-power transport or `R_{m+1}=R_m`.
 - CI for the correction is pending; no success is claimed before inspecting the new SHA's full Lean build and the four push/PR workflows.
 - Next: first verify this patch with the complete configured Lean build. If Lean passes, continue with the already identified local matrix-power-entry transport; if it fails, repair the first new Lean error before further source changes.
+
+
+## 2026-10-29 — Green Lean checkpoint and exceptional X-corner orientation transport
+
+- Verified checkpoint `7d98683340576aac241ac4b1d59a7f04595c8da4`: full configured Lean builds succeeded on push [40855695124](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40855695124) and PR [40855702564](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40855702564). Python push/PR workflows for this SHA were still running when work continued; no Python success is claimed here.
+- Continued immediately after the green Lean result, without waiting for Python. Added `pHeO_corner_X_box_entry_next_til` in `FinalTilde.lean): the same geometric B-corner transport as the existing numbering-orientation lemma, but with the exceptional `oTil` orientation preserved explicitly.
+- The proof uses the existing local B-entry identity and the already-established `faceB` / `cp1_shiftB` transport to show the flipped edge maps to the flipped parent edge; reverse edge orientation is handled via `OAnti). It does not assume `oTil = oNum) at X.
+- This is a necessary local entry lemma for the C/Y-copy exceptional-orientation case, not yet a power-4/power-5 identity. The new SHA's full Lean build is pending.
+- Next: if Lean passes, lift the per-edge transport to the concrete `sgK) base-entry identity under the O/A, X/B, and Y/C support equivalences, then use finite path sums to transport powers 4 and 5. If it fails, fix the first real Lean error before extending the proof.

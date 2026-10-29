@@ -1369,6 +1369,92 @@ noncomputable def sgK_radius_two_support_X_equiv
       · rfl
 
 
+
+/-- X-corner entry transport for the exceptional flipped orientation.
+Unlike the numbering-orientation lemma, this transports `oTil) itself: the
+single reversed corner edge is carried by the B shift to the corresponding
+reversed parent edge. This is the C-copy corner case needed in the power
+transport, and does not replace `oTil) by `oNum). -/
+theorem pHeO_corner_X_box_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 2) (hpy : p.2 ≤ 2)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j =
+        pHeO m θ ax (oTil m) p' q' i j := by
+  rcases (corner_X_radius_two_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', hpy', rfl⟩
+  rcases (corner_X_radius_two_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', hqx', hqy', rfl⟩
+  have hpow : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  have hpY : p' ≠ (0, 2 ^ m) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 1))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+      pHeO m θ ax (oBo m (oTil (m + 1))) p' q' i j :=
+        pHeO_succ_B_local_entry m θ ax (oTil (m + 1)) hax
+          hp' hq' hp0 hpY i j
+    _ = pHeO m θ ax (oTil m) p' q' i j := by
+      apply pHeO_orient_congr m θ ax (oBo m (oTil (m + 1))) (oTil m)
+      intro a b hab hE hfl
+      have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+      have ha : a ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m a).mpr hmEdge.1
+      have hb : b ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m b).mpr hmEdge.2
+      have fl : ∀ a b : Point, (a, b) ∈ fluxEdges m →
+          ∃ f ∈ facesExact m, f.1 = a ∧ f.2.1 = b := by
+        intro a b hab
+        obtain ⟨f, hf, hfe⟩ := List.mem_map.mp hab
+        have hle := flux_edge_order m f hf
+        have h' : fluxEdge f = (f.1, f.2.1) := by
+          simp [fluxEdge, hle]
+        rw [h'] at hfe
+        exact ⟨f, hf, (Prod.mk.inj hfe).1, (Prod.mk.inj hfe).2⟩
+      have hanti : OAnti m (oBo m (oTil (m + 1))) :=
+        oanti_B m _ (oTil_anti (m + 1))
+      by_cases hle : a ≤ b
+      · rw [if_pos hle] at hfl
+        obtain ⟨f, hf, h1, h2⟩ := fl a b hfl
+        rw [← h1, ← h2]
+        obtain ⟨hs1, hs2⟩ := flux_edge_shape m f hf
+        obtain ⟨k1, k2⟩ := cp1_shiftB m hs1
+        show oTil (m + 1) (shiftPoint (2 ^ m) 1 0 f.1)
+            (shiftPoint (2 ^ m) 1 0 f.2.1) ↔ oTil m f.1 f.2.1
+        exact oTil_transport (faceB m f hf) k1 k2
+      · rw [if_neg hle] at hfl
+        obtain ⟨f, hf, h1, h2⟩ := fl b a hfl
+        have h3 : oBo m (oTil (m + 1)) f.1 f.2.1 ↔
+            oTil m f.1 f.2.1 := by
+          obtain ⟨hs1, hs2⟩ := flux_edge_shape m f hf
+          obtain ⟨k1, k2⟩ := cp1_shiftB m hs1
+          show oTil (m + 1) (shiftPoint (2 ^ m) 1 0 f.1)
+              (shiftPoint (2 ^ m) 1 0 f.2.1) ↔ oTil m f.1 f.2.1
+          exact oTil_transport (faceB m f hf) k1 k2
+        rw [h1, h2] at h3
+        have hanti' : OAnti m (oTil m) := oTil_anti m
+        rw [hanti a b ha hb hab, hanti' a b ha hb hab]
+        exact not_congr h3
+
+
 /-- The level-(m+1) radius-two support at Y is the image of the level-m
 box under the C-copy shift. The C orientation and all matrix weights are
 deliberately left to the subsequent path-transport proof. -/

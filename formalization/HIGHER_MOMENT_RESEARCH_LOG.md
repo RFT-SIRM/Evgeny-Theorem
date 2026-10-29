@@ -3092,3 +3092,12 @@ The correction isolates this index-set conversion in `glueRHS6_sum_ite_eq_subtyp
 - The correction explicitly uses the property field for each subtype: `if_pos x.2) on `{x // p x}`, and `if_neg x.2) with `Finset.sum_eq_zero` on `{x // ¬ p x}`. It then closes addition by zero directly. This is an index-set proof repair only.
 - No fourth-/fifth-power entry transport has been established by this fix; the bridge remains conditional and adjacent-level residual stability `R_{m+1}=R_m` is still open.
 - Verification status for the correction: pending new-SHA CI. Do not proceed to another source theorem until the full Lean build passes.
+
+
+## 2026-10-29 — Preserve the exceptional orientation in X-corner entry transport
+
+- The full Lean build passed at source SHA `7d98683340576aac241ac4b1d59a7f04595c8da4` (push and PR). Python workflows on that exact SHA were still in progress when analysis continued.
+- Added a dedicated `pHeO_corner_X_box_entry_next_til` lemma. It transports a high-level matrix entry near X to the parent through the B coordinate shift while retaining `oTil) on both levels.
+- The orientation step is justified on every relevant flux edge by `faceB) together with `cp1_shiftB), and the reverse direction uses antisymmetry. Thus the single flipped edge is explicitly carried to its parent counterpart rather than suppressed by a locality claim.
+- This closes one local orientation dependency only. The adjacent-level `K^4)/`K^5) diagonal identities and `R_{m+1}=R_m) remain open.
+- Verification of the new patch: pending current-SHA Lean CI. Continue with an actual `sgK) entry transport only after that build passes; do not wait for Python to begin analysis.
