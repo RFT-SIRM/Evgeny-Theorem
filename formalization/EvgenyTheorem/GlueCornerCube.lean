@@ -546,6 +546,47 @@ theorem sgK_pow_two_entry_zero_outside_radius_two
   by_contra hzero
   exact h' (sgK_pow_two_entry_mem_radius_two m θ ax o w w' hzero)
 
+/-- The p=6 high-power residual for concrete glued-copy operators, written
+using the copy-preserving radius-two support proved above. This is a finite
+path-sum formula only; it does not claim that the sums agree between levels. -/
+theorem glueRHS6_highPowerResidual_sgK_radius_two_path_expansion
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    glueRHS6_highPowerResidual m (sgK m θ ax o) (sgK m θ ax' o) =
+      6 * ((∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax o ^ 3) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (sgK m θ ax' o) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax' o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax' o ^ 3) y ((sgGlue m).σ x)) else 0)) +
+      6 * ((∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o ^ 2) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax o ^ 2) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (sgK m θ ax' o ^ 2) x x * (∑ y ∈ sgK_radius_two_support m ((sgGlue m).σ x),
+            (sgK m θ ax' o ^ 2) ((sgGlue m).σ x) y *
+              (sgK m θ ax' o ^ 2) y ((sgGlue m).σ x)) else 0)) := by
+  classical
+  have hK : ∀ x, (sgGlue m).g x → ∀ y,
+      y ∉ sgK_radius_two_support m ((sgGlue m).σ x) →
+        (sgK m θ ax o ^ 2) ((sgGlue m).σ x) y = 0 := by
+    intro x hx y hy
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      m θ ax o ((sgGlue m).σ x) y hy
+  have hK' : ∀ x, (sgGlue m).g x → ∀ y,
+      y ∉ sgK_radius_two_support m ((sgGlue m).σ x) →
+        (sgK m θ ax' o ^ 2) ((sgGlue m).σ x) y = 0 := by
+    intro x hx y hy
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      m θ ax' o ((sgGlue m).σ x) y hy
+  simpa using
+    (glueRHS6_highPowerResidual_local_path_expansion
+      m (sgK m θ ax o) (sgK m θ ax' o)
+      (sgK_radius_two_support m) hK hK')
+
 
 /-- Exact residual formula for the sixth-moment boundary correction. Under
 orientation antisymmetry, powers one through three on glued diagonals and

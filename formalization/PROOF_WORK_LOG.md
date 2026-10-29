@@ -373,3 +373,13 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Proved that every nonzero entry of sgK ^ 2 lies in this set: coordinate bounds follow from sgK_pow_entry_coord_dist, and copy preservation follows from blockK_pow_local.
 - Added the exact vanishing corollary outside this set. This supplies the concrete support hypothesis needed to instantiate glueRHS6_highPowerResidual_local_path_expansion for the face-axis and constant-axis operators.
 - The weighted sums have not yet been compared across adjacent levels; the next proof must reindex these finite sets and compare matrix-product weights under the O/X/Y transports.
+
+
+## 2026-10-29 — Instantiate the p=6 finite-support formula for actual operators
+
+- Rechecked PR #9 and branch `moment-6-8-10` before editing: both matched `de9268a7d07b7b5da57c46aa4ed87238e585f1a5`.
+- The base SHA had all four configured workflows green: push Lean build [40802879077](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40802879077), PR Lean build [40802884135](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40802884135), push tests [40802878968](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40802878968), and PR tests [40802884578](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40802884578), with Python 3.11 and 3.12.
+- Added `glueRHS6_highPowerResidual_sgK_radius_two_path_expansion` in `GlueCornerCube.lean`. It instantiates the generic finite-support expansion for the two concrete `sgK` operators using `sgK_radius_two_support`; the required vanishing hypotheses follow from `sgK_pow_two_entry_zero_outside_radius_two`.
+- This makes the residual's weighted fourth/fifth-power terms explicit finite sums over the actual radius-two support. It does not compare those sums across levels and does not prove (R_{m+1}=R_m). Validation for the new source SHA is pending until its own CI runs finish.
+- Next: prove the required local-copy reindexing and preservation of every matrix-product factor under the O/X/Y transports. Do not proceed to p=8 or p=10.
+

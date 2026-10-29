@@ -2923,3 +2923,15 @@ Remaining step: choose the local radius-two sets in each copy, prove the support
 After all six checks passed on commit 388ce8eab4bf9c4ab88ed237a5243074d1118b43, this change adds a concrete finite support family for sgK: states must remain in the same copy and within coordinate distance two of the root. The theorem sgK_pow_two_entry_mem_radius_two derives this from the existing power locality estimate and block-diagonal structure; sgK_pow_two_entry_zero_outside_radius_two gives the exact vanishing hypothesis for the finite-support residual expansion.
 
 Still open: instantiate the generic finite-support expansion for both axis assignments, then prove a bijection of the support sets across adjacent levels and preservation of matrix-product weights under recursive-copy transport. No R_{m+1}=R_m theorem is claimed.
+
+
+## 4ae. Concrete finite-support residual formula for sgK
+
+The branch and PR head were rechecked at `de9268a7d07b7b5da57c46aa4ed87238e585f1a5` before this edit. That base SHA had four successful Actions runs: push Lean 40802879077, PR Lean 40802884135, push Tests 40802878968, and PR Tests 40802884578 (Python 3.11 and 3.12 included).
+
+Added `glueRHS6_highPowerResidual_sgK_radius_two_path_expansion`, specializing `glueRHS6_highPowerResidual_local_path_expansion` to the real operators `sgK m θ ax o` and `sgK m θ ax' o`, with the finite set `sgK_radius_two_support m`. Both support hypotheses are discharged by `sgK_pow_two_entry_zero_outside_radius_two`; the result therefore gives the weighted fourth-/fifth-power sums as explicit finite sums rather than relying on a caller-supplied abstract support family.
+
+This remains only Step A: it does not prove a bijection between the local sets at levels (m) and (m+1), equality of the weighted sums, or (R_{m+1}=R_m). The new SHA's own CI is pending at the time of this note.
+
+Next: establish a rooted radius-two reindexing for O/A, X/B, and Y/C and prove preservation of edge axes, recursive orientations, full vertex degrees, and every spin-block factor before claiming any level-stability identity.
+
