@@ -746,3 +746,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Cause: after the original support-equivalence wrapper and all six endpoint specializations, an orphaned duplicate doc-comment for the wrapper remained immediately before the documented residual theorem. The wrapper itself is already declared earlier and remains unchanged.
 - Removed only that orphaned comment. All six endpoint specializations (A/X, B/O, C/O, A/Y, B/Y, C/X) and the high-power residual theorem are preserved exactly.
 - Require successful full Lean push and PR builds on the new SHA before proceeding to instantiate the endpoint lemmas in the residual theorem.
+
+
+## 2026-10-29 — Assemble all six endpoints into actual high-power residual stability
+
+- Parent SHA `52efcacc5779d8676fb57c7d10e6160f1495ee45` passed both full Lean builds.
+- Added `sgK_glued_partner_diag_four_five_transport`, which splits the existing `gl` relation into its six corner/copy clauses and dispatches to the already compiled A/X, B/O, C/O, A/Y, B/Y, and C/X specializations. It introduces no new geometric or matrix-entry assumptions beyond the existing axis-periodicity hypotheses.
+- Added `glueRHS6_highPowerResidual_sgK_til_succ`: applies the abstract residual transport theorem to actual `sgK` matrices for `faceAxis` and the fixed axis `fun _ => 2`, proving the eight diagonal conditions from the existing glued-state degree lemmas and all four `h4/h5` obligations from the six-case wrapper.
+- **Next:** require both full Lean builds to pass on the new SHA. If green, connect this adjacent-level residual stability to `defectO6_succ_num_level3` to replace the explicit level-dependent boundary term by its base-level value.

@@ -4207,6 +4207,46 @@ private theorem sgK_B_Y_diag_four_five_transport
 
 
 
+/-- For any glued state, the partner `σ w` is one of the six corner/copy
+endpoints. Reduce its fourth/fifth diagonal transport to the matching local
+support-equivalence specialization. -/
+private theorem sgK_glued_partner_diag_four_five_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 4)
+        ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+      (sgK m θ ax (oTil (m + 1)) ^ 4)
+        (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+        (sgK_root_pullback m ((sgGlue (m + 1)).σ w)) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 5)
+        ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+      (sgK m θ ax (oTil (m + 1)) ^ 5)
+        (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+        (sgK_root_pullback m ((sgGlue (m + 1)).σ w)) := by
+  classical
+  have hex : ∃ w', glW (m + 1) w w' := by
+    change ∃ w', glW (m + 1) w w'
+    exact hw
+  have hpartner : glW (m + 1) w ((sgGlue (m + 1)).σ w) := by
+    change glW (m + 1) w (sgσ (m + 1) w)
+    exact glW_sgσ hex
+  rcases hpartner with ⟨hgl, hspin⟩
+  rcases hgl with
+      ⟨hA, hX, hB, hO⟩
+    | ⟨hB, hO, hA, hX⟩
+    | ⟨hA, hY, hC, hO⟩
+    | ⟨hC, hO, hA, hY⟩
+    | ⟨hB, hY, hC, hX⟩
+    | ⟨hC, hX, hB, hY⟩
+  · exact sgK_B_O_diag_four_five_transport m hm θ ax hB hO
+  · exact sgK_A_X_diag_four_five_transport m hm θ ax haxX hA hX
+  · exact sgK_C_O_diag_four_five_transport m hm θ ax hC hO
+  · exact sgK_A_Y_diag_four_five_transport m hm θ ax haxY hA hY
+  · exact sgK_C_X_diag_four_five_transport m hm θ ax haxX hC hX
+  · exact sgK_B_Y_diag_four_five_transport m hm θ ax haxY hB hY
+
 /-- The remaining outer-sum step in the p=6 residual proof. If the local
 fourth- and fifth-power diagonal entries transport at every glued partner
 root, then the full high-power residual is stable across adjacent levels.
@@ -4259,5 +4299,65 @@ theorem glueRHS6_highPowerResidual_eq_of_corner_power_transport
   have hSum4' := glueRHS6_glued_partner_power_sum_transport m 4 Khi' Klo' h4'
   have hSum5' := glueRHS6_glued_partner_power_sum_transport m 5 Khi' Klo' h5'
   rw [hSum5, hSum5', hSum4, hSum4']
+
+
+/-- Concrete adjacent-level stability of the sixth-moment high-power
+boundary residual for the tilde orientation. The six local endpoint lemmas
+supply the required fourth/fifth diagonal transport. -/
+theorem glueRHS6_highPowerResidual_sgK_til_succ
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    glueRHS6_highPowerResidual (m + 1)
+        (sgK (m + 1) θ faceAxis (oTil (m + 2)))
+        (sgK (m + 1) θ (fun _ => 2) (oTil (m + 2))) =
+      glueRHS6_highPowerResidual m
+        (sgK m θ faceAxis (oTil (m + 1)))
+        (sgK m θ (fun _ => 2) (oTil (m + 1))) := by
+  have hantiHi : OAnti (m + 2) (oTil (m + 2)) := oTil_anti (m + 2)
+  have hantiLo : OAnti (m + 1) (oTil (m + 1)) := oTil_anti (m + 1)
+  apply glueRHS6_highPowerResidual_eq_of_corner_power_transport m
+  · intro x hx
+    rw [sgK_diag (m + 1) θ faceAxis (oTil (m + 2)) x,
+      pdeg_glued_state_eq_two (m + 1) hx]
+    norm_num
+  · intro x hx
+    rw [pow_two, sgK_sq_diag (m + 1) θ faceAxis (oTil (m + 2)) hantiHi x,
+      pdeg_glued_state_eq_two (m + 1) hx]
+    norm_num
+  · intro x hx
+    rw [sgK_diag (m + 1) θ (fun _ => 2) (oTil (m + 2)) x,
+      pdeg_glued_state_eq_two (m + 1) hx]
+    norm_num
+  · intro x hx
+    rw [pow_two, sgK_sq_diag (m + 1) θ (fun _ => 2) (oTil (m + 2)) hantiHi x,
+      pdeg_glued_state_eq_two (m + 1) hx]
+    norm_num
+  · intro x hx
+    rw [sgK_diag m θ faceAxis (oTil (m + 1)) x,
+      pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro x hx
+    rw [pow_two, sgK_sq_diag m θ faceAxis (oTil (m + 1)) hantiLo x,
+      pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro x hx
+    rw [sgK_diag m θ (fun _ => 2) (oTil (m + 1)) x,
+      pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro x hx
+    rw [pow_two, sgK_sq_diag m θ (fun _ => 2) (oTil (m + 1)) hantiLo x,
+      pdeg_glued_state_eq_two m hx]
+    norm_num
+  · intro w hw
+    exact (sgK_glued_partner_diag_four_five_transport m hm θ faceAxis
+      (faceAxis_pow1 m (by omega)) (faceAxis_pow2 m (by omega)) hw).1
+  · intro w hw
+    exact (sgK_glued_partner_diag_four_five_transport m hm θ faceAxis
+      (faceAxis_pow1 m (by omega)) (faceAxis_pow2 m (by omega)) hw).2
+  · intro w hw
+    exact (sgK_glued_partner_diag_four_five_transport m hm θ (fun _ => 2)
+      (fun _ => rfl) (fun _ => rfl) hw).1
+  · intro w hw
+    exact (sgK_glued_partner_diag_four_five_transport m hm θ (fun _ => 2)
+      (fun _ => rfl) (fun _ => rfl) hw).2
 
 end EvgenyTheorem

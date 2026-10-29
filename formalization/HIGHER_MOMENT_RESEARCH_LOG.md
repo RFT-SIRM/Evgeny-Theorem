@@ -3265,3 +3265,8 @@ The C-copy X-corner specialization uses `sgK_radius_two_support_X_equiv` and `sg
 ## 2026-10-29 — Remove the orphaned generic-wrapper doc-comment
 
 The C/X build failed syntactically at the duplicate generic-wrapper doc-comment immediately preceding `glueRHS6_highPowerResidual_eq_of_corner_power_transport`. The generic wrapper is already defined above, so this stray documentation block was removed without changing any theorem body or assumption. The next checkpoint is a successful full Lean build on both push and PR events.
+
+
+## 2026-10-29 — Six endpoint cases now feed the concrete p=6 residual transport
+
+The generic glued-partner proof splits the six disjuncts of `gl` and dispatches partner endpoints to B/O, A/X, C/O, A/Y, C/X, or B/Y, respectively. It then gives a concrete adjacent-level equality for `glueRHS6_highPowerResidual` with the tilde orientation, comparing `faceAxis` against the constant axis. The high/low diagonal conditions use `sgK_diag`, `sgK_sq_diag`, and the existing fact that glued states have degree two; the fourth/fifth diagonal hypotheses are supplied by the six local endpoint transport theorems. This is the bridge needed to make the sixth-moment recurrence's boundary residual independent of level.
