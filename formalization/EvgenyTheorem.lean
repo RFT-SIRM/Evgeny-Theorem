@@ -34,7 +34,6 @@ import EvgenyTheorem.GlueCornerCube
 import EvgenyTheorem.FinalOrient
 import EvgenyTheorem.FinalArith
 import EvgenyTheorem.FinalTilde
-import EvgenyTheorem.H6BaseTransition
 import EvgenyTheorem.FinalTheorem
 import EvgenyTheorem.AlgebraTilde
 import EvgenyTheorem.CornerFaces
