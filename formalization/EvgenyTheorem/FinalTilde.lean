@@ -1208,6 +1208,33 @@ theorem pHeO_corner_Y_box_entry_next_num
 
 
 
+
+/-- The O/A point-entry transport is also a transport of the actual glued
+matrix entries on the A block. The subtype proofs merely repackage the same
+coordinates as states at the two adjacent levels. -/
+theorem sgK_O_A_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A,
+          ((⟨p, List.mem_toFinset.mpr
+            (corner_O_radius_two_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.A,
+          ((⟨q, List.mem_toFinset.mpr
+            (corner_O_radius_two_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  change pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+    pHeO m θ ax (oTil (m + 1)) p q i j
+  exact pHeO_corner_O_box_entry_next_til m hm θ ax
+    hp hq hpx hpy hqx hqy i j
+
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/
