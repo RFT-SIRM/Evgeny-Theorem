@@ -1184,6 +1184,55 @@ theorem sgK_radius_two_support_O_box_iff
     exact ⟨hcopy, by simp [hw], by simpa [hw] using hx,
       by simp [hw], by simpa [hw] using hy⟩
 
+
+
+/-- The parent-level O-corner states with the same outer copy and coordinate
+box [0,2]². Spin is deliberately unrestricted, just as in the glued radius-two
+support. -/
+def sgK_radius_two_O_parent_support (m : ℕ) (c : GCopy) : Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ z.2.1.1.1 ≤ 2 ∧ z.2.1.1.2 ≤ 2
+
+/-- Pulling the radius-two support at an O corner back one level is a genuine
+bijection of finite state sets. It preserves the outer copy, coordinate, and
+spin; this is a geometric reindexing lemma and makes no claim about matrix
+weights yet. -/
+noncomputable def sgK_radius_two_support_O_equiv
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 0) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_two_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_two_O_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    have hz := (sgK_radius_two_support_O_box_iff m hm hw).mp z.2
+    refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hz.2.1⟩, z.1.2.2)), ?_⟩
+    change _ ∈ sgK_radius_two_O_parent_support m w.1
+    simp only [sgK_radius_two_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hz.2.2.1, hz.2.2.2⟩
+  · intro z
+    have hp : z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inl (List.mem_toFinset.mp z.1.2.1.2)
+    refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
+    apply (sgK_radius_two_support_O_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_two_O_parent_support m w.1 := z.2
+    change z.1.1 = w.1 ∧
+      z.1.2.1.1.1 ≤ 2 ∧ z.1.2.1.1.2 ≤ 2 at hparent
+    exact ⟨hparent.1, List.mem_toFinset.mp z.1.2.1.2,
+      hparent.2.1, hparent.2.2⟩
+  · intro z
+    apply Subtype.ext
+    rfl
+  · intro z
+    apply Subtype.ext
+    rfl
+
 /-- The level-(m+1) radius-two support at X is the image of the level-m
 box under the B-copy shift. This is a support-set characterization, not
 yet an equality of the weighted path sums. -/

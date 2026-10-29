@@ -2971,3 +2971,10 @@ The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pai
 - The current source establishes finite radius-two support sets and O/X/Y coordinate-box characterizations only. It does not yet establish a level-to-level bijection that preserves the matrix weights. In particular, the (K^2)/(K^3) path products and the exceptional orientation transport remain open, so (R_{m+1}=R_m) is not proved.
 - Next target: construct the actual finite-state reindexing for the six glued states and prove entrywise preservation under that map. Use the explicit pairings in `sgGlue`; preserve the real orientation induced by `oCo` on the C copy rather than replacing it prematurely by `oNum`.
 
+## 2026-10-29 — O-corner support reindexing
+
+- Added a genuine finite-state equivalence for the O-corner radius-two support in `FinalTilde.lean`, named `sgK_radius_two_support_O_equiv`. It carries a state from level (m+1) to its parent coordinate in level (m), with the outer copy and spin preserved.
+- The equivalence is derived from the existing O-box support characterization; it is not a claim about equality of `sgK` entries, powers, or weighted path sums. The X/B and Y/C correspondences remain to be formalized.
+- CI for the new Lean source change is pending. The all-level residual identity (R_{m+1}=R_m) remains unproved.
+- Next: formalize the X/B and Y/C reindexings, preserving their copy shifts and then prove the matrix-entry equalities needed for the path products. The C-copy orientation must remain explicit.
+

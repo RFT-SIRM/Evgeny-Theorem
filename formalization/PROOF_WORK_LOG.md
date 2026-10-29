@@ -417,3 +417,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - No new mathematical claim was added: the support characterization is still only geometric. It does not prove entrywise weight preservation, equality of the finite weighted path sums, or (R_{m+1}=R_m).
 - Next: derive and prove the concrete corner-dependent correspondence for the supported intermediate states, then establish preservation of each matrix-entry factor before reindexing any weighted sum. Keep the actual `sgGlue` pairings and the `oNum`/`oTil` orientation distinctions explicit; do not infer residual stability from support membership alone.
 
+## 2026-10-29 — O-corner support reindexing
+
+- Added `sgK_radius_two_O_parent_support` and `sgK_radius_two_support_O_equiv` in `FinalTilde.lean`. The equivalence maps the finite radius-two support about an O corner at level (m+1) to the parent-level O coordinate box, keeping the outer copy and spin state fixed.
+- The forward map uses the existing `sgK_radius_two_support_O_box_iff`; the inverse uses membership of the old coordinate in `vertexOrder m) and the A-copy inclusion into `vertexOrder (m+1)`. This is an actual finite-state reindexing, not merely a support predicate.
+- Scope: O corner only. No matrix-entry or powered-matrix weight preservation is asserted, and this does not prove (R_{m+1}=R_m). CI for this source change is pending.
+- Next: build the corresponding X/B and Y/C state-set equivalences; then prove preservation of each entry factor under the appropriate A/B/C orientation transport before reindexing weighted path sums.
+
