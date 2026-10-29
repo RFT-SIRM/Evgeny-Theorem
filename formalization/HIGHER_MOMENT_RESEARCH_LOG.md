@@ -3151,3 +3151,8 @@ The proof keeps both levels and both orientations explicit. It transports point-
 ## 2026-10-29 — O-box Lean failure diagnosis and correction
 
 The failed SHA `3fec4bd1c1e02b1f2c16ab146c46b48b7c434e03` showed a too-weak arithmetic estimate and a missing imported theorem. Corrected on `1b99dc16f912bce2fe04cd65c6ee26fcbd7afc09`: use `4 ≤ 2^n` for `2 < 2^n-1), and prove the pointwise orientation congruence locally from already imported low-level lemmas. This remains a point-entry result only. Wait for both Lean workflows before making another mathematical change.
+
+
+## 2026-10-29 — Revert O-box tilde entry attempt
+
+The concrete O-box orientation lemma was reverted after CI exposed errors in the arithmetic calc chain and an unresolved congruence identifier. The source was restored to the exact `FinalTilde.lean` content at green checkpoint `2bf84fea6a42708a84f6d701075c17d64663d99c`. The local O-box strategy should be redesigned and checked against exact low-level theorem signatures before another commit; no B/C or power-transport work should be layered on top of the failed attempt.
