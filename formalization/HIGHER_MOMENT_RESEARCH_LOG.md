@@ -3225,3 +3225,8 @@ This change only repairs the generic finite-index conversion. The lemma `matrix_
 The generic finite-neighborhood algebra helper has now been specialized to a root in copy A at corner X. The specialization is intended to obtain the (K^4) and (K^5) diagonal equalities by combining the existing X radius-two state equivalence with `sgK_A_X_entry_next_til`. The one-step and two-step row/column vanishing obligations are separately discharged using `sgK_entry_coord_dist`, the symmetric radius-two support, and `sgK_pow_two_entry_zero_outside_radius_two`.
 
 This is a single corner/copy case only. It does not yet provide the uniform `h4/h5` hypotheses for all six endpoints of the glued pairs or establish stability of the sixth-moment residual. The current SHA must pass full Lean push and PR builds before the remaining five cases are added.
+
+
+## 2026-10-29 — Common support wrapper and B/O fourth/fifth diagonal case
+
+The shared support-equivalence wrapper now assembles the one-step and two-step zero-outside obligations from the symmetric radius-two support and the existing `sgK_pow_two_entry_zero_outside_radius_two` theorem. The B-copy O-corner specialization uses the previously established `sgK_B_O_entry_next_til` entry transport and `sgK_radius_two_support_O_equiv`. This handles the B/O glued endpoint paired with A/X, but it is not yet a uniform theorem for all glued roots. Full Lean push and PR builds on the new SHA are required before adding the remaining corner cases.

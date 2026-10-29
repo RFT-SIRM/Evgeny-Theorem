@@ -685,3 +685,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added a concrete specialization of `matrix_pow_four_five_diag_eq_of_local_equiv` for the A-copy X corner. It assembles the existing X support equivalence, the checked `sgK_A_X_entry_next_til` bridge, and explicit first-/second-power zero-outside-support conditions. The proof does not assume arbitrary local matrix equality and does not infer power equality from entry equality without finite path-sum expansions.
 - This is only the A/X case, not yet a theorem for every glued partner root. The analogous B/O, A/Y, C/O, B/Y, and C/X cases still need to be assembled, after which the result must be applied to `σ w` in the residual transport theorem.
 - New push/PR Lean and Python workflows are pending on the current SHA.
+
+
+## 2026-10-29 — Factor finite-support obligations and add the B/O endpoint
+
+- Parent SHA: `1c54b6d076bee75a137e996172ea46c362eb9083`; both full Lean builds passed on that SHA: [push](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40891063250) and [PR](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40891073341). Python push/PR workflows were still running at the last status check.
+- Added a common support-equivalence wrapper that discharges the one-step and two-step row/column vanishing conditions required by the already-proved finite matrix-power lemma. Its only extra premise is the explicit inclusion of the low-level radius-two support into the chosen parent support.
+- Added the B/O endpoint specialization using `sgK_radius_two_support_O_equiv` and the existing `sgK_B_O_entry_next_til` local entry bridge. This is the partner side of the previously compiled A/X case.
+- No arbitrary matrix equality or new graph/orientation assumption is introduced. The new endpoint is conditional on the existing local bridge and explicit support inclusion; the current SHA must pass both full Lean workflows before proceeding to A/Y and C/O.
