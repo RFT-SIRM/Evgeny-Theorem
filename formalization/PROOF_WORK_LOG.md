@@ -409,3 +409,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Converted the two remaining premises with `List.mem_toFinset.mp`; this is a typing repair only, with no change to any theorem statement.
 - CI for this fix is pending. No additional mathematical result is claimed.
 
+## 2026-10-29 — Verified status of the radius-two support fix
+
+- Rechecked PR #9 and branch `moment-6-8-10`; the source head was `10f0a24b562527070930e07f67c203caaae40e13` and PR #9 remained open against `main`.
+- At this exact source SHA, all four configured Actions workflows completed successfully: push Lean [40807729515](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807729515), PR Lean [40807735639](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807735639), push Tests [40807729529](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807729529), and PR Tests [40807735615](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807735615). Both Lean jobs passed `Build formalization`; Python 3.11 and 3.12 passed both `Fast tests` and `Slow tests (level 7 convergence, ~1-4 min)`.
+- This validates the two final Finset-to-list typing repairs in commit `10f0a24b562527070930e07f67c203caaae40e13`. Earlier entries saying that CI was pending describe the state at their respective handoff points; they are retained as history and are superseded by this verified result.
+- No new mathematical claim was added: the support characterization is still only geometric. It does not prove entrywise weight preservation, equality of the finite weighted path sums, or (R_{m+1}=R_m).
+- Next: derive and prove the concrete corner-dependent correspondence for the supported intermediate states, then establish preservation of each matrix-entry factor before reindexing any weighted sum. Keep the actual `sgGlue` pairings and the `oNum`/`oTil` orientation distinctions explicit; do not infer residual stability from support membership alone.
+

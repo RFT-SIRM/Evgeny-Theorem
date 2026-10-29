@@ -2963,3 +2963,11 @@ Next after CI passes: define the concrete finite-state reindexings and prove tha
 
 The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pair annotation and O/X/Y box-lemma calls, then identified two remaining list-versus-Finset membership mismatches in `vertexOrder_sum_le`. Both calls now receive `List.mem_toFinset.mp z.2.1.2`. No theorem statement changed and no new mathematical claim was introduced; the new SHA's CI is pending.
 
+## 2026-10-29 — Verified status of the radius-two support fix
+
+- Verified that PR #9 remains open on branch `moment-6-8-10` at source SHA `10f0a24b562527070930e07f67c203caaae40e13`.
+- The four workflows for this exact SHA are green: push Lean [40807729515](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807729515), PR Lean [40807735639](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807735639), push Tests [40807729529](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807729529), and PR Tests [40807735615](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40807735615). Full configured Lean build passed; fast and slow Python tests passed on versions 3.11 and 3.12.
+- The pending status recorded in the previous support-lemma entries is now corrected by this exact-SHA verification; the record of the earlier failed builds is intentionally unchanged.
+- The current source establishes finite radius-two support sets and O/X/Y coordinate-box characterizations only. It does not yet establish a level-to-level bijection that preserves the matrix weights. In particular, the (K^2)/(K^3) path products and the exceptional orientation transport remain open, so (R_{m+1}=R_m) is not proved.
+- Next target: construct the actual finite-state reindexing for the six glued states and prove entrywise preservation under that map. Use the explicit pairings in `sgGlue`; preserve the real orientation induced by `oCo` on the C copy rather than replacing it prematurely by `oNum`.
+
