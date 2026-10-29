@@ -3300,3 +3300,31 @@ The README and higher-moments status now reflect the verified theorem
 angle and `m ≥ 3`. They explicitly preserve the two remaining H6 limitations:
 the general-angle level-2-to-3 transition and simplification of the finite
 level-three coefficient. The H8/H10 all-angle results remain open.
+
+
+## 2026-10-29 — H6 base transition closed by exact symbolic polynomial certificate
+
+Define `D_m(θ)` as the numbering-orientation sixth-moment defect,
+`c=cos(θ/2)`, and `s=sin(θ/2)`. The Lean development proves
+`D_(m+1)=3D_m+C₆(θ)` for every `m≥3`, with its level-independent
+constant originally expressed through finite level-three operator data.
+
+The exact polynomial certificate now computes
+`D₂=-14592s²+1344cs²-384s³` and verifies the finite base-transition
+identity `D₃-3D₂=C₆(θ)` for all angles, with
+`C₆(θ)=4512s²+192cs²+768s³`. The verification works with exact integer
+coefficients in the polynomial basis `c^a s^b`, then normalizes by
+`c²+s²=1`. It does not sample floating-point angle grids.
+
+Consequently the recurrence extends from `m≥3` to all `m≥2`, with closed
+form `D_m=3^(m-2)D₂+(3^(m-2)-1)C₆/2`, equivalently
+`D_m=-(12336·3^(m-2)+2256)s²+(1440·3^(m-2)-96)cs²-384s³`.
+In particular, `C₆(π)=5280`, matching the exact sparse arithmetic
+certificates.
+
+**Formalization boundary:** the induction/boundary transport and recurrence
+for `m≥3` remain checked by Lean. The exceptional finite level-2 transition
+is checked by exact symbolic Python arithmetic and regression tests; a
+Lean-kernel proof of that finite symbolic identity remains future hardening,
+not an open mathematical claim in the combined certificate.
+

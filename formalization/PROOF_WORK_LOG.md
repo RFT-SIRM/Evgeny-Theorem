@@ -794,3 +794,15 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Commit `7ce1e9d687ce8b20d61bb6c5da39b0975f41519c` passed both full Lean formalization workflows: PR run `40914856804` and push run `40914846902`.
 - The named recurrence and affine-growth theorems compile without changing the six endpoint proofs.
 - Updated public status text to separate the proved all-angle recurrence for `m ≥ 3` from the unsimplified finite coefficient and the level-2-to-3 base transition. H8/H10 remain open.
+
+
+## 2026-10-29 — Exact symbolic base transition and explicit H6 closed form
+
+- Mathematical source checkpoint: `0dc6bb98573050003d94ab83fa20b8894e61294a`; the Lean recurrence is `defectO6_num_growth_recurrence` in `FinalTilde.lean`, proved for `m ≥ 3`.
+- The exact polynomial test pins the raw level-two defect polynomial `-14256 s^2 - 384 s^3 - 336 s^4 + 1344 c s^2 - 336 c^2 s^2`; using `c^2+s^2=1), this is `D₂=-14592 s²+1344 c s²-384 s³`.
+- The certificate verifies `D₃-3D₂=C₆(θ)`, with `C₆(θ)=4512 s²+192 c s²+768 s³), and equality of the adjusted residual polynomials at levels 2 and 3. The calculation uses exact integer/Gaussian-integer polynomial arithmetic, not floating-point fitting.
+- Combined with the Lean recurrence for `m ≥ 3`, the finite identity yields for all `m ≥ 2`: `D_m=3^(m-2)D₂+(3^(m-2)-1)C₆/2`, equivalently `D_m=-(12336·3^(m-2)+2256)s²+(1440·3^(m-2)-96)c s²-384s³`.
+- Proof boundary: the structural recurrence is Lean-kernel checked; the exceptional finite level-2-to-3 trace identity is an exact reproducible Python polynomial certificate and is not yet formalized in Lean.
+- Metadata: the repository owner supplied the name Evgeny Zaprudnov. The supplied dissertation PDF labels its author “Архитектор (Papka)” and contains no verifiable email address; no email has been guessed or added.
+- Final verification gate: complete Lean and Python push/PR workflows on the final commit before merge.
+

@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this software or its formalization, please cite it as below."
+title: "Evgeny's Theorem: Spectral-Moment Identities on the Sierpiński Gasket"
+authors:
+  - family-names: Zaprudnov
+    given-names: Evgeny
+repository-code: "https://github.com/RFT-SIRM/Evgeny-Theorem"
+license: Apache-2.0
+abstract: >-
+  Lean formalization and reproducible exact computations for SU(2)-valued
+  operators on Sierpiński-gasket refinements. The project includes the exact
+  fourth-moment identity and an all-angle sixth-moment recurrence with an
+  exact symbolic finite-level base-transition certificate; higher moments
+  remain under study.

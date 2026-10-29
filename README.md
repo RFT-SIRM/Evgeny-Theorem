@@ -59,12 +59,12 @@ at $\theta = \pi/2$, with geometric convergence confirmed through $m = 7$.
 | **Intensive limit** I_inf(pi/2) = -8/9 | Exact |
 | **Gauge invariance** | Spectral deviation < 8e-15 under random SU(2) gauge |
 | **Vanishes at p = 1, 2, 3** | Exact -- first nonzero at p = 4 |
-| **H6 all-angle recurrence** ($m \ge 3$) | Lean-proved: $D_{m+1}=3D_m+C_6(\theta)$ with an exact finite level-three constant |
-| **H6 affine growth law** ($m \ge 3$) | Lean-proved: $D_m=3^{m-3}A_6(\theta)+B_6(\theta)$ |
-| **H6 coefficient simplification** | An elementary trigonometric expression for $C_6(\theta)$ remains open; exact $\theta=\pi$ certificate gives 5280 for tested transitions from levels 3 through 6 |
+| **H6 all-angle recurrence** ($m \ge 2$) | Lean recurrence for $m \ge 3$ plus exact symbolic base certificate: $D_{m+1}=3D_m+C_6(\theta)$ |
+| **H6 explicit closed form** ($m \ge 2$) | $D_m=-(12336\cdot3^{m-2}+2256)s^2+(1440\cdot3^{m-2}-96)cs^2-384s^3$ |
+| **H6 coefficient** | Exact symbolic certificate: $C_6(\theta)=4512s^2+192cs^2+768s^3$; $C_6(\pi)=5280$ |
 | **H6 path-class zero theorem** | Single- and two-triangle classes contribute zero |
 | **H6/H8/H10 reference values** | Numerical regression, locked by tests |
-| **Elementary coefficient formula for H6; all-angle H8/H10 recurrence** | Open; H6's affine growth law is proved for $m ge 3$, but $C_6(\theta)$ is not simplified and the $m=2$ base transition is not proved for all angles |
+| **Lean-kernel proof of the finite H6 base transition; all-angle H8/H10 recurrence** | Open; the H6 base transition is exact symbolic Python arithmetic, not yet a Lean theorem |
 | **Lean 4: graph infrastructure** ($SG(m)$, `Vertex`, `Adj`, `degree`) | Computable, decidable, machine-checked (`lake build`) |
 | **Lean 4: operator-level closed form** (`traceDefect_closed`) | Machine-checked for every `m >= 1` and every `theta`, for the concrete operators; no `sorry`, standard axioms only (see below) |
 
@@ -142,40 +142,57 @@ The proof follows a different route from the hand proof in `docs/PROOF.md`: the 
 Check it yourself: `lake build`. The final theorems contain no `sorry` and depend only on
 the standard axioms `propext`, `Classical.choice`, `Quot.sound` (verify with `#print axioms EvgenyTheorem.traceDefect_closed`). Details and a file map: [`formalization/README.md`](formalization/README.md).
 
-What this does *not* cover: the theorem above is the fourth-moment formula only (`m >= 1`, not `m = 0`). The H6 branch now has a separate Lean-proved all-angle affine growth law for `m >= 3`, but its coefficient is still expressed through exact level-three data rather than a simplified trigonometric formula. The $m=2$ to $m=3$ base transition is not formally established for all angles, and the general H8/H10 recurrences remain open. The edge orientation in the Lean operator is the vertex-index order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
+What this does *not* cover: the theorem above is the fourth-moment formula only (`m >= 1`, not `m = 0`). H6 has a separate all-angle recurrence and closed form for `m >= 2`, combining the Lean-proved recurrence for `m >= 3` with an exact symbolic base-transition certificate. The finite base transition is not yet a Lean-kernel theorem; general H8/H10 recurrences remain open. The edge orientation in the Lean operator is the vertex-index order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
 
 ---
 
-## Higher moments: H6 growth law and open H8/H10 program
+## Higher moments: closed H6 recurrence and open H8/H10 program
 
-### H6: formally proved affine growth for m ≥ 3
+### H6: explicit all-angle recurrence and closed form for m ≥ 2
 
-For the sixth-moment numbering defect
-`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`, the current Lean proof establishes, for every real angle and every `m ≥ 3`,
+Let \`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)\`,
+\`c = cos(θ/2)\`, and \`s = sin(θ/2)\`. The Lean proof establishes
+\`D_(m+1)=3D_m+C₆(θ)\` for every angle and \`m ≥ 3\`. An exact
+Gaussian-integer polynomial certificate verifies the exceptional
+\`m = 2 → 3\` transition; it is a symbolic finite calculation, not a Lean-kernel
+theorem.
+
+The coefficient is now explicit:
 
 $$
-D_{m+1}(\theta)=3D_m(\theta)+C_6(\theta),
-\qquad
-D_m(\theta)=3^{m-3}A_6(\theta)+B_6(\theta).
+C_6(\theta)=4512s^2+192cs^2+768s^3.
 $$
 
-The coefficient and offset are exact, m-independent finite level-three
-expressions assembled from the stabilized high-power boundary residual and
-the level-three orientation gap. Neither contribution is assumed to vanish.
-Both complete Lean formalization workflows passed on the source proving this
-result.
+The level-two defect is
 
-This does not yet give an elementary trigonometric simplification for
-`C₆(θ)`, nor a Lean proof of the separate level-2-to-3 base transition for
-all angles. At `θ = π`, the exact sparse Gaussian-integer certificate gives
-residual 5280 for tested transitions from levels 3 through 6; the Lean
-coefficient has not yet been normalized to that integer by a separate theorem.
+$$
+D_2(\theta)=-14592s^2+1344cs^2-384s^3.
+$$
+
+The resulting closed form, valid for every angle and \`m ≥ 2\`, is
+
+$$
+D_m(\theta)=3^{m-2}D_2(\theta)
++\frac{3^{m-2}-1}{2}C_6(\theta)
+$$
+
+or equivalently
+
+$$
+D_m(\theta)=-(12336\cdot3^{m-2}+2256)s^2
++(1440\cdot3^{m-2}-96)cs^2-384s^3.
+$$
+
+At \`θ = π\`, the coefficient is exactly \`5280\`. The base certificate uses
+exact polynomial arithmetic and the identity \`c²+s²=1\`; no floating-point
+angle grid is used to establish it. The full Lean recurrence and the finite
+symbolic bridge are complementary proof components; only the recurrence for
+\`m ≥ 3\` is currently inside Lean's kernel.
 
 ### H8 and H10: still an open all-angle program
 
 The existing numerical data support affine growth for H8 and H10, but no
 general all-angle Lean recurrence or closed form is claimed for those moments.
-
 
 ### Numerical reference values at theta = pi/2
 

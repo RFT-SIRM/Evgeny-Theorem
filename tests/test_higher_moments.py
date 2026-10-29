@@ -600,6 +600,21 @@ def test_exact_p6_base_transition_and_coefficient_polynomial():
     assert r3 == expected_r
     assert evaluate_polynomial(r2, c=0, s=1) == -1920
 
+    expected_d2_raw = {
+        (0, 2): (-14256, 0),
+        (0, 3): (-384, 0),
+        (0, 4): (-336, 0),
+        (1, 2): (1344, 0),
+        (2, 2): (-336, 0),
+    }
+    expected_d2_simplified = {
+        (0, 2): (-14592, 0),
+        (0, 3): (-384, 0),
+        (1, 2): (1344, 0),
+    }
+    assert delta(2) == expected_d2_raw
+    assert reduce_unit_circle(delta(2)) == expected_d2_simplified
+
     # Hence C_6 = D_3 - 3 D_2 = R_2 - F_3, with no numeric angle sampling.
     c6 = combine_polynomials([
         (1, delta(3)),
