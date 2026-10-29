@@ -431,3 +431,9 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Failed runs: push Lean [40813572235](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40813572235) and PR Lean [40813578252](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40813578252). Both report the same line-1225 error. CI for this correction is pending.
 - Do not continue to X/B or Y/C until the corrected full Lean build and the Python 3.11/3.12 push/PR workflows have been inspected. No matrix-weight preservation or (R_{m+1}=R_m) claim is made.
 
+## 2026-10-29 — Verify O-corner fix and add the X-corner support equivalence
+
+- Verified the correction commit `f1e769c84767b1f22c6d9c57dee157cdfde08e5f`: all four workflow runs passed. Full Lean build: push [40814012354](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40814012354), PR [40814017964](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40814017964). Python 3.11/3.12 fast and slow tests: push [40814012438](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40814012438), PR [40814017942](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40814017942).
+- Added `sgK_radius_two_X_parent_support` and `sgK_radius_two_support_X_equiv` to `FinalTilde.lean`. The map uses the explicit inverse of the B-copy shift, and the existing X-box characterization to prove the parent coordinate belongs to `vertexOrder m`; the inverse uses the existing B-copy map into `vertexOrder (m+1)`.
+- Scope is still geometric: the equivalence preserves the copy label and spin, but does not establish any `sgK` matrix-entry equality or weighted path-sum equality. CI for the new source SHA is pending; do not continue to the Y/C case until the exact-SHA Lean and Python results are checked.
+

@@ -2984,3 +2984,9 @@ The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pai
 - Corrected the proof by unfolding the support definition and simplifying `Finset.mem_filter` and `Finset.mem_univ` explicitly at `hparent`. This changes no theorem statement and makes no stronger mathematical claim.
 - CI for this correction is pending. The O-corner finite-state equivalence is not yet considered compiled until the full build succeeds; the weighted path-sum identity and the all-level residual equality remain open.
 
+## 2026-10-29 — X-corner support reindexing
+
+- The previous O-corner proof correction at `f1e769c84767b1f22c6d9c57dee157cdfde08e5f` passed all four configured workflows, including the full Lean formalization build and Python fast/slow test stages under 3.11 and 3.12.
+- Added an X-corner finite-state equivalence `sgK_radius_two_support_X_equiv` and parent support predicate `sgK_radius_two_X_parent_support`. The inverse is expressed using the coordinate inverse of `shiftPoint (2^m) 1 0`; the existing support-box theorem supplies the bounds and parent membership.
+- This is not a claim that the (K^2)/(K^3) path weights are preserved, nor does it prove (R_{m+1}=R_m). The C/Y equivalence and all entrywise weight transport remain open. CI for the new source SHA is pending.
+
