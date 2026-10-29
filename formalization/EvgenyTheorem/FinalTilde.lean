@@ -3278,6 +3278,188 @@ private theorem sgK_A_X_diag_four_five_transport
     S T e w (sgK_root_pullback m w) hwS hwT hroot hEntry
     hRowOne hColOne hRowTwo hColTwo
     hRowOne' hColOne' hRowTwo' hColTwo'
+
+
+/-- The C-copy X-corner specialization of fourth/fifth diagonal transport.
+It uses the X support reindexing and the existing C/X local entry bridge. -/
+private theorem sgK_C_X_diag_four_five_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {w : WSG (m + 1)}
+    (hwCopy : w.1 = GCopy.C)
+    (hwPoint : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 4) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 4)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 5) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 5)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  classical
+  let S : Finset (WSG (m + 1)) := sgK_radius_two_support (m + 1) w
+  let T : Finset (WSG m) := sgK_radius_two_X_parent_support m w.1
+  let e := sgK_radius_two_support_X_equiv m hm (w := w) hwPoint
+  have hwS : w ∈ S := by
+    simp [S, sgK_radius_two_support]
+  have hwT : sgK_root_pullback m w ∈ T := by
+    simp [T, sgK_radius_two_X_parent_support, sgK_root_pullback,
+      sgK_root_pullback_pt, hwPoint, pow_succ, Nat.mul_two]
+  have hroot : e ⟨w, hwS⟩ = ⟨sgK_root_pullback m w, hwT⟩ := by
+    apply Subtype.ext
+    simp [e, sgK_radius_two_support_X_equiv, sgK_root_pullback,
+      sgK_root_pullback_pt, hwPoint, pow_succ, Nat.mul_two]
+
+  have hEntry : ∀ a b : {z : WSG (m + 1) // z ∈ S},
+      sgK (m + 1) θ ax (oTil (m + 2)) a.1 b.1 =
+        sgK m θ ax (oTil (m + 1)) (e a).1 (e b).1 := by
+    intro a b
+    have ha := a.2
+    have hb := b.2
+    simp only [S, sgK_radius_two_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at ha hb
+    have haCopy : a.1.1 = GCopy.C := ha.1.trans hwCopy
+    have hbCopy : b.1.1 = GCopy.C := hb.1.trans hwCopy
+    have haX : 2 ^ (m + 1) ≤ a.1.2.1.1.1 + 2 := by
+      simpa [hwPoint] using ha.2.1
+    have haY : a.1.2.1.1.2 ≤ 2 := by
+      simpa [hwPoint] using ha.2.2.2.2
+    have hbX : 2 ^ (m + 1) ≤ b.1.2.1.1.1 + 2 := by
+      simpa [hwPoint] using hb.2.1
+    have hbY : b.1.2.1.1.2 ≤ 2 := by
+      simpa [hwPoint] using hb.2.2.2.2
+    obtain ⟨pa, pb, hpa, hpb, hbridge⟩ :=
+      sgK_C_X_entry_next_til m hm θ ax hax
+        (List.mem_toFinset.mp a.1.2.1.2)
+        (List.mem_toFinset.mp b.1.2.1.2)
+        haX haY hbX hbY a.1.2.2 b.1.2.2
+    have haPt :
+        (⟨a.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp a.1.2.1.2)⟩ : Pt (m + 1)) = a.1.2.1 := by
+      apply Subtype.ext
+      rfl
+    have hbPt :
+        (⟨b.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp b.1.2.1.2)⟩ : Pt (m + 1)) = b.1.2.1 := by
+      apply Subtype.ext
+      rfl
+    have haState : a.1 = (GCopy.C, a.1.2) := Prod.ext haCopy rfl
+    have hbState : b.1 = (GCopy.C, b.1.2) := Prod.ext hbCopy rfl
+    have hpaPoint :
+        (a.1.2.1.1.1 - 2 ^ m, a.1.2.1.1.2) = pa.1 := by
+      have hx : a.1.2.1.1.1 = pa.1.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpa
+        simpa [shiftPoint] using h
+      have hy : a.1.2.1.1.2 = pa.1.2 := by
+        have h := congrArg Prod.snd hpa
+        simpa [shiftPoint] using h
+      exact Prod.ext (by omega) hy
+    have hpbPoint :
+        (b.1.2.1.1.1 - 2 ^ m, b.1.2.1.1.2) = pb.1 := by
+      have hx : b.1.2.1.1.1 = pb.1.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpb
+        simpa [shiftPoint] using h
+      have hy : b.1.2.1.1.2 = pb.1.2 := by
+        have h := congrArg Prod.snd hpb
+        simpa [shiftPoint] using h
+      exact Prod.ext (by omega) hy
+    have haMap : (e a).1 = (GCopy.C, (pa, a.1.2.2)) := by
+      apply Prod.ext
+      · exact haCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          change (a.1.2.1.1.1 - 2 ^ m, a.1.2.1.1.2) = pa.1
+          exact hpaPoint
+        · rfl
+    have hbMap : (e b).1 = (GCopy.C, (pb, b.1.2.2)) := by
+      apply Prod.ext
+      · exact hbCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          change (b.1.2.1.1.1 - 2 ^ m, b.1.2.1.1.2) = pb.1
+          exact hpbPoint
+        · rfl
+    rw [haState, hbState]
+    rw [haPt, hbPt] at hbridge
+    rw [haMap, hbMap]
+    exact hbridge
+
+  have hnotS : ∀ z, z ∉ T →
+      z ∉ sgK_radius_two_support m (sgK_root_pullback m w) := by
+    intro z hzT hzS
+    apply hzT
+    have hzs := hzS
+    simp only [sgK_radius_two_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hzs
+    simp only [T, sgK_radius_two_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨?_, ?_, ?_⟩
+    · simpa [sgK_root_pullback] using hzs.1
+    · simpa [sgK_root_pullback, sgK_root_pullback_pt, hwPoint] using hzs.2.1
+    · simpa [sgK_root_pullback, sgK_root_pullback_pt, hwPoint] using hzs.2.2.2.2
+
+  have hRowOne : ∀ z, z ∉ S →
+      sgK (m + 1) θ ax (oTil (m + 2)) w z = 0 := by
+    intro z hz
+    exact sgK_entry_zero_outside_radius_two (m + 1) θ ax
+      (oTil (m + 2)) w z (by simpa [S] using hz)
+  have hColOne : ∀ z, z ∉ S →
+      sgK (m + 1) θ ax (oTil (m + 2)) z w = 0 := by
+    intro z hz
+    have hrev : w ∉ sgK_radius_two_support (m + 1) z := by
+      intro hzw
+      exact hz ((sgK_radius_two_support_symm (m + 1) z w).mp hzw)
+    exact sgK_entry_zero_outside_radius_two (m + 1) θ ax
+      (oTil (m + 2)) z w hrev
+  have hRowTwo : ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ 2) w z = 0 := by
+    intro z hz
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      (m + 1) θ ax (oTil (m + 2)) w z (by simpa [S] using hz)
+  have hColTwo : ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ 2) z w = 0 := by
+    intro z hz
+    have hrev : w ∉ sgK_radius_two_support (m + 1) z := by
+      intro hzw
+      exact hz ((sgK_radius_two_support_symm (m + 1) z w).mp hzw)
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      (m + 1) θ ax (oTil (m + 2)) z w hrev
+  have hRowOne' : ∀ z, z ∉ T →
+      sgK m θ ax (oTil (m + 1)) (sgK_root_pullback m w) z = 0 := by
+    intro z hz
+    exact sgK_entry_zero_outside_radius_two m θ ax
+      (oTil (m + 1)) (sgK_root_pullback m w) z (hnotS z hz)
+  have hColOne' : ∀ z, z ∉ T →
+      sgK m θ ax (oTil (m + 1)) z (sgK_root_pullback m w) = 0 := by
+    intro z hz
+    have hnot := hnotS z hz
+    have hrev : sgK_root_pullback m w ∉ sgK_radius_two_support m z := by
+      intro hrootz
+      exact hnot ((sgK_radius_two_support_symm m z
+        (sgK_root_pullback m w)).mp hrootz)
+    exact sgK_entry_zero_outside_radius_two m θ ax
+      (oTil (m + 1)) z (sgK_root_pullback m w) hrev
+  have hRowTwo' : ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ 2) (sgK_root_pullback m w) z = 0 := by
+    intro z hz
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      m θ ax (oTil (m + 1)) (sgK_root_pullback m w) z (hnotS z hz)
+  have hColTwo' : ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ 2) z (sgK_root_pullback m w) = 0 := by
+    intro z hz
+    have hnot := hnotS z hz
+    have hrev : sgK_root_pullback m w ∉ sgK_radius_two_support m z := by
+      intro hrootz
+      exact hnot ((sgK_radius_two_support_symm m z
+        (sgK_root_pullback m w)).mp hrootz)
+    exact sgK_pow_two_entry_zero_outside_radius_two
+      m θ ax (oTil (m + 1)) z (sgK_root_pullback m w) hrev
+
+  exact matrix_pow_four_five_diag_eq_of_local_equiv
+    (sgK (m + 1) θ ax (oTil (m + 2)))
+    (sgK m θ ax (oTil (m + 1)))
+    S T e w (sgK_root_pullback m w) hwS hwT hroot hEntry
+    hRowOne hColOne hRowTwo hColTwo
+    hRowOne' hColOne' hRowTwo' hColTwo'
+
 private theorem sgK_A_Y_diag_four_five_transport
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)

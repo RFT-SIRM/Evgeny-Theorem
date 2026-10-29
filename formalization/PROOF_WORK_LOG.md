@@ -730,3 +730,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - The first B/Y commit `ca06a7b4b8d37c1696fcbe927d720d34a7f9996b` failed push Lean build because the insertion accidentally copied the trailing generic wrapper and B/O/C/O theorems a second time. CI reported only duplicate declaration errors for those three existing declarations; it did not report a type error in the B/Y proof.
 - Removed only that duplicate tail. The original wrapper, B/O, and C/O declarations remain, as do both A/Y and B/Y specializations and the main high-power residual theorem.
 - The current SHA must pass both full Lean builds before moving to C/X.
+
+
+## 2026-10-29 — Add the C/X fourth/fifth diagonal transport case
+
+- Parent SHA `22fd4b3eb77c4eb1bbe63eea23342c1cd00d4bb4` removes the duplicate declarations found in the first B/Y build. The earlier compiler log had reported only duplicate declarations after B/Y; the full build on the cleaned SHA was still running at the time of this edit.
+- Added `sgK_C_X_diag_four_five_transport` using the existing `sgK_radius_two_support_X_equiv` and `sgK_C_X_entry_next_til`. It follows the already checked A/X construction, with the inverse X shift subtracting `2^m` from x, and keeps the same radius-two first-/second-power vanishing arguments.
+- No new mathematical assumptions are added. This endpoint is not yet wired into the uniform `h4/h5` obligations of the residual theorem.
+- **Gate:** require successful full Lean push and PR builds on the new SHA before using the six endpoint cases in the residual proof.

@@ -3255,3 +3255,8 @@ The B-copy Y-corner case is now added using `sgK_radius_two_support_Y_equiv` and
 ## 2026-10-29 — Remove duplicated declarations from the B/Y insertion
 
 The Lean failure on `ca06a7b4b8d37c1696fcbe927d720d34a7f9996b` came from copying past the end of A/Y and duplicating the generic support-equivalence wrapper plus the existing B/O and C/O specializations. Removed that repeated tail while preserving the new B/Y specialization and the original declarations. The reported failure was duplicate declarations, not a type error in the B/Y theorem. Do not proceed to C/X until both full Lean builds pass on the cleaned SHA.
+
+
+## 2026-10-29 — C/X fourth/fifth diagonal transport
+
+The C-copy X-corner specialization uses `sgK_radius_two_support_X_equiv` and `sgK_C_X_entry_next_til`. It mirrors A/X because both use the X support bounds and the inverse coordinate map `(x,y)\mapsto(x-2^m,y)`; the copy label and local entry bridge are the only endpoint-specific changes. It still needs a green full Lean build and has not yet been applied to obtain the uniform high-power residual hypotheses.
