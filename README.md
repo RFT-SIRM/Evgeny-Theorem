@@ -150,11 +150,11 @@ What this does *not* cover: the theorem above is the fourth-moment formula only 
 
 ### H6: explicit all-angle recurrence and closed form for m ≥ 2
 
-Let \`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)\`,
-\`c = cos(θ/2)\`, and \`s = sin(θ/2)\`. The Lean proof establishes
-\`D_(m+1)=3D_m+C₆(θ)\` for every angle and \`m ≥ 3\`. An exact
+Let `D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`,
+`c = cos(θ/2)`, and `s = sin(θ/2)`. The Lean proof establishes
+`D_(m+1)=3D_m+C₆(θ)` for every angle and `m ≥ 3`. An exact
 Gaussian-integer polynomial certificate verifies the exceptional
-\`m = 2 → 3\` transition; it is a symbolic finite calculation, not a Lean-kernel
+`m = 2 → 3` transition; it is a symbolic finite calculation, not a Lean-kernel
 theorem.
 
 The coefficient is now explicit:
@@ -169,7 +169,7 @@ $$
 D_2(\theta)=-14592s^2+1344cs^2-384s^3.
 $$
 
-The resulting closed form, valid for every angle and \`m ≥ 2\`, is
+The resulting closed form, valid for every angle and `m ≥ 2`, is
 
 $$
 D_m(\theta)=3^{m-2}D_2(\theta)
@@ -183,11 +183,11 @@ D_m(\theta)=-(12336\cdot3^{m-2}+2256)s^2
 +(1440\cdot3^{m-2}-96)cs^2-384s^3.
 $$
 
-At \`θ = π\`, the coefficient is exactly \`5280\`. The base certificate uses
-exact polynomial arithmetic and the identity \`c²+s²=1\`; no floating-point
+At `θ = π`, the coefficient is exactly `5280`. The base certificate uses
+exact polynomial arithmetic and the identity `c²+s²=1`; no floating-point
 angle grid is used to establish it. The full Lean recurrence and the finite
 symbolic bridge are complementary proof components; only the recurrence for
-\`m ≥ 3\` is currently inside Lean's kernel.
+`m ≥ 3` is currently inside Lean's kernel.
 
 ### H8 and H10: still an open all-angle program
 

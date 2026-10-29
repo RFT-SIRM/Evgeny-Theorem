@@ -799,10 +799,19 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 ## 2026-10-29 — Exact symbolic base transition and explicit H6 closed form
 
 - Mathematical source checkpoint: `0dc6bb98573050003d94ab83fa20b8894e61294a`; the Lean recurrence is `defectO6_num_growth_recurrence` in `FinalTilde.lean`, proved for `m ≥ 3`.
-- The exact polynomial test pins the raw level-two defect polynomial `-14256 s^2 - 384 s^3 - 336 s^4 + 1344 c s^2 - 336 c^2 s^2`; using `c^2+s^2=1), this is `D₂=-14592 s²+1344 c s²-384 s³`.
-- The certificate verifies `D₃-3D₂=C₆(θ)`, with `C₆(θ)=4512 s²+192 c s²+768 s³), and equality of the adjusted residual polynomials at levels 2 and 3. The calculation uses exact integer/Gaussian-integer polynomial arithmetic, not floating-point fitting.
+- The exact polynomial test pins the raw level-two defect polynomial `-14256 s^2 - 384 s^3 - 336 s^4 + 1344 c s^2 - 336 c^2 s^2`; using `c^2+s^2=1`, this is `D₂=-14592 s²+1344 c s²-384 s³`.
+- The certificate verifies `D₃-3D₂=C₆(θ)`, with `C₆(θ)=4512 s²+192 c s²+768 s³`, and equality of the adjusted residual polynomials at levels 2 and 3. The calculation uses exact integer/Gaussian-integer polynomial arithmetic, not floating-point fitting.
 - Combined with the Lean recurrence for `m ≥ 3`, the finite identity yields for all `m ≥ 2`: `D_m=3^(m-2)D₂+(3^(m-2)-1)C₆/2`, equivalently `D_m=-(12336·3^(m-2)+2256)s²+(1440·3^(m-2)-96)c s²-384s³`.
 - Proof boundary: the structural recurrence is Lean-kernel checked; the exceptional finite level-2-to-3 trace identity is an exact reproducible Python polynomial certificate and is not yet formalized in Lean.
 - Metadata: the repository owner supplied the name Evgeny Zaprudnov. The supplied dissertation PDF labels its author “Архитектор (Papka)” and contains no verifiable email address; no email has been guessed or added.
 - Final verification gate: complete Lean and Python push/PR workflows on the final commit before merge.
 
+
+
+## 2026-10-29 — Final-source verification before PR merge
+
+- Source/test commit `772b521afd6befcb80af0d590f6742e488a6ea76` passed the complete Lean build and Python suites on both push and pull-request workflows.
+- Lean push: `40926915630` (success); Lean PR: `40926931506` (success).
+- Python push: `40926915594` (success); Python PR: `40926930923` (success), with Python 3.11 and 3.12 jobs successful.
+- The exact base-transition test includes assertions for the raw and normalized level-two polynomial, (D_3-3D_2=C_6(\theta)), and (C_6(\pi)=5280). The formulas are documented as a combined Lean recurrence plus exact Python symbolic certificate, not as a fully Lean-kernel proof of the finite base step.
+- The PR is being prepared for merge; the branch merge state is recorded by the PR itself after the merge operation.

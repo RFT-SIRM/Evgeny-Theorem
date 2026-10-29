@@ -3328,3 +3328,14 @@ is checked by exact symbolic Python arithmetic and regression tests; a
 Lean-kernel proof of that finite symbolic identity remains future hardening,
 not an open mathematical claim in the combined certificate.
 
+
+
+## 2026-10-29 — Full verification of the exact H6 base certificate
+
+The source/test checkpoint `772b521afd6befcb80af0d590f6742e488a6ea76` passed all four required workflows:
+- Lean push `40926915630` — success;
+- Lean pull request `40926931506` — success;
+- Python push `40926915594` — success for Python 3.11 and 3.12;
+- Python pull request `40926930923` — success for Python 3.11 and 3.12.
+
+The exact test also pins the raw level-two polynomial and its reduction by (c^2+s^2=1). The result is a closed H6 recurrence and explicit formula for all (m\ge2) by combining the Lean-proved (m\ge3) recurrence with an exact symbolic finite base identity. The finite identity is not represented as Lean-kernel checked.

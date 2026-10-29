@@ -17,14 +17,14 @@ not yet a Lean-kernel theorem. **H⁸ and H¹⁰** remain an open research progr
 ### 1. All-angle recurrence and explicit closed form (combined Lean + exact certificate)
 
 Write
-\`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)\`,
-\`c = cos(θ/2)\`, and \`s = sin(θ/2)\`.
+`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`,
+`c = cos(θ/2)`, and `s = sin(θ/2)`.
 
-The Lean proof establishes the recurrence for every angle and \`m ≥ 3\`.
+The Lean proof establishes the recurrence for every angle and `m ≥ 3`.
 The exact Gaussian-integer polynomial certificate in
-\`tests/test_higher_moments.py\` checks the finite \`m = 2 → 3\` transition
+`tests/test_higher_moments.py` checks the finite `m = 2 → 3` transition
 by expanding the exact level-2 and level-3 trace polynomials and reducing only
-with \`c² + s² = 1\`. Together these results give, for every angle and \`m ≥ 2\`,
+with `c² + s² = 1`. Together these results give, for every angle and `m ≥ 2`,
 
 $$
 D_{m+1}(\theta)=3D_m(\theta)+C_6(\theta),
@@ -57,11 +57,11 @@ D_m(\theta)=-(12336\cdot3^{m-2}+2256)s^2
 +(1440\cdot3^{m-2}-96)cs^2-384s^3.
 $$
 
-At \`θ = π\`, this gives \`C₆(π) = 5280\`, agreeing with the exact sparse
+At `θ = π`, this gives `C₆(π) = 5280`, agreeing with the exact sparse
 Gaussian-integer certificates.
 
-**Proof boundary:** \`defectO6_num_growth_recurrence\` in
-\`formalization/EvgenyTheorem/FinalTilde.lean\` is Lean-proved for \`m ≥ 3\`.
+**Proof boundary:** `defectO6_num_growth_recurrence` in
+`formalization/EvgenyTheorem/FinalTilde.lean` is Lean-proved for `m ≥ 3`.
 The exceptional finite base transition is established by exact symbolic Python
 polynomial arithmetic and regression tests, not currently by Lean's kernel.
 No floating-point sampling is used for that polynomial identity.
@@ -69,13 +69,11 @@ No floating-point sampling is used for that polynomial identity.
 ### 2. Exact symbolic base-transition certificate
 
 The certificate pins the raw level-two defect polynomial, verifies
-\`D₃ - 3D₂ = C₆(θ)\`, and checks that the adjusted residual
-\`D_{m+1} - 3D_m + F₃\` has the same exact polynomial at \`m = 2\` and \`m = 3\`.
-This is the one finite bridge needed to extend the Lean recurrence to \`m ≥ 2\`.
+`D₃ - 3D₂ = C₆(θ)`, and checks that the adjusted residual
+`D_{m+1} - 3D_m + F₃` has the same exact polynomial at `m = 2` and `m = 3`.
+This is the one finite bridge needed to extend the Lean recurrence to `m ≥ 2`.
 
 ### 3. Path-class zero pattern on SG(1) (finite-level result)
-
-### 4. Path-class zero pattern on SG(1) (finite-level result)
 
 On `SG(1)` (6 vertices, 9 edges, 3 triangles), closed walks of length 6 were classified computationally by which triangles they visit. Their contribution to
 `Δ(H⁶) = Tr(H_C⁶) − Tr(H_C′⁶)` is reported as follows:
@@ -91,7 +89,7 @@ In these finite-level calculations, only paths sampling all three rotation axes 
 The physical reason: for two axes, `Tr([R_a, R_b] · M) = 0` — the
 pairwise commutator leaves no trace. All three axes are required.
 
-### 5. Why H⁶ differs from the simpler H⁴ formula
+### 4. Why H⁶ differs from the simpler H⁴ formula
 
 H⁴ has the particularly simple factor `−4·sin²(θ/2)` per contributing
 triangular traversal. H⁶ still has an explicit level-growth closed form, but
@@ -101,7 +99,7 @@ rotation axes; the exact level-growth formula above comes from the recurrence
 and finite symbolic base certificate, not from identifying those walks with
 one common H⁴ contribution.
 
-### 6. What remains open
+### 5. What remains open
 
 - Formalize the exact finite level-2-to-3 base transition in Lean, so the combined H⁶ result is kernel-checked end to end.
 - Derive the corresponding all-angle recurrence and closed forms for H⁸ and H¹⁰.
