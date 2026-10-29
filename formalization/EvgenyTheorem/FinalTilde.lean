@@ -4405,6 +4405,5 @@ theorem defectO6_succ_num_level3_constant_boundary
   rw [glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
     (oNum (m + 1)) (oNum_anti (m + 1))]
   rw [glueRHS6_highPowerResidual_sgK_num_eq_level3 m hm θ]
-  ring
 
 end EvgenyTheorem

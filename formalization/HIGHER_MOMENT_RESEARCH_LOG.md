@@ -3275,3 +3275,8 @@ The generic glued-partner proof splits the six disjuncts of `gl` and dispatches 
 ## 2026-10-29 — Constant boundary term in the p=6 recurrence
 
 The six endpoint transport cases imply adjacent-level stability of the concrete tilde high-power residual. Induction reduces that residual to its level-three value; the existing same-level num/til equivalence transfers the result to numbering orientation. This yields an affine recurrence whose boundary contribution is explicitly a fixed level-three residual, rather than a level-dependent term. The base residual is not assumed to vanish.
+
+
+## 2026-10-29 — Clean up completed constant-boundary proof
+
+The new constant-boundary recurrence proof's two rewrite steps already solved the goal, so the trailing `ring` caused a no-goals error. Removed that redundant tactic. All level-three reductions and theorem statements are unchanged. The next checkpoint is successful full Lean push and PR builds.

@@ -763,3 +763,10 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Transferred the result to numbering orientation via the existing `glueRHS6_highPowerResidual_num_eq_til`.
 - Recast the sixth-moment recurrence as `defectO6_succ_num_level3_constant_boundary`, where the high-power boundary contribution is explicitly the value at level three. No claim that this base residual is zero is made.
 - **Next:** solve the resulting affine recurrence in m exactly, keeping the base-level orientation gap and residual explicit, then determine whether the remaining finite base term has a separate exact evaluation.
+
+
+## 2026-10-29 — Remove redundant final tactic in constant-boundary recurrence
+
+- Lean push build on `02e223f3376342107e30e6e31ef54b72e5f983a5` reached the end of `defectO6_succ_num_level3_constant_boundary` and reported `No goals to be solved` at the final `ring`.
+- The preceding rewrites already close the goal; removed only that redundant tactic. No theorem statement or mathematical argument changed.
+- Recheck both full Lean builds on the corrected SHA before continuing to the explicit affine solution.
