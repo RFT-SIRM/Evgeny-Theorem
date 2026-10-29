@@ -2996,3 +2996,10 @@ The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pai
 - Replaced witness destructuring in the Type-valued branch with `Classical.choose` and `Classical.choose_spec`. This is an elaboration repair only; no mathematical assertion was strengthened.
 - The corrected SHA must pass a full Lean build and push/PR Python 3.11/3.12 workflows before further work. The Y-corner support equivalence and all matrix-entry/weight preservation claims remain open.
 
+## 2026-10-29 — Return to the last fully green Lean source
+
+- Established a reproducible clean checkpoint: `f1e769c84767b1f22c6d9c57dee157cdfde08e5f` passed all four configured workflows (push/PR Lean and push/PR Python 3.11/3.12).
+- The two subsequent commits added an X-corner finite-support equivalence and an attempted proof repair. Both full Lean workflows still failed, with the current source error in the X equivalence; the repair did not fix the complete elaboration. This is concrete evidence that this branch of work was not ready to continue.
+- Restored `FinalTilde.lean` to its exact contents at the green checkpoint. This drops the X-corner equivalence experiment but keeps the already-compiled O-corner equivalence. Historical log entries are preserved.
+- The next mathematical objective is the actual p=6 obstruction: prove equality of matrix-entry weights for the relevant short paths / powered entries before attempting to reindex the finite sums. Another coordinate-support equivalence alone is not sufficient. Verify the rollback CI before proceeding.
+
