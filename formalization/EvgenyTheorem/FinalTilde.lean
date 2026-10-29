@@ -1664,6 +1664,8 @@ theorem sgK_root_pullback_lift (m : ℕ) {w : WSG m}
     exact glued_point m w.1 w.2.1.1 ⟨w'.1, w'.2.1.1, hgl.1⟩
   have hpos : 0 < 2 ^ m := by positivity
   have hne : (0 : ℕ) ≠ 2 ^ m := (Nat.ne_of_gt hpos).symm
+  have hpos' : 0 < 2 ^ (m + 1) := by positivity
+  have hne' : (0 : ℕ) ≠ 2 ^ (m + 1) := (Nat.ne_of_gt hpos').symm
   rcases hcorner with hcorner | hcorner | hcorner
   all_goals
     apply Prod.ext
@@ -1671,7 +1673,7 @@ theorem sgK_root_pullback_lift (m : ℕ) {w : WSG m}
     · apply Prod.ext
       · apply Subtype.ext
         simp [sgK_root_pullback, sgK_root_lift,
-          sgK_root_pullback_pt, sgK_root_lift_pt, hcorner, hne]
+          sgK_root_pullback_pt, sgK_root_lift_pt, hcorner, hne, hne']
       · rfl
 
 /-- Lifting after pulling back is the identity on the glued-root subtype. -/
@@ -1684,6 +1686,8 @@ theorem sgK_root_lift_pullback (m : ℕ) {w : WSG (m + 1)}
     exact glued_point (m + 1) w.1 w.2.1.1 ⟨w'.1, w'.2.1.1, hgl.1⟩
   have hpos : 0 < 2 ^ (m + 1) := by positivity
   have hne : (0 : ℕ) ≠ 2 ^ (m + 1) := (Nat.ne_of_gt hpos).symm
+  have hpos' : 0 < 2 ^ m := by positivity
+  have hne' : (0 : ℕ) ≠ 2 ^ m := (Nat.ne_of_gt hpos').symm
   rcases hcorner with hcorner | hcorner | hcorner
   all_goals
     apply Prod.ext
@@ -1691,7 +1695,7 @@ theorem sgK_root_lift_pullback (m : ℕ) {w : WSG (m + 1)}
     · apply Prod.ext
       · apply Subtype.ext
         simp [sgK_root_pullback, sgK_root_lift,
-          sgK_root_pullback_pt, sgK_root_lift_pt, hcorner, hne]
+          sgK_root_pullback_pt, sgK_root_lift_pt, hcorner, hne, hne']
       · rfl
 
 /-- The glued states at adjacent refinement levels are in canonical bijection.
