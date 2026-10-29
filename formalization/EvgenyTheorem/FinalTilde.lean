@@ -4484,7 +4484,10 @@ theorem defectO6_num_affine_growth
     defectO6_num_growth_offset, defectO6_num_residual_constant]
   ring
 
-/-- Equivalent one-step recurrence with its residual constant named once. -/
+/-- Exact all-angle H6 recurrence after the proved high-power boundary
+stabilization, valid for `m ≥ 3`. The constant is defined from finite
+level-three data; this does not claim the `m = 2` to `m = 3` transition or
+an elementary trigonometric simplification of `C₆`. -/
 theorem defectO6_num_growth_recurrence
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
     defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
