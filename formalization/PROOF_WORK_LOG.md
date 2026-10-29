@@ -364,3 +364,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Added glueRHS6_highPowerResidual_local_path_expansion, which rewrites each weighted K^4/K^5 contribution to a finite support set S (σ x) supplied by the caller.
 - The new theorem deliberately takes the support property as an explicit hypothesis; it does not yet construct the three geometric box sets or compare their sums across adjacent levels.
 - Next: instantiate S with the appropriate same-copy radius-two boxes, prove the support hypotheses from sgK_pow_entry_zero_of_coord_gap and the block structure, and then transport the restricted sums using the orientation-aligned corner entry lemmas.
+
+
+## 2026-10-29 — Concrete radius-two support for the p=6 residual
+
+- Rechecked commit 388ce8eab4bf9c4ab88ed237a5243074d1118b43: both Lean builds and all four Python 3.11/3.12 push/PR jobs succeeded.
+- Added sgK_radius_two_support, a finite coordinate box of radius two that preserves the copy index of the block-diagonal sgK operator.
+- Proved that every nonzero entry of sgK ^ 2 lies in this set: coordinate bounds follow from sgK_pow_entry_coord_dist, and copy preservation follows from blockK_pow_local.
+- Added the exact vanishing corollary outside this set. This supplies the concrete support hypothesis needed to instantiate glueRHS6_highPowerResidual_local_path_expansion for the face-axis and constant-axis operators.
+- The weighted sums have not yet been compared across adjacent levels; the next proof must reindex these finite sets and compare matrix-product weights under the O/X/Y transports.

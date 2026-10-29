@@ -2916,3 +2916,10 @@ Added support-sensitive forms of the generic matrix identities for powers four a
 glueRHS6_highPowerResidual_local_path_expansion applies this restriction to each of the four weighted high-power sums in the p=6 residual, with an explicit family S (σ x) for the intermediate states at each glued partner. No geometric set or support assertion is assumed implicitly; both operator support obligations are function hypotheses.
 
 Remaining step: choose the local radius-two sets in each copy, prove the support obligations and bijectively reindex them across adjacent levels using the O/X/Y copy maps. The theorem does not claim equality of the restricted sums or the all-level residual identity R_{m+1}=R_m.
+
+
+## 4ad. Concrete radius-two support for the glued operator
+
+After all six checks passed on commit 388ce8eab4bf9c4ab88ed237a5243074d1118b43, this change adds a concrete finite support family for sgK: states must remain in the same copy and within coordinate distance two of the root. The theorem sgK_pow_two_entry_mem_radius_two derives this from the existing power locality estimate and block-diagonal structure; sgK_pow_two_entry_zero_outside_radius_two gives the exact vanishing hypothesis for the finite-support residual expansion.
+
+Still open: instantiate the generic finite-support expansion for both axis assignments, then prove a bijection of the support sets across adjacent levels and preservation of matrix-product weights under recursive-copy transport. No R_{m+1}=R_m theorem is claimed.

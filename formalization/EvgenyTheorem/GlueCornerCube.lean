@@ -500,6 +500,53 @@ theorem glueRHS6_highPowerResidual_local_path_expansion
     hsum15 K hK, hsum15 K' hK', hsum24 K hK, hsum24 K' hK']
 
 
+
+/-- The finite coordinate box of radius two about a state of the glued
+copy operator. The copy coordinate is retained so the set cannot mix
+different blocks of the block-diagonal operator. -/
+def sgK_radius_two_support (m : ℕ) (w : WSG m) : Finset (WSG m) :=
+  Finset.univ.filter fun w' =>
+    w'.1 = w.1 ∧
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 2 ∧
+    w'.2.1.1.1 ≤ w.2.1.1.1 + 2 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 2 ∧
+    w'.2.1.1.2 ≤ w.2.1.1.2 + 2
+
+/-- Any nonzero two-step entry of sgK lies in the copy-preserving
+radius-two support set. The coordinate bounds use the generic locality
+estimate; equality of copy indices follows from block diagonality. -/
+theorem sgK_pow_two_entry_mem_radius_two
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m)
+    (h : (sgK m θ ax o ^ 2) w w' ≠ 0) :
+    w' ∈ sgK_radius_two_support m w := by
+  apply Finset.mem_filter.mpr
+  refine ⟨Finset.mem_univ _, ?_⟩
+  have hdist := sgK_pow_entry_coord_dist m θ ax o 2 w w' h
+  have hcopy : w'.1 = w.1 := by
+    by_contra hne
+    have hne' : w.1 ≠ w'.1 := fun heq => hne heq.symm
+    have hzero : (sgK m θ ax o ^ 2) w w' = 0 := by
+      change (blockK (Hc m θ ax o) ^ 2) w w' = 0
+      rw [blockK_pow_local]
+      simp [blockK, hne']
+    exact h hzero
+  exact ⟨hcopy, hdist.1, hdist.2.1, hdist.2.2.1, hdist.2.2.2⟩
+
+/-- The two-step row of sgK vanishes outside the finite radius-two
+support set. This is the concrete support hypothesis needed by the
+finite-support residual expansion. -/
+theorem sgK_pow_two_entry_zero_outside_radius_two
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w w' : WSG m)
+    (h' : w' ∉ sgK_radius_two_support m w) :
+    (sgK m θ ax o ^ 2) w w' = 0 := by
+  by_contra hzero
+  exact h' (sgK_pow_two_entry_mem_radius_two m θ ax o w w' hzero)
+
+
 /-- Exact residual formula for the sixth-moment boundary correction. Under
 orientation antisymmetry, powers one through three on glued diagonals and
 the top-stratum diagonal-cube term are axis-independent. Therefore the only
