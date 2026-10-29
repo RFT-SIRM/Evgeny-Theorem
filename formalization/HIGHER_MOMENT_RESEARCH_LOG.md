@@ -3130,3 +3130,12 @@ No concrete entry-transport theorem is claimed by this repair; full Lean verific
 The attempt to force finite-set subtypes through a locally defined equivalence failed because the type-level notation `S) did not elaborate as the intended subtype in that declaration. The fix removes the helper and consistently uses the proposition-indexed subtype `{x // x ∈ S}` at every stage, including the support equivalence, power-2/path sums, and fourth/fifth diagonal reindexings. This gives the sum conversion theorem and the matrix-power proof one uniform Fintype representation.
 
 The previous full Lean run on SHA `969085624e95167efe13f5b45341f97c03b4acba` failed with this mismatch (push and PR). Verification of the correction is pending; no higher-moment transport is claimed yet.
+
+
+## 2026-10-29 — Three-pass audit and removal of the unfinished path-transport abstraction
+
+The last attempted block `matrix_pow_four_five_diag_transport_of_local_entries` was not yet connected to a concrete `sgK) entry-transport theorem. Lean failed because the proof alternated between `Subtype.fintype (fun x => x ∈ S)` and `Finset.Subtype.fintype S`, which are not definitionally equal. The attempted fix then treated a finite set `T` as a type in some `Equiv.sum_comp` lambdas. Push and PR Lean runs for SHA `3f269fde2703e8fa2af9b152375223f7e7910470` failed at the same ten sum-conversion sites.
+
+The unfinished abstraction was removed from `FinalTilde.lean`; previously compiled O/X/Y support and orientation lemmas remain. This restores that source file to its last fully Lean-green version at `f388e6209c76900f442fd65b8146414bd0c2b719`, while keeping the chronology. It is not a branch reset and does not remove the earlier geometry lemmas.
+
+Next mathematical work must start from the concrete high-root `sgK) support and its parent correspondence. O/A, X/B, and Y/C must preserve copy label, point, spin, exact `oNum/oTil/oBo/oCo) conventions, and axis periodicity. Then prove one-step entry equality on all support pairs and only afterwards derive the finite path sums. `R_{m+1}=R_m` remains unproved.
