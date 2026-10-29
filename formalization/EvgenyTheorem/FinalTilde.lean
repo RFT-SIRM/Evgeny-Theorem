@@ -1353,9 +1353,10 @@ noncomputable def sgK_radius_two_support_X_equiv
           simpa [shiftPoint] using h
         change shiftPoint (2 ^ m) 1 0
           (z.1.2.1.1.1 - 2 ^ m, z.1.2.1.1.2) = z.1.2.1.1
-        simp only [shiftPoint, one_mul, zero_mul, Nat.add_zero,
-          Prod.mk.injEq]
-        constructor <;> omega
+        simp only [shiftPoint, one_mul, zero_mul, Nat.add_zero]
+        apply Prod.ext
+        · omega
+        · rfl
       · rfl
   · intro z
     apply Subtype.ext
@@ -1363,6 +1364,7 @@ noncomputable def sgK_radius_two_support_X_equiv
     · rfl
     · apply Prod.ext
       · apply Subtype.ext
+        dsimp
         change (z.1.2.1.1.1 + 2 ^ m - 2 ^ m, z.1.2.1.1.2) =
           z.1.2.1.1
         simp [Nat.add_sub_cancel_right]

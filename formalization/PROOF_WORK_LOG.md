@@ -468,3 +468,9 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - This is a proof-planned prerequisite for applying a finite-sum bijection to the inner radius-two path sums. It does not assert entrywise equality of (K^2/K^3), residual stability, or p=6 closure. CI for the new source SHA is pending.
 - Next after a clean build: prove the matching state map commutes with the glued partner `sgGlue.σ`, and lift the existing corner entry equalities to the specific powers in the two residual sums. The Y/C map must keep `oCo`/`oTil` explicit.
 
+## 2026-10-29 — Fix product equality and reduce the X inverse composition
+
+- Inspected both full Lean logs for `b70fd6677ab6b82c88135de9ea32c7a55340173e`. The first failure at `FinalTilde.lean:1358` followed simplification of a pair equality; `constructor` was not a valid tactic for the remaining goal. It is now decomposed explicitly with `Prod.ext`, proving the x-coordinate with `omega` and the y-coordinate by reflexivity.
+- The second error at line 1366 occurred in `right_inv`: the proposed `change` did not match the unreduced composition `toFun (invFun z)`. Added `dsimp` after descending to the point subtype equality, before the coordinate-level `change`. The inverse coordinate arithmetic itself remains unchanged.
+- Failed runs reviewed: push Lean [40835853136](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40835853136), PR Lean [40835863641](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40835863641). No matrix-weight or residual-stability theorem was claimed. CI for this repair is pending.
+

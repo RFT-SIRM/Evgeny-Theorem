@@ -3035,3 +3035,9 @@ for `m ≥ 3`. This is the missing step after the already-compiled theorem `defe
 - CI for this source change is pending. Matrix-power weights and adjacent-level residual invariance have not yet been proved.
 - If compilation succeeds, next prove partner-map compatibility and use this support correspondence in finite sums. Then establish local (K²/K³) entry transport for the exact paths contributing to (K⁴/K⁵) corner diagonals; do not claim all entries agree outside the radius-two box.
 
+## 2026-10-29 — Fix product equality and reduce the X inverse composition
+
+- Full build logs on `b70fd6677ab6b82c88135de9ea32c7a55340173e` gave two failures in the X support equivalence: line 1358 used `constructor` after the product equality had already been simplified, and line 1366 attempted a coordinate-level `change` before reducing the composite `toFun (invFun z)).
+- Replaced the first with explicit product extensionality and inserted `dsimp` before the second coordinate-level change. These are narrowly targeted elaboration fixes; no definition or theorem statement changed.
+- The next SHA must pass full Lean build and Python checks before extending the argument to matrix powers. Adjacent-level high-power residual stability remains unproved.
+
