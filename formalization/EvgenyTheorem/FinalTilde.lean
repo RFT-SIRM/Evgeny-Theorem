@@ -1505,6 +1505,227 @@ noncomputable def sgK_radius_two_support_Y_equiv
       · rfl
 
 
+/-- The origin belongs to every recursively defined vertex list. -/
+theorem sgK_origin_mem (m : ℕ) : ((0, 0) : Point) ∈ vertexOrder m := by
+  induction m with
+  | zero => simp [vertexOrder]
+  | succ m ih =>
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inl ih
+
+/-- Pull a glued corner point of level m+1 back to the corresponding
+corner point of level m. Away from the three corners this total auxiliary
+map defaults to the origin; it is used only on the glued-state subtype. -/
+noncomputable def sgK_root_pullback_pt (m : ℕ) (p : Pt (m + 1)) : Pt m :=
+  if p.1 = ((2 ^ (m + 1), 0) : Point) then
+    ⟨(2 ^ m, 0), cornerX_mem m⟩
+  else if p.1 = ((0, 2 ^ (m + 1)) : Point) then
+    ⟨(0, 2 ^ m), cornerY_mem m⟩
+  else
+    ⟨(0, 0), sgK_origin_mem m⟩
+
+/-- Lift a glued corner point from level m to its corresponding corner
+point at level m+1. -/
+noncomputable def sgK_root_lift_pt (m : ℕ) (p : Pt m) : Pt (m + 1) :=
+  if p.1 = ((2 ^ m, 0) : Point) then
+    ⟨(2 ^ (m + 1), 0), cornerX_mem (m + 1)⟩
+  else if p.1 = ((0, 2 ^ m) : Point) then
+    ⟨(0, 2 ^ (m + 1)), cornerY_mem (m + 1)⟩
+  else
+    ⟨(0, 0), sgK_origin_mem (m + 1)⟩
+
+@[simp] theorem sgK_root_pullback_pt_O
+    (m : ℕ) {p : Pt (m + 1)} (hp : p.1 = ((0, 0) : Point)) :
+    (sgK_root_pullback_pt m p).1 = (0, 0) := by
+  have hpow : 0 < 2 ^ (m + 1) := by positivity
+  have hx : p.1 ≠ ((2 ^ (m + 1), 0) : Point) := by
+    intro h
+    have h' := congrArg Prod.fst h
+    simp at h'
+    omega
+  have hy : p.1 ≠ ((0, 2 ^ (m + 1)) : Point) := by
+    intro h
+    have h' := congrArg Prod.snd h
+    simp at h'
+    omega
+  simp [sgK_root_pullback_pt, hp, hx, hy]
+
+@[simp] theorem sgK_root_pullback_pt_X
+    (m : ℕ) {p : Pt (m + 1)} (hp : p.1 = ((2 ^ (m + 1), 0) : Point)) :
+    (sgK_root_pullback_pt m p).1 = (2 ^ m, 0) := by
+  simp [sgK_root_pullback_pt, hp]
+
+@[simp] theorem sgK_root_pullback_pt_Y
+    (m : ℕ) {p : Pt (m + 1)} (hp : p.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    (sgK_root_pullback_pt m p).1 = (0, 2 ^ m) := by
+  have hpow : 0 < 2 ^ (m + 1) := by positivity
+  have hx : p.1 ≠ ((2 ^ (m + 1), 0) : Point) := by
+    intro h
+    have h' := congrArg Prod.fst h
+    have h'' := congrArg Prod.snd h
+    simp at h' h''
+    omega
+  simp [sgK_root_pullback_pt, hp, hx]
+
+@[simp] theorem sgK_root_lift_pt_O
+    (m : ℕ) {p : Pt m} (hp : p.1 = ((0, 0) : Point)) :
+    (sgK_root_lift_pt m p).1 = (0, 0) := by
+  have hpow : 0 < 2 ^ m := by positivity
+  have hx : p.1 ≠ ((2 ^ m, 0) : Point) := by
+    intro h
+    have h' := congrArg Prod.fst h
+    simp at h'
+    omega
+  have hy : p.1 ≠ ((0, 2 ^ m) : Point) := by
+    intro h
+    have h' := congrArg Prod.snd h
+    simp at h'
+    omega
+  simp [sgK_root_lift_pt, hp, hx, hy]
+
+@[simp] theorem sgK_root_lift_pt_X
+    (m : ℕ) {p : Pt m} (hp : p.1 = ((2 ^ m, 0) : Point)) :
+    (sgK_root_lift_pt m p).1 = (2 ^ (m + 1), 0) := by
+  simp [sgK_root_lift_pt, hp, pow_succ]
+
+@[simp] theorem sgK_root_lift_pt_Y
+    (m : ℕ) {p : Pt m} (hp : p.1 = ((0, 2 ^ m) : Point)) :
+    (sgK_root_lift_pt m p).1 = (0, 2 ^ (m + 1)) := by
+  have hpow : 0 < 2 ^ m := by positivity
+  have hx : p.1 ≠ ((2 ^ m, 0) : Point) := by
+    intro h
+    have h' := congrArg Prod.fst h
+    have h'' := congrArg Prod.snd h
+    simp at h' h''
+    omega
+  simp [sgK_root_lift_pt, hp, hx, pow_succ]
+
+/-- The corresponding corner reindexing of all three-copy states. -/
+noncomputable def sgK_root_pullback (m : ℕ) (w : WSG (m + 1)) : WSG m :=
+  (w.1, (sgK_root_pullback_pt m w.2.1, w.2.2))
+
+/-- The inverse corner reindexing on glued roots. -/
+noncomputable def sgK_root_lift (m : ℕ) (w : WSG m) : WSG (m + 1) :=
+  (w.1, (sgK_root_lift_pt m w.2.1, w.2.2))
+
+/-- Pulling back a glued pair preserves the gluing relation. -/
+theorem sgK_root_pullback_glW (m : ℕ) {w w' : WSG (m + 1)}
+    (h : glW (m + 1) w w') :
+    glW m (sgK_root_pullback m w) (sgK_root_pullback m w') := by
+  rcases w with ⟨c, p, i⟩
+  rcases w' with ⟨c', p', i'⟩
+  change gl (m + 1) c p.1 c' p'.1 ∧ i = i' at h
+  rcases h with ⟨hgl, hspin⟩
+  rcases hgl with
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩
+  all_goals
+    change gl m _ (sgK_root_pullback_pt m p).1 _ (sgK_root_pullback_pt m p').1 ∧ i = i'
+    constructor
+    · simp [gl, sgK_root_pullback_pt, hp, hp']
+    · exact hspin
+
+/-- Lifting a glued pair also preserves the gluing relation. -/
+theorem sgK_root_lift_glW (m : ℕ) {w w' : WSG m}
+    (h : glW m w w') :
+    glW (m + 1) (sgK_root_lift m w) (sgK_root_lift m w') := by
+  rcases w with ⟨c, p, i⟩
+  rcases w' with ⟨c', p', i'⟩
+  change gl m c p.1 c' p'.1 ∧ i = i' at h
+  rcases h with ⟨hgl, hspin⟩
+  rcases hgl with
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩ |
+    ⟨rfl, hp, rfl, hp'⟩
+  all_goals
+    change gl (m + 1) _ (sgK_root_lift_pt m p).1 _ (sgK_root_lift_pt m p').1 ∧ i = i'
+    constructor
+    · simp [gl, sgK_root_lift_pt, hp, hp', pow_succ]
+    · exact hspin
+
+theorem sgK_root_pullback_g (m : ℕ) {w : WSG (m + 1)}
+    (hw : (sgGlue (m + 1)).g w) :
+    (sgGlue m).g (sgK_root_pullback m w) := by
+  obtain ⟨w', hw'⟩ := hw
+  exact ⟨sgK_root_pullback m w', sgK_root_pullback_glW m hw'⟩
+
+theorem sgK_root_lift_g (m : ℕ) {w : WSG m}
+    (hw : (sgGlue m).g w) :
+    (sgGlue (m + 1)).g (sgK_root_lift m w) := by
+  obtain ⟨w', hw'⟩ := hw
+  exact ⟨sgK_root_lift m w', sgK_root_lift_glW m hw'⟩
+
+/-- The partner map sigma commutes with the glued-root reindexing. This is
+essential for transporting the outer sum in the high-power residual. -/
+theorem sgK_root_pullback_sigma (m : ℕ) {w : WSG (m + 1)}
+    (hw : (sgGlue (m + 1)).g w) :
+    sgK_root_pullback m ((sgGlue (m + 1)).σ w) =
+      (sgGlue m).σ (sgK_root_pullback m w) := by
+  have hhigh : glW (m + 1) w ((sgGlue (m + 1)).σ w) :=
+    glW_sgσ hw
+  have hlow : glW m (sgK_root_pullback m w)
+      (sgK_root_pullback m ((sgGlue (m + 1)).σ w)) :=
+    sgK_root_pullback_glW m hhigh
+  have hlow' : glW m (sgK_root_pullback m w)
+      ((sgGlue m).σ (sgK_root_pullback m w)) :=
+    glW_sgσ (sgK_root_pullback_g m hw)
+  exact glW_unique hlow hlow'
+
+/-- On a glued root, pulling back after lifting is the identity. -/
+theorem sgK_root_pullback_lift (m : ℕ) {w : WSG m}
+    (hw : (sgGlue m).g w) :
+    sgK_root_pullback m (sgK_root_lift m w) = w := by
+  have hcorner : w.2.1.1 = ((0, 0) : Point) ∨
+      w.2.1.1 = (2 ^ m, 0) ∨ w.2.1.1 = (0, 2 ^ m) := by
+    obtain ⟨w', hgl⟩ := hw
+    exact glued_point m w.1 w.2.1.1 ⟨w'.1, w'.2.1.1, hgl.1⟩
+  rcases hcorner with hcorner | hcorner | hcorner
+  all_goals
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        simp [sgK_root_pullback, sgK_root_lift,
+          sgK_root_pullback_pt, sgK_root_lift_pt, hcorner, pow_succ]
+      · rfl
+
+/-- Lifting after pulling back is the identity on the glued-root subtype. -/
+theorem sgK_root_lift_pullback (m : ℕ) {w : WSG (m + 1)}
+    (hw : (sgGlue (m + 1)).g w) :
+    sgK_root_lift m (sgK_root_pullback m w) = w := by
+  have hcorner : w.2.1.1 = ((0, 0) : Point) ∨
+      w.2.1.1 = (2 ^ (m + 1), 0) ∨ w.2.1.1 = (0, 2 ^ (m + 1)) := by
+    obtain ⟨w', hgl⟩ := hw
+    exact glued_point (m + 1) w.1 w.2.1.1 ⟨w'.1, w'.2.1.1, hgl.1⟩
+  rcases hcorner with hcorner | hcorner | hcorner
+  all_goals
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        simp [sgK_root_pullback, sgK_root_lift,
+          sgK_root_pullback_pt, sgK_root_lift_pt, hcorner, pow_succ]
+      · rfl
+
+/-- The glued states at adjacent refinement levels are in canonical bijection.
+This equivalence preserves copy labels and spin, and its partner-map
+compatibility is sgK_root_pullback_sigma. -/
+noncomputable def sgK_glued_root_equiv (m : ℕ) :
+    {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w} where
+  toFun w := ⟨sgK_root_pullback m w.1, sgK_root_pullback_g m w.2⟩
+  invFun w := ⟨sgK_root_lift m w.1, sgK_root_lift_g m w.2⟩
+  left_inv w := Subtype.ext (sgK_root_lift_pullback m w.1 w.2)
+  right_inv w := Subtype.ext (sgK_root_pullback_lift m w.1 w.2)
+
+
 
 
 end EvgenyTheorem
