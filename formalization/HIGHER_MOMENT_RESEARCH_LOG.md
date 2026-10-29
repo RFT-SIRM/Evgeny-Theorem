@@ -3186,3 +3186,8 @@ The C/X entry bridge now composes the verified point-level X-box tilde transport
 ## 2026-10-29 — Make the C/X parent bound explicit
 
 The parent `Hc_C_num_eq_parent_til` invocation now discharges its `1 ≤ m` bound from `3 ≤ m` via `by omega`. This prevents the same predicate mismatch previously found in the C/O attempt. No mathematical statement changed; full Lean CI on the new commit is required before continuing.
+
+
+## 2026-10-29 — C/X theorem declaration order
+
+CI for `acd33bc3465cc21367034412e852b662d74a5272` reported that `pHeO_corner_X_box_entry_next_til` was unavailable at the point where the new C/X wrapper was written. The point-level theorem is declared later in the file, so the wrapper is relocated immediately after that dependency. Verify the full build before continuing to B/Y.

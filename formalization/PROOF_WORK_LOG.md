@@ -638,3 +638,8 @@ The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean bui
 ## 2026-10-29 — Pre-empt lower-level C/X bound mismatch
 
 The C/X transport uses `Hc_C_num_eq_parent_til` at the parent level `m). Its precondition is `1 ≤ m`, while the theorem's available bound is `3 ≤ m`; these propositions are mathematically compatible but not accepted as a direct argument by Lean. Replaced the argument by `by omega` before relying on a failed build. This is a proof-typing correction; the orientation argument remains restricted to C-shifted points via `cp1_shiftC`. New SHA CI is pending.
+
+
+## 2026-10-29 — Fix C/X wrapper declaration order
+
+The full Lean build for `acd33bc3465cc21367034412e852b662d74a5272` failed because `sgK_C_X_entry_next_til` referenced `pHeO_corner_X_box_entry_next_til` before it was declared. Moved the state wrapper after its point-level dependency, without changing the theorem statement or proof term. The failure was declaration order, not an orientation mismatch. Re-running both full Lean workflows on the new SHA before the B/Y step.
