@@ -593,3 +593,8 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 ## 2026-10-29 — Fix failed O-box tilde transport proof
 
 The Lean build for `3fec4bd1c1e02b1f2c16ab146c46b48b7c434e03` failed at the new O-box lemma for two concrete reasons: the power bound was too weak, and the higher-level `pHeO_rel_congr` was unavailable in this module's imports. The follow-up commit `1b99dc16f912bce2fe04cd65c6ee26fcbd7afc09` changes the bound to `4 ≤ 2^n` and adds a private local congruence proof using the low-level diagonal, edge, and non-edge lemmas already in the dependency chain. New SHA CI is pending; do not proceed to other transport cases until the Lean build is green.
+
+
+## 2026-10-29 — Revert unverified O-box tilde entry lemma
+
+The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean build failed on the follow-up SHA. The fresh CI log showed two invalid `calc` steps (the proof stated `4 ≤ 2^n` but started its chain at `3 ≤ 2^3`) and a remaining reference to unavailable `pHeO_rel_congr`. Rather than continue layering unverified patches, `FinalTilde.lean` was restored exactly to the verified source blob from green checkpoint `2bf84fea6a42708a84f6d701075c17d64663d99c`. This does not solve the transport problem; it restores the known-good geometry checkpoint before a redesigned proof attempt.
