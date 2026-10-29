@@ -555,3 +555,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Power four is handled through `K^4=K^2K^2); power five uses `K^5=K^2K^3) and `K^3=K K^2). Every reindexing is via the supplied support equivalence; no matrix entry outside a proved support is silently discarded.
 - This is a generic path-transport mechanism, not yet an instantiation for `sgK). The remaining concrete obligation is to establish the one-step `sgK) entry equality for all pairs in each corner support under the relevant orientations/axis periodicity, and discharge the support hypotheses with the existing locality lemmas.
 - New-SHA full Lean CI is pending. If it fails, fix the first error before applying this theorem or adding further proof steps.
+
+
+## 2026-10-29 — Fix first Lean failure in local power-4/5 transport abstraction
+
+- Commit `df4ae643b6944d91b983e3c1ee1435069f5e03c8` failed full Lean push build [40859099659](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40859099659); the PR Lean run [40859108178](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40859108178) was still running at first inspection.
+- The concrete errors were Fintype-instance mismatches: the generic helper emitted sums over predicate subtypes using `Subtype.fintype`, while the theorem's finite-support sums were elaborated using `Finset.Subtype.fintype S`. Subsequent `K^3) rewrite failures came from the same type instability in the surrounding goals.
+- Added `glueRHS6_sum_ite_eq_finset_subtype`, explicitly bridging to the canonical finite-set subtype `S), changed the support equivalence to `S ≃ T), and changed every path sum to use those canonical finite-set subtypes. Replaced the brittle inline `rw) for `K^3=K*K^2) with a named matrix-power equality.
+- This is a proof-engineering correction to the generic path transport only. The concrete `sgK) local-entry hypotheses and all-level residual stability remain open. CI for the correction is pending.

@@ -3116,3 +3116,10 @@ The correction isolates this index-set conversion in `glueRHS6_sum_ite_eq_subtyp
 A new abstract lemma, `matrix_pow_four_five_diag_transport_of_local_entries`, has been added in `FinalTilde.lean`. It proves both diagonal-power transports from a finite-support equivalence and pointwise one-step entry transport on the support. The finite path algebra is explicit: `K^4) is expanded as a product of two squares; `K^5) is expanded into `K^2) times `K^3), with `K^3) expanded as `K K^2). Root row/column support hypotheses justify each restriction to the finite set, while the support equivalence reindexes every resulting finite sum.
 
 This reduces the next concrete step to a single clean interface: prove one-step `sgK) entry preservation inside the O/X/Y radius-two supports for the two axis/orientation choices, plus the first-/second-power support facts. It does not yet imply the four local power identities needed by the residual bridge or the all-level stability equation `R_{m+1}=R_m`. CI on the new SHA is pending.
+
+
+## 2026-10-29 — Correct finite-subtype indexing in the power-transport lemma
+
+The first compile attempt of `matrix_pow_four_five_diag_transport_of_local_entries` exposed a mismatch between the predicate-subtype Fintype and Mathlib's canonical `Finset.Subtype.fintype S`. The correction introduces a conversion lemma whose codomain is indexed by `S) itself, changes the support equivalence to `S ≃ T), and uses the same canonical subtype instances throughout the power-2, power-3, power-4, and power-5 sums. The `K^3=K K^2) step is also isolated as a named equality.
+
+No concrete entry-transport theorem is claimed by this repair; full Lean verification on the new commit is pending.
