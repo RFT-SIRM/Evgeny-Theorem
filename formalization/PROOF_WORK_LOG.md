@@ -778,3 +778,12 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added `defectO6_num_closed_form`, applying the pre-existing `affine_three_recurrence` arithmetic lemma to the now-proved constant-boundary recurrence.
 - The formula is explicit in (3^{m-3}), the level-three numbering defect, the level-three orientation gap, and the level-three high-power boundary residual. It does not silently set either finite base contribution to zero.
 - **Next:** check both full Lean builds. If green, inspect whether the level-three residual/gap have exact existing evaluations that can finish the target theorem without assumptions.
+
+
+## 2026-10-29 — Expose the sixth-moment affine growth law as a named theorem
+
+- Parent SHA `9f04c0c8520fcaaf0b9879bdc79023e962b0dbf9` has successful full Lean builds on both push and PR workflows.
+- Added named definitions for the exact residual constant, growth coefficient, and constant offset, each expressed through actual finite level-three quantities.
+- Added `defectO6_num_affine_growth`, stating the all-angle law `D_m = 3^(m-3) A(θ) + B(θ)` for every `m ≥ 3`; and `defectO6_num_growth_recurrence`, stating the equivalent one-step recurrence with a single explicit constant.
+- These are consequences of the previously proved endpoint transport and residual stabilization; no assumption that the level-three gap or residual vanishes was introduced.
+- **Verification gate:** both full Lean builds must pass on the new SHA. The residual constant's simplified elementary expression at arbitrary `θ` remains a separate finite-level evaluation question.

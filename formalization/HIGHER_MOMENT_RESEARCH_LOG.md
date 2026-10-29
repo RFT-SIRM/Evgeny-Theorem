@@ -3285,3 +3285,9 @@ The new constant-boundary recurrence proof's two rewrite steps already solved th
 ## 2026-10-29 — Closed form from the stabilized sixth-moment recurrence
 
 The fixed boundary term plus `affine_three_recurrence` now yields an exact formula for `defectO6 m θ faceAxis (fun _ => 2) (oNum m)` as an affine function of (3^{m-3}). The constant is expressed using the actual level-three defect, level-three orientation difference, and level-three `glueRHS6_highPowerResidual`; no base value is assumed to vanish. The remaining closure question is whether those finite-level quantities already have exact symbolic evaluations in the repository.
+
+
+## 2026-10-29 — Sixth-moment growth law has a direct named interface
+
+The proof now exposes the exact all-angle result in the form
+`D_m(θ) = 3^{m-3} A_6(θ) + B_6(θ)` for every `m ≥ 3`, where `A_6` and `B_6` are explicit definitions in terms of the level-three defect, orientation gap, and high-power boundary residual. It also states the equivalent recurrence `D_{m+1}=3D_m+C_6(θ)`. This is a formal all-level growth law, not an elementary trigonometric simplification of `C_6(θ)`; the latter is still not claimed.

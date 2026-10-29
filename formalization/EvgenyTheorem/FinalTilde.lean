@@ -4451,4 +4451,47 @@ theorem defectO6_num_closed_form
   rw [Nat.sub_add_cancel hm] at hclosed
   simpa [D, C3, R3, G3] using hclosed
 
+
+/-- The exact level-independent residual constant in the sixth-moment
+recurrence. It is defined by finite level-three data, with no vanishing
+assumption on either the boundary residual or the orientation gap. -/
+noncomputable def defectO6_num_residual_constant (θ : ℝ) : ℂ :=
+  glueRHS6_highPowerResidual 3
+      (sgK 3 θ faceAxis (oTil 4))
+      (sgK 3 θ (fun _ => 2) (oTil 4)) -
+    (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+      defectO6 3 θ faceAxis (fun _ => 2) (oTil 3))
+
+/-- Coefficient of the geometric growth term for the sixth-moment defect. -/
+noncomputable def defectO6_num_growth_coefficient (θ : ℝ) : ℂ :=
+  defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) +
+    defectO6_num_residual_constant θ / 2
+
+/-- Constant offset in the all-level affine growth law for the sixth moment. -/
+noncomputable def defectO6_num_growth_offset (θ : ℝ) : ℂ :=
+  - defectO6_num_residual_constant θ / 2
+
+/-- The sixth-moment numbering defect is exactly affine in 3^(m-3), for every
+m ≥ 3 and every angle. Both coefficients are explicit finite level-three
+quantities, and their definition is independent of m. -/
+theorem defectO6_num_affine_growth
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 m θ faceAxis (fun _ => 2) (oNum m) =
+      (3 : ℂ) ^ (m - 3) * defectO6_num_growth_coefficient θ +
+        defectO6_num_growth_offset θ := by
+  rw [defectO6_num_closed_form m hm θ]
+  simp [defectO6_num_growth_coefficient,
+    defectO6_num_growth_offset, defectO6_num_residual_constant]
+  ring
+
+/-- Equivalent one-step recurrence with its residual constant named once. -/
+theorem defectO6_num_growth_recurrence
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
+      3 * defectO6 m θ faceAxis (fun _ => 2) (oNum m) +
+        defectO6_num_residual_constant θ := by
+  rw [defectO6_succ_num_level3_constant_boundary m hm θ]
+  simp [defectO6_num_residual_constant]
+  ring
+
 end EvgenyTheorem
