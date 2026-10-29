@@ -738,3 +738,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added `sgK_C_X_diag_four_five_transport` using the existing `sgK_radius_two_support_X_equiv` and `sgK_C_X_entry_next_til`. It follows the already checked A/X construction, with the inverse X shift subtracting `2^m` from x, and keeps the same radius-two first-/second-power vanishing arguments.
 - No new mathematical assumptions are added. This endpoint is not yet wired into the uniform `h4/h5` obligations of the residual theorem.
 - **Gate:** require successful full Lean push and PR builds on the new SHA before using the six endpoint cases in the residual proof.
+
+
+## 2026-10-29 — Remove orphaned wrapper documentation after C/X insertion
+
+- Lean failed on commit `973fe2a4d690ae0e75431984078fa47841745156` at `FinalTilde.lean:4212`: `unexpected token '/--'; expected 'lemma'`.
+- Cause: after the original support-equivalence wrapper and all six endpoint specializations, an orphaned duplicate doc-comment for the wrapper remained immediately before the documented residual theorem. The wrapper itself is already declared earlier and remains unchanged.
+- Removed only that orphaned comment. All six endpoint specializations (A/X, B/O, C/O, A/Y, B/Y, C/X) and the high-power residual theorem are preserved exactly.
+- Require successful full Lean push and PR builds on the new SHA before proceeding to instantiate the endpoint lemmas in the residual theorem.

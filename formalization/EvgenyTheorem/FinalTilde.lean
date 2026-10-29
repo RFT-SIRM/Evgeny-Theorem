@@ -4207,9 +4207,6 @@ private theorem sgK_B_Y_diag_four_five_transport
 
 
 
-/-- Generic support-local specialization for the fourth/fifth diagonal
-transport. The only geometric input beyond the finite equivalence is that
-the level-m radius-two support is contained in the chosen parent support. -/
 /-- The remaining outer-sum step in the p=6 residual proof. If the local
 fourth- and fifth-power diagonal entries transport at every glued partner
 root, then the full high-power residual is stable across adjacent levels.

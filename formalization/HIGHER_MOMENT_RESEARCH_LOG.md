@@ -3260,3 +3260,8 @@ The Lean failure on `ca06a7b4b8d37c1696fcbe927d720d34a7f9996b` came from copying
 ## 2026-10-29 — C/X fourth/fifth diagonal transport
 
 The C-copy X-corner specialization uses `sgK_radius_two_support_X_equiv` and `sgK_C_X_entry_next_til`. It mirrors A/X because both use the X support bounds and the inverse coordinate map `(x,y)\mapsto(x-2^m,y)`; the copy label and local entry bridge are the only endpoint-specific changes. It still needs a green full Lean build and has not yet been applied to obtain the uniform high-power residual hypotheses.
+
+
+## 2026-10-29 — Remove the orphaned generic-wrapper doc-comment
+
+The C/X build failed syntactically at the duplicate generic-wrapper doc-comment immediately preceding `glueRHS6_highPowerResidual_eq_of_corner_power_transport`. The generic wrapper is already defined above, so this stray documentation block was removed without changing any theorem body or assumption. The next checkpoint is a successful full Lean build on both push and PR events.
