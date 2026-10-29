@@ -386,6 +386,120 @@ theorem glueRHS6_highPowerResidual_path_expansion
   simp only [pow_one, matrix_pow_five_diag_as_sum_two_three,
     matrix_pow_four_diag_as_sum_sq]
 
+
+/-- Restrict the fourth-power diagonal path sum to any finite set that
+contains the support of the two-step row from the root. -/
+theorem matrix_pow_four_diag_as_sum_sq_of_support
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) (S : Finset W)
+    (hsupport : ∀ y, y ∉ S → (K ^ 2) x y = 0) :
+    (K ^ 4) x x =
+      ∑ y ∈ S, (K ^ 2) x y * (K ^ 2) y x := by
+  rw [matrix_pow_four_diag_as_sum_sq]
+  symm
+  apply Finset.sum_subset (Finset.subset_univ S)
+  intro y _ hyS
+  simp [hsupport y hyS]
+
+/-- Restrict the fifth-power diagonal path sum to any finite set that
+contains the support of the two-step row from the root. -/
+theorem matrix_pow_five_diag_as_sum_two_three_of_support
+    {W : Type*} [Fintype W] [DecidableEq W]
+    (K : Matrix W W ℂ) (x : W) (S : Finset W)
+    (hsupport : ∀ y, y ∉ S → (K ^ 2) x y = 0) :
+    (K ^ 5) x x =
+      ∑ y ∈ S, (K ^ 2) x y * (K ^ 3) y x := by
+  rw [matrix_pow_five_diag_as_sum_two_three]
+  symm
+  apply Finset.sum_subset (Finset.subset_univ S)
+  intro y _ hyS
+  simp [hsupport y hyS]
+
+/-- The p=6 high-power residual written using finite intermediate-state
+sets. Each set need only contain the support of the corresponding K² row
+from the glued partner. This leaves the choice of geometric corner boxes
+explicit for the later level-to-level reindexing proof. -/
+theorem glueRHS6_highPowerResidual_local_path_expansion
+    (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ)
+    (S : WSG m → Finset (WSG m))
+    (hK : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+      (K ^ 2) ((sgGlue m).σ x) y = 0)
+    (hK' : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+      (K' ^ 2) ((sgGlue m).σ x) y = 0) :
+    glueRHS6_highPowerResidual m K K' =
+      6 * ((∑ x, if (sgGlue m).g x then
+          K x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K ^ 2) ((sgGlue m).σ x) y * (K ^ 3) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          K' x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K' ^ 2) ((sgGlue m).σ x) y * (K' ^ 3) y ((sgGlue m).σ x)) else 0)) +
+      6 * ((∑ x, if (sgGlue m).g x then
+          (K ^ 2) x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K ^ 2) ((sgGlue m).σ x) y * (K ^ 2) y ((sgGlue m).σ x)) else 0) -
+        (∑ x, if (sgGlue m).g x then
+          (K' ^ 2) x x * (∑ y ∈ S ((sgGlue m).σ x),
+            (K' ^ 2) ((sgGlue m).σ x) y * (K' ^ 2) y ((sgGlue m).σ x)) else 0)) := by
+  classical
+  have hsum15 (A : Matrix (WSG m) (WSG m) ℂ)
+      (hA : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+        (A ^ 2) ((sgGlue m).σ x) y = 0) :
+      (∑ x, if (sgGlue m).g x then
+        A x x * (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+          (A ^ 3) y ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        A x x * (∑ y ∈ S ((sgGlue m).σ x),
+          (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 3) y ((sgGlue m).σ x)) else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp only [hg, ↓reduceIte]
+      have hlocal :
+          (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 3) y ((sgGlue m).σ x)) =
+          ∑ y ∈ S ((sgGlue m).σ x),
+            (A ^ 2) ((sgGlue m).σ x) y *
+              (A ^ 3) y ((sgGlue m).σ x) := by
+        calc
+          _ = (A ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) :=
+            (matrix_pow_five_diag_as_sum_two_three A ((sgGlue m).σ x)).symm
+          _ = _ :=
+            matrix_pow_five_diag_as_sum_two_three_of_support A
+              ((sgGlue m).σ x) (S ((sgGlue m).σ x)) (hA x hg)
+      rw [hlocal]
+    · simp [hg]
+  have hsum24 (A : Matrix (WSG m) (WSG m) ℂ)
+      (hA : ∀ x, (sgGlue m).g x → ∀ y, y ∉ S ((sgGlue m).σ x) →
+        (A ^ 2) ((sgGlue m).σ x) y = 0) :
+      (∑ x, if (sgGlue m).g x then
+        (A ^ 2) x x * (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+          (A ^ 2) y ((sgGlue m).σ x)) else 0) =
+      (∑ x, if (sgGlue m).g x then
+        (A ^ 2) x x * (∑ y ∈ S ((sgGlue m).σ x),
+          (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 2) y ((sgGlue m).σ x)) else 0) := by
+    apply Finset.sum_congr rfl
+    intro x _
+    by_cases hg : (sgGlue m).g x
+    · simp only [hg, ↓reduceIte]
+      have hlocal :
+          (∑ y, (A ^ 2) ((sgGlue m).σ x) y *
+            (A ^ 2) y ((sgGlue m).σ x)) =
+          ∑ y ∈ S ((sgGlue m).σ x),
+            (A ^ 2) ((sgGlue m).σ x) y *
+              (A ^ 2) y ((sgGlue m).σ x) := by
+        calc
+          _ = (A ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) :=
+            (matrix_pow_four_diag_as_sum_sq A ((sgGlue m).σ x)).symm
+          _ = _ :=
+            matrix_pow_four_diag_as_sum_sq_of_support A
+              ((sgGlue m).σ x) (S ((sgGlue m).σ x)) (hA x hg)
+      rw [hlocal]
+    · simp [hg]
+  rw [glueRHS6_highPowerResidual_path_expansion,
+    hsum15 K hK, hsum15 K' hK', hsum24 K hK, hsum24 K' hK']
+
+
 /-- Exact residual formula for the sixth-moment boundary correction. Under
 orientation antisymmetry, powers one through three on glued diagonals and
 the top-stratum diagonal-cube term are axis-independent. Therefore the only

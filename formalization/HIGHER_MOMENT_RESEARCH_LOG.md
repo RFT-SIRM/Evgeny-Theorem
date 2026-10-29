@@ -2907,3 +2907,12 @@ The level-to-level residual target compares sgK (m+1) with orientation oNum (m+2
 - Y/C: oNum (m+2) to oCo m (oNum (m+1)), preserving the exceptional C orientation.
 
 These statements are entrywise and include only the coordinate boxes already localized in CornerLocality.lean. The missing theorem is still the weighted closed-walk sum comparison for powers 4 and 5, and hence the all-level identity R_{m+1}=R_m.
+
+
+## 4ac. Restricting the p=6 weighted path sums to finite support sets
+
+Added support-sensitive forms of the generic matrix identities for powers four and five. They are direct consequences of the existing path expansions: if (K²)_{x,y} vanishes outside a finite set S, the corresponding diagonal path sum is exactly the sum over S.
+
+glueRHS6_highPowerResidual_local_path_expansion applies this restriction to each of the four weighted high-power sums in the p=6 residual, with an explicit family S (σ x) for the intermediate states at each glued partner. No geometric set or support assertion is assumed implicitly; both operator support obligations are function hypotheses.
+
+Remaining step: choose the local radius-two sets in each copy, prove the support obligations and bijectively reindex them across adjacent levels using the O/X/Y copy maps. The theorem does not claim equality of the restricted sums or the all-level residual identity R_{m+1}=R_m.

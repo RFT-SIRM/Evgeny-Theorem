@@ -355,3 +355,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The C-copy conclusion intentionally keeps oCo rather than replacing it prematurely by oNum; its exceptional orientation flip remains explicit.
 - This repairs the orientation index needed by the residual recurrence. These remain single-entry transport lemmas; no equality of fourth/fifth-power diagonal sums or R_{m+1}=R_m is claimed.
 - Next: use these entries and the radius-two support argument to prove the weighted local closed-walk sum comparison for powers four and five.
+
+
+## 2026-10-29 — Finite-support form of the p=6 path sums
+
+- Rechecked that commit 46206a87114cee7bf995958d20da2068ac56178f passed both Lean build jobs and all four Python 3.11/3.12 push/PR jobs.
+- Added support-restricted versions of the generic K^4 and K^5 diagonal path-sum identities. The proof uses the existing factorization formulas and Finset.sum_subset: when (K^2)_{x,y}=0 outside a finite set S, the intermediate-state sum can be restricted to S.
+- Added glueRHS6_highPowerResidual_local_path_expansion, which rewrites each weighted K^4/K^5 contribution to a finite support set S (σ x) supplied by the caller.
+- The new theorem deliberately takes the support property as an explicit hypothesis; it does not yet construct the three geometric box sets or compare their sums across adjacent levels.
+- Next: instantiate S with the appropriate same-copy radius-two boxes, prove the support hypotheses from sgK_pow_entry_zero_of_coord_gap and the block structure, and then transport the restricted sums using the orientation-aligned corner entry lemmas.
