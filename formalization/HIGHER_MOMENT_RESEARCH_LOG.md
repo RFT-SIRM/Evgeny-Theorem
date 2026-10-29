@@ -3245,3 +3245,8 @@ The C-copy O-corner case instantiates the same finite-support power-transport wr
 ## 2026-10-29 — A/Y fourth/fifth diagonal transport
 
 The A-copy Y-corner specialization uses `sgK_radius_two_support_Y_equiv` together with `sgK_A_Y_entry_next_til`. The inverse state map subtracts `2^m` in the y-coordinate, while the Y support bounds are (x\le2) and (2^{m+1}\le y+2). The proof then uses the existing finite path-sum matrix-power lemma with explicit row/column zero-outside-support premises. This does not yet close the uniform glued-root transport or the sixth-moment residual. Require green push and PR full Lean builds before adding another endpoint.
+
+
+## 2026-10-29 — B/Y fourth/fifth diagonal transport
+
+The B-copy Y-corner case is now added using `sgK_radius_two_support_Y_equiv` and `sgK_B_Y_entry_next_til`. Like A/Y, it uses the inverse Y shift `(x,y)\mapsto(x,y-2^m)`, with support bounds (x\le2) and (2^{m+1}\le y+2). The shared finite-neighborhood power lemma reduces the (K^4/K^5) diagonal equality to the checked local bridge plus first-/second-power zero-outside-support conditions. This remains an endpoint specialization, not yet a uniform glued-root statement or a closed sixth-moment residual.
