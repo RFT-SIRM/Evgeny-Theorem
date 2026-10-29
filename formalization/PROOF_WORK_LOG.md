@@ -605,3 +605,9 @@ The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean bui
 - Full Lean push and PR builds passed on `3f4dd54e0278f95b44f093eb59f64467a304e5b4` after correcting the Y/C transport's `cp1_not_A` side-condition and packing parent witnesses into `Pt m`. Python tests on that SHA were still running at the time of this update.
 - Added `sgK_A_X_entry_next_til`, a state-index wrapper around the already-proved `pHeO_corner_X_box_entry_next_til_num`. Parent states are bundled as `Pt m`, avoiding a dangling membership proof in the result type. The lemma applies to the A block and does not claim power-diagonal transport.
 - The next proof target remains the equality of fourth/fifth-power diagonal entries at glued partner states; all pointwise one-step entries needed across every outer copy and corner still have to be assembled before the power reindexing can be justified.
+
+
+## 2026-10-29 — Fix X-wrapper declaration order after CI failure
+
+- CI for `0bae1cddee6886964fb48b69cd4fb3220868df23` failed because `sgK_A_X_entry_next_til` appeared before `pHeO_corner_X_box_entry_next_til_num`, the theorem it calls. The theorem is present later in the same file; Lean processes declarations sequentially, so this was a source-order error, not a failed mathematical premise. The subsequent `rcases` error was cascading from the unresolved identifier.
+- Moved the state wrapper below the complete X point-entry theorem. No proof term or theorem statement was changed; only declaration order changed. The exact failing SHA is preserved in commit history. New full Lean CI is pending.

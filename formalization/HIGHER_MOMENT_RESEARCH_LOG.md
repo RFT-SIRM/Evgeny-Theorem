@@ -3161,3 +3161,8 @@ The concrete O-box orientation lemma was reverted after CI exposed errors in the
 ## 2026-10-29 — A-block point-entry coverage extended to X
 
 The corrected Y/C point-level transport and its A-block wrapper compile on the new source. Added `sgK_A_X_entry_next_til`, packaging the existing actual-tilde X-box transport into `WSG) states for the A block. This complements `sgK_O_A_entry_next_til` and `sgK_A_Y_entry_next_til`. It is still only a local matrix-entry equality: it does not establish equality of `sgK^4) or `sgK^5) diagonals. The next broad step is to assemble matching one-step transports for B/C blocks across the relevant root neighborhoods, then derive the two power-diagonal equalities using radius-two support and matrix multiplication.
+
+
+## 2026-10-29 — Declaration-order issue in the A-block X wrapper
+
+The failed build at `0bae1cddee6886964fb48b69cd4fb3220868df23` exposed a declaration-order mistake: the A-block state wrapper referenced the actual-tilde X point-entry theorem before that theorem was declared. The correction moves the wrapper to immediately after the X proof, preserving its proof and statement. Next step is to verify both Lean workflows on the new SHA before adding any further transport lemmas.
