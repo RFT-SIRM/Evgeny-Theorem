@@ -3201,3 +3201,8 @@ The source error was caused by the two `rfl) patterns in the existential elimina
 ## 2026-10-29 — B/Y state transport closes local corner coverage
 
 The B/Y case completes the six local entry transports around the three glued-root pairs. It composes the established `pHeO_corner_Y_box_entry_next_til` with the B-copy orientation reduction. The high B pullback becomes the high-level `oTil) relation using the no-corner bound after B shift and the restriction lemma; the parent B pullback reduces to `oNum m), which matches parent `oTil(m+1)) on this Y-local box because `cp1(m+1)) is excluded there. Only after Lean confirms this local bridge should the proof lift these entry equalities to fourth/fifth powers.
+
+
+## 2026-10-29 — B/Y side-condition correction
+
+The sole Lean error in the B/Y wrapper was the known predicate-strength mismatch for `cp1_not_A` at the parent level. Discharged the required `1 ≤ m` from `3 ≤ m` via `by omega`. Recheck both push and PR Lean builds before adding the power-sum proof.

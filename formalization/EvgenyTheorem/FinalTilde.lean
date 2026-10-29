@@ -1522,7 +1522,7 @@ theorem sgK_B_Y_entry_next_til
         unfold oBo
         exact oTil_of_no_corner hLowBShift.1 hLowBShift.2
       _ ↔ oNum m p0 q0 := oBo_num_iff_oNum m hp0 hq0
-  obtain ⟨h1, h2⟩ := cp1_not_A m hm hp0 hq0
+  obtain ⟨h1, h2⟩ := cp1_not_A m (by omega) hp0 hq0
   have hnum : oNum (m + 1) p0 q0 ↔ oNum m p0 q0 := by
     unfold oNum
     rw [vIdx_succ_of_mem hp0, vIdx_succ_of_mem hq0]
