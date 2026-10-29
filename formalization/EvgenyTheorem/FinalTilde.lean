@@ -1235,6 +1235,121 @@ theorem sgK_O_A_entry_next_til
     hp hq hpx hpy hqx hqy i j
 
 
+
+/-- Pointwise orientation congruence for a single `pHeO` entry. Unlike
+`pHeO_orient_congr`, this only needs the orientations to agree on the pair
+whose entry is being evaluated. -/
+private theorem pHeO_rel_congr_local
+    (n : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (p q : Point) (i j : C2) (h : o p q ↔ o' p q) :
+    pHeO n θ ax o p q i j = pHeO n θ ax o' p q i j := by
+  classical
+  by_cases hpq : p = q
+  · subst hpq
+    rw [pHeO_diag, pHeO_diag]
+  · by_cases hE : EdgeB n p.1 p.2 q.1 q.2 = true
+    · rw [pHeO_edge_eq n θ ax o hpq hE,
+        pHeO_edge_eq n θ ax o' hpq hE]
+      by_cases ho : o p q
+      · rw [if_pos ho, if_pos (h.mp ho)]
+      · rw [if_neg ho, if_neg (fun h' => ho (h.mpr h'))]
+    · rw [pHeO_zero_of_not_edge n θ ax o hpq hE,
+        pHeO_zero_of_not_edge n θ ax o' hpq hE]
+
+/-- The exceptional edge `cp1 (n+1)` cannot enter the B-shift of an
+O-radius-two box at level n. -/
+private theorem cp1_not_B_shift_radius_two
+    (n : ℕ) (hn : 3 ≤ n) {p q : Point}
+    (hp : p.1 ≤ 2) (hq : q.1 ≤ 2) :
+    ¬ cp1 (n + 1) (shiftPoint (2 ^ n) 1 0 p) (shiftPoint (2 ^ n) 1 0 q) ∧
+    ¬ cp1 (n + 1) (shiftPoint (2 ^ n) 1 0 q) (shiftPoint (2 ^ n) 1 0 p) := by
+  have hpow : 3 < 2 ^ n := by
+    calc
+      3 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hn
+  have hsep : 2 ^ n + 2 < 2 ^ (n + 1) - 1 := by
+    rw [pow_succ]
+    omega
+  constructor
+  · intro h
+    have hx : (shiftPoint (2 ^ n) 1 0 p).1 = 2 ^ (n + 1) - 1 :=
+      congrArg Prod.fst h.1
+    simp only [shiftPoint] at hx
+    omega
+  · intro h
+    have hx : (shiftPoint (2 ^ n) 1 0 q).1 = 2 ^ (n + 1) - 1 :=
+      congrArg Prod.fst h.1
+    simp only [shiftPoint] at hx
+    omega
+
+/-- On the B-block, the level-(m+1) entry near its O corner transports to
+the same B-block entry at level m. This is the B-copy representative used
+for the glued X corner; the orientation flip is excluded by the radius-two
+bound before reducing both entries to the already established O-box result. -/
+theorem sgK_B_O_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.B, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.B, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.B,
+          ((⟨p, List.mem_toFinset.mpr
+            (corner_O_radius_two_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.B,
+          ((⟨q, List.mem_toFinset.mpr
+            (corner_O_radius_two_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  have hp' : p ∈ vertexOrder m :=
+    (corner_O_radius_two_transport m hm hp hpx hpy).1
+  have hq' : q ∈ vertexOrder m :=
+    (corner_O_radius_two_transport m hm hq hqx hqy).1
+  have hhighNoCorner :=
+    cp1_not_B_shift_radius_two (m + 1) (by omega) hpx hqx
+  have hhighOrient :
+      oBo (m + 1) (oTil (m + 2)) p q ↔ oNum (m + 2) p q := by
+    calc
+      oBo (m + 1) (oTil (m + 2)) p q ↔
+          oBo (m + 1) (oNum (m + 2)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hhighNoCorner.1 hhighNoCorner.2
+      _ ↔ oNum (m + 1) p q := oBo_num_iff_oNum (m + 1) hp hq
+      _ ↔ oNum (m + 2) p q := (oNum_succ_restrict m hp hq).symm
+  have hlowNoCorner :=
+    cp1_not_B_shift_radius_two m hm hpx hqx
+  have hlowOrient :
+      oBo m (oTil (m + 1)) p q ↔ oNum (m + 1) p q := by
+    calc
+      oBo m (oTil (m + 1)) p q ↔
+          oBo m (oNum (m + 1)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hlowNoCorner.1 hlowNoCorner.2
+      _ ↔ oNum m p q := oBo_num_iff_oNum m hp' hq'
+      _ ↔ oNum (m + 1) p q := by
+        unfold oNum
+        rw [vIdx_succ_of_mem hp', vIdx_succ_of_mem hq']
+  change
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+      pHeO m θ ax (oBo m (oTil (m + 1))) p q i j
+  calc
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oBo (m + 1) (oTil (m + 2))) (oNum (m + 2))
+        p q i j hhighOrient
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_box_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oBo m (oTil (m + 1))) p q i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oBo m (oTil (m + 1))) (oNum (m + 1))
+        p q i j hlowOrient).symm
+
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/
