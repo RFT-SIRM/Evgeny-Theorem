@@ -3291,3 +3291,12 @@ The fixed boundary term plus `affine_three_recurrence` now yields an exact formu
 
 The proof now exposes the exact all-angle result in the form
 `D_m(θ) = 3^{m-3} A_6(θ) + B_6(θ)` for every `m ≥ 3`, where `A_6` and `B_6` are explicit definitions in terms of the level-three defect, orientation gap, and high-power boundary residual. It also states the equivalent recurrence `D_{m+1}=3D_m+C_6(θ)`. This is a formal all-level growth law, not an elementary trigonometric simplification of `C_6(θ)`; the latter is still not claimed.
+
+
+## 2026-10-29 — Public status synchronized after the H6 proof
+
+The README and higher-moments status now reflect the verified theorem
+`D_{m+1}=3D_m+C_6(θ)` and `D_m=3^{m-3}A_6(θ)+B_6(θ)` for every
+angle and `m ≥ 3`. They explicitly preserve the two remaining H6 limitations:
+the general-angle level-2-to-3 transition and simplification of the finite
+level-three coefficient. The H8/H10 all-angle results remain open.

@@ -4,46 +4,51 @@
 
 **H⁴** has an exact closed form. See [THEOREM.md](../THEOREM.md).
 
-**H⁶, H⁸, H¹⁰** are an open research program. This document records
-what is currently established, what is not, and what the next steps are.
+**H⁶** now has a Lean-proved all-angle affine growth law for levels `m ≥ 3`;
+the finite-level coefficient is not yet simplified, and the level-2-to-3 base
+transition remains open. **H⁸ and H¹⁰** remain an open research program.
+This document records the proven H⁶ result, its limitations, and the remaining
+higher-moment steps.
 
 ---
 
 ## H⁶: Structural results
 
-### 1. Growth law (established numerically to machine precision)
+### 1. All-angle recurrence and affine growth (Lean-proved for m ≥ 3)
 
-For all tested `(m, θ)`:
-Δ_m(H⁶, θ) = α(θ)·3^m + β(θ)
+Writing
+`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`, the current
+Lean proof establishes
 
-Verification: coefficients `α`, `β` fitted from `m = 4, 5` predict `m = 3`
-with error below `10⁻⁸` across all tested θ values.
+$$
+D_{m+1}(\theta)=3D_m(\theta)+C_6(\theta),\qquad m\ge 3,
+$$
 
-No quadratic term `3^(2m)` is present. The coefficient of `9^m` in a
-3-point fit using `m = 3, 4, 5` is below `10⁻¹⁵` relative to the linear term.
+and equivalently
 
-### 2. Recurrence pattern (numerically observed; proof remains open)
+$$
+D_m(\theta)=3^{m-3}A_6(\theta)+B_6(\theta),\qquad m\ge 3.
+$$
 
-For `m ≥ 2`, the tested data are consistent with
-Δ_m(H⁶, θ) = 3 · Δ_{m−1}(H⁶, θ) + C(θ),
+The functions `C₆`, `A₆`, and `B₆` are defined exactly in
+`formalization/EvgenyTheorem/FinalTilde.lean` from the level-three defect,
+the level-three orientation gap, and the level-three high-power boundary
+residual. They are independent of m; no vanishing of the gap or residual is
+assumed. Both full Lean CI builds passed on commit
+`7ce1e9d687ce8b20d61bb6c5da39b0975f41519c`.
 
-where `C(θ)` appears independent of `m`. This is a finite-level numerical observation: checking `Δ_m − 3·Δ_{m−1}` at `m = 2, 3, 4, 5` does **not** prove the recurrence for all levels or all angles. An analytic derivation and a reproducible exact certificate remain open.
+### 2. Remaining base-transition and coefficient questions
 
-### 3. Candidate exact value at θ = π: C(π) = 5280
+The transition from level 2 to level 3 (`D_3 - 3D_2 = C₆(θ)`) is not yet
+formally proved for all angles, and the finite level-three expression for
+`C₆(θ)` has not been simplified to an elementary trigonometric expression.
 
-At `θ = π`, the computed recurrence constant is `5280 = 2⁵ · 3 · 5 · 11`. The integer is a candidate exact value supported by the calculations; this document does not claim an independent symbolic proof of the recurrence or of `C(π)`.
+### 3. Exact finite certificate at θ = π
 
-| θ | C(θ) |
-|---|------|
-| 0 | 0 (exact) |
-| π/6 | 327.985… |
-| π/4 | 729.785… |
-| π/3 | 1265.569… |
-| π/2 | 2595.411… |
-| 2π/3 | 3954.831… |
-| **π** | **5280** (exact integer) |
-
-At `θ = π`, the fitted growth law gives the candidate values `α(π) = −4112/3`, `β(π) = −2640`; these remain computationally inferred rather than Lean-proved identities.
+The sparse Gaussian-integer certificate gives the exact residual value 5280
+for tested transitions from levels 3 through 6 at `θ = π`. This is a finite
+arithmetic calculation; the Lean theorem does not yet separately normalize
+its general coefficient `C₆(π)` to 5280.
 
 ### 4. Path-class zero pattern on SG(1) (finite-level result)
 
@@ -72,11 +77,13 @@ whose SU(2) holonomies do not collapse to a finite trigonometric polynomial.
 
 ### 6. What remains open
 
-- Analytical expression for `C(θ)` at general `θ`.
-- Symbolic computation of all 486 walk contributions.
-- Whether `C(θ)` admits a closed form in any variable.
+- Prove the finite base transition `D_3 - 3D_2 = C₆(θ)` for every angle.
+- Simplify the exact level-three definition of `C₆(θ)` to an elementary expression, if possible.
+- Derive the corresponding all-angle recurrence and affine growth law for H⁸ and H¹⁰.
 
----
+The path-class inventory and exact sparse certificate remain useful for
+simplifying the finite coefficient; they are not needed to claim the all-level
+affine law for H⁶ when `m ≥ 3`.---
 
 ## H⁸ and H¹⁰: Numerical results
 

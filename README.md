@@ -59,11 +59,12 @@ at $\theta = \pi/2$, with geometric convergence confirmed through $m = 7$.
 | **Intensive limit** I_inf(pi/2) = -8/9 | Exact |
 | **Gauge invariance** | Spectral deviation < 8e-15 under random SU(2) gauge |
 | **Vanishes at p = 1, 2, 3** | Exact -- first nonzero at p = 4 |
-| **H6 growth law** alpha(theta)*3^m + beta(theta) | Established numerically to machine precision |
-| **H6 recurrence** $\Delta_m = 3\Delta_{m-1} + C(\theta)$ | Established numerically; $C(\pi) = 5280$ to within $0.1$ |
+| **H6 all-angle recurrence** ($m \ge 3$) | Lean-proved: $D_{m+1}=3D_m+C_6(\theta)$ with an exact finite level-three constant |
+| **H6 affine growth law** ($m \ge 3$) | Lean-proved: $D_m=3^{m-3}A_6(\theta)+B_6(\theta)$ |
+| **H6 coefficient simplification** | An elementary trigonometric expression for $C_6(\theta)$ remains open; exact $\theta=\pi$ certificate gives 5280 for tested transitions from levels 3 through 6 |
 | **H6 path-class zero theorem** | Single- and two-triangle classes contribute zero |
 | **H6/H8/H10 reference values** | Numerical regression, locked by tests |
-| **Closed form for H6, H8, H10** | Open -- no claim made |
+| **Elementary coefficient formula for H6; all-angle H8/H10 recurrence** | Open; H6's affine growth law is proved for $m ge 3$, but $C_6(\theta)$ is not simplified and the $m=2$ base transition is not proved for all angles |
 | **Lean 4: graph infrastructure** ($SG(m)$, `Vertex`, `Adj`, `degree`) | Computable, decidable, machine-checked (`lake build`) |
 | **Lean 4: operator-level closed form** (`traceDefect_closed`) | Machine-checked for every `m >= 1` and every `theta`, for the concrete operators; no `sorry`, standard axioms only (see below) |
 
@@ -141,50 +142,40 @@ The proof follows a different route from the hand proof in `docs/PROOF.md`: the 
 Check it yourself: `lake build`. The final theorems contain no `sorry` and depend only on
 the standard axioms `propext`, `Classical.choice`, `Quot.sound` (verify with `#print axioms EvgenyTheorem.traceDefect_closed`). Details and a file map: [`formalization/README.md`](formalization/README.md).
 
-What this does *not* cover: the closed form is claimed for `m >= 1` only (not `m = 0`), and only for the fourth
-moment; the H6/H8/H10 values remain numerical. The edge orientation in the Lean operator is the vertex-index
-order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
+What this does *not* cover: the theorem above is the fourth-moment formula only (`m >= 1`, not `m = 0`). The H6 branch now has a separate Lean-proved all-angle affine growth law for `m >= 3`, but its coefficient is still expressed through exact level-three data rather than a simplified trigonometric formula. The $m=2$ to $m=3$ base transition is not formally established for all angles, and the general H8/H10 recurrences remain open. The edge orientation in the Lean operator is the vertex-index order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
 
 ---
 
-## Higher moments: an open research program
+## Higher moments: H6 growth law and open H8/H10 program
 
-### H6 structural results
+### H6: formally proved affine growth for m ≥ 3
 
-**Growth law** (machine-precision verification):
-
-$$
-\Delta_m(H^6, \theta) = \alpha(\theta) \cdot 3^m + \beta(\theta)
-$$
-
-Fit from $m = 4, 5$ predicts $m = 3$ with error below $10^{-8}$.
-No quadratic $3^{2m}$ term (coefficient ratio $< 10^{-15}$).
-
-**Recurrence** (for $m \ge 2$, established numerically):
+For the sixth-moment numbering defect
+`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`, the current Lean proof establishes, for every real angle and every `m ≥ 3`,
 
 $$
-\Delta_m(H^6, \theta) = 3\, \Delta_{m-1}(H^6, \theta) + C(\theta)
+D_{m+1}(\theta)=3D_m(\theta)+C_6(\theta),
+\qquad
+D_m(\theta)=3^{m-3}A_6(\theta)+B_6(\theta).
 $$
 
-At $\theta = \pi$, numerically:
+The coefficient and offset are exact, m-independent finite level-three
+expressions assembled from the stabilized high-power boundary residual and
+the level-three orientation gap. Neither contribution is assumed to vanish.
+Both complete Lean formalization workflows passed on the source proving this
+result.
 
-$$
-C(\pi) \approx 5280 = 2^5 \cdot 3 \cdot 5 \cdot 11 \quad (\text{within } 0.1)
-$$
+This does not yet give an elementary trigonometric simplification for
+`C₆(θ)`, nor a Lean proof of the separate level-2-to-3 base transition for
+all angles. At `θ = π`, the exact sparse Gaussian-integer certificate gives
+residual 5280 for tested transitions from levels 3 through 6; the Lean
+coefficient has not yet been normalized to that integer by a separate theorem.
 
-At $\theta = \pi$, the growth law numerically matches the fractions
-$\alpha(\pi) = -4112/3$, $\beta(\pi) = -2640$. These are reproducible
-computational results (see `tests/test_path_class_h6.py`), not
-machine-checked closed-form theorems.
+### H8 and H10: still an open all-angle program
 
-**Path-class zero theorem**: on SG(1), only closed walks visiting
-all three triangles contribute to Delta(H^6). Single-triangle and
-two-triangle walk classes contribute exactly zero.
+The existing numerical data support affine growth for H8 and H10, but no
+general all-angle Lean recurrence or closed form is claimed for those moments.
 
-**Why H6 has no H4-type closed form**: every H4 contributing walk
-performs one triangular traversal, giving the same -4*sin^2(theta/2).
-The H6 class {0,1,2} contains 486 walks with different axis sequences
-whose SU(2) holonomies do not collapse to a finite trig polynomial.
 
 ### Numerical reference values at theta = pi/2
 

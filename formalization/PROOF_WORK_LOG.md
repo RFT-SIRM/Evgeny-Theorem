@@ -787,3 +787,10 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added `defectO6_num_affine_growth`, stating the all-angle law `D_m = 3^(m-3) A(θ) + B(θ)` for every `m ≥ 3`; and `defectO6_num_growth_recurrence`, stating the equivalent one-step recurrence with a single explicit constant.
 - These are consequences of the previously proved endpoint transport and residual stabilization; no assumption that the level-three gap or residual vanishes was introduced.
 - **Verification gate:** both full Lean builds must pass on the new SHA. The residual constant's simplified elementary expression at arbitrary `θ` remains a separate finite-level evaluation question.
+
+
+## 2026-10-29 — Verification of the named H6 growth-law API
+
+- Commit `7ce1e9d687ce8b20d61bb6c5da39b0975f41519c` passed both full Lean formalization workflows: PR run `40914856804` and push run `40914846902`.
+- The named recurrence and affine-growth theorems compile without changing the six endpoint proofs.
+- Updated public status text to separate the proved all-angle recurrence for `m ≥ 3` from the unsimplified finite coefficient and the level-2-to-3 base transition. H8/H10 remain open.
