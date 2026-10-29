@@ -1468,6 +1468,113 @@ theorem sgK_A_Y_entry_next_til
 
 
 
+
+/-- At the same operator level, `oTil n` and `oNum n` induce the same
+point-operator entries: every graph edge lies in the level-n vertex domain,
+where the exceptional `cp1 n` pair is absent. -/
+private theorem pHeO_til_eq_num_same_index
+    (n : ℕ) (hn : 1 ≤ n) (θ : ℝ) (ax : ℕ → Axis)
+    (p q : Point) (i j : C2) :
+    pHeO n θ ax (oTil n) p q i j =
+      pHeO n θ ax (oNum n) p q i j := by
+  exact pHeO_orient_congr n θ ax (oTil n) (oNum n)
+    (by
+      intro a b hab hE hfl
+      have hmEdge := EdgeB_mem n a.1 a.2 b.1 b.2 hE
+      have ha : a ∈ vertexOrder n :=
+        (mem_vertexOrder_iff n a).mpr hmEdge.1
+      have hb : b ∈ vertexOrder n :=
+        (mem_vertexOrder_iff n b).mpr hmEdge.2
+      obtain ⟨h1, h2⟩ := cp1_not_A n hn ha hb
+      exact oTil_of_no_corner h1 h2)
+    p q i j
+
+/-- The C-block at the O corner also transports across one refinement level.
+The C shift turns its orientation into the established C-copy orientation
+transfer; the small O box then lets the ordinary O-entry transport apply. -/
+theorem sgK_C_O_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.C,
+          ((⟨p, List.mem_toFinset.mpr
+            (corner_O_radius_two_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.C,
+          ((⟨q, List.mem_toFinset.mpr
+            (corner_O_radius_two_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  have hp' : p ∈ vertexOrder m :=
+    (corner_O_radius_two_transport m hm hp hpx hpy).1
+  have hq' : q ∈ vertexOrder m :=
+    (corner_O_radius_two_transport m hm hq hqx hqy).1
+  have hHighOrient : ∀ a b : Point,
+      oCo (m + 1) (oTil (m + 2)) a b ↔
+        oCo (m + 1) (oNum (m + 2)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC (m + 1) (p := a) (q := b)
+    change oTil (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b) ↔
+      oNum (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hLowOrient : ∀ a b : Point,
+      oCo m (oTil (m + 1)) a b ↔
+        oCo m (oNum (m + 1)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC m (p := a) (q := b)
+    change oTil (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b) ↔
+      oNum (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hHighC :
+      pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := by
+    have h := Hc_C_num_eq_parent_til (m + 1) (by omega) θ ax
+      (oNum_anti (m + 2))
+      ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i)
+      ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)
+    change pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j at h
+    exact h
+  have hLowC :
+      pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+        pHeO m θ ax (oTil m) p q i j := by
+    have h := Hc_C_num_eq_parent_til m hm θ ax
+      (oNum_anti (m + 1))
+      ((⟨p, List.mem_toFinset.mpr hp'⟩ : Pt m), i)
+      ((⟨q, List.mem_toFinset.mpr hq'⟩ : Pt m), j)
+    change pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+      pHeO m θ ax (oTil m) p q i j at h
+    exact h
+  change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oCo m (oTil (m + 1))) p q i j
+  calc
+    pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
+        p q i j (hHighOrient p q)
+    _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
+    _ = pHeO (m + 1) θ ax (oNum (m + 1)) p q i j :=
+      pHeO_til_eq_num_same_index (m + 1) (by omega) θ ax p q i j
+    _ = pHeO m θ ax (oNum m) p q i j :=
+      pHeO_corner_O_box_entry m hm θ ax hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil m) p q i j :=
+      (pHeO_til_eq_num_same_index m hm θ ax p q i j).symm
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p q i j := hLowC.symm
+    _ = pHeO m θ ax (oCo m (oTil (m + 1))) p q i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
+        p q i j (hLowOrient p q)).symm
+
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/

@@ -611,3 +611,11 @@ The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean bui
 
 - CI for `0bae1cddee6886964fb48b69cd4fb3220868df23` failed because `sgK_A_X_entry_next_til` appeared before `pHeO_corner_X_box_entry_next_til_num`, the theorem it calls. The theorem is present later in the same file; Lean processes declarations sequentially, so this was a source-order error, not a failed mathematical premise. The subsequent `rcases` error was cascading from the unresolved identifier.
 - Moved the state wrapper below the complete X point-entry theorem. No proof term or theorem statement was changed; only declaration order changed. The exact failing SHA is preserved in commit history. New full Lean CI is pending.
+
+
+## 2026-10-29 — Add C-block O-corner entry transport
+
+- Previous green checkpoint: `577d627912f51e5030a4827cd6e0afcb8efeb1c2` passed both full Lean workflows. The C-block was the remaining outer-copy case at the O coordinate box.
+- Added `pHeO_til_eq_num_same_index`, the same-level counterpart of the existing `pHeO_til_eq_num_of_level_domain`. It follows directly from `cp1_not_A) on every edge in the level-n graph.
+- Added `sgK_C_O_entry_next_til`. Its high and low C-copy orientations are converted using `cp1_shiftC) and the already-proved `Hc_C_num_eq_parent_til`; the O-box entry transport then handles the level change. This proves only a one-entry transport in the C block, not yet any fourth/fifth power equality.
+- Full Lean verification on this new SHA is pending; do not add power-sum claims until it passes.

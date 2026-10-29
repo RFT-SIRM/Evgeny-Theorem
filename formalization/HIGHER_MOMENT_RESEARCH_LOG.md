@@ -3166,3 +3166,8 @@ The corrected Y/C point-level transport and its A-block wrapper compile on the n
 ## 2026-10-29 — Declaration-order issue in the A-block X wrapper
 
 The failed build at `0bae1cddee6886964fb48b69cd4fb3220868df23` exposed a declaration-order mistake: the A-block state wrapper referenced the actual-tilde X point-entry theorem before that theorem was declared. The correction moves the wrapper to immediately after the X proof, preserving its proof and statement. Next step is to verify both Lean workflows on the new SHA before adding any further transport lemmas.
+
+
+## 2026-10-29 — C outer-copy O-box entry transport
+
+The C-copy at an O-local coordinate box has an orientation path already available in the source: `cp1_shiftC) removes the exceptional edge under the C shift, and `Hc_C_num_eq_parent_til` transfers the numbered C orientation to the parent `oTil). The new `sgK_C_O_entry_next_til` composes those facts with the ordinary O-box entry transport. This fills the third outer-copy entry case for the O corner; X/Y corner and power-sum assembly remain separate requirements.
