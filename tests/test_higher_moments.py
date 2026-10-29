@@ -524,8 +524,8 @@ def test_level3_p6_orientation_gap_matches_dense_operator(theta):
     )
 
 
-def test_exact_p6_boundary_residual_polynomial_levels_two_through_four():
-    """Exact symbolic certificate for the level-2/3/4 H6 recurrence transition."""
+def test_exact_p6_base_transition_and_coefficient_polynomial():
+    """Exact symbolic certificate of the H6 base transition R_2 = R_3."""
     from computational.p6_level3_orientation_certificate import (
         orientation_gap_polynomial,
         trace_polynomial,
@@ -548,12 +548,11 @@ def test_exact_p6_boundary_residual_polynomial_levels_two_through_four():
         return result
 
     def reduce_unit_circle(polynomial):
-        """Canonicalize with c^2 = 1 - s^2; coefficients remain exact integers."""
+        """Canonicalize c^2 = 1 - s^2 using exact integer coefficients."""
         result = dict(polynomial)
         while any(pc >= 2 for pc, _ps in result):
-            monomial = next((pc, ps) for pc, ps in result if pc >= 2)
-            pc, ps = monomial
-            coefficient = result.pop(monomial)
+            pc, ps = next((pc, ps) for pc, ps in result if pc >= 2)
+            coefficient = result.pop((pc, ps))
             for target, sign in (((pc - 2, ps), 1), ((pc - 2, ps + 2), -1)):
                 old = result.get(target, (0, 0))
                 value = (
@@ -566,17 +565,21 @@ def test_exact_p6_boundary_residual_polynomial_levels_two_through_four():
                     result[target] = value
         return result
 
-    def delta(level):
-        return combine_polynomials([
-            (1, trace_polynomial(level, commuting=False)),
-            (-1, trace_polynomial(level, commuting=True)),
-        ])
+    delta_cache = {}
 
-    # F_3 = D_num(3) - D_til(3), the finite orientation gap.
+    def delta(level):
+        if level not in delta_cache:
+            delta_cache[level] = combine_polynomials([
+                (1, trace_polynomial(level, commuting=False)),
+                (-1, trace_polynomial(level, commuting=True)),
+            ])
+        return delta_cache[level]
+
+    # F_3 = D_num(3) - D_til(3), the finite orientation gap in the Lean proof.
     f3 = orientation_gap_polynomial(3)
 
-    # The level-independent coefficient from the Lean recurrence is C_6 = R_3 - F_3,
-    # where R_m = D_{m+1} - 3 D_m + F_3.
+    # The stabilized recurrence gives D_(m+1) - 3 D_m + F_3 = R_3 for m >= 3.
+    # This certificate checks the missing base transition at m=2 exactly.
     def boundary_residual(level):
         return combine_polynomials([
             (1, delta(level + 1)),
@@ -593,14 +596,11 @@ def test_exact_p6_boundary_residual_polynomial_levels_two_through_four():
     }
     r2 = boundary_residual(2)  # D_3 - 3 D_2 + F_3
     r3 = boundary_residual(3)  # D_4 - 3 D_3 + F_3
-    r4 = boundary_residual(4)  # D_5 - 3 D_4 + F_3
     assert r2 == expected_r
     assert r3 == expected_r
-    assert r4 == expected_r
     assert evaluate_polynomial(r2, c=0, s=1) == -1920
 
-    # Exact finite base transition: D_3 - 3 D_2 has the same polynomial
-    # as the stabilized recurrence coefficient inferred from levels 3 and 4.
+    # Hence C_6 = D_3 - 3 D_2 = R_2 - F_3, with no numeric angle sampling.
     c6 = combine_polynomials([
         (1, delta(3)),
         (-3, delta(2)),
