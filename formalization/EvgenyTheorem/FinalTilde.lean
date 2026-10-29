@@ -1455,6 +1455,79 @@ theorem pHeO_corner_X_box_entry_next_til
         exact not_congr h3
 
 
+
+/-- The X-corner entry transport with the actual orientations used in the
+adjacent-level residual: high level `m+1) uses `oTil (m+2)), while the
+parent uses `oTil (m+1)). At these two restricted graphs the flip is absent
+from the high local edge and the old parent edge; the B-copy pullback is
+therefore reconciled with the parent tilde orientation explicitly. -/
+theorem pHeO_corner_X_box_entry_next_til_num
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 2) (hpy : p.2 ≤ 2)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO m θ ax (oTil (m + 1)) p' q' i j := by
+  have hhighOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB (m + 1) a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges (m + 1) →
+        (oTil (m + 2) a b ↔ oNum (m + 2) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem (m + 1) a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder (m + 1) :=
+      (mem_vertexOrder_iff (m + 1) a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder (m + 1) :=
+      (mem_vertexOrder_iff (m + 1) b).mpr hmEdge.2
+    obtain ⟨h1, h2⟩ := cp1_not_A (m + 1) (by omega) ha hb
+    exact oTil_of_no_corner h1 h2
+  have hhigh := pHeO_orient_congr (m + 1) θ ax
+    (oTil (m + 2)) (oNum (m + 2)) hhighOrient
+  rcases pHeO_corner_X_box_entry_next_num m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p', q', hp', hq', rfl, rfl, hentry⟩
+  have hparentOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB m a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges m →
+        (oBo m (oNum (m + 1)) a b ↔ oTil (m + 1) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m b).mpr hmEdge.2
+    have hbo : oBo m (oNum (m + 1)) a b ↔ oNum m a b :=
+      oBo_num_iff_oNum m ha hb
+    have hnum : oNum m a b ↔ oNum (m + 1) a b := by
+      unfold oNum
+      rw [vIdx_succ_of_mem ha, vIdx_succ_of_mem hb]
+    obtain ⟨h1, h2⟩ := cp1_not_A m (by omega) ha hb
+    calc
+      oBo m (oNum (m + 1)) a b ↔ oNum m a b := hbo
+      _ ↔ oNum (m + 1) a b := hnum
+      _ ↔ oTil (m + 1) a b := (oTil_of_no_corner h1 h2).symm
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+      pHeO (m + 1) θ ax (oNum (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j :=
+      hhigh _ _ i j
+    _ = pHeO m θ ax (oBo m (oNum (m + 1))) p' q' i j := hentry
+    _ = pHeO m θ ax (oTil (m + 1)) p' q' i j :=
+      pHeO_orient_congr m θ ax
+        (oBo m (oNum (m + 1))) (oTil (m + 1))
+        hparentOrient p' q' i j
+
+
 /-- The level-(m+1) radius-two support at Y is the image of the level-m
 box under the C-copy shift. The C orientation and all matrix weights are
 deliberately left to the subsequent path-transport proof. -/

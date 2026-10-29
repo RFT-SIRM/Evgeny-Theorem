@@ -3101,3 +3101,11 @@ The correction isolates this index-set conversion in `glueRHS6_sum_ite_eq_subtyp
 - The orientation step is justified on every relevant flux edge by `faceB) together with `cp1_shiftB), and the reverse direction uses antisymmetry. Thus the single flipped edge is explicitly carried to its parent counterpart rather than suppressed by a locality claim.
 - This closes one local orientation dependency only. The adjacent-level `K^4)/`K^5) diagonal identities and `R_{m+1}=R_m) remain open.
 - Verification of the new patch: pending current-SHA Lean CI. Continue with an actual `sgK) entry transport only after that build passes; do not wait for Python to begin analysis.
+
+
+## 2026-10-29 — Index audit for the X-corner exceptional orientation
+
+- The green checkpoint `07db1fb3a891b738429b4c08d4ccbcd6779dc99d` contains the X-corner `oTil) entry lemma for the pair `oTil (m+1)`/`oTil m`. The p=6 adjacent-level residual bridge instead asks for `oTil (m+2)` on level `m+1` and `oTil (m+1)` on level `m`.
+- Added a separately named lemma with the exact residual indices, leaving the earlier proved lemma and its history intact. The orientation proof is based on the fact that the high-level flip lies outside `vertexOrder (m+1)), then uses the established B-copy orientation equivalence and the absence of the next flip on the parent vertex set. It does not silently identify the C/B copy orientation with ordinary numbering.
+- This is still insufficient for high-power residual stability; the next step must compose the entry identities for the specific `K²/K³) factors in the finite radius-two path sums, corner by corner.
+- Verification status for this source change: pending full Lean CI.

@@ -538,3 +538,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The proof uses the existing local B-entry identity and the already-established `faceB` / `cp1_shiftB` transport to show the flipped edge maps to the flipped parent edge; reverse edge orientation is handled via `OAnti). It does not assume `oTil = oNum) at X.
 - This is a necessary local entry lemma for the C/Y-copy exceptional-orientation case, not yet a power-4/power-5 identity. The new SHA's full Lean build is pending.
 - Next: if Lean passes, lift the per-edge transport to the concrete `sgK) base-entry identity under the O/A, X/B, and Y/C support equivalences, then use finite path sums to transport powers 4 and 5. If it fails, fix the first real Lean error before extending the proof.
+
+
+## 2026-10-29 — Correctly indexed X-corner transport for the tilde recurrence
+
+- Verified that commit `07db1fb3a891b738429b4c08d4ccbcd6779dc99d` passed both full Lean builds: push [40856810849](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40856810849) and PR [40856818445](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40856818445). Python push/PR were still in progress; they did not gate continued analysis.
+- Inspection of the residual theorem's actual indices shows the adjacent-level comparison needs the high entry at orientation `oTil (m+2)` and the parent entry at `oTil (m+1)`. The previously added local lemma `pHeO_corner_X_box_entry_next_til` concerns the unshifted sequence `oTil (m+1)` to `oTil m`; it is valid but does not itself match the residual theorem's indices.
+- Added `pHeO_corner_X_box_entry_next_til_num` for the correctly indexed pair. It first restricts the high `oTil (m+2)) orientation to `oNum (m+2)) on vertices of level `m+1), transports the X box through the B shift, then explicitly identifies the pulled-back B orientation with `oTil (m+1)) on the parent graph.
+- This repairs an index alignment dependency only. It is still a local entry theorem, not an equality of powers four/five or a proof of residual stability. Current-SHA Lean CI is pending.
