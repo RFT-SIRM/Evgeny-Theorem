@@ -1,5 +1,6 @@
 import EvgenyTheorem.FinalTilde
 import Mathlib.Algebra.MvPolynomial.Basic
+import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 import Mathlib.Tactic
 
 /-!
@@ -17,11 +18,11 @@ namespace EvgenyTheorem
 
 open Matrix
 
-abbrev H6Poly := MvPolynomial (Fin 2) (Complex ℤ)
+abbrev H6Poly := MvPolynomial (Fin 2) GaussianInt
 
 def h6PolyC : H6Poly := MvPolynomial.X 0
 def h6PolyS : H6Poly := MvPolynomial.X 1
-def h6PolyI : Complex ℤ := ⟨0, 1⟩
+def h6PolyI : GaussianInt := ⟨0, 1⟩
 
 /-- Forward edge block `-U` for `U = c I - i s σ_a`. -/
 def h6AxisForwardEntry (a : Axis) (i j : C2) : H6Poly :=
@@ -69,7 +70,7 @@ def h6EdgeReverseEntry (m : ℕ) (ax : ℕ → Axis)
 def h6PHeOPoly (m : ℕ) (ax : ℕ → Axis) (o : Point → Point → Prop)
     [DecidableRel o] (p q : Point) (i j : C2) : H6Poly :=
   if p = q then
-    if i = j then MvPolynomial.C ((pdeg m p : ℕ) : Complex ℤ) else 0
+    if i = j then MvPolynomial.C ((pdeg m p : ℕ) : GaussianInt) else 0
   else if EdgeB m p.1 p.2 q.1 q.2 = true then
     let e : Point × Point := if p ≤ q then (p, q) else (q, p)
     if o p q then h6EdgeForwardEntry m ax e i j
