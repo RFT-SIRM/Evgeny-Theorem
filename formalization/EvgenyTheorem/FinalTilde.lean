@@ -1209,7 +1209,8 @@ theorem sgK_radius_two_support_X_box_iff
   · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
     have hbox := (corner_X_radius_two_box_iff m hm (List.mem_toFinset.mp z.2.1.2)).mpr
       ⟨p, hp, hpx, hpy, hz⟩
-    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1 z.2.1.2
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1
+      (List.mem_toFinset.mp z.2.1.2)
     refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
     · simpa [hw] using hbox.1
     · simp [hw]
@@ -1242,7 +1243,8 @@ theorem sgK_radius_two_support_Y_box_iff
   · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
     have hbox := (corner_Y_radius_two_box_iff m hm (List.mem_toFinset.mp z.2.1.2)).mpr
       ⟨p, hp, hpx, hpy, hz⟩
-    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1 z.2.1.2
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1
+      (List.mem_toFinset.mp z.2.1.2)
     refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
     · simp [hw]
     · simpa [hw] using hbox.1

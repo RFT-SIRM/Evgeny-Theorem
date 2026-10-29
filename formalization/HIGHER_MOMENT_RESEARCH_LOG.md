@@ -2957,3 +2957,9 @@ The correction commit changes only the annotation and converts the three point-m
 
 Next after CI passes: define the concrete finite-state reindexings and prove that each K²/K³ product factor is preserved under the A/B/C corner transport, including vertex degree, axis index, and orientation.
 
+
+
+## 4ah. Convert the final two vertexOrder membership proofs
+
+The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pair annotation and O/X/Y box-lemma calls, then identified two remaining list-versus-Finset membership mismatches in `vertexOrder_sum_le`. Both calls now receive `List.mem_toFinset.mp z.2.1.2`. No theorem statement changed and no new mathematical claim was introduced; the new SHA's CI is pending.
+

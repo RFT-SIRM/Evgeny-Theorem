@@ -401,3 +401,11 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - This commit only repairs parser/elaboration errors in the three existing support-characterization proofs. No statement or mathematical target was added or strengthened.
 - CI for the correction is pending. Once the full Lean build and Python 3.11/3.12 push and PR workflows are green, continue with entrywise K²/K³ path-weight transport. Do not claim `R_(m+1)=R_m` yet.
 
+
+
+## 2026-10-29 — Finish Finset-to-list conversion in the support bounds
+
+- The next Lean build after the prior correction still failed at two `vertexOrder_sum_le` calls. The log showed that these lemmas also expect list membership, whereas the `Pt` subtype stores membership in `(vertexOrder (m+1)).toFinset`.
+- Converted the two remaining premises with `List.mem_toFinset.mp`; this is a typing repair only, with no change to any theorem statement.
+- CI for this fix is pending. No additional mathematical result is claimed.
+
