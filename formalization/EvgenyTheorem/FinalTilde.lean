@@ -1618,7 +1618,7 @@ theorem sgK_C_X_entry_next_til
   have hLowC :
       pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
         pHeO m θ ax (oTil m) p0 q0 i j := by
-    have h := Hc_C_num_eq_parent_til m hm θ ax
+    have h := Hc_C_num_eq_parent_til m (by omega) θ ax
       (oNum_anti (m + 1))
       ((⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m), i)
       ((⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), j)

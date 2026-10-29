@@ -3181,3 +3181,8 @@ The failed C/O attempt exposed the key constraint: `oTil n = oNum n` is not a gl
 ## 2026-10-29 — C/X block entry transport
 
 The C/X entry bridge now composes the verified point-level X-box tilde transport with `Hc_C_num_eq_parent_til`. At the high and low levels, the C-copy pullback means orientation changes can be justified using `cp1_shiftC` only; this preserves the exceptional-edge semantics. The companion B/Y bridge is still required before assembling the cross-level fourth/fifth-power diagonal equalities.
+
+
+## 2026-10-29 — Make the C/X parent bound explicit
+
+The parent `Hc_C_num_eq_parent_til` invocation now discharges its `1 ≤ m` bound from `3 ≤ m` via `by omega`. This prevents the same predicate mismatch previously found in the C/O attempt. No mathematical statement changed; full Lean CI on the new commit is required before continuing.

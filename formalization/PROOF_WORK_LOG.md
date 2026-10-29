@@ -633,3 +633,8 @@ The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean bui
 - Checkpoint `7cbfc568d479708a59dd8bbde6d9349c76fb7be4` has both Lean workflow runs and both test workflow runs green.
 - Added `sgK_C_X_entry_next_til` for the C-copy at the X corner. It uses the existing X-box tilde transport for the point-level operator and the existing `Hc_C_num_eq_parent_til` theorem on both levels. The only `oTil)-to-`oNum) changes are across a C-shift, justified by `cp1_shiftC`, so this does not assume the exceptional edge is absent globally.
 - This fills the C/X side of the glued B/Y–C/X pair; the B/Y state transport is still missing. The proof is local to the radius-two X box and does not yet prove the fourth/fifth-power diagonal transport. New-SHA full Lean CI pending.
+
+
+## 2026-10-29 — Pre-empt lower-level C/X bound mismatch
+
+The C/X transport uses `Hc_C_num_eq_parent_til` at the parent level `m). Its precondition is `1 ≤ m`, while the theorem's available bound is `3 ≤ m`; these propositions are mathematically compatible but not accepted as a direct argument by Lean. Replaced the argument by `by omega` before relying on a failed build. This is a proof-typing correction; the orientation argument remains restricted to C-shifted points via `cp1_shiftC`. New SHA CI is pending.
