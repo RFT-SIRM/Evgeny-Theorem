@@ -1039,6 +1039,55 @@ theorem pHeO_corner_O_box_entry_next_num
           exact oNum_succ_restrict m ha' hb')
         p q i j
 
+
+/-- For operator level n, the exceptional edge used by `oTil (n+1)`
+lies outside the level-n vertex set. Consequently the actual tilde
+orientation and the numbering give the same point-operator entry. -/
+theorem pHeO_til_eq_num_of_level_domain
+    (n : ℕ) (hn : 1 ≤ n) (θ : ℝ) (ax : ℕ → Axis)
+    (p q : Point) (i j : C2) :
+    pHeO n θ ax (oTil (n + 1)) p q i j =
+      pHeO n θ ax (oNum (n + 1)) p q i j := by
+  apply pHeO_orient_congr n θ ax (oTil (n + 1)) (oNum (n + 1))
+  · intro a b hab hE hfl
+    have hmEdge := EdgeB_mem n a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder n :=
+      (mem_vertexOrder_iff n a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder n :=
+      (mem_vertexOrder_iff n b).mpr hmEdge.2
+    exact oTil_of_no_corner (cp1_not_A n hn ha hb).1
+      (cp1_not_A n hn ha hb).2
+  · exact p
+  · exact q
+  · exact i
+  · exact j
+
+/-- Across the O/A corner box, the level-(m+1) entry using the actual
+tilde orientation pulls back to the parent-level entry using its tilde
+orientation. The orientation conversion is justified by the fact that
+`cp1` is outside each operator's own vertex domain. -/
+theorem pHeO_corner_O_box_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : p.2 ≤ 2)
+    (hqx : q.1 ≤ 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+      pHeO m θ ax (oTil (m + 1)) p q i j := by
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_til_eq_num_of_level_domain (m + 1) (by omega)
+        θ ax p q i j
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_box_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil (m + 1)) p q i j :=
+      (pHeO_til_eq_num_of_level_domain m (by omega)
+        θ ax p q i j).symm
+
+
 /-- Across the X/B corner box, the level-(m+1) entry using oNum (m+2)
 pulls back to the corresponding parent entry with its actual B-copy
 orientation, oBo m (oNum (m+1)). -/
