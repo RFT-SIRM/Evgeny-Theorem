@@ -1040,6 +1040,25 @@ theorem pHeO_corner_O_box_entry_next_num
         p q i j
 
 
+/-- A point-entry depends on the orientation only through this pair. -/
+private theorem pHeO_rel_congr_local
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (p q : Point) (i j : C2) (h : o p q ↔ o' p q) :
+    pHeO m θ ax o p q i j = pHeO m θ ax o' p q i j := by
+  classical
+  by_cases hpq : p = q
+  · subst hpq
+    rw [pHeO_diag, pHeO_diag]
+  · by_cases hE : EdgeB m p.1 p.2 q.1 q.2 = true
+    · rw [pHeO_edge_eq m θ ax o hpq hE,
+        pHeO_edge_eq m θ ax o' hpq hE]
+      by_cases ho : o p q
+      · rw [if_pos ho, if_pos (h.mp ho)]
+      · rw [if_neg ho, if_neg (fun h' => ho (h.mpr h'))]
+    · rw [pHeO_zero_of_not_edge m θ ax o hpq hE,
+        pHeO_zero_of_not_edge m θ ax o' hpq hE]
+
 /-- The O/A corner-entry transport for the actual tilde orientations used by
 the adjacent-level residual. In the radius-two O box, the exceptional cp1
 edge cannot occur at either orientation level, so oTil reduces to oNum and
@@ -1055,14 +1074,14 @@ theorem pHeO_corner_O_box_entry_next_til
       pHeO m θ ax (oTil (m + 1)) p q i j := by
   have hpowHi : 2 < 2 ^ (m + 2) - 1 := by
     have hmHi : 3 ≤ m + 2 := by omega
-    have hbound : 3 ≤ 2 ^ (m + 2) := by
+    have hbound : 4 ≤ 2 ^ (m + 2) := by
       calc
         3 ≤ 2 ^ 3 := by norm_num
         _ ≤ 2 ^ (m + 2) := Nat.pow_le_pow_right (by norm_num) hmHi
     omega
   have hpowLo : 2 < 2 ^ (m + 1) - 1 := by
     have hmLo : 3 ≤ m + 1 := by omega
-    have hbound : 3 ≤ 2 ^ (m + 1) := by
+    have hbound : 4 ≤ 2 ^ (m + 1) := by
       calc
         3 ≤ 2 ^ 3 := by norm_num
         _ ≤ 2 ^ (m + 1) := Nat.pow_le_pow_right (by norm_num) hmLo
@@ -1086,7 +1105,7 @@ theorem pHeO_corner_O_box_entry_next_til
   calc
     pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
         pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
-      pHeO_rel_congr (m + 1) θ ax (oTil (m + 2)) (oNum (m + 2))
+      pHeO_rel_congr_local (m + 1) θ ax (oTil (m + 2)) (oNum (m + 2))
         p q i j (oTil_of_no_corner hhi hhi')
     _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
       pHeO_corner_O_box_entry_next_num m hm θ ax
