@@ -1404,6 +1404,109 @@ theorem sgK_radius_two_support_Y_box_iff
       omega
 
 
+
+/-- Parent-level support for a radius-two box around the upper corner Y. -/
+def sgK_radius_two_Y_parent_support (m : ℕ) (c : GCopy) : Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ z.2.1.1.1 ≤ 2 ∧ 2 ^ m ≤ z.2.1.1.2 + 2
+
+/-- The Y-corner radius-two support is in bijection with its parent-level
+box under the inverse C shift. Coordinates are pulled back explicitly;
+this identifies only the finite state sets, not their matrix weights. -/
+noncomputable def sgK_radius_two_support_Y_equiv
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_two_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_two_Y_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    let p : Point := (z.1.2.1.1.1, z.1.2.1.1.2 - 2 ^ m)
+    have hz := (sgK_radius_two_support_Y_box_iff m hm hw).mp z.2
+    have hp : p ∈ vertexOrder m := by
+      rcases hz.2 with ⟨q, hq, _, _, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      have hpEq : p = q := by
+        dsimp [p]
+        exact Prod.ext hcoordx (by omega)
+      rw [hpEq]
+      exact hq
+    have hbounds : p.1 ≤ 2 ∧ 2 ^ m ≤ p.2 + 2 := by
+      rcases hz.2 with ⟨q, _, hqx, hqy, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      constructor
+      · dsimp [p]
+        rw [hcoordx]
+        exact hqx
+      · dsimp [p]
+        rw [hcoordy]
+        simpa [Nat.add_sub_cancel_right] using hqy
+    refine ⟨(z.1.1, (⟨p, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
+    simp only [sgK_radius_two_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hbounds.1, hbounds.2⟩
+  · intro z
+    have hp : shiftPoint (2 ^ m) 0 1 z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inr (List.mem_map.mpr
+        ⟨z.1.2.1.1, List.mem_toFinset.mp z.1.2.1.2, rfl⟩))
+    refine ⟨(z.1.1,
+      (⟨shiftPoint (2 ^ m) 0 1 z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+        z.1.2.2)), ?_⟩
+    apply (sgK_radius_two_support_Y_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_two_Y_parent_support m w.1 := z.2
+    simp only [sgK_radius_two_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, ⟨z.1.2.1.1,
+      List.mem_toFinset.mp z.1.2.1.2, hparent.2.1, hparent.2.2, rfl⟩⟩
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        have hz := (sgK_radius_two_support_Y_box_iff m hm hw).mp z.2
+        rcases hz.2 with ⟨q, _, _, _, hpoint⟩
+        have hcoordx : z.1.2.1.1.1 = q.1 := by
+          have h := congrArg Prod.fst hpoint
+          simpa [shiftPoint] using h
+        have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+          have h := congrArg Prod.snd hpoint
+          simpa [shiftPoint] using h
+        change shiftPoint (2 ^ m) 0 1
+          (z.1.2.1.1.1, z.1.2.1.1.2 - 2 ^ m) = z.1.2.1.1
+        simp only [shiftPoint, zero_mul, one_mul, Nat.add_zero]
+        apply Prod.ext
+        · rfl
+        · omega
+      · rfl
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        dsimp
+        simp [shiftPoint, Nat.add_sub_cancel_right]
+      · rfl
+
+
+
+
 end EvgenyTheorem
 
 

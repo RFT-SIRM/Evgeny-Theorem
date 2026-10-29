@@ -480,3 +480,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Replaced the mismatched `change` with `simp [shiftPoint, Nat.add_sub_cancel_right]` on the actual goal. This directly unfolds the shifted coordinates and cancels the added/subtracted (2^m); no definition or mathematical claim changed.
 - Failing runs reviewed: push Lean [40836229850](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836229850), PR Lean [40836234409](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836234409). CI for this correction is pending.
 
+## 2026-10-29 — Y/C support equivalence on the verified X checkpoint
+
+- Before this change, all four workflows were green on the exact source SHA `0ce5f8f4d65e796e9b86d9a8bdb81062047f6860`: push Lean [40836563072](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836563072), PR Lean [40836569337](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836569337), push Python [40836562916](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836562916), and PR Python [40836569344](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836569344), including fast and slow tests on both Python versions.
+- Added `sgK_radius_two_Y_parent_support` and `sgK_radius_two_support_Y_equiv`, the C-shift counterpart to the compiled X/B equivalence. The inverse point is explicit: `(x, y - 2^m)); the forward map is `shiftPoint (2^m) 0 1). Existence witnesses are unpacked only in Prop-valued goals.
+- Scope: geometrical support correspondence only. It does not identify `sgK` entries or powers and does not prove (R_{m+1}=R_m). The new SHA's full Lean build and Python push/PR workflows must pass before the next change.
+- Next: make the three O/X/Y support equivalences serve one concrete purpose: reindex the finite (K^2/K^3) path sums, proving the entrywise transfer needed for (R_{m+1}=R_m). Preserve the actual C-copy `oCo`/`oTil` orientation.
+

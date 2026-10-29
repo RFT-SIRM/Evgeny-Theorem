@@ -3046,3 +3046,11 @@ for `m ≥ 3`. This is the missing step after the already-compiled theorem `defe
 - After the prior correction, the only remaining Lean error was at line 1368: the `right_inv` goal contained the coordinates of `shiftPoint (2^m) 1 0 p`, so the proposed literal pair equality was not definitionally equal to the goal.
 - Replaced the brittle `change` with direct simplification of `shiftPoint` and `Nat.add_sub_cancel_right`, matching the actual goal. This is an elaboration-only correction. Residual stability is not proved yet.
 
+## 2026-10-29 — Y/C support equivalence on the verified X checkpoint
+
+**Verified base:** SHA `0ce5f8f4d65e796e9b86d9a8bdb81062047f6860` passed both full Lean builds and both Python workflows (versions 3.11 and 3.12, fast and slow tests): push Lean [40836563072](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836563072), PR Lean [40836569337](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836569337), push Tests [40836562916](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836562916), PR Tests [40836569344](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836569344).
+
+Added `sgK_radius_two_Y_parent_support` and `sgK_radius_two_support_Y_equiv` in `FinalTilde.lean`. This matches the existing O/A and X/B support mappings and uses the explicit C-shift inverse coordinate `(x, y - 2^m)). The result is a finite-state equivalence, not a matrix weight identity.
+
+The all-level proof still requires showing that the high-level and parent-level base entries agree for all states in these supports under the nested orientations of `Hc), then transporting (K²/K³) factors and reindexing the outer `sgGlue` sum. The C orientation must remain `oCo`/`oTil`; no general (R_{m+1}=R_m) result is claimed. New-SHA CI is pending.
+
