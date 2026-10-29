@@ -3146,3 +3146,8 @@ Next mathematical work must start from the concrete high-root `sgK) support and 
 The current green checkpoint already had `pHeO_corner_O_box_entry_next_num`, but it did not state the exact orientation pair required by the adjacent-level residual. Added `pHeO_corner_O_box_entry_next_til`: on the O radius-two box, the exceptional edge `cp1 n) has x-coordinate `2^n-1), which is strictly greater than 2 for the two relevant levels `n=m+1,m+2). Therefore both `oTil) relations coincide with `oNum) on the local pair, and the numbered transport gives the desired equality.
 
 The proof keeps both levels and both orientations explicit. It transports point-operator entries only; it does not yet lift the result to `sgK) on glued-root states or imply equality of the fourth/fifth powers. The next concrete check is to use the root copy label to specialize this point-entry result to the A-block of `sgK), then handle the shifted B/C blocks separately. New-SHA Lean verification is pending.
+
+
+## 2026-10-29 — O-box Lean failure diagnosis and correction
+
+The failed SHA `3fec4bd1c1e02b1f2c16ab146c46b48b7c434e03` showed a too-weak arithmetic estimate and a missing imported theorem. Corrected on `1b99dc16f912bce2fe04cd65c6ee26fcbd7afc09`: use `4 ≤ 2^n` for `2 < 2^n-1), and prove the pointwise orientation congruence locally from already imported low-level lemmas. This remains a point-entry result only. Wait for both Lean workflows before making another mathematical change.
