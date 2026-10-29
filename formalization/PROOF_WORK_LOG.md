@@ -693,3 +693,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added a common support-equivalence wrapper that discharges the one-step and two-step row/column vanishing conditions required by the already-proved finite matrix-power lemma. Its only extra premise is the explicit inclusion of the low-level radius-two support into the chosen parent support.
 - Added the B/O endpoint specialization using `sgK_radius_two_support_O_equiv` and the existing `sgK_B_O_entry_next_til` local entry bridge. This is the partner side of the previously compiled A/X case.
 - No arbitrary matrix equality or new graph/orientation assumption is introduced. The new endpoint is conditional on the existing local bridge and explicit support inclusion; the current SHA must pass both full Lean workflows before proceeding to A/Y and C/O.
+
+
+## 2026-10-29 — Fix the B/O root normalization failures from Lean CI
+
+- Failed PR Lean build: [run 40892622118](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40892622118), on parent SHA `9ad7ea9007fb2a79d5ba5914abff09c3f3d97267`. The reported failures were all in `sgK_B_O_diag_four_five_transport`: the support membership proof, the root equality under the equivalence, and the two coordinate bounds for support inclusion.
+- Cause: simplification did not discharge the conditional definition of `sgK_root_pullback_pt` at the O corner; it left `if 0 = 2^(m+1) then ...` expressions. The proof now invokes the existing `sgK_root_pullback_pt_O` lemma explicitly and derives the two zero-coordinate facts from it.
+- Rebuilt `hwT`, `hroot`, and `hsubset` using those concrete coordinate equalities. This changes no mathematical assumptions and does not replace the local-entry bridge.
+- **Gate:** check full Lean builds on the corrected SHA (push and PR) before adding any more corner cases. Then check the test workflow statuses. If Lean fails again, fix that failure first.

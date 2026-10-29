@@ -3230,3 +3230,8 @@ This is a single corner/copy case only. It does not yet provide the uniform `h4/
 ## 2026-10-29 — Common support wrapper and B/O fourth/fifth diagonal case
 
 The shared support-equivalence wrapper now assembles the one-step and two-step zero-outside obligations from the symmetric radius-two support and the existing `sgK_pow_two_entry_zero_outside_radius_two` theorem. The B-copy O-corner specialization uses the previously established `sgK_B_O_entry_next_til` entry transport and `sgK_radius_two_support_O_equiv`. This handles the B/O glued endpoint paired with A/X, but it is not yet a uniform theorem for all glued roots. Full Lean push and PR builds on the new SHA are required before adding the remaining corner cases.
+
+
+## 2026-10-29 — B/O failed build: normalize the O-corner pullback explicitly
+
+The first B/O specialization failed because `simp [sgK_root_pullback_pt, hwPoint]` left conditional point definitions unresolved. The fix explicitly uses `sgK_root_pullback_pt_O` to prove the pulled-back point is O, then derives its first and second coordinates as zero. Those facts support the finite-parent membership, root-equivalence equality, and radius-two subset inclusion. No new hypotheses were introduced. The B/O specialization remains unaccepted until both full Lean push and PR workflows pass on the corrected SHA.

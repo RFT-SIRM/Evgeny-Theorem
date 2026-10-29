@@ -3390,13 +3390,33 @@ private theorem sgK_B_O_diag_four_five_transport
   let T : Finset (WSG m) := sgK_radius_two_O_parent_support m w.1
   let e := sgK_radius_two_support_O_equiv m hm (w := w) hwPoint
   have hwS : w ∈ S := by simp [S, sgK_radius_two_support, hwPoint]
+  have hpull : (sgK_root_pullback m w).2.1.1 = ((0, 0) : Point) := by
+    change (sgK_root_pullback_pt m w.2.1).1 = ((0, 0) : Point)
+    exact sgK_root_pullback_pt_O m hwPoint
+  have hrootX : (sgK_root_pullback m w).2.1.1.1 = 0 := by
+    have h := congrArg Prod.fst hpull
+    simpa using h
+  have hrootY : (sgK_root_pullback m w).2.1.1.2 = 0 := by
+    have h := congrArg Prod.snd hpull
+    simpa using h
   have hwT : sgK_root_pullback m w ∈ T := by
-    simp [T, sgK_radius_two_O_parent_support, sgK_root_pullback,
-      sgK_root_pullback_pt, hwPoint]
+    simp only [T, sgK_radius_two_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨rfl, ?_, ?_⟩
+    · rw [hrootX]
+      norm_num
+    · rw [hrootY]
+      norm_num
   have hroot : e ⟨w, hwS⟩ = ⟨sgK_root_pullback m w, hwT⟩ := by
     apply Subtype.ext
-    simp [e, sgK_radius_two_support_O_equiv, sgK_root_pullback,
-      sgK_root_pullback_pt, hwPoint]
+    change (sgK_radius_two_support_O_equiv m hm (w := w) hwPoint
+      ⟨w, hwS⟩).1 = sgK_root_pullback m w
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        exact hwPoint.trans hpull.symm
+      · rfl
 
   have hEntry : ∀ a b : {z : WSG (m + 1) // z ∈ S},
       sgK (m + 1) θ ax (oTil (m + 2)) a.1 b.1 =
@@ -3473,8 +3493,10 @@ private theorem sgK_B_O_diag_four_five_transport
       Finset.mem_univ, true_and]
     refine ⟨?_, ?_, ?_⟩
     · simpa [sgK_root_pullback] using hzs.1
-    · simpa [sgK_root_pullback, sgK_root_pullback_pt, hwPoint] using hzs.2.2.1
-    · simpa [sgK_root_pullback, sgK_root_pullback_pt, hwPoint] using hzs.2.2.2.2
+    · have hbound := hzs.2.2.1
+      simpa [hrootX] using hbound
+    · have hbound := hzs.2.2.2.2
+      simpa [hrootY] using hbound
 
   exact sgK_diag_four_five_transport_of_support_equiv
     m θ ax T e (by simpa [S] using hwS) hwT hroot hEntry hsubset
