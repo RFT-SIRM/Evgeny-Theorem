@@ -392,3 +392,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - This is the geometric support-reindexing interface only. It does not establish equality of any matrix entry, equality of the weights in the K²/K³ path sums, or `R_(m+1)=R_m`. CI for the new source SHA is pending.
 - Next: use these characterizations to construct actual finite-state reindexing maps, then prove preservation of all entries along the two- and three-step paths. For outer copy C, keep the `oCo` / `oTil` orientation explicit; verify the full vertex-degree and face-axis factors. Do not move to p=8/p=10.
 
+
+
+## 2026-10-29 — Fix Lean typing in the O/X/Y support characterization
+
+- Lean CI for `8df96452409093943b23660986fbe9a80a6824e2` failed in `FinalTilde.lean`. The full PR build log identified a malformed pair type annotation in the O theorem and a membership-type mismatch at calls to the O/X/Y coordinate-box lemmas.
+- Corrected the point annotation to `((0, 0) : Point)` and explicitly converted subtype membership in `(vertexOrder (m+1)).toFinset` to list membership using `List.mem_toFinset.mp` before calling `corner_O_radius_two_transport`, `corner_X_radius_two_box_iff`, and `corner_Y_radius_two_box_iff`.
+- This commit only repairs parser/elaboration errors in the three existing support-characterization proofs. No statement or mathematical target was added or strengthened.
+- CI for the correction is pending. Once the full Lean build and Python 3.11/3.12 push and PR workflows are green, continue with entrywise K²/K³ path-weight transport. Do not claim `R_(m+1)=R_m` yet.
+

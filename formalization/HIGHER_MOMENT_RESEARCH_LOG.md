@@ -2947,3 +2947,13 @@ This is the first, geometric part of Step B only. It does **not** prove an entry
 
 Next: use the finite-support characterizations to define the actual state reindexings and prove that every entry factor in the two- and three-step path products is preserved, including the C-copy orientation and all full-degree/axis data.
 
+
+
+## 4ag. Correct the O/X/Y support-lemma elaboration failure
+
+Lean CI for `8df96452409093943b23660986fbe9a80a6824e2` failed in `FinalTilde.lean`. The full build log isolated a malformed point type annotation in the O-root support theorem and a type mismatch between subtype membership in the finite-set `Pt` and the list-membership premises required by `corner_O_radius_two_transport` and the X/Y box equivalences.
+
+The correction commit changes only the annotation and converts the three point-membership proofs via `List.mem_toFinset.mp`. The three support-characterization statements are unchanged. No entrywise transport or weighted-sum equality is claimed. The correction's own CI is pending.
+
+Next after CI passes: define the concrete finite-state reindexings and prove that each K²/K³ product factor is preserved under the A/B/C corner transport, including vertex degree, axis index, and orientation.
+

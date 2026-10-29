@@ -1166,7 +1166,7 @@ part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/
 theorem sgK_radius_two_support_O_box_iff
     (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
-    (hw : w.2.1.1 = (0, 0 : Point)) :
+    (hw : w.2.1.1 = ((0, 0) : Point)) :
     z ∈ sgK_radius_two_support (m + 1) w ↔
       z.1 = w.1 ∧
         z.2.1.1 ∈ vertexOrder m ∧
@@ -1178,7 +1178,7 @@ theorem sgK_radius_two_support_O_box_iff
     have hzX : z.2.1.1.1 ≤ 2 := by simpa [hw] using hx
     have hzY : z.2.1.1.2 ≤ 2 := by simpa [hw] using hy
     have hmem := (corner_O_radius_two_transport m hm
-      (z := z.2.1.1) z.2.1.2 hzX hzY).1
+      (z := z.2.1.1) (List.mem_toFinset.mp z.2.1.2) hzX hzY).1
     exact ⟨hcopy, hmem, hzX, hzY⟩
   · rintro ⟨hcopy, _, hx, hy⟩
     exact ⟨hcopy, by simp [hw], by simpa [hw] using hx,
@@ -1203,11 +1203,11 @@ theorem sgK_radius_two_support_X_box_iff
       simpa [hw] using hx
     have hboxY : z.2.1.1.2 ≤ 2 := by
       simpa [hw] using hy
-    rcases (corner_X_radius_two_box_iff m hm z.2.1.2).mp
+    rcases (corner_X_radius_two_box_iff m hm (List.mem_toFinset.mp z.2.1.2)).mp
         ⟨hboxX, hboxY⟩ with ⟨p, hp, hpx, hpy, hz⟩
     exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
   · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
-    have hbox := (corner_X_radius_two_box_iff m hm z.2.1.2).mpr
+    have hbox := (corner_X_radius_two_box_iff m hm (List.mem_toFinset.mp z.2.1.2)).mpr
       ⟨p, hp, hpx, hpy, hz⟩
     have hsum := vertexOrder_sum_le (m + 1) z.2.1.1 z.2.1.2
     refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
@@ -1236,11 +1236,11 @@ theorem sgK_radius_two_support_Y_box_iff
       simpa [hw] using hx
     have hboxY : 2 ^ (m + 1) ≤ z.2.1.1.2 + 2 := by
       simpa [hw] using hy
-    rcases (corner_Y_radius_two_box_iff m hm z.2.1.2).mp
+    rcases (corner_Y_radius_two_box_iff m hm (List.mem_toFinset.mp z.2.1.2)).mp
         ⟨hboxX, hboxY⟩ with ⟨p, hp, hpx, hpy, hz⟩
     exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
   · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
-    have hbox := (corner_Y_radius_two_box_iff m hm z.2.1.2).mpr
+    have hbox := (corner_Y_radius_two_box_iff m hm (List.mem_toFinset.mp z.2.1.2)).mpr
       ⟨p, hp, hpx, hpy, hz⟩
     have hsum := vertexOrder_sum_le (m + 1) z.2.1.1 z.2.1.2
     refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
