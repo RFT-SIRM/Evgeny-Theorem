@@ -2935,3 +2935,15 @@ This remains only Step A: it does not prove a bijection between the local sets a
 
 Next: establish a rooted radius-two reindexing for O/A, X/B, and Y/C and prove preservation of edge axes, recursive orientations, full vertex degrees, and every spin-block factor before claiming any level-stability identity.
 
+
+
+## 4af. Support-box reindexing for the p=6 corner residual
+
+The previous commit `b040b29bc65417eebac65d983211c7309b1acad1` is fully verified on its exact SHA. Push and PR Lean builds succeeded (runs 40805240750 and 40805246864); both Python 3.11/3.12 workflows succeeded on push and PR (runs 40805240669 and 40805246921, including the slow tests).
+
+Added `sgK_radius_two_support_O_box_iff`, `sgK_radius_two_support_X_box_iff`, and `sgK_radius_two_support_Y_box_iff` in `FinalTilde.lean`. These characterize the actual support predicate at level (m+1) for any root at O, X, or Y: O points are in the old A part, X points have the unique B-shift preimage in the parent radius-two box, and Y points have the unique C-shift preimage. The outer copy coordinate remains fixed; the spin component is not altered by the state index. The X/Y statements use the already-proved coordinate-box equivalences, and O uses `corner_O_radius_two_transport`.
+
+This is the first, geometric part of Step B only. It does **not** prove an entrywise transport for the full `sgK` blocks under the nested copy orientations, does not yet build the finite-sum bijections for K²/K³, and does not prove equality of weighted sums or (R_{m+1}=R_m). Validation of the new commit is pending.
+
+Next: use the finite-support characterizations to define the actual state reindexings and prove that every entry factor in the two- and three-step path products is preserved, including the C-copy orientation and all full-degree/axis data.
+

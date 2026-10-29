@@ -383,3 +383,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - This makes the residual's weighted fourth/fifth-power terms explicit finite sums over the actual radius-two support. It does not compare those sums across levels and does not prove (R_{m+1}=R_m). Validation for the new source SHA is pending until its own CI runs finish.
 - Next: prove the required local-copy reindexing and preservation of every matrix-product factor under the O/X/Y transports. Do not proceed to p=8 or p=10.
 
+
+
+## 2026-10-29 — Verified finite-support expansion; characterize O/X/Y support boxes
+
+- Verified commit `b040b29bc65417eebac65d983211c7309b1acad1` on the exact PR head. All four workflows succeeded: push Lean [40805240750](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40805240750), PR Lean [40805246864](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40805246864), push Python 3.11/3.12 [40805240669](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40805240669), and PR Python 3.11/3.12 [40805246921](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40805246921). Both fast and slow test stages passed.
+- Added in `FinalTilde.lean` three support-characterization theorems: `sgK_radius_two_support_O_box_iff`, `sgK_radius_two_support_X_box_iff`, and `sgK_radius_two_support_Y_box_iff`. They express membership in the actual `sgK_radius_two_support` at level `m+1` by the corresponding parent vertex in the A/B/C corner box at level `m), while preserving the outer copy label and the individual spin index.
+- This is the geometric support-reindexing interface only. It does not establish equality of any matrix entry, equality of the weights in the K²/K³ path sums, or `R_(m+1)=R_m`. CI for the new source SHA is pending.
+- Next: use these characterizations to construct actual finite-state reindexing maps, then prove preservation of all entries along the two- and three-step paths. For outer copy C, keep the `oCo` / `oTil` orientation explicit; verify the full vertex-degree and face-axis factors. Do not move to p=8/p=10.
+

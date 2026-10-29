@@ -1161,6 +1161,96 @@ theorem pHeO_corner_Y_box_entry_next_num
 
 
 
+/-- The level-(m+1) radius-two support at O is exactly the old A-copy
+part of the same coordinate box. The copy coordinate is still explicit;
+spin states are retained unchanged by the state index. -/
+theorem sgK_radius_two_support_O_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = (0, 0 : Point)) :
+    z ∈ sgK_radius_two_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        z.2.1.1 ∈ vertexOrder m ∧
+        z.2.1.1.1 ≤ 2 ∧ z.2.1.1.2 ≤ 2 := by
+  simp only [sgK_radius_two_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, _, hx, _, hy⟩
+    have hzX : z.2.1.1.1 ≤ 2 := by simpa [hw] using hx
+    have hzY : z.2.1.1.2 ≤ 2 := by simpa [hw] using hy
+    have hmem := (corner_O_radius_two_transport m hm
+      (z := z.2.1.1) z.2.1.2 hzX hzY).1
+    exact ⟨hcopy, hmem, hzX, hzY⟩
+  · rintro ⟨hcopy, _, hx, hy⟩
+    exact ⟨hcopy, by simp [hw], by simpa [hw] using hx,
+      by simp [hw], by simpa [hw] using hy⟩
+
+/-- The level-(m+1) radius-two support at X is the image of the level-m
+box under the B-copy shift. This is a support-set characterization, not
+yet an equality of the weighted path sums. -/
+theorem sgK_radius_two_support_X_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    z ∈ sgK_radius_two_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        ∃ p : Point, p ∈ vertexOrder m ∧
+          2 ^ m ≤ p.1 + 2 ∧ p.2 ≤ 2 ∧
+          z.2.1.1 = shiftPoint (2 ^ m) 1 0 p := by
+  simp only [sgK_radius_two_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, hx, _, _, hy⟩
+    have hboxX : 2 ^ (m + 1) ≤ z.2.1.1.1 + 2 := by
+      simpa [hw] using hx
+    have hboxY : z.2.1.1.2 ≤ 2 := by
+      simpa [hw] using hy
+    rcases (corner_X_radius_two_box_iff m hm z.2.1.2).mp
+        ⟨hboxX, hboxY⟩ with ⟨p, hp, hpx, hpy, hz⟩
+    exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+  · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+    have hbox := (corner_X_radius_two_box_iff m hm z.2.1.2).mpr
+      ⟨p, hp, hpx, hpy, hz⟩
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1 z.2.1.2
+    refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
+    · simpa [hw] using hbox.1
+    · simp [hw]
+      omega
+    · simp [hw]
+    · simpa [hw] using hbox.2
+
+/-- The level-(m+1) radius-two support at Y is the image of the level-m
+box under the C-copy shift. The C orientation and all matrix weights are
+deliberately left to the subsequent path-transport proof. -/
+theorem sgK_radius_two_support_Y_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    z ∈ sgK_radius_two_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        ∃ p : Point, p ∈ vertexOrder m ∧
+          p.1 ≤ 2 ∧ 2 ^ m ≤ p.2 + 2 ∧
+          z.2.1.1 = shiftPoint (2 ^ m) 0 1 p := by
+  simp only [sgK_radius_two_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, _, hx, hy, _⟩
+    have hboxX : z.2.1.1.1 ≤ 2 := by
+      simpa [hw] using hx
+    have hboxY : 2 ^ (m + 1) ≤ z.2.1.1.2 + 2 := by
+      simpa [hw] using hy
+    rcases (corner_Y_radius_two_box_iff m hm z.2.1.2).mp
+        ⟨hboxX, hboxY⟩ with ⟨p, hp, hpx, hpy, hz⟩
+    exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+  · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+    have hbox := (corner_Y_radius_two_box_iff m hm z.2.1.2).mpr
+      ⟨p, hp, hpx, hpy, hz⟩
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1 z.2.1.2
+    refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
+    · simp [hw]
+    · simpa [hw] using hbox.1
+    · simpa [hw] using hbox.2
+    · simp [hw]
+      omega
+
+
 end EvgenyTheorem
 
 
