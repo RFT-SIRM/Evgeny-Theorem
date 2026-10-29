@@ -3028,3 +3028,10 @@ for `m ≥ 3`. This is the missing step after the already-compiled theorem `defe
 
 **Failure guard.** The failed X-equivalence experiment at `6a4a6b31...` and its `Classical.choose` repair at `8ba29464...` showed that extracting an existential witness while constructing data in Type is invalid or brittle. Define the inverse point explicitly and eliminate existential facts only inside Prop-valued membership proofs, or avoid the Type-valued equivalence and prove the finite-sum bijection directly. No source-code change is allowed until its exact mathematical role in the residual proof is identified. Leave CI durations/configuration unchanged.
 
+## 2026-10-29 — Explicit-coordinate X support equivalence for residual reindexing
+
+- Implemented the X-corner support-set equivalence via an explicit inverse point coordinate `(x - 2^m, y)) and the existing `sgK_radius_two_support_X_box_iff`. The source is aimed specifically at the reindexing dependency in the single target theorem (R_{m+1}=R_m), not at expanding the list of support lemmas in isolation.
+- Avoided the previous failure mode: all `rcases` over the support theorem's existential occur inside Prop-valued proof goals. The data-valued point `p) is computed directly from coordinates.
+- CI for this source change is pending. Matrix-power weights and adjacent-level residual invariance have not yet been proved.
+- If compilation succeeds, next prove partner-map compatibility and use this support correspondence in finite sums. Then establish local (K²/K³) entry transport for the exact paths contributing to (K⁴/K⁵) corner diagonals; do not claim all entries agree outside the radius-two box.
+

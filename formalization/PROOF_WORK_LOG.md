@@ -461,3 +461,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Keep C's `oCo` orientation explicit. The existing corner entry theorem maps Y/C to `oTil`, not to `oNum`; do not erase that distinction.
 - The Python exact polynomial check of the p=6 residual at levels 3 and 4 is a finite computational certificate, not an all-level Lean proof. Keep separate the (a) all-level residual-stability theorem and (b) optional explicit trigonometric evaluation of its finite base value.
 
+## 2026-10-29 — Explicit-coordinate X support equivalence for residual reindexing
+
+- Added `sgK_radius_two_X_parent_support` and `sgK_radius_two_support_X_equiv` to support the planned finite-sum reindexing of the p=6 high-power residual. The inverse uses the explicit coordinate `(x - 2^m, y)), and the forward map is the B shift `shiftPoint (2^m) 1 0`.
+- Unlike the failed experiment, no existential witness is eliminated into a value in `Type`. The existential from `sgK_radius_two_support_X_box_iff` is unpacked only inside proofs of propositions (parent vertex membership, coordinate bounds, and point equality); the point used to construct the subtype is computed directly.
+- This is a proof-planned prerequisite for applying a finite-sum bijection to the inner radius-two path sums. It does not assert entrywise equality of (K^2/K^3), residual stability, or p=6 closure. CI for the new source SHA is pending.
+- Next after a clean build: prove the matching state map commutes with the glued partner `sgGlue.σ`, and lift the existing corner entry equalities to the specific powers in the two residual sums. The Y/C map must keep `oCo`/`oTil` explicit.
+
