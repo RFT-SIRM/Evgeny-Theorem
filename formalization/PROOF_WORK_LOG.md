@@ -754,3 +754,12 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Added `sgK_glued_partner_diag_four_five_transport`, which splits the existing `gl` relation into its six corner/copy clauses and dispatches to the already compiled A/X, B/O, C/O, A/Y, B/Y, and C/X specializations. It introduces no new geometric or matrix-entry assumptions beyond the existing axis-periodicity hypotheses.
 - Added `glueRHS6_highPowerResidual_sgK_til_succ`: applies the abstract residual transport theorem to actual `sgK` matrices for `faceAxis` and the fixed axis `fun _ => 2`, proving the eight diagonal conditions from the existing glued-state degree lemmas and all four `h4/h5` obligations from the six-case wrapper.
 - **Next:** require both full Lean builds to pass on the new SHA. If green, connect this adjacent-level residual stability to `defectO6_succ_num_level3` to replace the explicit level-dependent boundary term by its base-level value.
+
+
+## 2026-10-29 — Reduce the sixth-moment recurrence's high-power boundary term to level three
+
+- Parent SHA `28afa58176c7e8c64a01529cc221c37bc0fb4137` passed both full Lean builds after assembling the six endpoint cases.
+- Added an induction showing the concrete tilde-oriented high-power residual is level-independent for every (m\ge3), using the now-proved adjacent-level residual stability.
+- Transferred the result to numbering orientation via the existing `glueRHS6_highPowerResidual_num_eq_til`.
+- Recast the sixth-moment recurrence as `defectO6_succ_num_level3_constant_boundary`, where the high-power boundary contribution is explicitly the value at level three. No claim that this base residual is zero is made.
+- **Next:** solve the resulting affine recurrence in m exactly, keeping the base-level orientation gap and residual explicit, then determine whether the remaining finite base term has a separate exact evaluation.

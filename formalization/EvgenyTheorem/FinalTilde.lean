@@ -4360,4 +4360,51 @@ theorem glueRHS6_highPowerResidual_sgK_til_succ
     exact (sgK_glued_partner_diag_four_five_transport m hm θ (fun _ => 2)
       (fun _ => rfl) (fun _ => rfl) hw).2
 
+
+/-- The concrete tilde-oriented sixth-moment high-power residual is equal
+at every level m ≥ 3 to its level-three value. -/
+theorem glueRHS6_highPowerResidual_sgK_til_eq_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    glueRHS6_highPowerResidual m
+        (sgK m θ faceAxis (oTil (m + 1)))
+        (sgK m θ (fun _ => 2) (oTil (m + 1))) =
+      glueRHS6_highPowerResidual 3
+        (sgK 3 θ faceAxis (oTil 4))
+        (sgK 3 θ (fun _ => 2) (oTil 4)) := by
+  induction m, hm using Nat.le_induction with
+  | base => rfl
+  | succ n hn ih =>
+      rw [glueRHS6_highPowerResidual_sgK_til_succ n hn θ, ih]
+
+/-- The same residual with numbering orientation reduces to the identical
+level-three tilde residual, using the established num/til equivalence. -/
+theorem glueRHS6_highPowerResidual_sgK_num_eq_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    glueRHS6_highPowerResidual m
+        (sgK m θ faceAxis (oNum (m + 1)))
+        (sgK m θ (fun _ => 2) (oNum (m + 1))) =
+      glueRHS6_highPowerResidual 3
+        (sgK 3 θ faceAxis (oTil 4))
+        (sgK 3 θ (fun _ => 2) (oTil 4)) := by
+  rw [glueRHS6_highPowerResidual_num_eq_til m hm θ faceAxis (fun _ => 2)]
+  exact glueRHS6_highPowerResidual_sgK_til_eq_level3 m hm θ
+
+/-- The numbering-orientation sixth-moment recurrence now has a fixed
+level-three boundary term. This does not assert that the boundary term
+vanishes; it proves that it is independent of m. -/
+theorem defectO6_succ_num_level3_constant_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
+      3 * defectO6 m θ faceAxis (fun _ => 2) (oNum m) -
+        (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+          defectO6 3 θ faceAxis (fun _ => 2) (oTil 3)) +
+        glueRHS6_highPowerResidual 3
+          (sgK 3 θ faceAxis (oTil 4))
+          (sgK 3 θ (fun _ => 2) (oTil 4)) := by
+  rw [defectO6_succ_num_level3 m hm θ]
+  rw [glueRHS6_sgK_axis_residual_of_diag123 m hm θ faceAxis (fun _ => 2)
+    (oNum (m + 1)) (oNum_anti (m + 1))]
+  rw [glueRHS6_highPowerResidual_sgK_num_eq_level3 m hm θ]
+  ring
+
 end EvgenyTheorem
