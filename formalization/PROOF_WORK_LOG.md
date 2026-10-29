@@ -660,3 +660,10 @@ The CI log for `b32e3c7f26282933f6894044a13821c1aa09ce21` showed the C/X wrapper
 ## 2026-10-29 — Correct the parent-level bound in B/Y transport
 
 The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: `cp1_not_A` expects `1 ≤ m), but `sgK_B_Y_entry_next_til` passed `hm : 3 ≤ m` directly. Replaced the argument with `by omega`; no other Lean errors were reported in this run. Full Lean CI is restarted on the new SHA.
+
+
+## 2026-10-29 — Generic finite-neighborhood transport for fourth/fifth diagonals
+
+- The full Lean push and PR builds passed on `b146f3f5d40c9760390dd5961d8492921dc391f6`; Python tests were still running.
+- Added `finset_sum_eq_subtype_of_zero_outside` and `matrix_pow_four_five_diag_eq_of_local_equiv`. The latter is the planned algebraic bridge: it expands `K^4) as `K^2 K^2) and `K^5) as `K^2 K^3), restricts sums to the radius-two supports, compares `K^2) rows/columns and `K^3) columns from one-step entry equality, and reindexes with the given finite equivalence.
+- The theorem assumes explicit zero-outside bounds for one- and two-step rows/columns on both levels. These can be discharged from the existing glued-operator locality lemmas once the six corner-specific equivalences and entry transports are assembled. No cross-level power equality is claimed yet; this is a generic algebraic lemma. New SHA Lean verification pending.

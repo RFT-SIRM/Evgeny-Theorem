@@ -3206,3 +3206,8 @@ The B/Y case completes the six local entry transports around the three glued-roo
 ## 2026-10-29 — B/Y side-condition correction
 
 The sole Lean error in the B/Y wrapper was the known predicate-strength mismatch for `cp1_not_A` at the parent level. Discharged the required `1 ≤ m` from `3 ≤ m` via `by omega`. Recheck both push and PR Lean builds before adding the power-sum proof.
+
+
+## 2026-10-29 — General algebraic transport lemma for powers four and five
+
+The new `matrix_pow_four_five_diag_eq_of_local_equiv` isolates the finite algebra needed for the p=6 residual. Given a state equivalence between two finite local supports, entry equality for `K) and `L) on those supports, and vanishing of first/second powers outside, it proves that fourth- and fifth-power diagonal entries agree. For power five, the proof uses `K^3 = K K^2); the intermediate state in the `K^2) column is kept in the radius-two support. Next, instantiate this theorem for each glued-root copy/corner case using `sgK_radius_two_support_{O,X,Y}_equiv` and the six one-step transport lemmas, then supply the resulting `h4/h5) to `glueRHS6_highPowerResidual_eq_of_corner_power_transport`.

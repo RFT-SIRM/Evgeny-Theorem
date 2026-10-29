@@ -2821,6 +2821,247 @@ fourth- and fifth-power diagonal entries transport at every glued partner
 root, then the full high-power residual is stable across adjacent levels.
 The hypotheses on powers one and two are exactly those needed to invoke the
 already-proved algebraic residual reduction. -/
+
+/-- Restrict a finite sum to a subtype when its summand vanishes outside the
+support set. This lets the local path sums be reindexed by a finite-state
+equivalence without making assumptions about matrix entries off the box. -/
+private theorem finset_sum_eq_subtype_of_zero_outside
+    {α : Type*} [Fintype α] [DecidableEq α]
+    (S : Finset α) (f : α → ℂ)
+    (hzero : ∀ x, x ∉ S → f x = 0) :
+    (∑ x, f x) = ∑ x : {x // x ∈ S}, f x.1 := by
+  calc
+    (∑ x, f x) = ∑ x, if x ∈ S then f x else 0 := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      by_cases hs : x ∈ S
+      · simp [hs]
+      · simp [hzero x hs]
+    _ = ∑ x : {x // x ∈ S}, f x.1 :=
+      glueRHS6_sum_ite_eq_subtype (fun x : α => x ∈ S) f
+
+/-- Local matrix entries determine fourth- and fifth-power diagonals at a
+point whenever both one-step and two-step rows/columns vanish outside the
+matched finite neighborhoods. The hypothesis `hEntry` is only local: it
+relates entries between states in `S` to entries between their images in
+`T`. -/
+private theorem matrix_pow_four_five_diag_eq_of_local_equiv
+    {W V : Type*} [Fintype W] [DecidableEq W] [Fintype V] [DecidableEq V]
+    (K : Matrix W W ℂ) (L : Matrix V V ℂ)
+    (S : Finset W) (T : Finset V)
+    (e : {z : W // z ∈ S} ≃ {z : V // z ∈ T})
+    (x : W) (x' : V) (hx : x ∈ S) (hx' : x' ∈ T)
+    (hroot : e ⟨x, hx⟩ = ⟨x', hx'⟩)
+    (hEntry : ∀ a b : {z : W // z ∈ S},
+      K a.1 b.1 = L (e a).1 (e b).1)
+    (hRowOne : ∀ z, z ∉ S → K x z = 0)
+    (hColOne : ∀ z, z ∉ S → K z x = 0)
+    (hRowTwo : ∀ z, z ∉ S → (K ^ 2) x z = 0)
+    (hColTwo : ∀ z, z ∉ S → (K ^ 2) z x = 0)
+    (hRowOne' : ∀ z, z ∉ T → L x' z = 0)
+    (hColOne' : ∀ z, z ∉ T → L z x' = 0)
+    (hRowTwo' : ∀ z, z ∉ T → (L ^ 2) x' z = 0)
+    (hColTwo' : ∀ z, z ∉ T → (L ^ 2) z x' = 0) :
+    (K ^ 4) x x = (L ^ 4) x' x' ∧
+      (K ^ 5) x x = (L ^ 5) x' x' := by
+  classical
+  let xr : {z : W // z ∈ S} := ⟨x, hx⟩
+  have hrootVal : (e xr).1 = x' := congrArg Subtype.val hroot
+
+  have hpow2Row : ∀ y : {z : W // z ∈ S},
+      (K ^ 2) x y.1 = (L ^ 2) x' (e y).1 := by
+    intro y
+    calc
+      (K ^ 2) x y.1 = ∑ z, K x z * K z y.1 := by
+        simp [pow_two, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S}, K x z.1 * K z.1 y.1 :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K x z * K z y.1)
+          (by
+            intro z hz
+            simp [hRowOne z hz])
+      _ = ∑ z : {z : V // z ∈ T}, L x' z.1 * L z.1 (e y).1 := by
+        calc
+          _ = ∑ z : {z : W // z ∈ S},
+              L (e xr).1 (e z).1 * L (e z).1 (e y).1 := by
+                apply Finset.sum_congr rfl
+                intro z hz
+                rw [hEntry xr z, hEntry z y]
+          _ = ∑ z : {z : V // z ∈ T}, L x' z.1 * L z.1 (e y).1 := by
+                rw [hrootVal]
+                exact Equiv.sum_comp e
+                  (fun z : {z : V // z ∈ T} => L x' z.1 * L z.1 (e y).1)
+      _ = ∑ z, L x' z * L z (e y).1 := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L x' z * L z (e y).1)
+          (by
+            intro z hz
+            simp [hRowOne' z hz])
+      _ = (L ^ 2) x' (e y).1 := by
+        simp [pow_two, Matrix.mul_apply]
+
+  have hpow2Col : ∀ y : {z : W // z ∈ S},
+      (K ^ 2) y.1 x = (L ^ 2) (e y).1 x' := by
+    intro y
+    calc
+      (K ^ 2) y.1 x = ∑ z, K y.1 z * K z x := by
+        simp [pow_two, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S}, K y.1 z.1 * K z.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K y.1 z * K z x)
+          (by
+            intro z hz
+            simp [hColOne z hz])
+      _ = ∑ z : {z : V // z ∈ T}, L (e y).1 z.1 * L z.1 x' := by
+        calc
+          _ = ∑ z : {z : W // z ∈ S},
+              L (e y).1 (e z).1 * L (e z).1 (e xr).1 := by
+                apply Finset.sum_congr rfl
+                intro z hz
+                rw [hEntry y z, hEntry z xr]
+          _ = ∑ z : {z : V // z ∈ T}, L (e y).1 z.1 * L z.1 x' := by
+                rw [hrootVal]
+                exact Equiv.sum_comp e
+                  (fun z : {z : V // z ∈ T} => L (e y).1 z.1 * L z.1 x')
+      _ = ∑ z, L (e y).1 z * L z x' := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L (e y).1 z * L z x')
+          (by
+            intro z hz
+            simp [hColOne' z hz])
+      _ = (L ^ 2) (e y).1 x' := by
+        simp [pow_two, Matrix.mul_apply]
+
+  have hpow3Col : ∀ y : {z : W // z ∈ S},
+      (K ^ 3) y.1 x = (L ^ 3) (e y).1 x' := by
+    intro y
+    calc
+      (K ^ 3) y.1 x = ∑ z, K y.1 z * (K ^ 2) z x := by
+        rw [show (3 : ℕ) = 1 + 2 by norm_num, pow_add, pow_one,
+          Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S}, K y.1 z.1 * (K ^ 2) z.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K y.1 z * (K ^ 2) z x)
+          (by
+            intro z hz
+            simp [hColTwo z hz])
+      _ = ∑ z : {z : V // z ∈ T}, L (e y).1 z.1 * (L ^ 2) z.1 x' := by
+        calc
+          _ = ∑ z : {z : W // z ∈ S},
+              L (e y).1 (e z).1 * (L ^ 2) (e z).1 x' := by
+                apply Finset.sum_congr rfl
+                intro z hz
+                rw [hEntry y z, hpow2Col z]
+          _ = ∑ z : {z : V // z ∈ T}, L (e y).1 z.1 * (L ^ 2) z.1 x' :=
+                Equiv.sum_comp e
+                  (fun z : {z : V // z ∈ T} =>
+                    L (e y).1 z.1 * (L ^ 2) z.1 x')
+      _ = ∑ z, L (e y).1 z * (L ^ 2) z x' := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L (e y).1 z * (L ^ 2) z x')
+          (by
+            intro z hz
+            simp [hColTwo' z hz])
+      _ = (L ^ 3) (e y).1 x' := by
+        rw [show (3 : ℕ) = 1 + 2 by norm_num, pow_add, pow_one,
+          Matrix.mul_apply]
+
+  have hfourK :
+      (K ^ 4) x x =
+        ∑ y : {z : W // z ∈ S}, (K ^ 2) x y.1 * (K ^ 2) y.1 x := by
+    calc
+      (K ^ 4) x x =
+          ∑ y, (K ^ 2) x y * (K ^ 2) y x :=
+        matrix_pow_four_diag_as_sum_sq K x
+      _ = ∑ y : {z : W // z ∈ S},
+          (K ^ 2) x y.1 * (K ^ 2) y.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun y => (K ^ 2) x y * (K ^ 2) y x)
+          (by
+            intro y hy
+            simp [hRowTwo y hy])
+  have hfourL :
+      (L ^ 4) x' x' =
+        ∑ y : {z : V // z ∈ T}, (L ^ 2) x' y.1 * (L ^ 2) y.1 x' := by
+    calc
+      (L ^ 4) x' x' =
+          ∑ y, (L ^ 2) x' y * (L ^ 2) y x' :=
+        matrix_pow_four_diag_as_sum_sq L x'
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 2) x' y.1 * (L ^ 2) y.1 x' :=
+        finset_sum_eq_subtype_of_zero_outside T
+          (fun y => (L ^ 2) x' y * (L ^ 2) y x')
+          (by
+            intro y hy
+            simp [hRowTwo' y hy])
+
+  have hfiveK :
+      (K ^ 5) x x =
+        ∑ y : {z : W // z ∈ S}, (K ^ 2) x y.1 * (K ^ 3) y.1 x := by
+    calc
+      (K ^ 5) x x =
+          ∑ y, (K ^ 2) x y * (K ^ 3) y x :=
+        matrix_pow_five_diag_as_sum_two_three K x
+      _ = ∑ y : {z : W // z ∈ S},
+          (K ^ 2) x y.1 * (K ^ 3) y.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun y => (K ^ 2) x y * (K ^ 3) y x)
+          (by
+            intro y hy
+            simp [hRowTwo y hy])
+  have hfiveL :
+      (L ^ 5) x' x' =
+        ∑ y : {z : V // z ∈ T}, (L ^ 2) x' y.1 * (L ^ 3) y.1 x' := by
+    calc
+      (L ^ 5) x' x' =
+          ∑ y, (L ^ 2) x' y * (L ^ 3) y x' :=
+        matrix_pow_five_diag_as_sum_two_three L x'
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 2) x' y.1 * (L ^ 3) y.1 x' :=
+        finset_sum_eq_subtype_of_zero_outside T
+          (fun y => (L ^ 2) x' y * (L ^ 3) y x')
+          (by
+            intro y hy
+            simp [hRowTwo' y hy])
+
+  constructor
+  · calc
+      (K ^ 4) x x = ∑ y : {z : W // z ∈ S},
+          (K ^ 2) x y.1 * (K ^ 2) y.1 x := hfourK
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 2) x' y.1 * (L ^ 2) y.1 x' := by
+        calc
+          _ = ∑ y : {z : W // z ∈ S},
+              (L ^ 2) x' (e y).1 * (L ^ 2) (e y).1 x' := by
+                apply Finset.sum_congr rfl
+                intro y hy
+                rw [hpow2Row y, hpow2Col y]
+          _ = ∑ y : {z : V // z ∈ T},
+              (L ^ 2) x' y.1 * (L ^ 2) y.1 x' :=
+                Equiv.sum_comp e
+                  (fun y : {z : V // z ∈ T} => (L ^ 2) x' y.1 * (L ^ 2) y.1 x')
+      _ = (L ^ 4) x' x' := hfourL.symm
+  · calc
+      (K ^ 5) x x = ∑ y : {z : W // z ∈ S},
+          (K ^ 2) x y.1 * (K ^ 3) y.1 x := hfiveK
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 2) x' y.1 * (L ^ 3) y.1 x' := by
+        calc
+          _ = ∑ y : {z : W // z ∈ S},
+              (L ^ 2) x' (e y).1 * (L ^ 3) (e y).1 x' := by
+                apply Finset.sum_congr rfl
+                intro y hy
+                rw [hpow2Row y, hpow3Col y]
+          _ = ∑ y : {z : V // z ∈ T},
+              (L ^ 2) x' y.1 * (L ^ 3) y.1 x' :=
+                Equiv.sum_comp e
+                  (fun y : {z : V // z ∈ T} => (L ^ 2) x' y.1 * (L ^ 3) y.1 x')
+      _ = (L ^ 5) x' x' := hfiveL.symm
+
+
 theorem glueRHS6_highPowerResidual_eq_of_corner_power_transport
     (m : ℕ)
     (Khi Khi' : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
