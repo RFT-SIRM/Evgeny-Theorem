@@ -1,5 +1,5 @@
 import EvgenyTheorem.FinalTilde
-import Mathlib.Data.MvPolynomial.Basic
+import Mathlib.Algebra.MvPolynomial.Basic
 import Mathlib.Tactic
 
 /-!
