@@ -3280,3 +3280,8 @@ The six endpoint transport cases imply adjacent-level stability of the concrete 
 ## 2026-10-29 — Clean up completed constant-boundary proof
 
 The new constant-boundary recurrence proof's two rewrite steps already solved the goal, so the trailing `ring` caused a no-goals error. Removed that redundant tactic. All level-three reductions and theorem statements are unchanged. The next checkpoint is successful full Lean push and PR builds.
+
+
+## 2026-10-29 — Closed form from the stabilized sixth-moment recurrence
+
+The fixed boundary term plus `affine_three_recurrence` now yields an exact formula for `defectO6 m θ faceAxis (fun _ => 2) (oNum m)` as an affine function of (3^{m-3}). The constant is expressed using the actual level-three defect, level-three orientation difference, and level-three `glueRHS6_highPowerResidual`; no base value is assumed to vanish. The remaining closure question is whether those finite-level quantities already have exact symbolic evaluations in the repository.

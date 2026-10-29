@@ -4406,4 +4406,49 @@ theorem defectO6_succ_num_level3_constant_boundary
     (oNum (m + 1)) (oNum_anti (m + 1))]
   rw [glueRHS6_highPowerResidual_sgK_num_eq_level3 m hm θ]
 
+
+/-- Exact closed form of the numbering-orientation sixth-moment defect.
+The only level-independent term is the explicit level-three boundary
+residual; this theorem does not assume that residual or the base gap vanishes. -/
+theorem defectO6_num_closed_form
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    defectO6 m θ faceAxis (fun _ => 2) (oNum m) =
+      (3 : ℂ) ^ (m - 3) *
+        (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) +
+          (glueRHS6_highPowerResidual 3
+              (sgK 3 θ faceAxis (oTil 4))
+              (sgK 3 θ (fun _ => 2) (oTil 4)) -
+            (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+              defectO6 3 θ faceAxis (fun _ => 2) (oTil 3))) / 2) -
+        (glueRHS6_highPowerResidual 3
+            (sgK 3 θ faceAxis (oTil 4))
+            (sgK 3 θ (fun _ => 2) (oTil 4)) -
+          (defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+            defectO6 3 θ faceAxis (fun _ => 2) (oTil 3))) / 2 := by
+  let D : ℕ → ℂ :=
+    fun k => defectO6 k θ faceAxis (fun _ => 2) (oNum k)
+  let R3 : ℂ :=
+    glueRHS6_highPowerResidual 3
+      (sgK 3 θ faceAxis (oTil 4))
+      (sgK 3 θ (fun _ => 2) (oTil 4))
+  let G3 : ℂ :=
+    defectO6 3 θ faceAxis (fun _ => 2) (oNum 3) -
+      defectO6 3 θ faceAxis (fun _ => 2) (oTil 3)
+  let C3 : ℂ := R3 - G3
+  have hrec : ∀ n, D (n + 4) = 3 * D (n + 3) + C3 := by
+    intro n
+    have hstep :=
+      defectO6_succ_num_level3_constant_boundary (n + 3) (by omega) θ
+    have hidx : n + 3 + 1 = n + 4 := by omega
+    rw [hidx] at hstep
+    calc
+      D (n + 4) = 3 * D (n + 3) - G3 + R3 := by
+        simpa [D, G3, R3] using hstep
+      _ = 3 * D (n + 3) + C3 := by
+        dsimp [C3]
+        ring
+  have hclosed := affine_three_recurrence D C3 hrec (m - 3)
+  rw [Nat.sub_add_cancel hm] at hclosed
+  simpa [D, C3, R3, G3] using hclosed
+
 end EvgenyTheorem

@@ -770,3 +770,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Lean push build on `02e223f3376342107e30e6e31ef54b72e5f983a5` reached the end of `defectO6_succ_num_level3_constant_boundary` and reported `No goals to be solved` at the final `ring`.
 - The preceding rewrites already close the goal; removed only that redundant tactic. No theorem statement or mathematical argument changed.
 - Recheck both full Lean builds on the corrected SHA before continuing to the explicit affine solution.
+
+
+## 2026-10-29 — Derive the explicit affine closed form for the sixth-moment defect
+
+- Parent SHA `20cfb844d552f23aa9b0c109a2b31c36c5dd9ee8` passed both full Lean builds after reducing the boundary term to its level-three value.
+- Added `defectO6_num_closed_form`, applying the pre-existing `affine_three_recurrence` arithmetic lemma to the now-proved constant-boundary recurrence.
+- The formula is explicit in (3^{m-3}), the level-three numbering defect, the level-three orientation gap, and the level-three high-power boundary residual. It does not silently set either finite base contribution to zero.
+- **Next:** check both full Lean builds. If green, inspect whether the level-three residual/gap have exact existing evaluations that can finish the target theorem without assumptions.
