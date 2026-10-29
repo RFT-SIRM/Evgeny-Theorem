@@ -3041,3 +3041,8 @@ for `m ≥ 3`. This is the missing step after the already-compiled theorem `defe
 - Replaced the first with explicit product extensionality and inserted `dsimp` before the second coordinate-level change. These are narrowly targeted elaboration fixes; no definition or theorem statement changed.
 - The next SHA must pass full Lean build and Python checks before extending the argument to matrix powers. Adjacent-level high-power residual stability remains unproved.
 
+## 2026-10-29 — Reduce the shifted-coordinate expression in X right inverse
+
+- After the prior correction, the only remaining Lean error was at line 1368: the `right_inv` goal contained the coordinates of `shiftPoint (2^m) 1 0 p`, so the proposed literal pair equality was not definitionally equal to the goal.
+- Replaced the brittle `change` with direct simplification of `shiftPoint` and `Nat.add_sub_cancel_right`, matching the actual goal. This is an elaboration-only correction. Residual stability is not proved yet.
+

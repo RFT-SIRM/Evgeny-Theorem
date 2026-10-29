@@ -1365,9 +1365,7 @@ noncomputable def sgK_radius_two_support_X_equiv
     · apply Prod.ext
       · apply Subtype.ext
         dsimp
-        change (z.1.2.1.1.1 + 2 ^ m - 2 ^ m, z.1.2.1.1.2) =
-          z.1.2.1.1
-        simp [Nat.add_sub_cancel_right]
+        simp [shiftPoint, Nat.add_sub_cancel_right]
       · rfl
 
 

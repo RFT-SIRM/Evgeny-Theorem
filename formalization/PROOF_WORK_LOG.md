@@ -474,3 +474,9 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The second error at line 1366 occurred in `right_inv`: the proposed `change` did not match the unreduced composition `toFun (invFun z)`. Added `dsimp` after descending to the point subtype equality, before the coordinate-level `change`. The inverse coordinate arithmetic itself remains unchanged.
 - Failed runs reviewed: push Lean [40835853136](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40835853136), PR Lean [40835863641](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40835863641). No matrix-weight or residual-stability theorem was claimed. CI for this repair is pending.
 
+## 2026-10-29 — Reduce the shifted-coordinate expression in X right inverse
+
+- The next full Lean build isolated the remaining X-equivalence issue to `FinalTilde.lean:1368`. After `dsimp`, the goal retained projections of `shiftPoint (2^m) 1 0 p`; the coordinate-level `change` incorrectly assumed those projections had already reduced.
+- Replaced the mismatched `change` with `simp [shiftPoint, Nat.add_sub_cancel_right]` on the actual goal. This directly unfolds the shifted coordinates and cancels the added/subtracted (2^m); no definition or mathematical claim changed.
+- Failing runs reviewed: push Lean [40836229850](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836229850), PR Lean [40836234409](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40836234409). CI for this correction is pending.
+
