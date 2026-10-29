@@ -1350,6 +1350,122 @@ theorem sgK_B_O_entry_next_til
         p q i j hlowOrient).symm
 
 
+
+/-- On a level-n O radius-two box, the exceptional edge at either of the
+next two orientation levels is absent. -/
+private theorem cp1_not_O_radius_two
+    (n : ℕ) (hn : 3 ≤ n) {p q : Point}
+    (hp : p.1 ≤ 2) (hq : q.1 ≤ 2) :
+    ¬ cp1 n p q ∧ ¬ cp1 n q p := by
+  have hpow : 4 ≤ 2 ^ n := by
+    calc
+      4 ≤ 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hn
+  have hcorner : 2 < 2 ^ n - 1 := by omega
+  constructor
+  · intro h
+    have hx : p.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
+    omega
+  · intro h
+    have hx : q.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
+    omega
+
+/-- The Y/C point-entry transport with the exact tilde orientations used by
+the adjacent-level residual. The parent endpoints lie in the Y box, away
+from the exceptional horizontal edge, so the C-flip's `oTil m` result
+can be shifted to `oTil (m+1)` on this restricted box. -/
+theorem pHeO_corner_Y_box_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : 2 ^ (m + 1) ≤ p.2 + 2)
+    (hqx : q.1 ≤ 2) (hqy : 2 ^ (m + 1) ≤ q.2 + 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 0 1 p' ∧
+      q = shiftPoint (2 ^ m) 0 1 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO m θ ax (oTil (m + 1)) p' q' i j := by
+  rcases pHeO_corner_Y_box_entry_next_num m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p', q', hp', hq', rfl, rfl, hentry⟩
+  have hpx' : p'.1 ≤ 2 := by
+    simpa [shiftPoint] using hpx
+  have hqx' : q'.1 ≤ 2 := by
+    simpa [shiftPoint] using hqx
+  have hpy' : 2 ^ m ≤ p'.2 + 2 := by
+    have hh : 2 ^ (m + 1) ≤ p'.2 + 2 ^ m + 2 := by
+      simpa [shiftPoint] using hpy
+    rw [pow_succ] at hh
+    omega
+  have hqy' : 2 ^ m ≤ q'.2 + 2 := by
+    have hh : 2 ^ (m + 1) ≤ q'.2 + 2 ^ m + 2 := by
+      simpa [shiftPoint] using hqy
+    rw [pow_succ] at hh
+    omega
+  have hCnum := Hc_C_num_eq_parent_til m (by omega) θ ax
+    (oNum_anti (m + 1))
+    ((⟨p', List.mem_toFinset.mpr hp'⟩ : Pt m), i)
+    ((⟨q', List.mem_toFinset.mpr hq'⟩ : Pt m), j)
+  change pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j =
+    pHeO m θ ax (oTil m) p' q' i j at hCnum
+  have hcpM := cp1_not_O_radius_two m hm hpx' hqx'
+  have hcpM1 := cp1_not_A m hm hp' hq'
+  have hnum : oNum m p' q' ↔ oNum (m + 1) p' q' := by
+    unfold oNum
+    rw [vIdx_succ_of_mem hp', vIdx_succ_of_mem hq']
+  have htil : oTil m p' q' ↔ oTil (m + 1) p' q' := by
+    calc
+      oTil m p' q' ↔ oNum m p' q' :=
+        oTil_of_no_corner hcpM.1 hcpM.2
+      _ ↔ oNum (m + 1) p' q' := hnum
+      _ ↔ oTil (m + 1) p' q' :=
+        (oTil_of_no_corner hcpM1.1 hcpM1.2).symm
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2))
+        (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j =
+        pHeO (m + 1) θ ax (oNum (m + 2))
+          (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j :=
+      pHeO_til_eq_num_of_level_domain (m + 1) (by omega)
+        θ ax (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j := hentry
+    _ = pHeO m θ ax (oTil m) p' q' i j := hCnum
+    _ = pHeO m θ ax (oTil (m + 1)) p' q' i j :=
+      pHeO_rel_congr_local m θ ax (oTil m) (oTil (m + 1))
+        p' q' i j htil
+
+/-- State-index version of the Y/A point-entry transport. It reuses the
+exact copy label, coordinate witness and spin without changing the kernel. -/
+theorem sgK_A_Y_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 2) (hpy : 2 ^ (m + 1) ≤ p.2 + 2)
+    (hqx : q.1 ≤ 2) (hqy : 2 ^ (m + 1) ≤ q.2 + 2)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 0 1 p' ∧
+      q = shiftPoint (2 ^ m) 0 1 q' ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, ((⟨p', List.mem_toFinset.mpr hp'⟩ : Pt m), i))
+        (GCopy.A, ((⟨q', List.mem_toFinset.mpr hq'⟩ : Pt m), j)) := by
+  rcases pHeO_corner_Y_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p', q', hp', hq', rfl, rfl, hentry⟩
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  change pHeO (m + 1) θ ax (oTil (m + 2))
+      (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j =
+    pHeO m θ ax (oTil (m + 1)) p' q' i j
+  exact hentry
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/
