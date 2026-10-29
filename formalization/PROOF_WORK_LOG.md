@@ -546,3 +546,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Inspection of the residual theorem's actual indices shows the adjacent-level comparison needs the high entry at orientation `oTil (m+2)` and the parent entry at `oTil (m+1)`. The previously added local lemma `pHeO_corner_X_box_entry_next_til` concerns the unshifted sequence `oTil (m+1)` to `oTil m`; it is valid but does not itself match the residual theorem's indices.
 - Added `pHeO_corner_X_box_entry_next_til_num` for the correctly indexed pair. It first restricts the high `oTil (m+2)) orientation to `oNum (m+2)) on vertices of level `m+1), transports the X box through the B shift, then explicitly identifies the pulled-back B orientation with `oTil (m+1)) on the parent graph.
 - This repairs an index alignment dependency only. It is still a local entry theorem, not an equality of powers four/five or a proof of residual stability. Current-SHA Lean CI is pending.
+
+
+## 2026-10-29 — Formalize the exact local-entry-to-power-4/5 transport
+
+- Verified SHA `f388e6209c76900f442fd65b8146414bd0c2b719`: both full Lean builds passed, push [40858042644](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40858042644) and PR [40858050896](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40858050896). Python push/PR remained in progress and was not awaited.
+- Added `matrix_pow_four_five_diag_transport_of_local_entries`, an abstract finite-matrix lemma that derives equality of the fourth- and fifth-power diagonal entries from: (i) a bijection of finite supports around the two roots, (ii) one-step entry equality on all support pairs, and (iii) first- and second-power root row/column vanishing outside those supports.
+- Power four is handled through `K^4=K^2K^2); power five uses `K^5=K^2K^3) and `K^3=K K^2). Every reindexing is via the supplied support equivalence; no matrix entry outside a proved support is silently discarded.
+- This is a generic path-transport mechanism, not yet an instantiation for `sgK). The remaining concrete obligation is to establish the one-step `sgK) entry equality for all pairs in each corner support under the relevant orientations/axis periodicity, and discharge the support hypotheses with the existing locality lemmas.
+- New-SHA full Lean CI is pending. If it fails, fix the first error before applying this theorem or adding further proof steps.
