@@ -3191,3 +3191,8 @@ The parent `Hc_C_num_eq_parent_til` invocation now discharges its `1 ≤ m` boun
 ## 2026-10-29 — C/X theorem declaration order
 
 CI for `acd33bc3465cc21367034412e852b662d74a5272` reported that `pHeO_corner_X_box_entry_next_til` was unavailable at the point where the new C/X wrapper was written. The point-level theorem is declared later in the file, so the wrapper is relocated immediately after that dependency. Verify the full build before continuing to B/Y.
+
+
+## 2026-10-29 — C/X wrapper endpoint substitution bug
+
+The source error was caused by the two `rfl) patterns in the existential elimination, which eliminated the original endpoint names used by the subsequent orientation conversion proof. The fix keeps the equalities as named hypotheses and uses them as the output coordinate witnesses. This removes the cascade of unknown-identifier errors without changing any mathematical claim.

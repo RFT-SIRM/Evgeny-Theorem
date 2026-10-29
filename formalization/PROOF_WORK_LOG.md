@@ -643,3 +643,8 @@ The C/X transport uses `Hc_C_num_eq_parent_til` at the parent level `m). Its pre
 ## 2026-10-29 — Fix C/X wrapper declaration order
 
 The full Lean build for `acd33bc3465cc21367034412e852b662d74a5272` failed because `sgK_C_X_entry_next_til` referenced `pHeO_corner_X_box_entry_next_til` before it was declared. Moved the state wrapper after its point-level dependency, without changing the theorem statement or proof term. The failure was declaration order, not an orientation mismatch. Re-running both full Lean workflows on the new SHA before the B/Y step.
+
+
+## 2026-10-29 — Preserve X-box endpoints in the C/X wrapper context
+
+The CI log for `b32e3c7f26282933f6894044a13821c1aa09ce21` showed the C/X wrapper using `p) and `q` after an `rcases ... with ... rfl, rfl` pattern had substituted those variables away. Changed the destructuring to retain the equalities as `hpEq) and `hqEq), and returned those equalities with the parent-state witnesses. The underlying point-entry theorem and orientation argument are unchanged. Re-run full Lean CI on the new SHA.

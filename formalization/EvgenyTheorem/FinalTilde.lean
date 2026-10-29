@@ -1880,7 +1880,7 @@ theorem sgK_C_X_entry_next_til
         (GCopy.C, (q', j)) := by
   rcases pHeO_corner_X_box_entry_next_til m hm θ ax hax
       hp hq hpx hpy hqx hqy i j with
-    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+    ⟨p0, q0, hp0, hq0, hpEq, hqEq, hentry⟩
   have hHighOrient : ∀ a b : Point,
       oCo (m + 1) (oTil (m + 2)) a b ↔
         oCo (m + 1) (oNum (m + 2)) a b := by
@@ -1921,7 +1921,7 @@ theorem sgK_C_X_entry_next_til
       pHeO m θ ax (oTil m) p0 q0 i j at h
     exact h
   refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
-      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), hpEq, hqEq, ?_⟩
   change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
     pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j
   calc
