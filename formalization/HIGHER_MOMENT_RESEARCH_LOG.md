@@ -3235,3 +3235,8 @@ The shared support-equivalence wrapper now assembles the one-step and two-step z
 ## 2026-10-29 — B/O failed build: normalize the O-corner pullback explicitly
 
 The first B/O specialization failed because `simp [sgK_root_pullback_pt, hwPoint]` left conditional point definitions unresolved. The fix explicitly uses `sgK_root_pullback_pt_O` to prove the pulled-back point is O, then derives its first and second coordinates as zero. Those facts support the finite-parent membership, root-equivalence equality, and radius-two subset inclusion. No new hypotheses were introduced. The B/O specialization remains unaccepted until both full Lean push and PR workflows pass on the corrected SHA.
+
+
+## 2026-10-29 — C/O fourth/fifth diagonal transport
+
+The C-copy O-corner case instantiates the same finite-support power-transport wrapper used in the compiled B/O case, now with `sgK_C_O_entry_next_til`. It relies on the existing O-corner radius-two equivalence and explicit O root-pullback lemma. This provides a third endpoint specialization (A/X, B/O, C/O), not yet the uniform `h4/h5` statement for all glued partner roots. Full Lean push and PR builds are required before implementing A/Y, B/Y and C/X.

@@ -701,3 +701,10 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Cause: simplification did not discharge the conditional definition of `sgK_root_pullback_pt` at the O corner; it left `if 0 = 2^(m+1) then ...` expressions. The proof now invokes the existing `sgK_root_pullback_pt_O` lemma explicitly and derives the two zero-coordinate facts from it.
 - Rebuilt `hwT`, `hroot`, and `hsubset` using those concrete coordinate equalities. This changes no mathematical assumptions and does not replace the local-entry bridge.
 - **Gate:** check full Lean builds on the corrected SHA (push and PR) before adding any more corner cases. Then check the test workflow statuses. If Lean fails again, fix that failure first.
+
+
+## 2026-10-29 — Add the C/O fourth/fifth diagonal transport case
+
+- Parent SHA `c3428e6d7bf9bc7b4126e0185284b3a5b41e9cef` was verified green: full Lean build and Python 3.11/3.12 tests passed for both push and PR workflows.
+- Added `sgK_C_O_diag_four_five_transport`, following the already-compiled B/O specialization but using the existing `sgK_C_O_entry_next_til` local entry bridge. The proof reuses the O-corner support equivalence, explicit `sgK_root_pullback_pt_O` normalization, and the shared finite-support power-transport wrapper.
+- This is one endpoint case only. The remaining cases are A/Y, B/Y, and C/X. Both full Lean builds must pass on the new SHA before proceeding.
