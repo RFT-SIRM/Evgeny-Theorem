@@ -44,4 +44,33 @@ theorem affine_three_recurrence (D : ℕ → ℂ) (C : ℂ)
       rw [hnidx, hrec n, ih, pow_succ]
       ring
 
+
+/-- Closed form for a third-order affine recurrence starting at level two.
+The level-two-to-three transition is supplied separately as `hbase`;
+the remaining recurrence is needed only from level three onward. -/
+theorem affine_three_recurrence_from_level_two (D : ℕ → ℂ) (C : ℂ)
+    (hbase : D 3 = 3 * D 2 + C)
+    (hrec : ∀ m, 3 ≤ m → D (m + 1) = 3 * D m + C)
+    (m : ℕ) (hm : 2 ≤ m) :
+    D m = (3 : ℂ) ^ (m - 2) * (D 2 + C / 2) - C / 2 := by
+  have hmain : ∀ n : ℕ,
+      D (n + 2) = (3 : ℂ) ^ n * (D 2 + C / 2) - C / 2 := by
+    intro n
+    induction n with
+    | zero =>
+        simp
+    | succ n ih =>
+        have hstep : D (n + 3) = 3 * D (n + 2) + C := by
+          by_cases hn : n = 0
+          · subst n
+            simpa using hbase
+          · have hnm : 3 ≤ n + 2 := by omega
+            simpa [Nat.add_assoc] using hrec (n + 2) hnm
+        rw [hstep, pow_succ, ih]
+        ring
+  have hm' : m = (m - 2) + 2 := by omega
+  rw [hm']
+  exact hmain (m - 2)
+
+
 end EvgenyTheorem
