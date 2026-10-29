@@ -815,3 +815,16 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Python push: `40926915594` (success); Python PR: `40926930923` (success), with Python 3.11 and 3.12 jobs successful.
 - The exact base-transition test includes assertions for the raw and normalized level-two polynomial, (D_3-3D_2=C_6(\theta)), and (C_6(\pi)=5280). The formulas are documented as a combined Lean recurrence plus exact Python symbolic certificate, not as a fully Lean-kernel proof of the finite base step.
 - The PR is being prepared for merge; the branch merge state is recorded by the PR itself after the merge operation.
+
+
+## 2026-10-29 — PR #11 H6 base-transition CI triage
+
+- The arithmetic bridge added in commit `5563403bc3b7a578546ab3b2f45b4139e9567c3d` passed the full Lean build and Python CI.
+- An experimental Lean transcription of the finite level-two polynomial was then tried in `H6BaseTransition.lean`. The first run exposed a nonexistent import path; after correcting the import, the actual blocker was that Mathlib's `MvPolynomial.X` and `AddMonoidAlgebra` ring operations are noncomputable in this setup, so `native_decide` cannot evaluate the matrix-trace certificate. This is a representation/verification-method failure, not a counterexample to the polynomial identity.
+- The noncomputable experiment and its aggregator import were removed in cleanup commit `8a7be474cd0d5bbec74b921c70f6ab1d0e42557a`. The generic arithmetic bridge remains.
+- The exact H6 certificate remains the existing Python symbolic calculation: it pins the raw (D_2) polynomial, checks (D_3-3D_2=C_6), and checks the level-2/3 adjusted residual identity exactly. It does not use floating-point fitting.
+- Formula recorded for (m\ge2), with (c=\cos(\theta/2)), (s=\sin(\theta/2)):
+  (D_m=-(12336\,3^{m-2}+2256)s^2+(1440\,3^{m-2}-96)cs^2-384s^3).
+- Formalization boundary is explicit: Lean proves the structural recurrence for (m\ge3) and the generic induction bridge; the exceptional finite transition is exact Python symbolic arithmetic, not yet a Lean-kernel theorem.
+- Full Lean and Python pull-request workflows were restarted on cleanup SHA `8a7be474cd0d5bbec74b921c70f6ab1d0e42557a`; statuses were still in progress when this note was written. Do not claim this SHA green until the checks finish.
+- H8/H10 have not been modified by this work.

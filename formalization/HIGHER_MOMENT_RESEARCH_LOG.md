@@ -3339,3 +3339,24 @@ The source/test checkpoint `772b521afd6befcb80af0d590f6742e488a6ea76` passed all
 - Python pull request `40926930923` — success for Python 3.11 and 3.12.
 
 The exact test also pins the raw level-two polynomial and its reduction by (c^2+s^2=1). The result is a closed H6 recurrence and explicit formula for all (m\ge2) by combining the Lean-proved (m\ge3) recurrence with an exact symbolic finite base identity. The finite identity is not represented as Lean-kernel checked.
+
+
+## 2026-10-29 — H6 base-transition PR #11: Lean experiment and formalization boundary
+
+The current H6 formula is
+
+\[
+D_m(\theta)=-(12336\,3^{m-2}+2256)s^2
+ +(1440\,3^{m-2}-96)cs^2-384s^3,\quad m\ge2,
+\]
+where (c=\cos(\theta/2)) and (s=\sin(\theta/2)). The equivalent recurrence data are
+\[
+D_2=-14592s^2+1344cs^2-384s^3,\qquad
+C_6=4512s^2+192cs^2+768s^3.
+\]
+
+The exact Python certificate checks integer/Gaussian-integer polynomial coefficients, the relation (c^2+s^2=1), (D_3-3D_2=C_6), and equality of the adjusted boundary residual at levels 2 and 3. This is an exact symbolic certificate, not numerical angle fitting.
+
+PR #11's arithmetic bridge compiles: assuming the level-two base identity and the all-level recurrence for (m\ge3), it derives the affine formula for all (m\ge2). The attempted direct Lean matrix-polynomial computation did not work: the `MvPolynomial` representation has noncomputable operations, so `native_decide` cannot compute the certificate. The experimental file was removed rather than leaving a misleading, unconnected proof attempt.
+
+Cleanup commit `8a7be474cd0d5bbec74b921c70f6ab1d0e42557a` restores the narrow bridge without that experiment. At the time of this entry, the current PR-head Lean/Python workflows are still running; record their final outcomes before changing PR status. The finite base transition remains exact Python evidence and is not yet Lean-kernel checked. No H8/H10 changes were made.
