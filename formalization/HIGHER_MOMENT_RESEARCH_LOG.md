@@ -2978,3 +2978,9 @@ The build for `d7638a84b4ff0e5f75869d0b832fc186d481b147` progressed past the pai
 - CI for the new Lean source change is pending. The all-level residual identity (R_{m+1}=R_m) remains unproved.
 - Next: formalize the X/B and Y/C reindexings, preserving their copy shifts and then prove the matrix-entry equalities needed for the path products. The C-copy orientation must remain explicit.
 
+## 2026-10-29 — Diagnose and repair the O-corner support proof
+
+- Diagnosis from both full Lean job logs at source SHA `16d3e702db22a9a6616c3827c9fb48deb9b09575`: the only Lean error reported is at `FinalTilde.lean:1225:4`, where `change` cannot reduce membership in the filtered finite set `sgK_radius_two_O_parent_support) to a conjunction by definitional equality.
+- Corrected the proof by unfolding the support definition and simplifying `Finset.mem_filter` and `Finset.mem_univ` explicitly at `hparent`. This changes no theorem statement and makes no stronger mathematical claim.
+- CI for this correction is pending. The O-corner finite-state equivalence is not yet considered compiled until the full build succeeds; the weighted path-sum identity and the all-level residual equality remain open.
+

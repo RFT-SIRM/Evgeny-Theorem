@@ -1222,8 +1222,8 @@ noncomputable def sgK_radius_two_support_O_equiv
     refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
     apply (sgK_radius_two_support_O_box_iff m hm hw).mpr
     have hparent : z.1 ∈ sgK_radius_two_O_parent_support m w.1 := z.2
-    change z.1.1 = w.1 ∧
-      z.1.2.1.1.1 ≤ 2 ∧ z.1.2.1.1.2 ≤ 2 at hparent
+    simp only [sgK_radius_two_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
     exact ⟨hparent.1, List.mem_toFinset.mp z.1.2.1.2,
       hparent.2.1, hparent.2.2⟩
   · intro z

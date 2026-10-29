@@ -424,3 +424,10 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - Scope: O corner only. No matrix-entry or powered-matrix weight preservation is asserted, and this does not prove (R_{m+1}=R_m). CI for this source change is pending.
 - Next: build the corresponding X/B and Y/C state-set equivalences; then prove preservation of each entry factor under the appropriate A/B/C orientation transport before reindexing weighted path sums.
 
+## 2026-10-29 — Diagnose and repair the O-corner support proof
+
+- The full logs for both Lean failures on `16d3e702db22a9a6616c3827c9fb48deb9b09575` point to the same first error: `FinalTilde.lean:1225:4`. The `change` tactic tried to replace membership in `sgK_radius_two_O_parent_support` by its defining conjunction, but that membership is not definitionally equal to the conjunction until the filtered-Finset membership is simplified.
+- Replaced that brittle `change` with the explicit simplification `simp only [sgK_radius_two_O_parent_support, Finset.mem_filter, Finset.mem_univ, true_and] at hparent`. This is a proof-elaboration correction; theorem statements and the intended finite-state equivalence are unchanged.
+- Failed runs: push Lean [40813572235](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40813572235) and PR Lean [40813578252](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40813578252). Both report the same line-1225 error. CI for this correction is pending.
+- Do not continue to X/B or Y/C until the corrected full Lean build and the Python 3.11/3.12 push/PR workflows have been inspected. No matrix-weight preservation or (R_{m+1}=R_m) claim is made.
+
