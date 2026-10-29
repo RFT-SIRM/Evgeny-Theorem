@@ -3240,3 +3240,8 @@ The first B/O specialization failed because `simp [sgK_root_pullback_pt, hwPoint
 ## 2026-10-29 — C/O fourth/fifth diagonal transport
 
 The C-copy O-corner case instantiates the same finite-support power-transport wrapper used in the compiled B/O case, now with `sgK_C_O_entry_next_til`. It relies on the existing O-corner radius-two equivalence and explicit O root-pullback lemma. This provides a third endpoint specialization (A/X, B/O, C/O), not yet the uniform `h4/h5` statement for all glued partner roots. Full Lean push and PR builds are required before implementing A/Y, B/Y and C/X.
+
+
+## 2026-10-29 — A/Y fourth/fifth diagonal transport
+
+The A-copy Y-corner specialization uses `sgK_radius_two_support_Y_equiv` together with `sgK_A_Y_entry_next_til`. The inverse state map subtracts `2^m` in the y-coordinate, while the Y support bounds are (x\le2) and (2^{m+1}\le y+2). The proof then uses the existing finite path-sum matrix-power lemma with explicit row/column zero-outside-support premises. This does not yet close the uniform glued-root transport or the sixth-moment residual. Require green push and PR full Lean builds before adding another endpoint.

@@ -708,3 +708,10 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Parent SHA `c3428e6d7bf9bc7b4126e0185284b3a5b41e9cef` was verified green: full Lean build and Python 3.11/3.12 tests passed for both push and PR workflows.
 - Added `sgK_C_O_diag_four_five_transport`, following the already-compiled B/O specialization but using the existing `sgK_C_O_entry_next_til` local entry bridge. The proof reuses the O-corner support equivalence, explicit `sgK_root_pullback_pt_O` normalization, and the shared finite-support power-transport wrapper.
 - This is one endpoint case only. The remaining cases are A/Y, B/Y, and C/X. Both full Lean builds must pass on the new SHA before proceeding.
+
+
+## 2026-10-29 — A/Y fourth/fifth diagonal transport specialization
+
+- Parent SHA `aa66fdf8889e02c912f2b427e7ecac38d30ed5c2` passed the full Lean build and all Python 3.11/3.12 fast+slow tests for both push and PR workflows.
+- Added `sgK_A_Y_diag_four_five_transport` using the already-proved Y-radius-two support equivalence and `sgK_A_Y_entry_next_til`. The proof explicitly inverts the Y shift by subtracting `2^m` from the y-coordinate, preserves x and spin, and supplies the finite-support one-/two-step vanishing obligations to the matrix-power identity.
+- The endpoint keeps the existing axis-periodicity hypothesis `ax (2 * 3^m + k) = ax k`; no new matrix-entry assumption is introduced. This does not yet establish uniform `h4/h5`. Both full Lean builds on the new SHA must pass before proceeding to B/Y or C/X.
