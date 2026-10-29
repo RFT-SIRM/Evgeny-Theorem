@@ -503,3 +503,12 @@ Both Lean workflows for `e6233009fa4531cc7943a29ae8dcd6e3b6234519` failed in `Fi
 - The residual is now expressed exactly as `12 * (Σ_g K^5(σx,σx) - Σ_g K'^5(σx,σx)) + 36 * (Σ_g K^4(σx,σx) - Σ_g K'^4(σx,σx))`. The partner map is deliberately retained, ready for the existing `sgK_root_pullback_sigma) compatibility theorem.
 - Scope: this is an exact algebraic reduction, not the all-level identity `R_{m+1}=R_m`. The remaining proof must compare these power-4 and power-5 diagonal sums across the rooted radius-two corner maps, including recursive axis labels and the C-copy exceptional orientation. New-SHA CI is pending.
 
+
+
+## 2026-10-29 — Prove the outer glued-root reindexing interface for p=6
+
+- Starting SHA `db3d626ca21012bf9ade7d60df47d8b4fafbdcc2` had successful Lean push/PR builds and successful Python push/PR test workflows.
+- Added `glueRHS6_glued_partner_power_sum_transport`: a finite-sum reindexing lemma on the subtype of glued states, using the existing equivalence `sgK_glued_root_equiv` and the crucial compatibility theorem `sgK_root_pullback_sigma`.
+- Added `glueRHS6_highPowerResidual_eq_of_corner_power_transport`. It combines the already-proved diagonal reduction with four pointwise transport hypotheses (powers 4 and 5 for each of the two operators) to derive the exact adjacent-level residual equality. It deliberately does not assert these local power equalities.
+- This isolates the remaining mathematical core: prove the fourth- and fifth-power diagonal entries agree under the explicit root pullback on every glued partner root, for the concrete face-axis and constant-axis operators. The theorem is a sum-reindexing bridge, not yet the all-level p=6 closure.
+- New commit CI must finish its full Lean build; Python results are checked but do not gate further mathematical analysis.

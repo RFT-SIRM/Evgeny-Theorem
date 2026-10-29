@@ -3069,3 +3069,10 @@ This isolates the sole remaining dependence on the chosen axis assignment into t
 
 This is a proved reduction, not an all-level stability theorem: `R_{m+1}=R_m` is still open. Next, compare the individual/cumulative fourth- and fifth-power corner diagonal contributions using radius-two path expansions and entry transports, taking special care with nested B/C copy orientation; do not promote the finite `R_3=R_4` certificate to a general proof.
 
+
+
+## 2026-10-29 — Outer-sum transport separated from local corner-power transport
+
+The next formal interface is now explicit. The existing glued-root equivalence and `sgK_root_pullback_sigma` suffice to reindex a sum of partner-root diagonal power entries from level (m+1) to level (m), provided those entries agree pointwise under root pullback. The new bridge theorem `glueRHS6_highPowerResidual_eq_of_corner_power_transport` then turns the four required local identities (powers 4 and 5, for face-axis and constant-axis operators) into (R_{m+1}=R_m), with the exact diagonal hypotheses for powers 1 and 2 made explicit.
+
+No local power identity or all-level stability result is claimed by this commit. The next mathematical step is to establish those four pointwise identities using the radius-two path expansions, support correspondences, and entry/axis/orientation transport, while preserving the C-copy exceptional orientation.

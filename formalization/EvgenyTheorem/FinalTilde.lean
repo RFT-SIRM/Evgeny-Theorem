@@ -1978,3 +1978,103 @@ theorem glueRHS6_highPowerResidual_sgK_corner_reduce
     norm_num
 
 end EvgenyTheorem
+
+
+namespace EvgenyTheorem
+
+/-- Reindex a glued-partner diagonal-power sum across adjacent levels, assuming
+the pointwise power entry is preserved by the explicit root pullback. The
+partner-map compatibility is used here, so this theorem handles the outer
+finite sum and leaves only local power-entry transport as a hypothesis. -/
+private theorem glueRHS6_glued_partner_power_sum_transport
+    (m n : ℕ)
+    (Ahi : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
+    (Alo : Matrix (WSG m) (WSG m) ℂ)
+    (hpow : ∀ w, (sgGlue (m + 1)).g w →
+      (Ahi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (Alo ^ n)
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))) :
+    (∑ w, if (sgGlue (m + 1)).g w then
+        (Ahi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) else 0) =
+      ∑ w, if (sgGlue m).g w then
+        (Alo ^ n) ((sgGlue m).σ w) ((sgGlue m).σ w) else 0 := by
+  classical
+  calc
+    (∑ w, if (sgGlue (m + 1)).g w then
+        (Ahi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) else 0) =
+      ∑ w : {w // (sgGlue (m + 1)).g w},
+        (Ahi ^ n) ((sgGlue (m + 1)).σ w.1) ((sgGlue (m + 1)).σ w.1) := by
+          simp
+    _ = ∑ w : {w // (sgGlue (m + 1)).g w},
+        (Alo ^ n)
+          ((sgGlue m).σ (sgK_root_pullback m w.1))
+          ((sgGlue m).σ (sgK_root_pullback m w.1)) := by
+          apply Finset.sum_congr rfl
+          intro w hw
+          have hentry := hpow w.1 w.2
+          rw [sgK_root_pullback_sigma m w.2] at hentry
+          exact hentry
+    _ = ∑ w : {w // (sgGlue m).g w},
+        (Alo ^ n) ((sgGlue m).σ w.1) ((sgGlue m).σ w.1) := by
+          exact Equiv.sum_comp (sgK_glued_root_equiv m)
+            (fun w : {w // (sgGlue m).g w} =>
+              (Alo ^ n) ((sgGlue m).σ w.1) ((sgGlue m).σ w.1))
+    _ = ∑ w, if (sgGlue m).g w then
+        (Alo ^ n) ((sgGlue m).σ w) ((sgGlue m).σ w) else 0 := by
+          simp
+
+/-- The remaining outer-sum step in the p=6 residual proof. If the local
+fourth- and fifth-power diagonal entries transport at every glued partner
+root, then the full high-power residual is stable across adjacent levels.
+The hypotheses on powers one and two are exactly those needed to invoke the
+already-proved algebraic residual reduction. -/
+theorem glueRHS6_highPowerResidual_eq_of_corner_power_transport
+    (m : ℕ)
+    (Khi Khi' : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
+    (Klo Klo' : Matrix (WSG m) (WSG m) ℂ)
+    (hdiag1Hi : ∀ x, (sgGlue (m + 1)).g x → Khi x x = 2)
+    (hdiag2Hi : ∀ x, (sgGlue (m + 1)).g x → (Khi ^ 2) x x = 6)
+    (hdiag1Hi' : ∀ x, (sgGlue (m + 1)).g x → Khi' x x = 2)
+    (hdiag2Hi' : ∀ x, (sgGlue (m + 1)).g x → (Khi' ^ 2) x x = 6)
+    (hdiag1Lo : ∀ x, (sgGlue m).g x → Klo x x = 2)
+    (hdiag2Lo : ∀ x, (sgGlue m).g x → (Klo ^ 2) x x = 6)
+    (hdiag1Lo' : ∀ x, (sgGlue m).g x → Klo' x x = 2)
+    (hdiag2Lo' : ∀ x, (sgGlue m).g x → (Klo' ^ 2) x x = 6)
+    (h4 : ∀ w, (sgGlue (m + 1)).g w →
+      (Khi ^ 4) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (Klo ^ 4)
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w)))
+    (h5 : ∀ w, (sgGlue (m + 1)).g w →
+      (Khi ^ 5) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (Klo ^ 5)
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w)))
+    (h4' : ∀ w, (sgGlue (m + 1)).g w →
+      (Khi' ^ 4) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (Klo' ^ 4)
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w)))
+    (h5' : ∀ w, (sgGlue (m + 1)).g w →
+      (Khi' ^ 5) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (Klo' ^ 5)
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))
+          (sgK_root_pullback m ((sgGlue (m + 1)).σ w))) :
+    glueRHS6_highPowerResidual (m + 1) Khi Khi' =
+      glueRHS6_highPowerResidual m Klo Klo' := by
+  classical
+  have hReduceHi :=
+    glueRHS6_highPowerResidual_diagonal_reduce (m + 1) Khi Khi'
+      hdiag1Hi hdiag2Hi hdiag1Hi' hdiag2Hi'
+  have hReduceLo :=
+    glueRHS6_highPowerResidual_diagonal_reduce m Klo Klo'
+      hdiag1Lo hdiag2Lo hdiag1Lo' hdiag2Lo'
+  rw [hReduceHi, hReduceLo]
+  have hSum4 := glueRHS6_glued_partner_power_sum_transport m 4 Khi Klo h4
+  have hSum5 := glueRHS6_glued_partner_power_sum_transport m 5 Khi Klo h5
+  have hSum4' := glueRHS6_glued_partner_power_sum_transport m 4 Khi' Klo' h4'
+  have hSum5' := glueRHS6_glued_partner_power_sum_transport m 5 Khi' Klo' h5'
+  rw [hSum5, hSum5', hSum4, hSum4']
+
+end EvgenyTheorem
