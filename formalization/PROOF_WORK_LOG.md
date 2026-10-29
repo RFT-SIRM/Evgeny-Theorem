@@ -667,3 +667,13 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - The full Lean push and PR builds passed on `b146f3f5d40c9760390dd5961d8492921dc391f6`; Python tests were still running.
 - Added `finset_sum_eq_subtype_of_zero_outside` and `matrix_pow_four_five_diag_eq_of_local_equiv`. The latter is the planned algebraic bridge: it expands `K^4) as `K^2 K^2) and `K^5) as `K^2 K^3), restricts sums to the radius-two supports, compares `K^2) rows/columns and `K^3) columns from one-step entry equality, and reindexes with the given finite equivalence.
 - The theorem assumes explicit zero-outside bounds for one- and two-step rows/columns on both levels. These can be discharged from the existing glued-operator locality lemmas once the six corner-specific equivalences and entry transports are assembled. No cross-level power equality is claimed yet; this is a generic algebraic lemma. New SHA Lean verification pending.
+
+
+## 2026-10-29 — Repair the generic p=6 power-transport helper's compile errors
+
+- Parent SHA checked: `373773bcc96773381f5d712d503338f98c0ab027`.
+- Both Lean workflows failed on that SHA: PR run [40884582419](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40884582419) and push run [40884571671](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40884571671). Both test workflows passed: PR [40884582469](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40884582469) and push [40884571466](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/40884571466).
+- Fixed the detached p=6 residual doc-comment by attaching it to `glueRHS6_highPowerResidual_eq_of_corner_power_transport`, rather than placing a second doc-comment immediately after it.
+- Addressed the exact `Fintype` mismatch: `glueRHS6_sum_ite_eq_subtype` enumerates the predicate subtype with `Subtype.fintype`, while the finite-support target uses `Finset.Subtype.fintype S`. The helper now proves the two `Finset.univ` enumerations equal extensionally before applying the generic conversion; no matrix-entry assumption is changed.
+- This is a compile repair for a conditional algebraic lemma. It does not yet instantiate the radius-two supports, prove concrete fourth/fifth-power transport for `sgK`, or close the sixth-moment residual.
+- **Next:** inspect both Lean workflows on the resulting SHA. Do not proceed to support instantiation until both full Lean builds pass; then derive and verify the concrete `h4/h5` hypotheses.

@@ -2816,12 +2816,6 @@ private theorem glueRHS6_glued_partner_power_sum_transport
             (fun w : WSG m => (sgGlue m).g w)
             (fun w => (Alo ^ n) ((sgGlue m).σ w) ((sgGlue m).σ w))).symm
 
-/-- The remaining outer-sum step in the p=6 residual proof. If the local
-fourth- and fifth-power diagonal entries transport at every glued partner
-root, then the full high-power residual is stable across adjacent levels.
-The hypotheses on powers one and two are exactly those needed to invoke the
-already-proved algebraic residual reduction. -/
-
 /-- Restrict a finite sum to a subtype when its summand vanishes outside the
 support set. This lets the local path sums be reindexed by a finite-state
 equivalence without making assumptions about matrix entries off the box. -/
@@ -2837,8 +2831,16 @@ private theorem finset_sum_eq_subtype_of_zero_outside
       by_cases hs : x ∈ S
       · simp [hs]
       · simp [hzero x hs]
-    _ = ∑ x : {x // x ∈ S}, f x.1 :=
-      glueRHS6_sum_ite_eq_subtype (fun x : α => x ∈ S) f
+    _ = ∑ x : {x // x ∈ S}, f x.1 := by
+      have hsubtype_univ :
+          (@Finset.univ {x // x ∈ S}
+            (Subtype.fintype (fun x : α => x ∈ S))) =
+          (@Finset.univ {x // x ∈ S}
+            (Finset.Subtype.fintype S)) := by
+        ext x
+        simp
+      rw [← hsubtype_univ]
+      exact glueRHS6_sum_ite_eq_subtype (fun x : α => x ∈ S) f
 
 /-- Local matrix entries determine fourth- and fifth-power diagonals at a
 point whenever both one-step and two-step rows/columns vanish outside the
@@ -3062,6 +3064,11 @@ private theorem matrix_pow_four_five_diag_eq_of_local_equiv
       _ = (L ^ 5) x' x' := hfiveL.symm
 
 
+/-- The remaining outer-sum step in the p=6 residual proof. If the local
+fourth- and fifth-power diagonal entries transport at every glued partner
+root, then the full high-power residual is stable across adjacent levels.
+The hypotheses on powers one and two are exactly those needed to invoke the
+already-proved algebraic residual reduction. -/
 theorem glueRHS6_highPowerResidual_eq_of_corner_power_transport
     (m : ℕ)
     (Khi Khi' : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)

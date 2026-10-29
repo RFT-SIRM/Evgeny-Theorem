@@ -3211,3 +3211,10 @@ The sole Lean error in the B/Y wrapper was the known predicate-strength mismatch
 ## 2026-10-29 — General algebraic transport lemma for powers four and five
 
 The new `matrix_pow_four_five_diag_eq_of_local_equiv` isolates the finite algebra needed for the p=6 residual. Given a state equivalence between two finite local supports, entry equality for `K) and `L) on those supports, and vanishing of first/second powers outside, it proves that fourth- and fifth-power diagonal entries agree. For power five, the proof uses `K^3 = K K^2); the intermediate state in the `K^2) column is kept in the radius-two support. Next, instantiate this theorem for each glued-root copy/corner case using `sgK_radius_two_support_{O,X,Y}_equiv` and the six one-step transport lemmas, then supply the resulting `h4/h5) to `glueRHS6_highPowerResidual_eq_of_corner_power_transport`.
+
+
+## 2026-10-29 — Compile repair for the conditional fourth/fifth-power transport
+
+On parent SHA `373773bcc96773381f5d712d503338f98c0ab027`, the PR and push Lean builds both failed in `FinalTilde.lean` for two source-level reasons: a detached doc-comment before the new support-sum helper, and an incompatibility between the generic predicate-subtype enumeration `Subtype.fintype` and the finite-set subtype enumeration `Finset.Subtype.fintype S`. The doc-comment is now attached to the theorem it documents. The support-sum helper explicitly proves equality of the two corresponding `Finset.univ` finsets before invoking `glueRHS6_sum_ite_eq_subtype`.
+
+This change only repairs the generic finite-index conversion. The lemma `matrix_pow_four_five_diag_eq_of_local_equiv` remains conditional on local entry matching and one-/two-step row/column vanishing. No concrete (K^4/K^5) diagonal equality for `sgK`, no equality of sixth-moment residuals, and no completed sixth-moment theorem is claimed. The next gate is a successful full Lean build in both push and PR workflows on the new SHA. After that, instantiate the already available radius-two support equivalences and local corner-entry bridges to obtain the actual `h4/h5` obligations.
