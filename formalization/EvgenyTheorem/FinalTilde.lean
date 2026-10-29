@@ -1467,6 +1467,38 @@ theorem sgK_A_Y_entry_next_til
   exact hentry
 
 
+
+/-- State-index version of the X/B point-entry transport for the A block.
+The point witnesses are bundled as `Pt m), so their vertex-membership
+proofs are carried with the parent-level matrix states. -/
+theorem sgK_A_X_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 2) (hpy : p.2 ≤ 2)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 2) (hqy : q.2 ≤ 2)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+      q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, (p', i))
+        (GCopy.A, (q', j)) := by
+  rcases pHeO_corner_X_box_entry_next_til_num m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
+  change pHeO (m + 1) θ ax (oTil (m + 2))
+      (shiftPoint (2 ^ m) 1 0 p0) (shiftPoint (2 ^ m) 1 0 q0) i j =
+    pHeO m θ ax (oTil (m + 1)) p0 q0 i j
+  exact hentry
+
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/

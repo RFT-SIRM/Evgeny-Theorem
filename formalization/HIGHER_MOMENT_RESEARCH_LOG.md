@@ -3156,3 +3156,8 @@ The failed SHA `3fec4bd1c1e02b1f2c16ab146c46b48b7c434e03` showed a too-weak arit
 ## 2026-10-29 — Revert O-box tilde entry attempt
 
 The concrete O-box orientation lemma was reverted after CI exposed errors in the arithmetic calc chain and an unresolved congruence identifier. The source was restored to the exact `FinalTilde.lean` content at green checkpoint `2bf84fea6a42708a84f6d701075c17d64663d99c`. The local O-box strategy should be redesigned and checked against exact low-level theorem signatures before another commit; no B/C or power-transport work should be layered on top of the failed attempt.
+
+
+## 2026-10-29 — A-block point-entry coverage extended to X
+
+The corrected Y/C point-level transport and its A-block wrapper compile on the new source. Added `sgK_A_X_entry_next_til`, packaging the existing actual-tilde X-box transport into `WSG) states for the A block. This complements `sgK_O_A_entry_next_til` and `sgK_A_Y_entry_next_til`. It is still only a local matrix-entry equality: it does not establish equality of `sgK^4) or `sgK^5) diagonals. The next broad step is to assemble matching one-step transports for B/C blocks across the relevant root neighborhoods, then derive the two power-diagonal equalities using radius-two support and matrix multiplication.

@@ -598,3 +598,10 @@ The Lean build for `3fec4bd1c1e02b1f2c16ab146c46b48b7c434e03` failed at the new 
 ## 2026-10-29 — Revert unverified O-box tilde entry lemma
 
 The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean build failed on the follow-up SHA. The fresh CI log showed two invalid `calc` steps (the proof stated `4 ≤ 2^n` but started its chain at `3 ≤ 2^3`) and a remaining reference to unavailable `pHeO_rel_congr`. Rather than continue layering unverified patches, `FinalTilde.lean` was restored exactly to the verified source blob from green checkpoint `2bf84fea6a42708a84f6d701075c17d64663d99c`. This does not solve the transport problem; it restores the known-good geometry checkpoint before a redesigned proof attempt.
+
+
+## 2026-10-29 — Y-corner transport compiles; add A-block X wrapper
+
+- Full Lean push and PR builds passed on `3f4dd54e0278f95b44f093eb59f64467a304e5b4` after correcting the Y/C transport's `cp1_not_A` side-condition and packing parent witnesses into `Pt m`. Python tests on that SHA were still running at the time of this update.
+- Added `sgK_A_X_entry_next_til`, a state-index wrapper around the already-proved `pHeO_corner_X_box_entry_next_til_num`. Parent states are bundled as `Pt m`, avoiding a dangling membership proof in the result type. The lemma applies to the A block and does not claim power-diagonal transport.
+- The next proof target remains the equality of fourth/fifth-power diagonal entries at glued partner states; all pointwise one-step entries needed across every outer copy and corner still have to be assembled before the power reindexing can be justified.
