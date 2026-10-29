@@ -619,3 +619,10 @@ The O-box `pHeO_corner_O_box_entry_next_til` was removed after the full Lean bui
 - Added `pHeO_til_eq_num_same_index`, the same-level counterpart of the existing `pHeO_til_eq_num_of_level_domain`. It follows directly from `cp1_not_A) on every edge in the level-n graph.
 - Added `sgK_C_O_entry_next_til`. Its high and low C-copy orientations are converted using `cp1_shiftC) and the already-proved `Hc_C_num_eq_parent_til`; the O-box entry transport then handles the level change. This proves only a one-entry transport in the C block, not yet any fourth/fifth power equality.
 - Full Lean verification on this new SHA is pending; do not add power-sum claims until it passes.
+
+
+## 2026-10-29 — Correct the C/O transfer's orientation scope
+
+- The full Lean build for `5432adb45c528017f44921820a74a4de66000fb4` failed at three places in the newly added C/O lemma. Source review found a genuine logical overgeneralization: the helper `pHeO_til_eq_num_same_index` asserted global agreement of `oTil n` and `oNum n) on level-n entries, but `cp1 n` can be an actual edge at that level, so the statement is not justified.
+- Removed that false global helper. The C/O proof now changes `oTil) to `oNum) only for endpoints inside the O radius-two box, invoking `cp1_not_O_radius_two` at levels `m) and `m+1). Also supplied `by omega` where `Hc_C_num_eq_parent_til` requires `1 ≤ m`, rather than incorrectly passing `3 ≤ m`.
+- The proof still uses the existing shifted-C exclusion `cp1_shiftC` for the copy wrapper and `Hc_C_num_eq_parent_til` for the actual C orientation. This is narrower and mathematically correct; new SHA full Lean verification is pending.

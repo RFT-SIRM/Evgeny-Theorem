@@ -1469,26 +1469,6 @@ theorem sgK_A_Y_entry_next_til
 
 
 
-/-- At the same operator level, `oTil n` and `oNum n` induce the same
-point-operator entries: every graph edge lies in the level-n vertex domain,
-where the exceptional `cp1 n` pair is absent. -/
-private theorem pHeO_til_eq_num_same_index
-    (n : ℕ) (hn : 1 ≤ n) (θ : ℝ) (ax : ℕ → Axis)
-    (p q : Point) (i j : C2) :
-    pHeO n θ ax (oTil n) p q i j =
-      pHeO n θ ax (oNum n) p q i j := by
-  exact pHeO_orient_congr n θ ax (oTil n) (oNum n)
-    (by
-      intro a b hab hE hfl
-      have hmEdge := EdgeB_mem n a.1 a.2 b.1 b.2 hE
-      have ha : a ∈ vertexOrder n :=
-        (mem_vertexOrder_iff n a).mpr hmEdge.1
-      have hb : b ∈ vertexOrder n :=
-        (mem_vertexOrder_iff n b).mpr hmEdge.2
-      obtain ⟨h1, h2⟩ := cp1_not_A n hn ha hb
-      exact oTil_of_no_corner h1 h2)
-    p q i j
-
 /-- The C-block at the O corner also transports across one refinement level.
 The C shift turns its orientation into the established C-copy orientation
 transfer; the small O box then lets the ordinary O-entry transport apply. -/
@@ -1546,7 +1526,7 @@ theorem sgK_C_O_entry_next_til
   have hLowC :
       pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
         pHeO m θ ax (oTil m) p q i j := by
-    have h := Hc_C_num_eq_parent_til m hm θ ax
+    have h := Hc_C_num_eq_parent_til m (by omega) θ ax
       (oNum_anti (m + 1))
       ((⟨p, List.mem_toFinset.mpr hp'⟩ : Pt m), i)
       ((⟨q, List.mem_toFinset.mpr hq'⟩ : Pt m), j)
@@ -1563,11 +1543,17 @@ theorem sgK_C_O_entry_next_til
         p q i j (hHighOrient p q)
     _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
     _ = pHeO (m + 1) θ ax (oNum (m + 1)) p q i j :=
-      pHeO_til_eq_num_same_index (m + 1) (by omega) θ ax p q i j
+      pHeO_rel_congr_local (m + 1) θ ax (oTil (m + 1)) (oNum (m + 1))
+        p q i j (oTil_of_no_corner
+          (cp1_not_O_radius_two (m + 1) (by omega) hpx hqx).1
+          (cp1_not_O_radius_two (m + 1) (by omega) hpx hqx).2)
     _ = pHeO m θ ax (oNum m) p q i j :=
       pHeO_corner_O_box_entry m hm θ ax hp hq hpx hpy hqx hqy i j
     _ = pHeO m θ ax (oTil m) p q i j :=
-      (pHeO_til_eq_num_same_index m hm θ ax p q i j).symm
+      (pHeO_rel_congr_local m θ ax (oTil m) (oNum m)
+        p q i j (oTil_of_no_corner
+          (cp1_not_O_radius_two m hm hpx hqx).1
+          (cp1_not_O_radius_two m hm hpx hqx).2)).symm
     _ = pHeO m θ ax (oCo m (oNum (m + 1))) p q i j := hLowC.symm
     _ = pHeO m θ ax (oCo m (oTil (m + 1))) p q i j :=
       (pHeO_rel_congr_local m θ ax

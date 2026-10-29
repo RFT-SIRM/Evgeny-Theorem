@@ -3171,3 +3171,8 @@ The failed build at `0bae1cddee6886964fb48b69cd4fb3220868df23` exposed a declara
 ## 2026-10-29 — C outer-copy O-box entry transport
 
 The C-copy at an O-local coordinate box has an orientation path already available in the source: `cp1_shiftC) removes the exceptional edge under the C shift, and `Hc_C_num_eq_parent_til` transfers the numbered C orientation to the parent `oTil). The new `sgK_C_O_entry_next_til` composes those facts with the ordinary O-box entry transport. This fills the third outer-copy entry case for the O corner; X/Y corner and power-sum assembly remain separate requirements.
+
+
+## 2026-10-29 — Scope correction for exceptional orientation
+
+The failed C/O attempt exposed the key constraint: `oTil n = oNum n` is not a global statement on the level-n graph because the exceptional edge `cp1 n` can be present. Therefore removed the global same-index entry lemma and converted orientations only locally inside the O box, using the proven coordinate-bound exclusion `cp1_not_O_radius_two`. At the C-shift level, `cp1_shiftC` remains the correct tool because the shifted points exclude the exceptional edge at the next level. New Lean CI is required before proceeding.
