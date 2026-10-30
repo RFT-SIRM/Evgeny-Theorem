@@ -832,3 +832,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - The orbit weights are eight for eight classes, four for (1,3,1,3), and two for (2,2,2,2), summing to C(8,4)=70.
 - Each of the two diagonalized middle powers is at most five; sgK_pow_hkg_up_to_five_of_OAnti discharges the required corner hypotheses for m >= 3.
 - Scope remains a single even boundary stratum. It does not prove cancellation, the H8 trace split, or the all-level H8 recurrence.
+
+
+## 2026-10-30 — Formalize the H8 six-N boundary stratum
+
+- Added sg_trace_p8_six_N_stratum_boundary for all four cyclic r=6 classes.
+- Exact orbit multiplicities are 8, 8, 8, and 4; their sum is C(8,6)=28.
+- Each class is reduced by trace_six_N_powers_boundary, retaining the three ordered diagonal corner insertions. All required exponents are at most three, covered by sgK_pow_hkg_up_to_five_of_OAnti for m >= 3.
+- This is only the r=6 boundary reduction; it makes no cancellation or H8 recurrence claim.
