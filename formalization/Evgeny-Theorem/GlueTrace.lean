@@ -1859,4 +1859,101 @@ theorem sg_trace_p8_six_N_stratum_boundary
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   rw [h111113, h111122, h111212, h112112]
 
+
+
+/-- Exact p=8 boundary correction assembled from all four even insertion
+strata. The r=2 and r=4 strata are weighted corner sums, r=6 retains the
+three ordered diagonal insertions, and r=8 is the fourth-power endpoint.
+No cancellation or axis-independence is built into this definition. -/
+noncomputable def glueRHS8
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+    fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  8 * (∑ x, if (sgGlue m).g x then
+    (K ^ 1) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  8 * (∑ x, if (sgGlue m).g x then
+    (K ^ 2) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  8 * (∑ x, if (sgGlue m).g x then
+    (K ^ 3) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  4 * (∑ x, if (sgGlue m).g x then
+    (K ^ 4) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 1 5 +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 4 2 +
+  8 * sg_trace_four_N_boundary_sum m K 1 2 1 4 +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 2 4 +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 3 3 +
+  8 * sg_trace_four_N_boundary_sum m K 1 3 2 2 +
+  8 * sg_trace_four_N_boundary_sum m K 1 2 3 2 +
+  4 * sg_trace_four_N_boundary_sum m K 1 3 1 3 +
+  8 * sg_trace_four_N_boundary_sum m K 1 2 2 3 +
+  2 * sg_trace_four_N_boundary_sum m K 2 2 2 2 +
+  8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) +
+  8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) +
+  8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) +
+  4 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) +
+  (∑ x, if (sgGlue m).g x then
+    (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0)
+
+/-- All even insertion strata of the eighth moment are reduced in one
+identity. The coefficients are the exact cyclic orbit sizes from the
+ordered-word inventory; periodic classes retain their shorter weights.
+Odd strata and the full ordered expansion are intentionally separate. -/
+theorem sg_trace_p8_all_even_strata_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let E2 :=
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+      4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    let E4 :=
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+      4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+      2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    let E6 :=
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+      8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+      4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    let E8 :=
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0)
+    E2 + E4 + E6 + E8 = glueRHS8 m K := by
+  dsimp
+  rw [sg_trace_p8_two_N_stratum_boundary m hm θ ax o hanti,
+    sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti,
+    sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti,
+    sg_trace_p8_top_stratum_diagonal_fourth m hm θ ax o hanti]
+  simp [glueRHS8, sg_trace_four_N_boundary_sum, Matrix.mul_assoc]
+
 end EvgenyTheorem
