@@ -3193,4 +3193,242 @@ theorem sg_trace_p8_ordered_expansion_boundary
       trace_orderedWordExpansion K (K * N) 8
     _ = Matrix.trace (K ^ 8) + E2 + E4 + E6 + E8 := hCyclicSplit
     _ = Matrix.trace (K ^ 8) + glueRHS8 m K := by rw [hAll]
+
+/-- The p=10 four-N word, reduced to its exact nested corner sum.
+The only hypotheses are the two required middle-power corner conditions;
+for the concrete Sierpinski operator they follow from OAnti and m ≥ 4. -/
+private theorem sg_trace_four_N_powers_boundary_sum_p10
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b ≤ 9) (hd : d ≤ 9) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N * sgK m θ ax o ^ 0) =
+      sg_trace_four_N_boundary_sum m (sgK m θ ax o) a b c d := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 9 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  simpa [sg_trace_four_N_boundary_sum, K, pow_zero, Matrix.one_mul,
+    Matrix.mul_assoc] using
+    (trace_four_N_powers_explicit (sgGlue m) K
+      (blockK_BD (Hc m θ ax o)) a b c d 0
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg d hd w w' hw hw' hcopy hne))
+
+/-- Complete r=4 cyclic stratum of the tenth-moment expansion.
+All 22 cyclic classes are included with exact orbit multiplicities:
+20 classes have weight 10 and the periodic classes (1,4,1,4) and
+(2,3,2,3) have weight 5 each. The result is only the boundary reduction. -/
+theorem sg_trace_p10_four_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+
+10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 5 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+    10 * sg_trace_four_N_boundary_sum m K 1 1 1 7
+    + 10 * sg_trace_four_N_boundary_sum m K 1 1 6 2
+    + 10 * sg_trace_four_N_boundary_sum m K 1 2 1 6
+    + 10 * sg_trace_four_N_boundary_sum m K 1 1 2 6
+    + 10 * sg_trace_four_N_boundary_sum m K 1 1 5 3
+    + 10 * sg_trace_four_N_boundary_sum m K 1 5 2 2
+    + 10 * sg_trace_four_N_boundary_sum m K 1 2 5 2
+    + 10 * sg_trace_four_N_boundary_sum m K 1 3 1 5
+    + 10 * sg_trace_four_N_boundary_sum m K 1 2 2 5
+    + 10 * sg_trace_four_N_boundary_sum m K 1 1 3 5
+    + 10 * sg_trace_four_N_boundary_sum m K 1 1 4 4
+    + 10 * sg_trace_four_N_boundary_sum m K 1 4 3 2
+    + 10 * sg_trace_four_N_boundary_sum m K 1 2 4 3
+    + 10 * sg_trace_four_N_boundary_sum m K 1 4 2 3
+    + 10 * sg_trace_four_N_boundary_sum m K 2 2 2 4
+    + 10 * sg_trace_four_N_boundary_sum m K 1 3 4 2
+    + 5 * sg_trace_four_N_boundary_sum m K 1 4 1 4
+    + 10 * sg_trace_four_N_boundary_sum m K 1 3 2 4
+    + 10 * sg_trace_four_N_boundary_sum m K 1 2 3 4
+    + 10 * sg_trace_four_N_boundary_sum m K 1 3 3 3
+    + 10 * sg_trace_four_N_boundary_sum m K 2 2 3 3
+    + 5 * sg_trace_four_N_boundary_sum m K 2 3 2 3 := by
+  dsimp
+  rw [
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 1 1 7 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 1 6 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 2 1 6 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 1 2 6 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 1 5 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 5 2 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 2 5 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 3 1 5 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 2 2 5 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 1 3 5 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 1 4 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 4 3 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 2 4 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 4 2 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 2 2 2 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 3 4 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 4 1 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 3 2 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 2 3 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 1 3 3 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 2 2 3 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum_p10 m hm θ ax o hanti 2 3 2 3 (by omega) (by omega)
+  ]
+
+/-- Ordered diagonal-insertion form for the complete p=10 six-N stratum.
+The three diagonal factors are exactly the powers in positions 2, 4, and 6;
+the other three gaps remain in their original matrix order. -/
+private def sg_trace_six_N_boundary_term
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e f : ℕ) : ℂ :=
+  Matrix.trace (K ^ a *
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+    K ^ c *
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+    K ^ e *
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
+
+/-- Concrete six-N boundary reduction for all p=10 cyclic gap tuples.
+For each selected middle power, the same-copy glued-corner hypothesis follows
+from OAnti and 9 < 2^m when m ≥ 4. -/
+private theorem sg_trace_six_N_powers_boundary_term_p10
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (hb : b ≤ 9) (hd : d ≤ 9) (hf : f ≤ 9) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N * sgK m θ ax o ^ 0) =
+      sg_trace_six_N_boundary_term m (sgK m θ ax o) a b c d e f := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 9 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  simpa [sg_trace_six_N_boundary_term, K, pow_zero, Matrix.one_mul,
+    Matrix.mul_assoc] using
+    (trace_six_N_powers_boundary (sgGlue m) K
+      (blockK_BD (Hc m θ ax o)) a b c d e f 0
+      (by intro w w' hw hw' hcopy hne; exact hkg b hb w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg d hd w w' hw hw' hcopy hne)
+      (by intro w w' hw hw' hcopy hne; exact hkg f hf w w' hw hw' hcopy hne))
+
+/-- Complete r=6 cyclic stratum of the tenth-moment expansion.
+Its 22 classes carry weight 10 except the two period-two classes
+(1,1,3,1,1,3) and (1,2,2,1,2,2), which carry weight 5. Every class
+is retained as an ordered three-diagonal boundary trace. -/
+theorem sg_trace_p10_six_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+
+10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    10 * sg_trace_six_N_boundary_term m K 1 1 1 1 1 5
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 1 4 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 4 1 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 2 1 1 4
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 2 1 4
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 1 2 4
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 1 3 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 3 2 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 3 2 1 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 2 1 3 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 2 3 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 3 1 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 3 1 2 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 2 1 2 1 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 2 3 1 2
+    + 5 * sg_trace_six_N_boundary_term m K 1 1 3 1 1 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 2 2 1 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 2 1 2 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 1 2 2 3
+    + 10 * sg_trace_six_N_boundary_term m K 1 1 2 2 2 2
+    + 10 * sg_trace_six_N_boundary_term m K 1 2 1 2 2 2
+    + 5 * sg_trace_six_N_boundary_term m K 1 2 2 1 2 2 := by
+  dsimp
+  rw [
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 1 1 5 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 1 4 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 4 1 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 2 1 1 4 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 2 1 4 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 1 2 4 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 1 3 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 3 2 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 3 2 1 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 2 1 3 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 2 3 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 3 1 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 3 1 2 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 2 1 2 1 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 2 3 1 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 3 1 1 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 2 2 1 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 2 1 2 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 1 2 2 3 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 1 2 2 2 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 2 1 2 2 2 (by omega) (by omega) (by omega),
+    sg_trace_six_N_powers_boundary_term_p10 m hm θ ax o hanti 1 2 2 1 2 2 (by omega) (by omega) (by omega)
+  ]
+
 end EvgenyTheorem
