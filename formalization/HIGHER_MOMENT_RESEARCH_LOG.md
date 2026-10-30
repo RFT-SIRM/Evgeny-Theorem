@@ -3395,3 +3395,67 @@ assert that each boundary stratum vanishes: the top r=8 term may be nonzero
 and may cancel only under matching support and degree hypotheses for the two
 operators. No H8 level recurrence or closed formula has yet been proved.
 H10 remains deferred until the H8 chain is complete.
+
+
+## 2026-10-30 — Exact H8 r=5 five-pairing reduction
+
+The p=8 inventory has seven cyclic classes in the r=5 stratum. Their
+canonical cyclic gap tuples and weights are:
+\[
+(0,0,0,0,3),\ (0,0,0,2,1),\ (0,0,2,0,1),\
+(0,0,1,0,2),\ (0,0,0,1,2),\ (0,0,1,1,1),\
+(0,1,0,1,1),
+\]
+with weight eight for each. Thus the exact ordered-word weight is
+\(7\cdot8=56=\\binom{8}{5}\). The corresponding positive K-gap exponents
+are the gap entries plus one.
+
+For a five-N trace, the existing concrete theorem
+\`trace_five_N_powers_zero_of_OAnti\` has the ordered form
+\[
+\\operatorname{tr}(K^a N K^b N K^c N K^d N K^e N K^f)=0,
+\]
+under the two explicit corner bounds \(b<2^m\) and \(d<2^m\), together
+with \(m,\theta,ax,o\) and \(OAnti(m+1,o)\). It is not an all-power
+assumption: the bound is used only at those two selected middle powers.
+
+For each canonical gap tuple \((g_1,\ldots,g_5)\), the proof chooses
+\((a,b,c,d,e,f)=(g_5+1,g_1+1,g_2+1,g_3+1,g_4+1,0)\).
+The seven Lean calls therefore use:
+- gaps \((0,0,0,0,3)\): exponents \((4,1,1,1,1,0)\);
+- gaps \((0,0,0,2,1)\): exponents \((2,1,1,1,3,0)\);
+- gaps \((0,0,2,0,1)\): exponents \((2,1,1,3,1,0)\);
+- gaps \((0,0,1,0,2)\): exponents \((3,1,1,2,1,0)\);
+- gaps \((0,0,0,1,2)\): exponents \((3,1,1,1,2,0)\);
+- gaps \((0,0,1,1,1)\): exponents \((2,1,1,2,2,0)\);
+- gaps \((0,1,0,1,1)\): exponents \((2,1,2,1,2,0)\).
+
+In every case \(b=1\) and \(d\le3\), so \(b,d<2^m\) follows for
+\(m\ge3\). Each displayed transformation in Lean is a cyclic rotation
+implemented by \`trace_cyclic_list\`; no adjacent factors are exchanged,
+no reversal is inferred, and no complex-conjugation symmetry is invoked.
+The exact class expressions are the binary-word representatives with
+\`K\` denoting the unselected factor and \`K*N\` the selected factor.
+
+The newly added \`sg_trace_p8_five_N_stratum_zero\` is intended to combine
+the seven classwise vanishing results with their orbit weights. The
+mathematical deduction is complete for this r=5 stratum if (and only if)
+the fresh complete Lean build accepts the theorem body.
+
+The status ledger at this point is:
+- r=0: separate \`trace(K^8)\`;
+- r=1: proved zero by the single-N theorem;
+- r=2: proved boundary reduction, four classes, total weight 28;
+- r=3: proved zero, seven classes, total weight 56;
+- r=4: proved boundary reduction, ten classes, total weight 70;
+- r=5: seven classwise zero reductions now added, total weight 56; fresh
+  Lean verification pending;
+- r=6: proved boundary reduction, four classes, total weight 28;
+- r=7: one class, total weight 8; next step is the seven-N OAnti helper;
+- r=8: top boundary/diagonal contribution, weight 1.
+
+Even after r=5 and r=7 vanish, the H8 identity is not closed: the positive
+even boundary sums \(B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}\) must still be
+compared jointly for the two intended operator configurations. No claim
+that these strata vanish separately is justified, and the H8 level
+recurrence remains open.
