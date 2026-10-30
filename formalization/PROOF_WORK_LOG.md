@@ -840,3 +840,33 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Exact orbit multiplicities are 8, 8, 8, and 4; their sum is C(8,6)=28.
 - Each class is reduced by trace_six_N_powers_boundary, retaining the three ordered diagonal corner insertions. All required exponents are at most three, covered by sgK_pow_hkg_up_to_five_of_OAnti for m >= 3.
 - This is only the r=6 boundary reduction; it makes no cancellation or H8 recurrence claim.
+
+## 2026-10-30 — Imported H8 positive-even boundary checkpoint
+
+- Source checkpoint: `54392a2b8100b40aa0b9589907adef1cd9f1cac6`.
+- The H8 boundary statements are now in the imported module
+  `formalization/EvgenyTheorem/GlueTrace.lean`, not only in the legacy,
+  unimported `formalization/Evgeny-Theorem/GlueTrace.lean` copy.
+- The imported module proves the concrete p=8 boundary reductions for
+  `r=2`, `r=4`, and `r=6` separately. The existing top-stratum
+  `r=8` boundary/diagonal theorem is retained. Their exact ordered-word
+  weights are respectively 28, 70, 28, and 1; the empty-insertion
+  `r=0` term remains the separate `trace(K^8)) contribution.
+- Full Lean formalization build passed on this exact source checkpoint:
+  run `41094123297` (success).
+- Python 3.11 and 3.12 fast and slow suites passed on the immediate parent
+  `d777e53b85eee87d1ed02b99f63fcb2ec6bc684a`, run `41091825697`
+  (both jobs success). The only file changed between that parent and this
+  checkpoint is `formalization/EvgenyTheorem/GlueTrace.lean`; no Python
+  source, tests, or fixtures changed. The exact-checkpoint Python run
+  `41094123151` had not reported completion when this entry was written.
+- Deliberately removed the unfinished p=8 aggregate/odd/full-split proof
+  block. This checkpoint does **not** claim the combined even-stratum
+  identity, odd-stratum cancellation, the full p=8 ordered trace split,
+  an all-level H8 recurrence, or any H10 result.
+- Next mathematical gate: assemble the already-proved even strata without
+  expanding giant nested sums, then prove the odd cyclic classes with
+  exact pivots and their OAnti/corner hypotheses. Only after the complete
+  H8 split and its level-transport recurrence are independently checked
+  may H10 work resume.
+
