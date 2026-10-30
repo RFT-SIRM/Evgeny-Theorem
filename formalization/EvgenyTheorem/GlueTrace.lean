@@ -2737,7 +2737,7 @@ K^7 * (K*N). The generic single-pairing lemma applies because K is
 block diagonal across the glued copies; no OAnti hypothesis is needed. -/
 theorem sg_trace_p8_one_N_stratum_zero
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o) :
+    (o : Point → Point → Prop) [DecidableRel o] :
     8 * Matrix.trace
       (sgK m θ ax o ^ 7 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
   have hzero :
