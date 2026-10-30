@@ -2465,7 +2465,7 @@ theorem sg_trace_p8_two_N_stratum_boundary
 
 /-- Explicit nested sum for a concrete four-N boundary word. Factor
 order is retained; only the terminal identity power has been removed. -/
-private def sg_trace_four_N_boundary_sum
+private noncomputable def sg_trace_four_N_boundary_sum
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (a b c d : ℕ) : ℂ :=
   ∑ x, if (sgGlue m).g x then
@@ -2740,9 +2740,12 @@ theorem sg_trace_p8_all_even_strata_boundary
     sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti,
     sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti,
     sg_trace_p8_top_stratum_diagonal_fourth m hm θ ax o hanti]
-  simp [glueRHS8, sg_trace_four_N_boundary_sum, Matrix.mul_assoc]
+  unfold glueRHS8
+  rfl
 
 
+-- The 16 odd cyclic classes need bounded reductions of at most seven K-factors.
+set_option maxHeartbeats 2000000 in
 /-- The complete odd-insertion part of the p=8 cyclic expansion vanishes.
 The r=1 class is killed by the single-pairing trace lemma; r=3, r=5,
 and r=7 classes are killed by the corresponding conditional multi-pairing
@@ -2777,6 +2780,52 @@ theorem sg_trace_p8_odd_strata_zero
       7 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
 
+  have hbd : BD (fun w : WSG m => w.1) K :=
+    blockK_BD (Hc m θ ax o)
+  have hkg : ∀ n, n ≤ 7 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti (by omega)
+      w w' hw hw' hcopy hne
+  have h3 (a b c d : ℕ) (hb : b ≤ 7) :
+      Matrix.trace (K ^ a * N * K ^ b * N * K ^ c * N * K ^ d) = 0 := by
+    have hxs : ∀ A, A ∈ ([K ^ a] : List (Matrix (WSG m) (WSG m) ℂ)) →
+        BD (fun w : WSG m => w.1) A := by
+      intro A hA
+      simp only [List.mem_singleton] at hA
+      subst A
+      exact BD_pow K hbd a
+    have hys : ∀ A, A ∈ ([K ^ c] : List (Matrix (WSG m) (WSG m) ℂ)) →
+        BD (fun w : WSG m => w.1) A := by
+      intro A hA
+      simp only [List.mem_singleton] at hA
+      subst A
+      exact BD_pow K hbd c
+    have hzs : ∀ A, A ∈ ([K ^ d] : List (Matrix (WSG m) (WSG m) ℂ)) →
+        BD (fun w : WSG m => w.1) A := by
+      intro A hA
+      simp only [List.mem_singleton] at hA
+      subst A
+      exact BD_pow K hbd d
+    simpa [List.prod_singleton, Matrix.mul_assoc] using
+      (trace_three_N_word_zero (sgGlue m)
+        ([K ^ a] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K ^ c] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K ^ d] : List (Matrix (WSG m) (WSG m) ℂ))
+        (K ^ b) hxs hys hzs (BD_pow K hbd b) (hkg b hb))
+  have h5 (a b c d e f : ℕ) (hb : b ≤ 7) (hd : d ≤ 7) :
+      Matrix.trace (K ^ a * N * K ^ b * N * K ^ c * N *
+        K ^ d * N * K ^ e * N * K ^ f) = 0 := by
+    exact trace_five_N_powers_zero (sgGlue m) K hbd
+      a b c d e f (hkg b hb) (hkg d hd)
+  have h7 (a b c d e f g h : ℕ)
+      (hb : b ≤ 7) (hd : d ≤ 7) (hf : f ≤ 7) :
+      Matrix.trace (K ^ a * N * K ^ b * N * K ^ c * N *
+        K ^ d * N * K ^ e * N * K ^ f * N * K ^ g * N * K ^ h) = 0 := by
+    exact trace_seven_N_powers_zero (sgGlue m) K hbd
+      a b c d e f g h (hkg b hb) (hkg d hd) (hkg f hf)
+
   have hrot_00000111 :
       Matrix.trace (K * K * K * K * K * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 0 * N * K ^ 1 * N * K ^ 1 * N * K ^ 6) := by
@@ -2785,7 +2834,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00000111 : Matrix.trace (K * K * K * K * K * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_00000111]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 1 1 6 (by omega)
+    exact h3 0 1 1 6 (by omega)
 
   have hrot_00001011 :
       Matrix.trace (K * K * K * K * (K * N) * K * (K * N) * (K * N)) =
@@ -2795,7 +2844,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00001011 : Matrix.trace (K * K * K * K * (K * N) * K * (K * N) * (K * N)) = 0 := by
     rw [hrot_00001011]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 1 5 2 (by omega)
+    exact h3 0 1 5 2 (by omega)
 
   have hrot_00001101 :
       Matrix.trace (K * K * K * K * (K * N) * (K * N) * K * (K * N)) =
@@ -2805,7 +2854,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00001101 : Matrix.trace (K * K * K * K * (K * N) * (K * N) * K * (K * N)) = 0 := by
     rw [hrot_00001101]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 1 2 5 (by omega)
+    exact h3 0 1 2 5 (by omega)
 
   have hrot_00010011 :
       Matrix.trace (K * K * K * (K * N) * K * K * (K * N) * (K * N)) =
@@ -2815,7 +2864,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00010011 : Matrix.trace (K * K * K * (K * N) * K * K * (K * N) * (K * N)) = 0 := by
     rw [hrot_00010011]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 1 4 3 (by omega)
+    exact h3 0 1 4 3 (by omega)
 
   have hrot_00010101 :
       Matrix.trace (K * K * K * (K * N) * K * (K * N) * K * (K * N)) =
@@ -2825,7 +2874,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00010101 : Matrix.trace (K * K * K * (K * N) * K * (K * N) * K * (K * N)) = 0 := by
     rw [hrot_00010101]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 2 2 4 (by omega)
+    exact h3 0 2 2 4 (by omega)
 
   have hrot_00011001 :
       Matrix.trace (K * K * K * (K * N) * (K * N) * K * K * (K * N)) =
@@ -2835,7 +2884,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00011001 : Matrix.trace (K * K * K * (K * N) * (K * N) * K * K * (K * N)) = 0 := by
     rw [hrot_00011001]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 1 3 4 (by omega)
+    exact h3 0 1 3 4 (by omega)
 
   have hrot_00100101 :
       Matrix.trace (K * K * (K * N) * K * K * (K * N) * K * (K * N)) =
@@ -2845,7 +2894,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h3_00100101 : Matrix.trace (K * K * (K * N) * K * K * (K * N) * K * (K * N)) = 0 := by
     rw [hrot_00100101]
-    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti 0 2 3 3 (by omega)
+    exact h3 0 2 3 3 (by omega)
 
   have hrot_00011111 :
       Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
@@ -2855,7 +2904,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_00011111 : Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_00011111]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 1 1 4 (by omega) (by omega)
+    exact h5 0 1 1 1 1 4 (by omega) (by omega)
 
   have hrot_00101111 :
       Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) =
@@ -2865,7 +2914,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_00101111 : Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_00101111]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 1 3 2 (by omega) (by omega)
+    exact h5 0 1 1 1 3 2 (by omega) (by omega)
 
   have hrot_00110111 :
       Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) =
@@ -2875,7 +2924,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_00110111 : Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_00110111]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 3 1 2 (by omega) (by omega)
+    exact h5 0 1 1 3 1 2 (by omega) (by omega)
 
   have hrot_00111011 :
       Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N)) =
@@ -2885,7 +2934,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_00111011 : Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N)) = 0 := by
     rw [hrot_00111011]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 2 1 3 (by omega) (by omega)
+    exact h5 0 1 1 2 1 3 (by omega) (by omega)
 
   have hrot_00111101 :
       Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * K * (K * N)) =
@@ -2895,7 +2944,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_00111101 : Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * K * (K * N)) = 0 := by
     rw [hrot_00111101]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 1 2 3 (by omega) (by omega)
+    exact h5 0 1 1 1 2 3 (by omega) (by omega)
 
   have hrot_01010111 :
       Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N) * (K * N)) =
@@ -2905,7 +2954,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_01010111 : Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_01010111]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 2 2 2 (by omega) (by omega)
+    exact h5 0 1 1 2 2 2 (by omega) (by omega)
 
   have hrot_01011011 :
       Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N) * (K * N)) =
@@ -2915,7 +2964,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h5_01011011 : Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N) * (K * N)) = 0 := by
     rw [hrot_01011011]
-    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti 0 1 2 1 2 2 (by omega) (by omega)
+    exact h5 0 1 2 1 2 2 (by omega) (by omega)
 
   have hrot_01111111 :
       Matrix.trace (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
@@ -2925,7 +2974,7 @@ theorem sg_trace_p8_odd_strata_zero
 
   have h7_01111111 : Matrix.trace (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_01111111]
-    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti 0 1 1 1 1 1 1 2 (by omega) (by omega) (by omega)
+    exact h7 0 1 1 1 1 1 1 2 (by omega) (by omega) (by omega)
 
   have h1_00000001 : Matrix.trace (K * K * K * K * K * K * K * (K * N)) = 0 := by
     simpa [pow_succ, Matrix.mul_assoc] using
@@ -2935,6 +2984,8 @@ theorem sg_trace_p8_odd_strata_zero
   linear_combination 8 * h1_00000001 + 8 * h3_00000111 + 8 * h3_00001011 + 8 * h3_00001101 + 8 * h3_00010011 + 8 * h3_00010101 + 8 * h3_00011001 + 8 * h3_00100101 + 8 * h5_00011111 + 8 * h5_00101111 + 8 * h5_00110111 + 8 * h5_00111011 + 8 * h5_00111101 + 8 * h5_01010111 + 8 * h5_01011011 + 8 * h7_01111111
 
 
+-- This proof checks the 20 even cyclic rotations and their exact orbit weights.
+set_option maxHeartbeats 2000000 in
 /-- Complete eighth-moment cyclic trace split for the glued matrix sum.
 The ordered expansion is grouped into all 36 cyclic classes; the odd
 classes vanish under OAnti and every even class is reduced to glueRHS8.
