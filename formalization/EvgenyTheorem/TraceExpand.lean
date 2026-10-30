@@ -676,6 +676,7 @@ The 256 ordered choice words are grouped into their 36 cyclic classes using
 the inventory's exact orbit sizes. This is a purely algebraic identity:
 no factors are commuted, no class is discarded, and all periodic classes
 retain their actual shorter orbit weights. -/
+set_option maxHeartbeats 2000000 in
 theorem trace_orderedWordExpansion_eight_cyclic
     {n : Type*} [Fintype n] [DecidableEq n]
     (A B : Matrix n n ℂ) :
