@@ -944,3 +944,31 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - The new r=7 source change and this log entry are pending a fresh full
   Lean build. H8 is not yet a complete trace split: the even boundary
   terms still require their joint weighted comparison and level transport.
+
+
+## 2026-10-30 — Assemble the complete H8 ordered trace split
+
+- Audited parent `343092e894bfa1b0849f1153c25f2e82680588f1`. The full project Lean build for
+  [run 41109918875](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41109918875)
+  passed; the job log reports `Build completed successfully (3060 jobs)`.
+  Python 3.11/3.12 run
+  [41109919069](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41109919069)
+  was still running when this step began.
+- Added `sg_trace_p8_cyclic_even` in the exact order of the even classes
+  in `trace_orderedWordExpansion_eight_cyclic`, plus
+  `sg_trace_p8_cyclic_even_eq_glueLHS8`. Its 19 explicit rotations match
+  every class in `glueLHS8`: r=2 (4 classes), r=4 (10), r=6 (4),
+  and r=8 (1). Their exact total orbit weights remain 28, 70, 28, and 1.
+  Periodic classes retain weights 4 (r=2), 4 and 2 (r=4), and 4 (r=6).
+- Added `sg_trace_p8_ordered_expansion_boundary`. It composes the general
+  ordered-word expansion, the exact 36-class cyclic grouping, the four
+  already-proved odd-stratum vanishing theorems (r=1,3,5,7), the 19
+  even-class rotations, and `sg_trace_p8_all_even_strata_boundary`.
+  The resulting identity is
+  `trace((K + K*N)^8) = trace(K^8) + glueRHS8(m,K)` for m >= 3
+  under `OAnti (m+1) o`.
+- This closes the **level-local ordered trace split** only. It does not
+  prove that `glueRHS8` cancels between the target operator configurations,
+  does not prove a level-transport identity, and does not establish an
+  H8 recurrence or closed formula. H10 remains deferred.
+- Fresh full Lean and Python CI for the new source SHA are pending.

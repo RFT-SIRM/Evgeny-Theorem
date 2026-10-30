@@ -3505,3 +3505,60 @@ weighted expression (B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}) must be compared
 for the intended operator configurations with matching support and degree
 hypotheses. The current r=7 result does not imply cancellation of any
 even stratum and does not yet establish an H8 recurrence.
+
+
+## 2026-10-30 — Complete cyclic-class accounting for H8
+
+The exact ordered-word expansion for (p=8) contains 256 binary choice
+words. The checked cyclic regrouping theorem produces 36 necklace classes.
+The source inventory gives the following exact class counts and orbit-weight
+sums by insertion count (r):
+
+| r | Cyclic classes | Sum of orbit weights |
+|---:|---:|---:|
+| 0 | 1 | 1 |
+| 1 | 1 | 8 |
+| 2 | 4 | 28 |
+| 3 | 7 | 56 |
+| 4 | 10 | 70 |
+| 5 | 7 | 56 |
+| 6 | 4 | 28 |
+| 7 | 1 | 8 |
+| 8 | 1 | 1 |
+
+The weights sum to (256). No class is discarded, duplicated, or assigned
+a generic orbit length: the periodic r=2, r=4, and r=6 classes retain their
+shorter weights 4, 2, and 4, respectively.
+
+The imported Lean source now defines the positive even cyclic contribution
+`sg_trace_p8_cyclic_even` in the same term order as
+`trace_orderedWordExpansion_eight_cyclic`. Each of its 19 classes is
+matched to one of the 19 terms in `glueLHS8` by one explicit cyclic rotation
+using `trace_cyclic_list`. This is only cyclic invariance of trace; no
+commutation, reversal, or complex-conjugation identity is used.
+
+The odd classes are covered by the concrete Lean theorems:
+- r=1: one class, orbit weight 8, via the generic single-pairing result;
+- r=3: seven classes, total weight 56, via the three-N corner theorem;
+- r=5: seven classes, total weight 56, via the five-N corner theorem;
+- r=7: one class, orbit weight 8, via the seven-N corner theorem.
+
+The new theorem `sg_trace_p8_ordered_expansion_boundary` combines those
+four vanishing results with the complete 36-class cyclic expansion and the
+even-boundary theorem. Its exact level-local conclusion is
+[
+\operatorname{Tr}((K+KN)^8)=\operatorname{Tr}(K^8)+\mathrm{glueRHS8}(m,K),
+]
+for (m\ge3) under the stated (OAnti(m+1,o)) hypothesis. The kernel
+`glueRHS8` still contains all 19 positive even classes, reduced to their
+actual corner sums/diagonal products. In particular, the r=8 top contribution
+is retained; it has not been set to zero.
+
+**Remaining H8 mathematical target:** compare the full weighted boundary
+expression `glueRHS8(m,K)` for the two operator configurations used by the
+moment defect, with their exact support and degree hypotheses. The earlier
+research audit notes that the pair of configurations must be traced to the
+actual defect definition and cannot be silently replaced by an unrestricted
+cycling-axis/common-axis comparison. Only after that comparison is proved
+may one derive the level transition and solve the recurrence. This trace
+split is not itself an H8 recurrence, and H10 remains open.
