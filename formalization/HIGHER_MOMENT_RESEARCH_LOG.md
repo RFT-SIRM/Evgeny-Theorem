@@ -3584,3 +3584,34 @@ r=1,3,5,7 vanish under their existing hypotheses; all 19 positive even
 classes rotate to `glueLHS8), and the established boundary theorem
 reduces that sum to `glueRHS8). Fresh Lean compilation is still required
 before claiming the aggregate theorem verified.
+
+
+## 2026-10-31 — H8 odd-stratum assembly: exact normalization defect
+
+The full build on `75a9802791ee54dc6d9d04400cceb36e3e6838a7` has one remaining Lean error in the
+new ordered-split proof. Inspecting the complete target state shows that
+the four odd-stratum identities have the right words and weights, but
+three theorem conclusions still contain syntactic zero-power factors after
+the proof's `simp only [pow_succ]` step. Specifically, `pow_succ`
+recursively expands each positive natural power but does not reduce the
+terminal `K ^ 0` factor to the identity. The expanded ordered-word target
+has no such explicit identity factors, so the noncommutative polynomial
+normalizer does not identify the products.
+
+A separate source-level word audit confirms:
+- r=1: one expansion class (A^7B), weight 8; the single-N theorem
+  represents (K^7(KN));
+- r=3: the seven statement words are exactly
+  `AAAAABBB`, `AAAABABB`, `AAAABBAB`, `AAABAABB`,
+  `AAABABAB`, `AAABBAAB`, and `AABAABAB`, each weight 8;
+- r=5: the seven statement words are exactly
+  `AAABBBBB`, `AABABBBB`, `AABBABBB`, `AABBBABB`,
+  `AABBBBAB`, `ABABABBB`, and `ABABBABB`, each weight 8;
+- r=7: one expansion class (AB^7), weight 8; the seven-N statement
+  is (K(KN)^7).
+
+Thus the class-to-expansion matching is not the obstruction. The line
+now reduces `pow_succ` together with the base case `pow_zero` and both
+matrix identity multiplications. This is a proof normalization repair,
+not a new mathematical result; it remains unverified until the fresh
+project-wide Lean build passes.

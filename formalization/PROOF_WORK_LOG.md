@@ -997,3 +997,31 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - No mathematical statement, representative, orbit weight, support
   hypothesis, or degree bound was changed. The fresh full Lean build is
   pending.
+
+
+## 2026-10-31 — Root-cause correction: normalize zero powers in H8 odd-stratum assembly
+
+- Rechecked the completed CI run for parent `75a9802791ee54dc6d9d04400cceb36e3e6838a7`:
+  Lean run [41140559328](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41140559328)
+  failed only at the odd-stratum `linear_combination` in
+  `sg_trace_p8_ordered_expansion_boundary`; Python run
+  [41140559183](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41140559183)
+  passed for Python 3.11 and 3.12.
+- The failed goal state showed `hOne`, `hThree`, and `hFive` still
+  contained factors `K ^ 0 * ...`, while the ordered expansion contained
+  the corresponding literal K words. The prior normalization expanded
+  `pow_succ` but omitted its base case. This is the precise source of the
+  remaining `ring expressions not equal` failure.
+- Independently compared the odd terms in
+  `trace_orderedWordExpansion_eight_cyclic` with the theorem statements:
+  r=3 has seven matching words/weights (8 each), r=5 has seven matching
+  words/weights (8 each), and r=1/r=7 each have the single expected class
+  with weight 8. No factor permutation or representative mismatch was found.
+- Completed the normalization set with `pow_zero`, `Matrix.one_mul`,
+  and `Matrix.mul_one` before the existing linear combination. This changes
+  no theorem statement, coefficient, orbit multiplicity, hypothesis, or
+  matrix-factor order. Fresh full Lean verification is pending.
+- Process correction: do not label a Lean proof-state fix complete from an
+  assumed simplifier behaviour. The actual error goal must be inspected, and
+  all base cases of any recursive normalization (here `pow_succ` plus
+  `pow_zero`) must be checked against the target expression before pushing.
