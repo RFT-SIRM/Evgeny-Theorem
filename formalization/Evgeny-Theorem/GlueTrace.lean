@@ -2148,4 +2148,273 @@ theorem sg_trace_p8_odd_strata_zero
 
   linear_combination 8 * h1_00000001 + 8 * h3_00000111 + 8 * h3_00001011 + 8 * h3_00001101 + 8 * h3_00010011 + 8 * h3_00010101 + 8 * h3_00011001 + 8 * h3_00100101 + 8 * h5_00011111 + 8 * h5_00101111 + 8 * h5_00110111 + 8 * h5_00111011 + 8 * h5_00111101 + 8 * h5_01010111 + 8 * h5_01011011 + 8 * h7_01111111
 
+
+/-- Complete eighth-moment cyclic trace split for the glued matrix sum.
+The ordered expansion is grouped into all 36 cyclic classes; the odd
+classes vanish under OAnti and every even class is reduced to glueRHS8.
+This is a level-local trace identity, not yet an all-level recurrence. -/
+theorem sg_trace_p8_ordered_expansion_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace ((K + K * (sgGlue m).N) ^ 8) =
+      Matrix.trace (K ^ 8) + glueRHS8 m K := by
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N := (sgGlue m).N
+
+  let E2 :=
+    8 * Matrix.trace (K ^ 1 * N * K ^ 7 * N) +
+    8 * Matrix.trace (K ^ 2 * N * K ^ 6 * N) +
+    8 * Matrix.trace (K ^ 3 * N * K ^ 5 * N) +
+    4 * Matrix.trace (K ^ 4 * N * K ^ 4 * N)
+  let E4 :=
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 5 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 4 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 2 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2 * N) +
+    4 * Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 3 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3 * N) +
+    2 * Matrix.trace (K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N)
+  let E6 :=
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 1 * N * K ^ 3 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 2 * N * K ^ 2 * N) +
+    8 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 2 * N * K ^ 1 * N * K ^ 2 * N) +
+    4 * Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N *
+      K ^ 1 * N * K ^ 1 * N * K ^ 2 * N)
+  let E8 :=
+    Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N)
+
+
+  have hrot_even_00000000 :
+      Matrix.trace (K * K * K * K * K * K * K * K) =
+        Matrix.trace (K ^ undefined * N * ) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, K, K, K, K, K] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00000011 :
+      Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 7 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00000101 :
+      Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 6 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00001001 :
+      Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N)) =
+        Matrix.trace (K ^ 3 * N * K ^ 5 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00001111 :
+      Matrix.trace (K * K * K * K * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 5 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00010001 :
+      Matrix.trace (K * K * K * (K * N) * K * K * K * (K * N)) =
+        Matrix.trace (K ^ 4 * N * K ^ 4 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00010111 :
+      Matrix.trace (K * K * K * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00011011 :
+      Matrix.trace (K * K * K * (K * N) * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 4 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00011101 :
+      Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00100111 :
+      Matrix.trace (K * K * (K * N) * K * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00101011 :
+      Matrix.trace (K * K * (K * N) * K * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00101101 :
+      Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00110011 :
+      Matrix.trace (K * K * (K * N) * (K * N) * K * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 3 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00110101 :
+      Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_00111111 :
+      Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_01010101 :
+      Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_01011111 :
+      Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_01101111 :
+      Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_01110111 :
+      Matrix.trace (K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hrot_even_11111111 :
+      Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+
+  have hEvenRep :
+      1 * Matrix.trace (K * K * K * K * K * K * K * K)
+    + 8 * Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N))
+    + 8 * Matrix.trace (K * K * K * K * (K * N) * (K * N) * (K * N) * (K * N))
+    + 4 * Matrix.trace (K * K * K * (K * N) * K * K * K * (K * N))
+    + 8 * Matrix.trace (K * K * K * (K * N) * K * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * K * (K * N) * (K * N) * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * K * K * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * K * (K * N) * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * K * (K * N))
+    + 4 * Matrix.trace (K * K * (K * N) * (K * N) * K * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+    + 2 * Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N))
+    + 4 * Matrix.trace (K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N))
+    + 1 * Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        E2 + E4 + E6 + E8 := by
+    simp [E2, E4, E6, E8, pow_zero, Matrix.mul_one, Matrix.mul_assoc]
+    linear_combination 1 * hrot_even_00000000 + 8 * hrot_even_00000011 + 8 * hrot_even_00000101 + 8 * hrot_even_00001001 + 8 * hrot_even_00001111 + 4 * hrot_even_00010001 + 8 * hrot_even_00010111 + 8 * hrot_even_00011011 + 8 * hrot_even_00011101 + 8 * hrot_even_00100111 + 8 * hrot_even_00101011 + 8 * hrot_even_00101101 + 4 * hrot_even_00110011 + 8 * hrot_even_00110101 + 8 * hrot_even_00111111 + 2 * hrot_even_01010101 + 8 * hrot_even_01011111 + 8 * hrot_even_01101111 + 4 * hrot_even_01110111 + 1 * hrot_even_11111111
+
+
+  have hOdd :
+      8 * Matrix.trace (K * K * K * K * K * K * K * (K * N)) +
+      8 * Matrix.trace (K * K * K * K * K * (K * N) * (K * N) * (K * N)) +
+      8 * Matrix.trace (K * K * K * K * (K * N) * K * (K * N) * (K * N)) +
+      8 * Matrix.trace (K * K * K * (K * N) * K * K * (K * N) * (K * N)) +
+      8 * Matrix.trace (K * K * K * (K * N) * K * (K * N) * K * (K * N)) +
+      8 * Matrix.trace (K * K * (K * N) * K * K * (K * N) * K * (K * N)) +
+      8 * Matrix.trace (K * K * (K * N) * K * (K * N) * K * (K * N) * K) +
+      8 * Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * K) +
+      8 * Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * K * (K * N)) +
+      8 * Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N)) +
+      8 * Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N)) +
+      8 * Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * K * (K * N)) +
+      8 * Matrix.trace (K * (K * N) * (K * N) * (K * N) * K * (K * N) * K) +
+      8 * Matrix.trace ((K * N) * K * (K * N) * K * (K * N) * (K * N) * K) +
+      8 * Matrix.trace ((K * N) * K * (K * N) * (K * N) * K * (K * N) * K) +
+      8 * Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+    simpa [Matrix.mul_assoc] using
+      (sg_trace_p8_odd_strata_zero m hm θ ax o hanti)
+
+
+  have hAll : E2 + E4 + E6 + E8 = glueRHS8 m K := by
+    simpa [E2, E4, E6, E8, pow_zero, Matrix.mul_one,
+      Matrix.mul_assoc] using
+      (sg_trace_p8_all_even_strata_boundary m hm θ ax o hanti)
+  have hCyclicSplit :
+      ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum =
+        Matrix.trace (K ^ 8) + E2 + E4 + E6 + E8 := by
+    rw [trace_orderedWordExpansion_eight_cyclic K (K * N)]
+    linear_combination hOdd + hEvenRep
+  calc
+    Matrix.trace ((K + K * N) ^ 8) =
+        ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum :=
+      trace_orderedWordExpansion K (K * N) 8
+    _ = Matrix.trace (K ^ 8) + E2 + E4 + E6 + E8 := hCyclicSplit
+    _ = Matrix.trace (K ^ 8) + glueRHS8 m K := by rw [hAll]
+
 end EvgenyTheorem
