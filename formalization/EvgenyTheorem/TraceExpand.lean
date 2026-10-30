@@ -671,6 +671,7 @@ theorem recurrence_of_affine_three_pow
   ring
 
 
+set_option maxRecDepth 4096 in
 set_option maxHeartbeats 2000000 in
 /-- Exact cyclic-orbit grouping of the eighth ordered-word trace expansion.
 The 256 ordered choice words are grouped into their 36 cyclic classes using
