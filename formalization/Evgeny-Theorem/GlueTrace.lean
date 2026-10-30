@@ -2347,7 +2347,7 @@ theorem sg_trace_p8_ordered_expansion_boundary
 
 
   have hEvenRep :
-    + 8 * Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N))
+      8 * Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N))
     + 8 * Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N))
     + 8 * Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N))
     + 8 * Matrix.trace (K * K * K * K * (K * N) * (K * N) * (K * N) * (K * N))
