@@ -870,3 +870,23 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   H8 split and its level-transport recurrence are independently checked
   may H10 work resume.
 
+
+
+## 2026-10-30 — Align the H8 three-N proof goal with local K/N expressions
+
+- Audited branch head before editing: `da9eec53cf679337109819f21604214a68715b61`; the only source failure on that
+  commit was `GlueTrace.lean:2861:2`, `simp made no progress`.
+- In `sg_trace_p8_three_N_stratum_zero`, removed the initial unrestricted
+  `dsimp`. The local matrices `K` and `N` are now introduced first, and an
+  explicit `change` presents the unchanged seven-term target using those
+  exact local names. The seven cyclic-rotation identities and all seven
+  individual `hzero_r3_*` proofs are unchanged.
+- This is a definitional/proof-state alignment only: the theorem statement,
+  `OAnti (m + 1) o` hypothesis, bound `m ≥ 3`, cyclic representatives,
+  and multiplicities are unchanged. No new mathematical claim is added.
+- Full Lean build and Python 3.11/3.12 status for the resulting source commit
+  are pending; the exact commit SHA and run links will be added in the
+  verification follow-up.
+- H8 remains open: concrete r=5/r=7 aggregation and the complete ordered
+  trace split are still required, followed by the weighted even-boundary
+  comparison and level recurrence. No H10 closure is claimed.

@@ -2766,9 +2766,16 @@ theorem sg_trace_p8_three_N_stratum_zero
     + 8 * Matrix.trace (K ^ 3 * (K * N) * K * (K * N) * K * (K * N))
     + 8 * Matrix.trace (K ^ 3 * (K * N) * (K * N) * K ^ 2 * (K * N))
     + 8 * Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K * (K * N)) = 0 := by
-  dsimp
   let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
   let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    8 * Matrix.trace (K ^ 5 * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 4 * (K * N) * K * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 4 * (K * N) * (K * N) * K * (K * N))
+      + 8 * Matrix.trace (K ^ 3 * (K * N) * K ^ 2 * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 3 * (K * N) * K * (K * N) * K * (K * N))
+      + 8 * Matrix.trace (K ^ 3 * (K * N) * (K * N) * K ^ 2 * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K * (K * N)) = 0
   have hside : 2 < 2 ^ m := by
     calc
       2 < 2 ^ 3 := by norm_num

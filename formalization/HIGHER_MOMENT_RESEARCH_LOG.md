@@ -3339,3 +3339,59 @@ The source/test checkpoint `772b521afd6befcb80af0d590f6742e488a6ea76` passed all
 - Python pull request `40926930923` — success for Python 3.11 and 3.12.
 
 The exact test also pins the raw level-two polynomial and its reduction by (c^2+s^2=1). The result is a closed H6 recurrence and explicit formula for all (m\ge2) by combining the Lean-proved (m\ge3) recurrence with an exact symbolic finite base identity. The finite identity is not represented as Lean-kernel checked.
+
+
+## 2026-10-30 — H8 r=3 class audit and exact proof-state correction
+
+For the p=8 ordered expansion, the cyclic inventory has 36 classes in total.
+The r=3 stratum consists of seven cyclic classes, each with orbit weight 8;
+their total contribution accounts for 56 of the 256 ordered factor words.
+The seven representatives in `sg_trace_p8_three_N_stratum_zero` are
+rotated only by `trace_cyclic_list`, which applies cyclic invariance of the
+matrix trace and does not permute the relative order of factors.
+
+The seven resulting applications of
+`trace_three_N_word_zero_of_OAnti` use exponent tuples (a,b,c,d)
+`(1,1,1,5)`, `(1,1,5,1)`, `(1,1,2,4)`, `(1,1,4,2)`,
+`(1,2,2,3)`, `(1,1,3,3)`, and `(1,2,3,2)`.
+The helper requires the glued-corner hypothesis only for the selected middle
+power (K^b); here (bin\{1,2\}). Since (m\ge3), we have
+(2<2^m), so each concrete helper call meets its strict degree bound.
+The helper derives the corner condition from `OAnti (m + 1) o`, block
+diagonality of (K), and the geometric support estimate. No reversal,
+complex-conjugation, or arbitrary factor reordering is used.
+
+The final failure on the audited source SHA was not a failed corner lemma.
+The theorem body performed `dsimp` on the goal before introducing fresh local
+names `K` and `N`; this exposed the lets in the target, so the closing
+`simp [hzero_r3_1, …, hzero_r3_7]` no longer saw the exact local expressions.
+The correction leaves the goal definitionally equal but explicitly changes
+it back to the seven-term expression in the local `K` and `N`. This does
+not change any representative or mathematical hypothesis. Its acceptance
+still depends on the fresh full Lean build.
+
+The p=8 reduction ledger continues to distinguish all strata:
+- r=0: one separate `trace(K^8)` term;
+- r=1: one cyclic class (weight 8), covered by
+  `sg_trace_p8_one_N_stratum_zero`;
+- r=2: 4 cyclic classes, total weight 28, reduced to a two-N boundary sum;
+- r=3: 7 cyclic classes, total weight 56, represented by the theorem above;
+- r=4: 10 cyclic classes, total weight 70, reduced to a four-N boundary sum;
+- r=5: 7 cyclic classes, total weight 56, not yet assembled into a concrete
+  H8 theorem; the existing five-N OAnti helper requires two selected
+  middle-power corner bounds, which must be checked class by class;
+- r=6: 4 cyclic classes, total weight 28, reduced to a six-N boundary sum;
+- r=7: 1 cyclic class, total weight 8, not yet assembled into a concrete
+  H8 theorem; the seven-N OAnti helper requires three selected
+  middle-power corner bounds;
+- r=8: one top class, weight 1, retained as a boundary/diagonal contribution.
+
+The positive even-stratum assembly is not a full trace split and is not a
+cancellation theorem. The next H8 work is to formalize and verify r=5 and r=7,
+then assemble the complete ordered split with the separate r=0 term and all
+exact orbit weights. Only after that can the joint comparison of
+(B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}) be attempted. In particular, do not
+assert that each boundary stratum vanishes: the top r=8 term may be nonzero
+and may cancel only under matching support and degree hypotheses for the two
+operators. No H8 level recurrence or closed formula has yet been proved.
+H10 remains deferred until the H8 chain is complete.
