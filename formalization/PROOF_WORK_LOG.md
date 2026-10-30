@@ -972,3 +972,28 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   does not prove a level-transport identity, and does not establish an
   H8 recurrence or closed formula. H10 remains deferred.
 - Fresh full Lean and Python CI for the new source SHA are pending.
+
+
+## 2026-10-30 — Normalize H8 odd-stratum identities in the full trace split
+
+- Audited failed full Lean build
+  [41112344232](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41112344232)
+  on parent `c74dd4dfe93a302242ee0082db7d82b601f86aaf`. The only two source errors were in the newly
+  added `sg_trace_p8_ordered_expansion_boundary` proof, at lines 3289
+  and 3291. Python workflow
+  [41112344222](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41112344222)
+  passed for Python 3.11 and 3.12, with fast suites 219 passed and slow
+  suites 8 passed on each version.
+- Line 3289 compared the raw A/B words from the cyclic expansion with the
+  odd-stratum theorems before zeta-reducing their local `K,N` lets and
+  expanding the `K^n` blocks. The proof now performs `dsimp [K,N]`
+  on the four odd identities and goal, followed by `simp only [pow_succ]`,
+  before the linear combination. This is definitional normalization only;
+  all four theorem statements and coefficients remain unchanged.
+- Line 3291 used `congrArg` to add the common `trace(K^8)` term to the
+  even-class identity. The simplifier cancels this common additive term
+  in the target, so the proof now applies
+  `sg_trace_p8_cyclic_even_eq_glueLHS8` directly after `simpa [N]`.
+- No mathematical statement, representative, orbit weight, support
+  hypothesis, or degree bound was changed. The fresh full Lean build is
+  pending.

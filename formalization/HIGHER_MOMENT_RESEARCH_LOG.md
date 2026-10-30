@@ -3562,3 +3562,25 @@ actual defect definition and cannot be silently replaced by an unrestricted
 cycling-axis/common-axis comparison. Only after that comparison is proved
 may one derive the level transition and solve the recurrence. This trace
 split is not itself an H8 recurrence, and H10 remains open.
+
+
+## 2026-10-30 — Proof-state correction in H8 full trace split
+
+The failed build on `c74dd4dfe93a302242ee0082db7d82b601f86aaf` exposed two proof-state issues, not a
+combinatorial mismatch:
+1. The odd-stratum hypotheses are written using powers (K^a) and local
+   `let K,N` aliases, while the cyclic expansion is represented by
+   explicitly ordered factors (K) and (K N). The proof now zeta-reduces
+   these local aliases and expands natural powers before taking the linear
+   combination. This does not permute any matrix factor.
+2. The even-class equality is already exactly
+   `sg_trace_p8_cyclic_even_eq_glueLHS8`. The previous `congrArg`
+   unnecessarily re-added the common base trace even though simplification
+   cancels that common summand in the equality goal. The direct identity is
+   now used.
+
+The mathematical decomposition remains: one r=0 base term; odd classes
+r=1,3,5,7 vanish under their existing hypotheses; all 19 positive even
+classes rotate to `glueLHS8), and the established boundary theorem
+reduces that sum to `glueRHS8). Fresh Lean compilation is still required
+before claiming the aggregate theorem verified.

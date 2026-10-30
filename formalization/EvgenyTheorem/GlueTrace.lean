@@ -3286,11 +3286,11 @@ theorem sg_trace_p8_ordered_expansion_boundary
       rw [trace_orderedWordExpansion K (K * N) 8,
         trace_orderedWordExpansion_eight_cyclic K (K * N)]
       unfold sg_trace_p8_cyclic_even
+      dsimp [K, N] at hOne hThree hFive hSeven ⊢
+      simp only [pow_succ] at hOne hThree hFive hSeven ⊢
       linear_combination hOne + hThree + hFive + hSeven
     _ = Matrix.trace (K ^ 8) + glueLHS8 m K := by
-      simpa [N] using
-        congrArg (fun z : ℂ => Matrix.trace (K ^ 8) + z)
-          (sg_trace_p8_cyclic_even_eq_glueLHS8 m K)
+      simpa [N] using sg_trace_p8_cyclic_even_eq_glueLHS8 m K
     _ = Matrix.trace (K ^ 8) + glueRHS8 m K := by
       rw [sg_trace_p8_all_even_strata_boundary m hm θ ax o hanti]
 
