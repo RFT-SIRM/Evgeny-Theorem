@@ -2194,14 +2194,6 @@ theorem sg_trace_p8_ordered_expansion_boundary
       K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N)
 
 
-  have hrot_even_00000000 :
-      Matrix.trace (K * K * K * K * K * K * K * K) =
-        Matrix.trace (K ^ undefined * N * ) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, K, K, K, K, K] : List (Matrix (WSG m) (WSG m) ℂ)))
-
-
   have hrot_even_00000011 :
       Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 7 * N) := by
@@ -2355,7 +2347,6 @@ theorem sg_trace_p8_ordered_expansion_boundary
 
 
   have hEvenRep :
-      1 * Matrix.trace (K * K * K * K * K * K * K * K)
     + 8 * Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N))
     + 8 * Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N))
     + 8 * Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N))
@@ -2377,7 +2368,7 @@ theorem sg_trace_p8_ordered_expansion_boundary
     + 1 * Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
         E2 + E4 + E6 + E8 := by
     simp [E2, E4, E6, E8, pow_zero, Matrix.mul_one, Matrix.mul_assoc]
-    linear_combination 1 * hrot_even_00000000 + 8 * hrot_even_00000011 + 8 * hrot_even_00000101 + 8 * hrot_even_00001001 + 8 * hrot_even_00001111 + 4 * hrot_even_00010001 + 8 * hrot_even_00010111 + 8 * hrot_even_00011011 + 8 * hrot_even_00011101 + 8 * hrot_even_00100111 + 8 * hrot_even_00101011 + 8 * hrot_even_00101101 + 4 * hrot_even_00110011 + 8 * hrot_even_00110101 + 8 * hrot_even_00111111 + 2 * hrot_even_01010101 + 8 * hrot_even_01011111 + 8 * hrot_even_01101111 + 4 * hrot_even_01110111 + 1 * hrot_even_11111111
+    linear_combination 8 * hrot_even_00000011 + 8 * hrot_even_00000101 + 8 * hrot_even_00001001 + 8 * hrot_even_00001111 + 4 * hrot_even_00010001 + 8 * hrot_even_00010111 + 8 * hrot_even_00011011 + 8 * hrot_even_00011101 + 8 * hrot_even_00100111 + 8 * hrot_even_00101011 + 8 * hrot_even_00101101 + 4 * hrot_even_00110011 + 8 * hrot_even_00110101 + 8 * hrot_even_00111111 + 2 * hrot_even_01010101 + 8 * hrot_even_01011111 + 8 * hrot_even_01101111 + 4 * hrot_even_01110111 + 1 * hrot_even_11111111
 
 
   have hOdd :
