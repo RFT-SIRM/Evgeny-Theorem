@@ -1675,4 +1675,101 @@ theorem sg_trace_p8_two_N_stratum_boundary
           exact hkg 4 (by omega) w w' hw hw' hcopy hne))
   rw [h17, h26, h35, h44]
 
+
+
+/-- Explicit nested sum for a concrete four-N boundary word. Factor
+order is retained; only the terminal identity power has been removed. -/
+private def sg_trace_four_N_boundary_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d : ℕ) : ℂ :=
+  ∑ x, if (sgGlue m).g x then
+    (∑ y, if (sgGlue m).g y then
+      ((K ^ a) x y * (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+        (K ^ c) y x else 0) *
+      (K ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x)
+    else 0
+
+/-- Concrete four-N boundary reduction under OAnti. The two required
+corner powers are bounded by five, so the existing glued-corner spin
+cancellation and the geometric estimate 5 < 2^m apply for m ≥ 3. -/
+private theorem sg_trace_four_N_powers_boundary_sum
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b ≤ 5) (hd : d ≤ 5) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N * sgK m θ ax o ^ 0) =
+      sg_trace_four_N_boundary_sum m (sgK m θ ax o) a b c d := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 5 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  simpa [sg_trace_four_N_boundary_sum, K, pow_zero] using
+    (trace_four_N_powers_explicit (sgGlue m) K
+      (blockK_BD (Hc m θ ax o)) a b c d 0
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg d hd w w' hw hw' hcopy hne))
+
+/-- Complete four-N cyclic stratum of the p=8 ordered-word expansion.
+The ten classes have exact multiplicities eight (eight classes), four
+for the periodic class (1,3,1,3), and two for the alternating class
+(2,2,2,2). This is a boundary identity, not an axis-cancellation claim. -/
+theorem sg_trace_p8_four_N_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * sg_trace_four_N_boundary_sum m K 1 1 1 5 +
+    8 * sg_trace_four_N_boundary_sum m K 1 1 4 2 +
+    8 * sg_trace_four_N_boundary_sum m K 1 2 1 4 +
+    8 * sg_trace_four_N_boundary_sum m K 1 1 2 4 +
+    8 * sg_trace_four_N_boundary_sum m K 1 1 3 3 +
+    8 * sg_trace_four_N_boundary_sum m K 1 3 2 2 +
+    8 * sg_trace_four_N_boundary_sum m K 1 2 3 2 +
+    4 * sg_trace_four_N_boundary_sum m K 1 3 1 3 +
+    8 * sg_trace_four_N_boundary_sum m K 1 2 2 3 +
+    2 * sg_trace_four_N_boundary_sum m K 2 2 2 2 := by
+  dsimp
+  rw [
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 1 5 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 4 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 2 1 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 2 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 3 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 3 2 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 2 3 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 3 1 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 2 2 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 2 2 2 2 (by omega) (by omega)
+  ]
+
 end EvgenyTheorem
