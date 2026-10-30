@@ -823,3 +823,12 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - The theorem groups the four cyclic two-N classes (1,7), (2,6), (3,5), and periodic (4,4) with exact word multiplicities 8, 8, 8, and 4.
 - Each trace is reduced through the existing generic trace_two_N_powers; the corner-off-diagonal premises are derived from sgK_pow_hkg_of_OAnti using the geometric bound 7 < 2^m for m >= 3.
 - Scope is deliberately limited to the r=2 boundary stratum. This does not establish the full H8 even-stratum expansion, axis cancellation, or an all-level H8 recurrence. Require the full Lean workflow to pass before proceeding to the r=4 stratum.
+
+
+## 2026-10-30 — Formalize the H8 four-N boundary stratum
+
+- Added a reusable concrete corner-power reduction for four-N words with terminal K^0.
+- Added sg_trace_p8_four_N_stratum_boundary for all ten p=8 cyclic r=4 classes.
+- The orbit weights are eight for eight classes, four for (1,3,1,3), and two for (2,2,2,2), summing to C(8,4)=70.
+- Each of the two diagonalized middle powers is at most five; sgK_pow_hkg_up_to_five_of_OAnti discharges the required corner hypotheses for m >= 3.
+- Scope remains a single even boundary stratum. It does not prove cancellation, the H8 trace split, or the all-level H8 recurrence.
