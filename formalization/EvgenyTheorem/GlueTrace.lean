@@ -2741,7 +2741,7 @@ theorem sg_trace_p8_all_even_strata_boundary
     sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti,
     sg_trace_p8_top_stratum_diagonal_fourth m hm θ ax o hanti]
   unfold glueRHS8
-  rfl
+  ring
 
 
 -- The 16 odd cyclic classes need bounded reductions of at most seven K-factors.
@@ -2984,12 +2984,13 @@ theorem sg_trace_p8_odd_strata_zero
   linear_combination 8 * h1_00000001 + 8 * h3_00000111 + 8 * h3_00001011 + 8 * h3_00001101 + 8 * h3_00010011 + 8 * h3_00010101 + 8 * h3_00011001 + 8 * h3_00100101 + 8 * h5_00011111 + 8 * h5_00101111 + 8 * h5_00110111 + 8 * h5_00111011 + 8 * h5_00111101 + 8 * h5_01010111 + 8 * h5_01011011 + 8 * h7_01111111
 
 
--- This proof checks the 20 even cyclic rotations and their exact orbit weights.
+-- This proof checks the 19 nonempty even cyclic classes and their exact orbit weights.
 set_option maxHeartbeats 2000000 in
 /-- Complete eighth-moment cyclic trace split for the glued matrix sum.
-The ordered expansion is grouped into all 36 cyclic classes; the odd
-classes vanish under OAnti and every even class is reduced to glueRHS8.
-This is a level-local trace identity, not yet an all-level recurrence. -/
+The ordered expansion is grouped into all 36 cyclic classes; the 16 odd
+classes vanish under OAnti, the 19 nonempty even classes give glueRHS8,
+and the empty-insertion class remains trace(K^8). This is a level-local
+trace identity, not yet an all-level recurrence. -/
 theorem sg_trace_p8_ordered_expansion_boundary
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
