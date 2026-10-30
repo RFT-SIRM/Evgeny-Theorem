@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [ main, moment-6-8-10 ]
+    branches: [ main, moment-6-8-10, work/h8-h10-exact-recurrence-certificates ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
