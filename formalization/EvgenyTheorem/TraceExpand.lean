@@ -1817,7 +1817,8 @@ theorem trace_orderedWordExpansion_eight_cyclic
       Matrix.trace (A * B * B * B * B * B * B * B) := by
     simpa [Matrix.mul_assoc] using
       (trace_cyclic_list ([B, B, B, B, B, B, B] : List (Matrix n n ℂ)) ([A] : List (Matrix n n ℂ)))
-  simp [orderedWordExpansion, List.map_append, List.sum_append,
+  simp [orderedWordExpansion, List.map_append, List.sum_append]
+  rw [
     hrot_00000010,
     hrot_00000100,
     hrot_00000110,
@@ -2037,8 +2038,9 @@ theorem trace_orderedWordExpansion_eight_cyclic
     hrot_11111011,
     hrot_11111100,
     hrot_11111101,
-    hrot_11111110]
-  <;> ring
+    hrot_11111110
+  ]
+  ring
 
 end EvgenyTheorem
 
