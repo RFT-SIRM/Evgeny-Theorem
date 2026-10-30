@@ -2730,4 +2730,22 @@ theorem sg_trace_p8_all_even_strata_boundary
   unfold glueRHS8
   ring
 
+
+/-- The unique r=1 cyclic class in the p=8 ordered-word expansion
+vanishes. Its orbit weight is eight and its representative is
+K^7 * (K*N). The generic single-pairing lemma applies because K is
+block diagonal across the glued copies; no OAnti hypothesis is needed. -/
+theorem sg_trace_p8_one_N_stratum_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o) :
+    8 * Matrix.trace
+      (sgK m θ ax o ^ 7 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+  have hzero :
+      Matrix.trace
+        (sgK m θ ax o ^ 7 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+    simpa using
+      (trace_single_KN_word_zero (sgGlue m) (sgK m θ ax o)
+        (blockK_BD (Hc m θ ax o)) 7 0)
+  simp [hzero]
+
 end EvgenyTheorem
