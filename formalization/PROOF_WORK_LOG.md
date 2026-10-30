@@ -851,7 +851,7 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   `r=2`, `r=4`, and `r=6` separately. The existing top-stratum
   `r=8` boundary/diagonal theorem is retained. Their exact ordered-word
   weights are respectively 28, 70, 28, and 1; the empty-insertion
-  `r=0` term remains the separate `trace(K^8)) contribution.
+  `r=0` term remains the separate `trace(K^8)` contribution.
 - Full Lean formalization build passed on this exact source checkpoint:
   run `41094123297` (success).
 - Python 3.11 and 3.12 fast and slow suites passed on the immediate parent
