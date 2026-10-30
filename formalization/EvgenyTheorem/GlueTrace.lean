@@ -2688,7 +2688,31 @@ The sum contains all positive even insertion strata r=2,4,6,8 with
 exact cyclic-orbit weights; the r=0 word is kept separate as trace(K^8). -/
 noncomputable def glueLHS8
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
-  8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) + 4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + 4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) + 2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + 4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) + Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0)
+  (
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+  )
+  + (
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+  )
+  + (
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+  )
+  + Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0)
 
 /-- The already-proved positive even p=8 strata combine into glueRHS8.
 This theorem is only the level-local even-boundary assembly: it asserts
