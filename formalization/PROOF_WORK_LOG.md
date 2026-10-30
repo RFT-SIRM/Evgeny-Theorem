@@ -815,3 +815,11 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Python push: `40926915594` (success); Python PR: `40926930923` (success), with Python 3.11 and 3.12 jobs successful.
 - The exact base-transition test includes assertions for the raw and normalized level-two polynomial, (D_3-3D_2=C_6(\theta)), and (C_6(\pi)=5280). The formulas are documented as a combined Lean recurrence plus exact Python symbolic certificate, not as a fully Lean-kernel proof of the finite base step.
 - The PR is being prepared for merge; the branch merge state is recorded by the PR itself after the merge operation.
+
+
+## 2026-10-30 — Formalize the H8 two-N boundary stratum
+
+- Added the theorem sg_trace_p8_two_N_stratum_boundary in GlueTrace.lean.
+- The theorem groups the four cyclic two-N classes (1,7), (2,6), (3,5), and periodic (4,4) with exact word multiplicities 8, 8, 8, and 4.
+- Each trace is reduced through the existing generic trace_two_N_powers; the corner-off-diagonal premises are derived from sgK_pow_hkg_of_OAnti using the geometric bound 7 < 2^m for m >= 3.
+- Scope is deliberately limited to the r=2 boundary stratum. This does not establish the full H8 even-stratum expansion, axis cancellation, or an all-level H8 recurrence. Require the full Lean workflow to pass before proceeding to the r=4 stratum.

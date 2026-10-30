@@ -1599,4 +1599,80 @@ theorem sg_trace_p10_top_stratum_diagonal_fifth
             simp [K, d, g, hg]
           · simp [hg, g]
 
+
+/-- The complete two-N cyclic stratum of the eighth-moment expansion.
+The four cyclic gap classes are (1,7), (2,6), (3,5), and the periodic
+(4,4), with exact word multiplicities 8, 8, 8, and 4. This is one
+boundary-stratum identity only; it does not imply H8 recurrence closure. -/
+theorem sg_trace_p8_two_N_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) =
+    8 * (∑ x, if (sgGlue m).g x then
+      (K ^ 1) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    8 * (∑ x, if (sgGlue m).g x then
+      (K ^ 2) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    8 * (∑ x, if (sgGlue m).g x then
+      (K ^ 3) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    4 * (∑ x, if (sgGlue m).g x then
+      (K ^ 4) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 7 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hside : 7 < 2 ^ m := by
+      calc
+        7 < 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti (by omega)
+      w w' hw hw' hcopy hne
+  have h17 : Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 1) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 1 7 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 7)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 7 (by omega) w w' hw hw' hcopy hne))
+  have h26 : Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 2) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 2 6 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 6)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 6 (by omega) w w' hw hw' hcopy hne))
+  have h35 : Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 3) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 3 5 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 5)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 5 (by omega) w w' hw hw' hcopy hne))
+  have h44 : Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 4) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 4 4 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 4)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 4 (by omega) w w' hw hw' hcopy hne))
+  rw [h17, h26, h35, h44]
+
 end EvgenyTheorem
