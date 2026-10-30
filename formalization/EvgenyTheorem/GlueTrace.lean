@@ -3010,4 +3010,47 @@ theorem sg_trace_p8_five_N_stratum_zero
   simp [hzero_r5_1, hzero_r5_2, hzero_r5_3, hzero_r5_4,
     hzero_r5_5, hzero_r5_6, hzero_r5_7]
 
+
+/-- The complete r=7 cyclic stratum of the p=8 ordered-word expansion
+vanishes under OAnti. The unique class has orbit weight eight. After a
+cyclic rotation, the seven selected middle powers are all K^1 and the
+remaining terminal gap is K^2, so m >= 3 suffices. -/
+theorem sg_trace_p8_seven_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    8 * Matrix.trace
+      (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change 8 * Matrix.trace
+    (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0
+  have hside : 1 < 2 ^ m := by
+    calc
+      1 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+
+  have hrot_r7 :
+      Matrix.trace
+        (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+      Matrix.trace
+        (K ^ 0 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([N, K, N, K, N, K, N, K, N, K, N, K, N] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r7 :
+      Matrix.trace
+        (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r7]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      0 1 1 1 1 1 1 2 (by omega) (by omega) (by omega)
+
+  simp [hzero_r7]
+
 end EvgenyTheorem

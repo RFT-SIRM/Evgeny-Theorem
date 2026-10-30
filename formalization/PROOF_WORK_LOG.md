@@ -894,29 +894,53 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 
 ## 2026-10-30 — Formalize the H8 five-N stratum
 
-- Parent source \`ff9e9a47891cd4dd430b5d5601bbe694b2ee1527\` passed the full
-  Lean project build (\`lake build EvgenyTheorem\`, run
-  \`41106775479\`). Python 3.11/3.12 jobs were still running when this
+- Parent source `ff9e9a47891cd4dd430b5d5601bbe694b2ee1527` passed the full
+  Lean project build (`lake build EvgenyTheorem`, run
+  `41106775479`). Python 3.11/3.12 jobs were still running when this
   mathematical step began; they are tracked independently.
-- Added \`sg_trace_p8_five_N_stratum_zero\` in the imported
-  \`GlueTrace.lean\`. It handles all seven cyclic r=5 classes from the
+- Added `sg_trace_p8_five_N_stratum_zero` in the imported
+  `GlueTrace.lean`. It handles all seven cyclic r=5 classes from the
   p=8 ordered-word inventory, each with exact orbit weight eight, total
-  weight \(56=\\binom{8}{5}\).
-- Each representative is rotated using \`trace_cyclic_list\` only. The
-  seven calls to \`trace_five_N_powers_zero_of_OAnti\` use the exact
-  exponent tuples \`(4,1,1,1,1,0)\`, \`(2,1,1,1,3,0)\`,
-  \`(2,1,1,3,1,0)\`, \`(3,1,1,2,1,0)\`, \`(3,1,1,1,2,0)\`,
-  \`(2,1,1,2,2,0)\`, and \`(2,1,2,1,2,0)\`.
+  weight \(56=\binom{8}{5}\).
+- Each representative is rotated using `trace_cyclic_list` only. The
+  seven calls to `trace_five_N_powers_zero_of_OAnti` use the exact
+  exponent tuples `(4,1,1,1,1,0)`, `(2,1,1,1,3,0)`,
+  `(2,1,1,3,1,0)`, `(3,1,1,2,1,0)`, `(3,1,1,1,2,0)`,
+  `(2,1,1,2,2,0)`, and `(2,1,2,1,2,0)`.
 - The helper's two corner hypotheses are only for the second and fourth
   exponents \(b,d\). Here \(b=1\) in all seven classes and
   \(d\\in\\{1,2,3\\}\); \(m\\ge3\) gives \(3<2^m\), so the strict
   hypotheses follow with the existing concrete OAnti specialization.
-  The theorem statement, its \`OAnti (m+1) o\` hypothesis, and the
+  The theorem statement, its `OAnti (m+1) o` hypothesis, and the
   level bound are unchanged by this reduction.
 - This proves only the r=5 odd stratum if the fresh Lean build succeeds.
   It is not the complete H8 ordered trace split and does not establish
   cancellation of the even boundary terms or an H8 recurrence.
 - Verification on the new source SHA is pending. Next mathematical step,
   after green Lean: add the single r=7 class using
-  \`trace_seven_N_powers_zero_of_OAnti\`, then assemble the full ordered
+  `trace_seven_N_powers_zero_of_OAnti`, then assemble the full ordered
   H8 split with exact cyclic weights.
+
+
+## 2026-10-30 — Verify H8 r=5 and add the r=7 class
+
+- Parent `8e3d22da1c65eb04212161f2e21dc57869ceed06` passed the full Lean project build:
+  `lake build EvgenyTheorem`, run
+  [41108416124](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41108416124);
+  the log reports `Build completed successfully (3060 jobs)`.
+  Python run [41108416024](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41108416024)
+  was still running at this checkpoint and remains independently tracked.
+- The r=5 theorem `sg_trace_p8_five_N_stratum_zero` is therefore Lean-verified
+  on `8e3d22da1c65eb04212161f2e21dc57869ceed06`: all seven classes compile, each with orbit weight eight
+  (total 56).
+- Added `sg_trace_p8_seven_N_stratum_zero` for the unique r=7 class. Its
+  orbit weight is eight. The proof rotates the expanded representative
+  `K * (K*N)^7` by moving its initial `[K,K]` block to the end, obtaining
+  the exact seven-N word with exponent tuple `(0,1,1,1,1,1,1,2)`.
+- The existing `trace_seven_N_powers_zero_of_OAnti` requires the three
+  selected corner bounds only at exponents (b,d,f); here all are one.
+  The bound (1<2^m) follows from (m\ge3). The only mathematical
+  hypothesis is the unchanged `OAnti (m + 1) o`.
+- The new r=7 source change and this log entry are pending a fresh full
+  Lean build. H8 is not yet a complete trace split: the even boundary
+  terms still require their joint weighted comparison and level transport.

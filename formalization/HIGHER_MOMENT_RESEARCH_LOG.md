@@ -3407,11 +3407,11 @@ canonical cyclic gap tuples and weights are:
 (0,1,0,1,1),
 \]
 with weight eight for each. Thus the exact ordered-word weight is
-\(7\cdot8=56=\\binom{8}{5}\). The corresponding positive K-gap exponents
+\(7\cdot8=56=\binom{8}{5}\). The corresponding positive K-gap exponents
 are the gap entries plus one.
 
 For a five-N trace, the existing concrete theorem
-\`trace_five_N_powers_zero_of_OAnti\` has the ordered form
+`trace_five_N_powers_zero_of_OAnti` has the ordered form
 \[
 \\operatorname{tr}(K^a N K^b N K^c N K^d N K^e N K^f)=0,
 \]
@@ -3432,18 +3432,18 @@ The seven Lean calls therefore use:
 
 In every case \(b=1\) and \(d\le3\), so \(b,d<2^m\) follows for
 \(m\ge3\). Each displayed transformation in Lean is a cyclic rotation
-implemented by \`trace_cyclic_list\`; no adjacent factors are exchanged,
+implemented by `trace_cyclic_list`; no adjacent factors are exchanged,
 no reversal is inferred, and no complex-conjugation symmetry is invoked.
 The exact class expressions are the binary-word representatives with
-\`K\` denoting the unselected factor and \`K*N\` the selected factor.
+`K` denoting the unselected factor and `K*N` the selected factor.
 
-The newly added \`sg_trace_p8_five_N_stratum_zero\` is intended to combine
+The newly added `sg_trace_p8_five_N_stratum_zero` is intended to combine
 the seven classwise vanishing results with their orbit weights. The
 mathematical deduction is complete for this r=5 stratum if (and only if)
 the fresh complete Lean build accepts the theorem body.
 
 The status ledger at this point is:
-- r=0: separate \`trace(K^8)\`;
+- r=0: separate `trace(K^8)`;
 - r=1: proved zero by the single-N theorem;
 - r=2: proved boundary reduction, four classes, total weight 28;
 - r=3: proved zero, seven classes, total weight 56;
@@ -3459,3 +3459,49 @@ even boundary sums \(B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}\) must still be
 compared jointly for the two intended operator configurations. No claim
 that these strata vanish separately is justified, and the H8 level
 recurrence remains open.
+
+
+## 2026-10-30 — H8 r=5 verification and exact r=7 reduction
+
+The r=5 proof source at SHA `8e3d22da1c65eb04212161f2e21dc57869ceed06` passed the project-wide Lean
+command `lake build EvgenyTheorem` (run 41108416124; the log reports
+3,060 successful build jobs). The Python workflow for that SHA was
+still running at the time of this next mathematical step.
+
+For r=7 the binary/cyclic inventory has exactly one class:
+`K, K*N, K*N, K*N, K*N, K*N, K*N, K*N`, with cyclic gap tuple
+((0,0,0,0,0,0,1)), orbit weight eight. Expanding (K(KN)^7) gives
+(K K N K N K N K N K N K N K N). Cyclically moving the initial two
+(K) factors to the end yields
+[
+N K N K N K N K N K N K N K^2,
+]
+which is the exact ordered word represented by the exponent tuple
+((a,b,c,d,e,f,g,h)=(0,1,1,1,1,1,1,2)) in
+`trace_seven_N_powers_zero_of_OAnti`. This uses only cyclic invariance
+of trace, not commutation, reversal, or conjugation of the word.
+
+The helper's selected middle-power conditions are (b<2^m),
+(d<2^m), and (f<2^m). Each selected exponent equals one, so the
+required strict inequalities follow from (m\ge3). The concrete helper
+derives those three glued-corner off-diagonal conditions from
+`OAnti (m+1) o`, the block-diagonal property of (K), and its geometric
+support argument; no additional corner assumption is introduced.
+
+The new theorem `sg_trace_p8_seven_N_stratum_zero` combines this classwise
+vanishing with the exact orbit weight eight. Its fresh full Lean build is
+still required before calling the r=7 stratum verified.
+
+The odd H8 strata now have the following state:
+- r=1: one class, weight 8, Lean proof already present;
+- r=3: seven classes, total weight 56, Lean proof on the green
+  `ff9e9a4...` checkpoint;
+- r=5: seven classes, total weight 56, verified at `8e3d22da1c65eb04212161f2e21dc57869ceed06`;
+- r=7: one class, weight 8, theorem just added, verification pending.
+
+The remaining H8 identity still requires the full ordered expansion to
+be assembled with all even boundary terms. In particular, the joint
+weighted expression (B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}) must be compared
+for the intended operator configurations with matching support and degree
+hypotheses. The current r=7 result does not imply cancellation of any
+even stratum and does not yet establish an H8 recurrence.
