@@ -2790,30 +2790,8 @@ theorem sg_trace_p8_odd_strata_zero
       w w' hw hw' hcopy hne
   have h3 (a b c d : ℕ) (hb : b ≤ 7) :
       Matrix.trace (K ^ a * N * K ^ b * N * K ^ c * N * K ^ d) = 0 := by
-    have hxs : ∀ A, A ∈ ([K ^ a] : List (Matrix (WSG m) (WSG m) ℂ)) →
-        BD (fun w : WSG m => w.1) A := by
-      intro A hA
-      simp only [List.mem_singleton] at hA
-      subst A
-      exact BD_pow K hbd a
-    have hys : ∀ A, A ∈ ([K ^ c] : List (Matrix (WSG m) (WSG m) ℂ)) →
-        BD (fun w : WSG m => w.1) A := by
-      intro A hA
-      simp only [List.mem_singleton] at hA
-      subst A
-      exact BD_pow K hbd c
-    have hzs : ∀ A, A ∈ ([K ^ d] : List (Matrix (WSG m) (WSG m) ℂ)) →
-        BD (fun w : WSG m => w.1) A := by
-      intro A hA
-      simp only [List.mem_singleton] at hA
-      subst A
-      exact BD_pow K hbd d
-    simpa [List.prod_singleton, Matrix.mul_assoc] using
-      (trace_three_N_word_zero (sgGlue m)
-        ([K ^ a] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ c] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ d] : List (Matrix (WSG m) (WSG m) ℂ))
-        (K ^ b) hxs hys hzs (BD_pow K hbd b) (hkg b hb))
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      a b c d (by omega)
   have h5 (a b c d e f : ℕ) (hb : b ≤ 7) (hd : d ≤ 7) :
       Matrix.trace (K ^ a * N * K ^ b * N * K ^ c * N *
         K ^ d * N * K ^ e * N * K ^ f) = 0 := by
@@ -3039,14 +3017,12 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_00000101 :
       Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N)) =
         Matrix.trace (K ^ 2 * N * K ^ 6 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
 
   have hrot_even_00001001 :
       Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N)) =
@@ -3055,14 +3031,12 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_00001111 :
       Matrix.trace (K * K * K * K * (K * N) * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 5 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
 
   have hrot_even_00010001 :
       Matrix.trace (K * K * K * (K * N) * K * K * K * (K * N)) =
@@ -3071,14 +3045,12 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_00010111 :
       Matrix.trace (K * K * K * (K * N) * K * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
+      (trace_cyclic_list ([K, K, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
   have hrot_even_00011011 :
       Matrix.trace (K * K * K * (K * N) * (K * N) * K * (K * N) * (K * N)) =
@@ -3087,7 +3059,6 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_00011101 :
       Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * K * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4 * N) := by
@@ -3095,30 +3066,26 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_00100111 :
       Matrix.trace (K * K * (K * N) * K * K * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
+      (trace_cyclic_list ([K, K, K, N, K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
   have hrot_even_00101011 :
       Matrix.trace (K * K * (K * N) * K * (K * N) * K * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 2 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
+      (trace_cyclic_list ([K, K, K, N, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
   have hrot_even_00101101 :
       Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * K * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
+      (trace_cyclic_list ([K, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
   have hrot_even_00110011 :
       Matrix.trace (K * K * (K * N) * (K * N) * K * K * (K * N) * (K * N)) =
@@ -3127,14 +3094,12 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_00110101 :
       Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * K * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
 
   have hrot_even_00111111 :
       Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
@@ -3143,7 +3108,6 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_01010101 :
       Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * K * (K * N)) =
         Matrix.trace (K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N) := by
@@ -3151,22 +3115,19 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_01011111 :
       Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, K, N, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
+      (trace_cyclic_list ([K, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
   have hrot_even_01101111 :
       Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
+      (trace_cyclic_list ([K, K, N, K, N, K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
   have hrot_even_01110111 :
       Matrix.trace (K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) =
@@ -3175,14 +3136,12 @@ theorem sg_trace_p8_ordered_expansion_boundary
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
 
-
   have hrot_even_11111111 :
       Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
         Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N) := by
     simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
       Matrix.one_mul, Matrix.mul_one] using
       (trace_cyclic_list ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)) ([K, N, K, N, K, N, K, N, K, N, K, N, K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-
 
   have hEvenRep :
       8 * Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N))
