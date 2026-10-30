@@ -1772,4 +1772,91 @@ theorem sg_trace_p8_four_N_stratum_boundary
     sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 2 2 2 2 (by omega) (by omega)
   ]
 
+
+
+/-- Complete six-N cyclic stratum of the eighth-moment expansion.
+Its four run-length classes are (1,1,1,1,1,3), (1,1,1,1,2,2),
+(1,1,1,2,1,2), and the period-two class (1,1,2,1,1,2), with
+exact multiplicities eight, eight, eight, and four. -/
+theorem sg_trace_p8_six_N_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+      fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) +
+    8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) +
+    8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) +
+    4 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) := by
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+    fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  have hkg : ∀ n, n ≤ 5 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  have h111113 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 1 1 1 3 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h111122 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 1 1 2 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h111212 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 1 2 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h112112 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 2 1 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  rw [h111113, h111122, h111212, h112112]
+
 end EvgenyTheorem
