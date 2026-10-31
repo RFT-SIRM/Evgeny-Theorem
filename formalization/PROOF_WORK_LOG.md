@@ -1427,3 +1427,7 @@ This is the first geometric input needed by the already-compiled generic
 degree-six/seven diagonal transport lemma. No matrix-entry, spin, axis,
 operator-power, r=6 trace, or residual-stability claim is included.
 Full Lean and Python CI on the exact resulting SHA are required.
+
+## 2026-10-31 — H8 radius-three transport repair
+
+Lean run 41171919726 on parent SHA 6ded225b630b5a632124de487040819182f540ef reported two proof-script failures in CornerLocality.lean (lines 543 and 614). The X-copy proof had not normalized the untouched shifted y-bound before excluding parent point (0, 2^m); the symmetric Y-copy proof had not normalized x before excluding (2^m, 0). Both coordinate hypotheses are now explicitly simplified after the copy substitution, before omega. Statements, assumptions, and m >= 4 threshold are unchanged. This is a local proof-script repair only; full Lean and Python CI on the new SHA are still required. WSG support equivalences and H8 residual stability remain open.

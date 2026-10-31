@@ -533,6 +533,7 @@ theorem corner_X_radius_three_transport
     omega
   · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzB
     simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hy
     have hp0 : p ≠ (0, 0) := by
       intro heq
       have hpx : p.1 = 0 := congrArg Prod.fst heq
@@ -604,6 +605,7 @@ theorem corner_Y_radius_three_transport
     omega
   · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzC
     simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hx
     have hp0 : p ≠ (0, 0) := by
       intro heq
       have hpy : p.2 = 0 := congrArg Prod.snd heq

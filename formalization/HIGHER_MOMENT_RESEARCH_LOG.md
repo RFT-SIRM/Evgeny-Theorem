@@ -4062,3 +4062,7 @@ corresponding WSG finite supports are equivalent, that spin-resolved
 sgK entries agree under the maps, or that powers one through three have
 the required row/column support. The six concrete corner transports and
 the H8 residual recurrence remain open.
+
+## 2026-10-31 — H8 radius-three coordinate proof repair
+
+The first full build on 6ded225 found two missing coordinate normalizations in the B/C copy branches. The B branch now normalizes y <= 3 before excluding (0, 2^m), and the C branch normalizes x <= 3 before excluding (2^m, 0). The theorem statements and threshold m >= 4 are unchanged. This does not prove WSG radius-three support equivalences, spin-entry transports, or H8 residual stability. A fresh full Lean build and both Python suites must pass on the corrected SHA before proceeding.
