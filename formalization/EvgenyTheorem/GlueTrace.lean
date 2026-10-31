@@ -3428,7 +3428,9 @@ theorem glueRHS8_eq_diagonal_form
   have hFour :=
     (sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti).symm.trans
       (sg_trace_p8_four_N_stratum_pair_diagonal m hm θ ax o hanti)
-  have hSix := sg_trace_p8_six_N_stratum_pair_diagonal m hm θ ax o hanti
+  have hSix :=
+    (sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti).symm.trans
+      (sg_trace_p8_six_N_stratum_pair_diagonal m hm θ ax o hanti)
   dsimp at hSix
   unfold glueRHS8
   dsimp
