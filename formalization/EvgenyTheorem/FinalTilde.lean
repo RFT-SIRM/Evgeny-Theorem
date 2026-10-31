@@ -6347,7 +6347,10 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
     simp only [T, sgK_radius_three_X_parent_support, Finset.mem_filter,
       Finset.mem_univ, true_and]
     refine ⟨?_, ?_, ?_⟩
-    · simpa [x', sgK_root_pullback] using hzs.1
+    · have hxCopy : x'.1 = c := by
+        change w.1 = c
+        exact hwCopy
+      exact hzs.1.trans hxCopy
     · simpa [x', sgK_root_pullback, sgK_root_pullback_pt, hwPoint]
         using hzs.2.1
     · simpa [x', sgK_root_pullback, sgK_root_pullback_pt, hwPoint]

@@ -1621,3 +1621,14 @@ FinalTilde.lean, and made the local bridge's membership proofs explicit in
 its binder types. This is a source-ordering correction, not a change to the
 mathematical statement. The prior SHA is not considered validated; full CI
 must run against this corrected SHA.
+
+
+## 2026-10-31 — Make the parent X-copy inclusion explicit
+
+A second source-level audit of the X diagonal proof identified that the
+low-level support inclusion must also transport the copy coordinate from
+the pulled-back root to the fixed parent copy c. The proof now derives
+x'.1 = c directly from sgK_root_pullback and the theorem premise
+hwCopy, then composes it with the support's copy equality. This closes
+that inclusion obligation explicitly; the corrected SHA still requires a
+full Lean build and both Python suites.
