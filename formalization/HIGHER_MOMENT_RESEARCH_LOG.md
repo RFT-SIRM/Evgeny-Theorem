@@ -3769,3 +3769,33 @@ consistently) to isolate
 That difference still requires a separate H8-specific diagonal-power and
 support/degree audit. No H6 residual lemma is being assumed for degree eight.
 H8 and H10 remain open at this checkpoint.
+
+
+## 2026-10-31 — Orientation-gap recurrence and the remaining H8 obstruction
+
+Define D8_num(m) as the faceAxis-versus-fixed-Z trace defect with
+orientation oNum(m), D8_til(m) as the same defect with orientation
+oTil(m), and G8(m)=D8_num(m)-D8_til(m).
+
+The exact already-established recurrences are
+D8_num(m+1)=2 D8_num(m)+D8_til(m)+R8_num(m)
+and
+D8_til(m+1)=D8_num(m)+2 D8_til(m)+R8_til(m),
+where R8_num and R8_til are the corresponding differences of the full
+glueRHS8 corrections for faceAxis and fixed Z.
+
+Subtracting the second identity from the first gives the exact relation
+G8(m+1)=G8(m)+R8_num(m)-R8_til(m).
+This algebraic subtraction is formalized by
+defectO8_orientation_difference_succ. Its Lean proof invokes the two
+independent H8 recurrence theorems and ring normalization; it does not
+use any claim about boundary cancellation or level stabilization.
+
+Thus the next question is sharply isolated: prove or reduce the difference
+R8_num(m)-R8_til(m). Since glueRHS8 contains boundary products with total
+degree eight, the audit must track every diagonal power appearing in those
+products, including the top stratum, and establish the exact support and
+degree hypotheses for both orientations. The degree-six argument controlling
+only its power-five endpoint residual cannot be promoted to degree eight
+by analogy. Until this H8-specific comparison is proved, neither constancy
+of G8 nor a scalar closed recurrence for D8_num follows.

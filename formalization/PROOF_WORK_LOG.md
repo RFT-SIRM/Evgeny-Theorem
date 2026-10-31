@@ -1148,3 +1148,28 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - Fresh full Lean and Python CI for the new commit are pending. H8 is still
   open: next derive the exact orientation-difference recurrence and then
   prove the needed H8 boundary-residual comparison. H10 remains deferred.
+
+
+## 2026-10-31 — Exact H8 recurrence for the difference of orientations
+
+- Rechecked branch work/h8-h10-exact-recurrence-certificates at parent
+  62686b7c66afe583c56f53658667e5a2c0a9a830. The full Lean build passed
+  (lake build EvgenyTheorem, 3,060 jobs) in run
+  41159024416. Python 3.11 fast and slow suites passed in run
+  41159024564; Python 3.12 was still running when this step began.
+- Added defectO8_orientation_difference_succ in FinalTilde.lean.
+  Its proof uses only the two already proved H8 recurrences
+  defectO8_succ_num and defectO8_succ_til, then normalizes the resulting
+  linear identity by ring. No new geometric or analytic hypothesis is added.
+- With G8(m) defined as D8_num(m)-D8_til(m), the theorem states
+  G8(m+1)=G8(m)+R8_num(m)-R8_til(m), where each R8 is the full
+  faceAxis-versus-fixed-Z glueRHS8 difference at its corresponding
+  orientation. The top and all other even boundary strata remain included.
+- This result identifies the exact obstruction to constancy of the
+  orientation gap. It does not assert R8_num=R8_til, does not assert
+  G8 is constant, and does not establish a closed H8 formula.
+- Fresh full Lean and Python CI for the new source SHA are pending.
+  The next mathematical task is an H8-specific proof or reduction of
+  R8_num(m)-R8_til(m), auditing all diagonal powers through the boundary
+  degree and the precise support/degree conditions. Do not reuse the
+  degree-six residual theorem without a separate degree-eight proof.

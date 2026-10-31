@@ -270,6 +270,26 @@ theorem defectO8_succ_til (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
 
 
 
+ 
+/-- Exact recurrence for the H8 difference between numbering and
+flipped-corner orientations. The difference of the two boundary residuals
+is retained explicitly. -/
+theorem defectO8_orientation_difference_succ
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
+    (defectO8 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) -
+      defectO8 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1))) =
+    (defectO8 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO8 m θ faceAxis (fun _ => 2) (oTil m)) +
+    ((glueRHS8 m (sgK m θ faceAxis (oNum (m + 1))) -
+        glueRHS8 m (sgK m θ (fun _ => 2) (oNum (m + 1))) ) -
+      (glueRHS8 m (sgK m θ faceAxis (oTil (m + 1))) -
+        glueRHS8 m (sgK m θ (fun _ => 2) (oTil (m + 1))) )) := by
+  rw [defectO8_succ_num m hm θ, defectO8_succ_til m hm θ]
+  ring
+
+
+
+
 /-- The one edge reversed by oTil, in the local coordinates of copy B. -/
 def p6FlipEndpoint (m : ℕ) (w : WSG m) : Prop :=
   w.1 = GCopy.B ∧
