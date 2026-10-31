@@ -4480,3 +4480,20 @@ outside the Lean kernel by exact integer arithmetic. It is not a
 floating-point angle-grid argument. H8 is now closed in the same combined
 Lean-plus-exact-certificate sense as the established H6 result. H10 remains
 open and is not started in this step.
+
+
+## 2026-10-31 — H10 four-N cyclic representatives: all nine specialized
+
+The generic p=10 four-N boundary reductions in GlueAlg.lean have nine
+cyclic representatives. The Sierpinski-specific GlueTrace.lean now
+specializes the four previously missing representatives:
+(1,1,3,5), (1,1,4,4), (1,2,2,5), and the period-two (1,4,1,4).
+
+Their exact word multiplicities are respectively 10, 10, 10, and 5.
+Each theorem retains the generic nested corner-sum order and invokes the
+existing degree-nine support theorem sgK_pow_hkg_up_to_nine_of_OAnti.
+This is a complete class-representative specialization inventory for
+the r=4 stratum. It is not yet the aggregate weighted r=4 boundary identity:
+the next step is to assemble the nine class wrappers with their exact
+multiplicities and compare that aggregate with the other H10 strata.
+H10 remains open.

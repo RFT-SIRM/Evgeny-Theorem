@@ -1780,3 +1780,21 @@ before adding a constant definition, scalar recurrence, or H8 closed form.
   comparisons against the Gaussian-integer trace certificate. The exact
   p=8 symbolic test is marked slow because it also computes level four.
 - H10 remains deferred. Full Lean and Python CI for this commit is pending.
+
+
+## 2026-10-31 — Complete the remaining H10 four-N class specializations
+
+- Audited the generic p=10 four-N class inventory in GlueAlg.lean.
+  It contains nine cyclic representatives: 1162, 1153, 1117, 1126, 1216,
+  1135, 1144, 1225, and the period-two class 1414.
+- The Sierpinski GlueTrace.lean specialization previously contained only
+  the first five. Added the remaining four concrete wrappers:
+  1135, 1144, 1225 (each multiplicity 10), and 1414 (multiplicity 5).
+- Each wrapper uses the existing degree-nine glued-state off-diagonal
+  vanishing theorem. The exact ordered factors and outer/inner diagonal
+  powers are copied from the generic GlueAlg theorem; no factors are
+  commuted or merged.
+- This completes the class-level r=4 wrapper inventory only. No combined
+  four-N stratum theorem, no complete p=10 ordered expansion, and no H10
+  boundary recurrence are claimed yet. Full Lean build and Python suites
+  are pending on the new SHA.
