@@ -4582,3 +4582,14 @@ The Lean parser rejected the line-broken multi-location list after
 identities explicitly, then normalizes the target before combining them.
 This is a tactic syntax correction only; the orbit inventory, coefficients,
 and vanishing statements are unchanged.
+
+
+## 2026-11-01 — H10 r=3 coefficient correction
+
+The previous Lean failure was an exact coefficient mismatch: the target
+contains weight 10 for each of the 12 cyclic classes, but the final
+linear combination subtracted each zero-trace identity only once.
+The remaining target therefore had coefficient 9 on every class.
+The final combination now weights all twelve established identities by
+10, matching the orbit multiplicity. The full Lean build must confirm this
+correction before the r=3 stratum is treated as closed.

@@ -1882,3 +1882,14 @@ The first retry revealed that the multiline `simp ... at` location list
 was parsed incorrectly. Replaced it with separate explicit simplification
 commands for each of the twelve established zero-trace identities and the
 target. This is syntax-only; no hypotheses or mathematical statements change.
+
+
+## 2026-11-01 — Fix the H10 r=3 weighted-sum coefficient
+
+The full Lean build exposed that each of the twelve cyclic representatives
+appears with coefficient 10 in the stratum, while the final
+`linear_combination` had used each zero-trace identity with coefficient 1.
+After normalization this left a residual coefficient 9 on every trace.
+The proof now combines each established zero-trace equality with
+coefficient 10, matching the exact orbit weights. No class inventory,
+trace representative, or theorem hypothesis was changed.

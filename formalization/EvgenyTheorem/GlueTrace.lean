@@ -4399,9 +4399,10 @@ theorem sg_trace_p10_three_N_stratum_zero
     at hzero_r3_12
   simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
   linear_combination
-    hzero_r3_1 + hzero_r3_2 + hzero_r3_3 + hzero_r3_4 +
-    hzero_r3_5 + hzero_r3_6 + hzero_r3_7 + hzero_r3_8 +
-    hzero_r3_9 + hzero_r3_10 + hzero_r3_11 + hzero_r3_12
+    10 * hzero_r3_1 + 10 * hzero_r3_2 + 10 * hzero_r3_3 +
+    10 * hzero_r3_4 + 10 * hzero_r3_5 + 10 * hzero_r3_6 +
+    10 * hzero_r3_7 + 10 * hzero_r3_8 + 10 * hzero_r3_9 +
+    10 * hzero_r3_10 + 10 * hzero_r3_11 + 10 * hzero_r3_12
 
 
 /-- The unique r=1 cyclic class in the p=8 ordered-word expansion
