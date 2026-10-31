@@ -4074,3 +4074,29 @@ The first full build on 6ded225 found two missing coordinate normalizations in t
 - Added the concrete finite-state radius-three support around O in FinalTilde.lean. The support equivalence retains the copy index, coordinate, and spin, and uses corner_O_radius_three_transport at the geometric layer.
 - The result is only a finite-set equivalence. It does not yet prove equality of high/low operator entries on the support, row/column support for powers one through three, any of the six corner transports, or H8 boundary-residual stability. The next step is to prove the corresponding O-corner spin-resolved entry bridge on the radius-three support and then derive row/column support for degrees 1–3.
 - Full Lean and Python CI on the new exact SHA are required before treating the addition as verified.
+
+## 2026-10-31 — H8 radius-three O-corner entry bridge
+
+For the O-neighborhood [0,3] x [0,3] at m >= 4, the geometric transport
+places both endpoints in the old A-copy domain and excludes the two
+non-root glued vertices. This gives the spin-resolved pHeO entry equality
+with oNum across one level, plus the adjacent orientation-index version
+with oNum (m+2) on the upper level.
+
+The other copy representatives require separate orientation arguments:
+- B: the radius-three first-coordinate bound, after the B shift, lies
+  strictly below the exceptional cp1 endpoint at level n+1. Thus both
+  edge directions are excluded and oBo of oTil reduces to the relevant
+  numbering orientation on the restricted box.
+- C: cp1_shiftC and Hc_C_num_eq_parent_til perform the C-copy conversion;
+  the O-box radius-three exclusion then identifies the local oTil entries
+  with their numbering entries.
+
+The B/O and C/O theorems preserve the two C2 spin indices and compare the
+actual sgK matrix entries at levels m+1 and m. These bridges complete only
+the local entry-matching obligation for the O-corner finite support.
+The row/column support conditions for powers 1--3, the instantiation of
+the generic degree-six/seven diagonal transport, and the H8 boundary
+residual comparison remain open. No boundary cancellation or level
+stability is inferred.
+

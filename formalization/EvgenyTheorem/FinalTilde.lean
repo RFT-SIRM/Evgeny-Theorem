@@ -1063,6 +1063,24 @@ theorem pHeO_corner_O_box_entry
     corner_O_radius_two_transport m hm hq hqx hqy
   exact pHeO_succ_A_num_entry m θ ax hp' hq' hpX hpY i j
 
+/-- At the outer corner O, all entries whose endpoints lie in the
+coordinate box [0,3]² agree with the parent-level operator. -/
+theorem pHeO_corner_O_radius_three_entry
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
+    (hqx : q.1 ≤ 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+      pHeO m θ ax (oNum m) p q i j := by
+  obtain ⟨hp', hpX, hpY⟩ :=
+    corner_O_radius_three_transport m hm hp hpx hpy
+  obtain ⟨hq', _, _⟩ :=
+    corner_O_radius_three_transport m hm hq hqx hqy
+  exact pHeO_succ_A_num_entry m θ ax hp' hq' hpX hpY i j
+
+
 /-- At the outer corner X, entries inside the radius-two coordinate box
 pull back to copy B with the ordinary parent numbering orientation. -/
 theorem pHeO_corner_X_box_entry
@@ -1203,6 +1221,46 @@ theorem pHeO_corner_O_box_entry_next_num
     corner_O_radius_two_transport m hm hp hpx hpy
   obtain ⟨hq', _, _⟩ :=
     corner_O_radius_two_transport m hm hq hqx hqy
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+        pHeO m θ ax (oNum (m + 2)) p q i j :=
+      pHeO_succ_A_local_entry m θ ax (oNum (m + 2))
+        hp' hq' hpX hpY i j
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_orient_congr m θ ax (oNum (m + 2)) (oNum (m + 1))
+        (by
+          intro a b hab hE hfl
+          have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hmEdge.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hmEdge.2
+          have ha' : a ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inl ha
+          have hb' : b ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inl hb
+          exact oNum_succ_restrict m ha' hb')
+        p q i j
+
+
+/-- Across the O/A radius-three box, the entry at level m+1 with
+the orientation used by the next residual, oNum (m+2), agrees with the
+parent entry using oNum (m+1). -/
+theorem pHeO_corner_O_radius_three_entry_next_num
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
+    (hqx : q.1 ≤ 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+      pHeO m θ ax (oNum (m + 1)) p q i j := by
+  obtain ⟨hp', hpX, hpY⟩ :=
+    corner_O_radius_three_transport m hm hp hpx hpy
+  obtain ⟨hq', _, _⟩ :=
+    corner_O_radius_three_transport m hm hq hqx hqy
   calc
     pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
         pHeO m θ ax (oNum (m + 2)) p q i j :=
@@ -1470,6 +1528,33 @@ private theorem cp1_not_B_shift_radius_two
     simp only [shiftPoint] at hx
     omega
 
+/-- The exceptional edge cp1 cannot enter the B-shift of an
+O-radius-three box at level n. -/
+private theorem cp1_not_B_shift_radius_three
+    (n : ℕ) (hn : 3 ≤ n) {p q : Point}
+    (hp : p.1 ≤ 3) (hq : q.1 ≤ 3) :
+    ¬ cp1 (n + 1) (shiftPoint (2 ^ n) 1 0 p) (shiftPoint (2 ^ n) 1 0 q) ∧
+    ¬ cp1 (n + 1) (shiftPoint (2 ^ n) 1 0 q) (shiftPoint (2 ^ n) 1 0 p) := by
+  have hpow : 4 < 2 ^ n := by
+    calc
+      4 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hn
+  have hsep : 2 ^ n + 3 < 2 ^ (n + 1) - 1 := by
+    rw [pow_succ]
+    omega
+  constructor
+  · intro h
+    have hx : (shiftPoint (2 ^ n) 1 0 p).1 = 2 ^ (n + 1) - 1 :=
+      congrArg Prod.fst h.1
+    simp only [shiftPoint] at hx
+    omega
+  · intro h
+    have hx : (shiftPoint (2 ^ n) 1 0 q).1 = 2 ^ (n + 1) - 1 :=
+      congrArg Prod.fst h.1
+    simp only [shiftPoint] at hx
+    omega
+
+
 /-- On the B-block, the level-(m+1) entry near its O corner transports to
 the same B-block entry at level m. This is the B-copy representative used
 for the glued X corner; the orientation flip is excluded by the radius-two
@@ -1538,6 +1623,72 @@ theorem sgK_B_O_entry_next_til
 
 
 
+/-- Spin-resolved B-copy entries in the O-radius-three box transport
+to the parent level with the exact tilde orientations. The radius-three
+separation excludes the flipped edge before the O/A entry bridge is used. -/
+theorem sgK_B_O_entry_next_til_radius_three
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
+    (hqx : q.1 ≤ 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.B, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.B, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.B,
+          ((⟨p, List.mem_toFinset.mpr
+            (corner_O_radius_three_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.B,
+          ((⟨q, List.mem_toFinset.mpr
+            (corner_O_radius_three_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  have hp' : p ∈ vertexOrder m :=
+    (corner_O_radius_three_transport m hm hp hpx hpy).1
+  have hq' : q ∈ vertexOrder m :=
+    (corner_O_radius_three_transport m hm hq hqx hqy).1
+  have hhighNoCorner :=
+    cp1_not_B_shift_radius_three (m + 1) (by omega) hpx hqx
+  have hhighOrient :
+      oBo (m + 1) (oTil (m + 2)) p q ↔ oNum (m + 2) p q := by
+    calc
+      oBo (m + 1) (oTil (m + 2)) p q ↔
+          oBo (m + 1) (oNum (m + 2)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hhighNoCorner.1 hhighNoCorner.2
+      _ ↔ oNum (m + 1) p q := oBo_num_iff_oNum (m + 1) hp hq
+      _ ↔ oNum (m + 2) p q := (oNum_succ_restrict m hp hq).symm
+  have hlowNoCorner :=
+    cp1_not_B_shift_radius_three m (by omega) hpx hqx
+  have hlowOrient :
+      oBo m (oTil (m + 1)) p q ↔ oNum (m + 1) p q := by
+    calc
+      oBo m (oTil (m + 1)) p q ↔
+          oBo m (oNum (m + 1)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hlowNoCorner.1 hlowNoCorner.2
+      _ ↔ oNum m p q := oBo_num_iff_oNum m hp' hq'
+      _ ↔ oNum (m + 1) p q := by
+        unfold oNum
+        rw [vIdx_succ_of_mem hp', vIdx_succ_of_mem hq']
+  change
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+      pHeO m θ ax (oBo m (oTil (m + 1))) p q i j
+  calc
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oBo (m + 1) (oTil (m + 2))) (oNum (m + 2))
+        p q i j hhighOrient
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_radius_three_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oBo m (oTil (m + 1))) p q i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oBo m (oTil (m + 1))) (oNum (m + 1))
+        p q i j hlowOrient).symm
+
+
 /-- On a level-n O radius-two box, the exceptional edge at either of the
 next two orientation levels is absent. -/
 private theorem cp1_not_O_radius_two
@@ -1556,6 +1707,26 @@ private theorem cp1_not_O_radius_two
   · intro h
     have hx : q.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
     omega
+
+/-- The exceptional edge cp1 at level n cannot meet either endpoint
+of an O-radius-three box. -/
+private theorem cp1_not_O_radius_three
+    (n : ℕ) (hn : 3 ≤ n) {p q : Point}
+    (hp : p.1 ≤ 3) (hq : q.1 ≤ 3) :
+    ¬ cp1 n p q ∧ ¬ cp1 n q p := by
+  have hpow : 4 < 2 ^ n := by
+    calc
+      4 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hn
+  have hcorner : 3 < 2 ^ n - 1 := by omega
+  constructor
+  · intro h
+    have hx : p.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
+    omega
+  · intro h
+    have hx : q.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
+    omega
+
 
 /-- The Y/C point-entry transport with the exact tilde orientations used by
 the adjacent-level residual. The parent endpoints lie in the Y box, away
@@ -1829,6 +2000,99 @@ theorem sgK_C_O_entry_next_til
         (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
         p q i j (hLowOrient p q)).symm
 
+
+
+/-- Spin-resolved C-copy entries in the O-radius-three box transport
+to the parent level with the exact tilde orientations. The C-copy
+orientation conversion and the radius-three O/A entry bridge are kept
+as separate steps. -/
+theorem sgK_C_O_entry_next_til_radius_three
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
+    (hqx : q.1 ≤ 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.C,
+          ((⟨p, List.mem_toFinset.mpr
+            (corner_O_radius_three_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.C,
+          ((⟨q, List.mem_toFinset.mpr
+            (corner_O_radius_three_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  have hp' : p ∈ vertexOrder m :=
+    (corner_O_radius_three_transport m hm hp hpx hpy).1
+  have hq' : q ∈ vertexOrder m :=
+    (corner_O_radius_three_transport m hm hq hqx hqy).1
+  have hHighOrient : ∀ a b : Point,
+      oCo (m + 1) (oTil (m + 2)) a b ↔
+        oCo (m + 1) (oNum (m + 2)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC (m + 1) (p := a) (q := b)
+    change oTil (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b) ↔
+      oNum (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hLowOrient : ∀ a b : Point,
+      oCo m (oTil (m + 1)) a b ↔
+        oCo m (oNum (m + 1)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC m (p := a) (q := b)
+    change oTil (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b) ↔
+      oNum (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hHighC :
+      pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := by
+    have h := Hc_C_num_eq_parent_til (m + 1) (by omega) θ ax
+      (oNum_anti (m + 2))
+      ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i)
+      ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)
+    change pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j at h
+    exact h
+  have hLowC :
+      pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+        pHeO m θ ax (oTil m) p q i j := by
+    have h := Hc_C_num_eq_parent_til m (by omega) θ ax
+      (oNum_anti (m + 1))
+      ((⟨p, List.mem_toFinset.mpr hp'⟩ : Pt m), i)
+      ((⟨q, List.mem_toFinset.mpr hq'⟩ : Pt m), j)
+    change pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+      pHeO m θ ax (oTil m) p q i j at h
+    exact h
+  change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oCo m (oTil (m + 1))) p q i j
+  calc
+    pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
+        p q i j (hHighOrient p q)
+    _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
+    _ = pHeO (m + 1) θ ax (oNum (m + 1)) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax (oTil (m + 1)) (oNum (m + 1))
+        p q i j (oTil_of_no_corner
+          (cp1_not_O_radius_three (m + 1) (by omega) hpx hqx).1
+          (cp1_not_O_radius_three (m + 1) (by omega) hpx hqx).2)
+    _ = pHeO m θ ax (oNum m) p q i j :=
+      pHeO_corner_O_radius_three_entry m hm θ ax hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil m) p q i j :=
+      (pHeO_rel_congr_local m θ ax (oTil m) (oNum m)
+        p q i j (oTil_of_no_corner
+          (cp1_not_O_radius_three m (by omega) hpx hqx).1
+          (cp1_not_O_radius_three m (by omega) hpx hqx).2)).symm
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p q i j := hLowC.symm
+    _ = pHeO m θ ax (oCo m (oTil (m + 1))) p q i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
+        p q i j (hLowOrient p q)).symm
 
 
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy

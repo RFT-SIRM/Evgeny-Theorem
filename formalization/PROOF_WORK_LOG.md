@@ -1439,3 +1439,24 @@ Lean run 41171919726 on parent SHA 6ded225b630b5a632124de487040819182f540ef repo
 - Added the concrete finite-state radius-three support around O in FinalTilde.lean. The support equivalence retains the copy index, coordinate, and spin, and uses corner_O_radius_three_transport at the geometric layer.
 - The result is only a finite-set equivalence. It does not yet prove equality of high/low operator entries on the support, row/column support for powers one through three, any of the six corner transports, or H8 boundary-residual stability. The next step is to prove the corresponding O-corner spin-resolved entry bridge on the radius-three support and then derive row/column support for degrees 1–3.
 - Full Lean and Python CI on the new exact SHA are required before treating the addition as verified.
+
+## 2026-10-31 — H8 radius-three O-corner spin-resolved entry transport (CI pending)
+
+Added the pointwise matrix-entry bridge for the O radius-three neighborhood,
+with the two spin indices retained explicitly:
+- the A-copy/O entries reduce to the parent through
+  corner_O_radius_three_transport and pHeO_succ_A_num_entry;
+- the B-copy/O entries use a radius-three exclusion of the shifted cp1 edge,
+  then the existing oBo-to-numbering restriction and the O/A next-number
+  entry transport;
+- the C-copy/O entries keep the C orientation conversion through
+  Hc_C_num_eq_parent_til separate from the O-box cp1 exclusion and the
+  O/A point-entry transport.
+
+All new statements retain m >= 4. They are entry equalities only:
+no row/column support for powers 1, 2, or 3, no six/seven diagonal
+transport instantiation, and no H8 boundary-residual stability is claimed.
+The full Lean build and Python matrices on this commit must be checked;
+the parent commit 71fb190 now has successful full Lean, Python 3.11,
+and Python 3.12 workflows (including slow tests).
+
