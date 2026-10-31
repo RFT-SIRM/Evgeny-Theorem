@@ -3299,7 +3299,7 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           L (e xr).1 (e z).1 * L (e z).1 (e y).1 := by
         apply Finset.sum_congr rfl
         intro z hz
-        rw [hEntry xr z, hEntry z y]
+        rw [hEntry xr z, hEntry z y, hrootVal]
       _ = ∑ z : {z : V // z ∈ T},
           L x' z.1 * L z.1 (e y).1 := by
         exact Equiv.sum_comp e
@@ -3365,9 +3365,8 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
         intro z hz
         rw [hpow2Row z, hEntry z y]
       _ = ∑ z : {z : V // z ∈ T},
-          (L ^ 2) x' z.1 * L z.1 (e y).1 := by
-        rw [hrootVal]
-        exact Equiv.sum_comp e
+          (L ^ 2) x' z.1 * L z.1 (e y).1 :=
+        Equiv.sum_comp e
           (fun z : {z : V // z ∈ T} =>
             (L ^ 2) x' z.1 * L z.1 (e y).1)
       _ = ∑ z, (L ^ 2) x' z * L z (e y).1 := by

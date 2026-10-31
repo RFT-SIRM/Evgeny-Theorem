@@ -3999,3 +3999,24 @@ local-entry hypothesis; the row degree-three case no longer tries to rewrite
 a root expression after it has already been normalized to the target root.
 This repairs the proof script only. The concrete radius-three Sierpinski
 support equivalences and H8 residual-level stability remain unproved.
+
+## 2026-10-31 — H8 degree-six/seven rewrite audit, corrected
+
+For hrootVal : (e xr).1 = x', there are two distinct uses in the
+degree-two transport:
+
+- hpow2Row must rewrite the first factor (e xr).1 before the sum
+  reindexing from S to T.
+- hpow2Col must rewrite the last factor (e xr).1 after hEntry z xr.
+
+By contrast, in hpow3Row, hpow2Row already provides (L^2) x' ...;
+the resulting sum contains no root image and must be reindexed directly.
+The previous correction moved the root rewrite into hpow2Col but
+accidentally removed the required rewrite from hpow2Row, while leaving
+the redundant hpow3Row rewrite. The corrected proof now places the
+identity in both degree-two directions and nowhere in degree-three row
+reindexing.
+
+This is a proof-script correction only. It does not yet instantiate the
+generic lemma on the six concrete radius-three corner supports and does
+not prove level stability of the full H8 boundary expression.

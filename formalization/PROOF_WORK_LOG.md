@@ -1359,3 +1359,25 @@ The Lean run 41165333999 compiled GlueTrace but failed in FinalTilde at the use 
   inside the theorem proof that triggered style warnings. The matrix
   factorizations, finite-support hypotheses, and theorem statement are
   unchanged. Full Lean verification is required on the corrected commit.
+
+## 2026-10-31 — Corrected audit of H8 degree-six/seven transport (run 41168333397)
+
+The full log for SHA 2fd926f contains exactly two elaboration errors in
+matrix_pow_six_seven_diag_eq_of_local_equiv:
+
+1. In hpow2Row, after rewriting hEntry xr z and hEntry z y, the
+   reindexed summand still has (e xr).1 as its first matrix index.
+   hrootVal must be applied there, before Equiv.sum_comp e.
+2. In hpow3Row, hpow2Row z has already changed the first matrix index
+   to x'; there is no (e xr).1 left to rewrite. The extra root-value
+   rewrite must be removed before Equiv.sum_comp e.
+
+The hpow2Col proof already correctly applies hrootVal after
+hEntry z xr and is left unchanged. This corrects the placement in the
+previous attempt. The generic theorem statement, hypotheses,
+factorizations K^6=K^3K^3, K^7=K^3K^4, and all H6 code remain
+unchanged.
+
+The style-linter warnings in FinalTilde.lean are not the build failure:
+the green parent d74731b has the same class of warnings. The failure
+is the two explicit proof errors above. No timeout occurred.
