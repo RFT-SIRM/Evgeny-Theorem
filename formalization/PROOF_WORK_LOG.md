@@ -1564,3 +1564,18 @@ this repair succeeds.
   equivalence still needs to be assembled with the degree-1--3 row/column
   support transfer. Y radius-three entry bridges remain open. H8/H10 remain
   open.
+
+## 2026-10-31 — Correct C-block X radius-three orientation index
+
+- The Lean build for commit 818fc0cc12e5309f63ab23dde800419c48e16149
+  exposed two type mismatches in the C state bridge. The point lemma used
+  there had the A-block orientation transition oTil (m+2) to oTil (m+1),
+  while Hc_C_num_eq_parent_til requires the C-block conversion to meet at
+  oTil (m+1) on the high level and oTil m on the parent level.
+- Replaced that composition with a dedicated radius-three point-entry
+  bridge modelled on the already compiling radius-two theorem
+  pHeO_corner_X_box_entry_next_til. It uses pHeO_succ_B_local_entry
+  with the parent tilde orientation and the existing faceB orientation
+  transport, so the exact endpoint types now match the C conversion.
+- The A-block theorem is unchanged. This is a correction of the current
+  C-block proof only; no diagonal transport or H8/H10 closure is claimed.

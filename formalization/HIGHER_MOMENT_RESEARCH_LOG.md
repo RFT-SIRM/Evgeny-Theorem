@@ -4206,3 +4206,16 @@ and it has no Y counterpart. The next step is to build the X sixth/seventh
 diagonal transport using the radius-three support equivalence, with row
 and column vanishing in degrees one through three on both levels. H8 and
 H10 remain open.
+
+## 2026-10-31 — C-block orientation correction at X radius three
+
+The first radius-three X entry commit failed at the C state bridge because
+it incorrectly reused the A-block point theorem, whose endpoint tilde
+indices are one level higher. The C-block conversion is instead aligned
+with Hc_C_num_eq_parent_til: the high entry must be oTil (m+1) and the
+parent entry oTil m. Added a separate point-level radius-three transport
+following the established radius-two proof pattern, keeping the B-shift
+local entry and faceB orientation equivalence explicit. The C state bridge
+now consumes this correctly indexed theorem; the A bridge remains
+unchanged. This does not yet provide X sixth/seventh diagonal transport.
+H8/H10 remain open.
