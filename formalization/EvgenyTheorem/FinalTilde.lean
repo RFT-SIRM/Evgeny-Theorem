@@ -7263,4 +7263,31 @@ theorem defectO8_succ_num_level4_constant_boundary
   unfold defectO8_num_residual_constant
   linear_combination -hgap
 
+
+/-- Closed affine formula for the numbering-orientation eighth-moment defect.
+The level-four correction is retained as an exact trace expression; this
+theorem does not replace it by a numerical fit or an unproved trigonometric
+simplification. -/
+theorem defectO8_num_affine_closed_form_from_level4 (θ : ℝ) :
+    ∀ n : ℕ,
+      defectO8 (n + 4) θ faceAxis (fun _ => 2) (oNum (n + 4)) =
+        (3 : ℂ) ^ n *
+          (defectO8 4 θ faceAxis (fun _ => 2) (oNum 4) +
+            defectO8_num_residual_constant θ / 2) -
+          defectO8_num_residual_constant θ / 2 := by
+  let D : ℕ → ℂ := fun k =>
+    defectO8 (k + 1) θ faceAxis (fun _ => 2) (oNum (k + 1))
+  have hrec : ∀ n : ℕ,
+      D (n + 4) = 3 * D (n + 3) +
+        defectO8_num_residual_constant θ := by
+    intro n
+    dsimp [D]
+    have h := defectO8_succ_num_level4_constant_boundary
+      (n + 4) (by omega) θ
+    simpa [Nat.add_assoc] using h
+  have hclosed := affine_three_recurrence D
+    (defectO8_num_residual_constant θ) hrec
+  intro n
+  simpa [D, Nat.add_assoc] using hclosed n
+
 end EvgenyTheorem
