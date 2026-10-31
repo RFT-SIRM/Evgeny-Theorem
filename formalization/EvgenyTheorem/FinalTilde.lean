@@ -2238,6 +2238,280 @@ noncomputable def sgK_radius_three_support_O_equiv
     apply Subtype.ext
     rfl
 
+/-- The level-(m+1) radius-three support at X is the image of the
+parent-level box under the B-copy shift. The copy coordinate is fixed,
+and the spin coordinate is retained. -/
+theorem sgK_radius_three_support_X_box_iff
+    (m : ℕ) (hm : 4 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    z ∈ sgK_radius_three_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        ∃ p : Point, p ∈ vertexOrder m ∧
+          2 ^ m ≤ p.1 + 3 ∧ p.2 ≤ 3 ∧
+          z.2.1.1 = shiftPoint (2 ^ m) 1 0 p := by
+  simp only [sgK_radius_three_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, hx, _, _, hy⟩
+    have hboxX : 2 ^ (m + 1) ≤ z.2.1.1.1 + 3 := by
+      simpa [hw] using hx
+    have hboxY : z.2.1.1.2 ≤ 3 := by
+      simpa [hw] using hy
+    rcases (corner_X_radius_three_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mp ⟨hboxX, hboxY⟩
+      with ⟨p, hp, hpx, hpy, hz⟩
+    exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+  · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+    have hbox := (corner_X_radius_three_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mpr
+      ⟨p, hp, hpx, hpy, hz⟩
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1
+      (List.mem_toFinset.mp z.2.1.2)
+    refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
+    · simpa [hw] using hbox.1
+    · simp [hw]
+      omega
+    · simp [hw]
+    · simpa [hw] using hbox.2
+
+/-- Parent-level finite-state support for the radius-three box around X.
+It fixes the copy label and leaves spin unrestricted. -/
+def sgK_radius_three_X_parent_support (m : ℕ) (c : GCopy) :
+    Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ 2 ^ m ≤ z.2.1.1.1 + 3 ∧ z.2.1.1.2 ≤ 3
+
+/-- The X radius-three support is bijective to its parent-level box by
+the inverse B shift. This is only a finite-state reindexing statement;
+it does not yet compare matrix entries. -/
+noncomputable def sgK_radius_three_support_X_equiv
+    (m : ℕ) (hm : 4 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_three_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_three_X_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    let p : Point := (z.1.2.1.1.1 - 2 ^ m, z.1.2.1.1.2)
+    have hz := (sgK_radius_three_support_X_box_iff m hm hw).mp z.2
+    have hp : p ∈ vertexOrder m := by
+      rcases hz.2 with ⟨q, hq, _, _, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      have hpEq : p = q := by
+        dsimp [p]
+        exact Prod.ext (by omega) hcoordy
+      rw [hpEq]
+      exact hq
+    have hbounds : 2 ^ m ≤ p.1 + 3 ∧ p.2 ≤ 3 := by
+      rcases hz.2 with ⟨q, _, hqx, hqy, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      constructor
+      · dsimp [p]
+        omega
+      · dsimp [p]
+        rw [hcoordy]
+        exact hqy
+    refine ⟨(z.1.1, (⟨p, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
+    simp only [sgK_radius_three_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hbounds.1, hbounds.2⟩
+  · intro z
+    have hp : shiftPoint (2 ^ m) 1 0 z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr
+        ⟨z.1.2.1.1, List.mem_toFinset.mp z.1.2.1.2, rfl⟩))
+    refine ⟨(z.1.1,
+      (⟨shiftPoint (2 ^ m) 1 0 z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+        z.1.2.2)), ?_⟩
+    apply (sgK_radius_three_support_X_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_three_X_parent_support m w.1 := z.2
+    simp only [sgK_radius_three_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, ⟨z.1.2.1.1,
+      List.mem_toFinset.mp z.1.2.1.2, hparent.2.1, hparent.2.2, rfl⟩⟩
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        have hz := (sgK_radius_three_support_X_box_iff m hm hw).mp z.2
+        rcases hz.2 with ⟨q, _, _, _, hpoint⟩
+        have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
+          have h := congrArg Prod.fst hpoint
+          simpa [shiftPoint] using h
+        have hcoordy : z.1.2.1.1.2 = q.2 := by
+          have h := congrArg Prod.snd hpoint
+          simpa [shiftPoint] using h
+        change shiftPoint (2 ^ m) 1 0
+          (z.1.2.1.1.1 - 2 ^ m, z.1.2.1.1.2) = z.1.2.1.1
+        simp only [shiftPoint, one_mul, zero_mul, Nat.add_zero]
+        apply Prod.ext
+        · omega
+        · rfl
+      · rfl
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        dsimp
+        simp [shiftPoint, Nat.add_sub_cancel_right]
+      · rfl
+
+
+/-- The level-(m+1) radius-three support at Y is the image of the
+parent-level box under the C-copy shift. The copy coordinate is fixed,
+and the spin coordinate is retained. -/
+theorem sgK_radius_three_support_Y_box_iff
+    (m : ℕ) (hm : 4 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    z ∈ sgK_radius_three_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        ∃ p : Point, p ∈ vertexOrder m ∧
+          p.1 ≤ 3 ∧ 2 ^ m ≤ p.2 + 3 ∧
+          z.2.1.1 = shiftPoint (2 ^ m) 0 1 p := by
+  simp only [sgK_radius_three_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, _, hx, hy, _⟩
+    have hboxX : z.2.1.1.1 ≤ 3 := by
+      simpa [hw] using hx
+    have hboxY : 2 ^ (m + 1) ≤ z.2.1.1.2 + 3 := by
+      simpa [hw] using hy
+    rcases (corner_Y_radius_three_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mp ⟨hboxX, hboxY⟩
+      with ⟨p, hp, hpx, hpy, hz⟩
+    exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+  · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+    have hbox := (corner_Y_radius_three_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mpr
+      ⟨p, hp, hpx, hpy, hz⟩
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1
+      (List.mem_toFinset.mp z.2.1.2)
+    refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
+    · simp [hw]
+    · simpa [hw] using hbox.1
+    · simpa [hw] using hbox.2
+    · simp [hw]
+      omega
+
+/-- Parent-level finite-state support for the radius-three box around Y.
+It fixes the copy label and leaves spin unrestricted. -/
+def sgK_radius_three_Y_parent_support (m : ℕ) (c : GCopy) :
+    Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ z.2.1.1.1 ≤ 3 ∧ 2 ^ m ≤ z.2.1.1.2 + 3
+
+/-- The Y radius-three support is bijective to its parent-level box by
+the inverse C shift. This is only a finite-state reindexing statement;
+it does not yet compare matrix entries. -/
+noncomputable def sgK_radius_three_support_Y_equiv
+    (m : ℕ) (hm : 4 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_three_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_three_Y_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    let p : Point := (z.1.2.1.1.1, z.1.2.1.1.2 - 2 ^ m)
+    have hz := (sgK_radius_three_support_Y_box_iff m hm hw).mp z.2
+    have hp : p ∈ vertexOrder m := by
+      rcases hz.2 with ⟨q, hq, _, _, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      have hpEq : p = q := by
+        dsimp [p]
+        exact Prod.ext hcoordx (by omega)
+      rw [hpEq]
+      exact hq
+    have hbounds : p.1 ≤ 3 ∧ 2 ^ m ≤ p.2 + 3 := by
+      rcases hz.2 with ⟨q, _, hqx, hqy, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      constructor
+      · dsimp [p]
+        rw [hcoordx]
+        exact hqx
+      · dsimp [p]
+        rw [hcoordy]
+        simpa [Nat.add_sub_cancel_right] using hqy
+    refine ⟨(z.1.1, (⟨p, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
+    simp only [sgK_radius_three_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hbounds.1, hbounds.2⟩
+  · intro z
+    have hp : shiftPoint (2 ^ m) 0 1 z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inr (List.mem_map.mpr
+        ⟨z.1.2.1.1, List.mem_toFinset.mp z.1.2.1.2, rfl⟩))
+    refine ⟨(z.1.1,
+      (⟨shiftPoint (2 ^ m) 0 1 z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+        z.1.2.2)), ?_⟩
+    apply (sgK_radius_three_support_Y_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_three_Y_parent_support m w.1 := z.2
+    simp only [sgK_radius_three_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, ⟨z.1.2.1.1,
+      List.mem_toFinset.mp z.1.2.1.2, hparent.2.1, hparent.2.2, rfl⟩⟩
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        have hz := (sgK_radius_three_support_Y_box_iff m hm hw).mp z.2
+        rcases hz.2 with ⟨q, _, _, _, hpoint⟩
+        have hcoordx : z.1.2.1.1.1 = q.1 := by
+          have h := congrArg Prod.fst hpoint
+          simpa [shiftPoint] using h
+        have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+          have h := congrArg Prod.snd hpoint
+          simpa [shiftPoint] using h
+        change shiftPoint (2 ^ m) 0 1
+          (z.1.2.1.1.1, z.1.2.1.1.2 - 2 ^ m) = z.1.2.1.1
+        simp only [shiftPoint, zero_mul, one_mul, Nat.add_zero]
+        apply Prod.ext
+        · rfl
+        · omega
+      · rfl
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        dsimp
+        simp [shiftPoint, Nat.add_sub_cancel_right]
+      · rfl
+
 /-- The level-(m+1) radius-two support at X is the image of the level-m
 box under the B-copy shift. This is a support-set characterization, not
 yet an equality of the weighted path sums. -/

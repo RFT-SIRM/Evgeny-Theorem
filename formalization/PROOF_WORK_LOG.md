@@ -1528,3 +1528,21 @@ is definitionally w.1. The proof now records x'.1 = w.1 by rfl and composes
 the equalities explicitly. No geometric premise or theorem statement changed.
 The previous Lean run therefore remains failed until a fresh full build of
 this repair succeeds.
+
+## 2026-10-31 — H8 radius-three X/Y finite-state support equivalences
+
+- Rechecked the exact parent commit 18db05df1adacc6c1216ffb84723e65c8069bac8:
+  the full Lean build passed, and Python 3.11/3.12 fast and slow suites
+  both passed.
+- Added coordinate-box characterizations for the X and Y radius-three
+  neighborhoods using the already-proved corner_X_radius_three_box_iff
+  and corner_Y_radius_three_box_iff results (m >= 4).
+- Added parent-level finite support sets and explicit finite equivalences:
+  inverse B shift at X and inverse C shift at Y. Both equivalences keep the
+  copy label and spin unchanged.
+- This step proves only equality/reindexing of the finite state supports.
+  It does not prove pointwise matrix-entry equality, row/column vanishing
+  for powers 1--3 under the corner shifts, sixth/seventh diagonal transport,
+  or H8 boundary-residual stability. H8/H10 remain open.
+- Full Lean build and Python 3.11/3.12 fast and slow suites must be checked
+  on the new exact commit before any further code changes.

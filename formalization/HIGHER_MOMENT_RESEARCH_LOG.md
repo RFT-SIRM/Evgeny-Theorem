@@ -4167,3 +4167,24 @@ the corrected proof composes z.copy = root.copy with root.copy = w.copy
 are unchanged. The corrected theorem is not yet certified; the fresh full
 Lean build must pass before the O degree-six/seven transport is counted as
 proved.
+
+## 2026-10-31 — H8 radius-three X/Y support reindexing
+
+The O-corner radius-three support reindexing is now accompanied by the
+corresponding X and Y finite-state support descriptions. At X, the
+coordinate box is pulled back by the B shift; at Y, it is pulled back by
+the C shift. The proof uses the existing geometric radius-three box
+equivalences in CornerLocality and the sum bound for points in
+vertexOrder to recover the opposite coordinate inequality required by
+the symmetric radius-three support.
+
+The resulting equivalences preserve the copy label and spin exactly and
+identify the high-level finite support with a parent-level finite support.
+They do not compare sgK entries on these sets, and do not yet provide the
+row/column support conditions for the shifted matrices. Thus no
+sixth/seventh diagonal transport for X or Y follows yet. The O transport
+remains the only corner diagonal transport completed so far; H8 and H10
+remain open. The next proof obligation is the spin-resolved local
+matrix-entry bridge on the X and Y radius-three boxes, followed by the
+degree-1--3 row/column support transfer and the generic degree-six/seven
+diagonal identity.
