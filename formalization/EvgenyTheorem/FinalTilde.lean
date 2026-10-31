@@ -6169,7 +6169,7 @@ theorem sgK_C_X_entry_next_til_radius_three
         (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
         p q i j (hHighOrient p q)
     _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
-    _ = pHeO m θ ax (oTil (m + 1)) p0 q0 i j := hentry
+    _ = pHeO m θ ax (oTil m) p0 q0 i j := hentry
     _ = pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j := hLowC.symm
     _ = pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j :=
       (pHeO_rel_congr_local m θ ax

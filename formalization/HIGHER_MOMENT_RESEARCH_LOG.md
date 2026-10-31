@@ -4219,3 +4219,13 @@ local entry and faceB orientation equivalence explicit. The C state bridge
 now consumes this correctly indexed theorem; the A bridge remains
 unchanged. This does not yet provide X sixth/seventh diagonal transport.
 H8/H10 remain open.
+
+## 2026-10-31 — Final C-state intermediate orientation index
+
+The second Lean build confirmed the new parent-tilde radius-three point
+lemma itself typechecks. The remaining two errors were one incorrect
+intermediate calc target in the C state wrapper: after hentry, the actual
+parent orientation is oTil m, not oTil (m+1). Corrected that target only;
+hLowC.symm and the final C-shift orientation congruence then line up in
+the intended order. The corrected state wrapper remains unverified until
+the next full Lean build.

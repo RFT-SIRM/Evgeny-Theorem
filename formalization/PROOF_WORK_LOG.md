@@ -1579,3 +1579,16 @@ this repair succeeds.
   transport, so the exact endpoint types now match the C conversion.
 - The A-block theorem is unchanged. This is a correction of the current
   C-block proof only; no diagonal transport or H8/H10 closure is claimed.
+
+## 2026-10-31 — Align C-state calc with the radius-three parent entry
+
+- The second Lean attempt reached and compiled the new point-level
+  radius-three parent-tilde bridge. It reported only the two dependent
+  C-state calc mismatches at the composition around hentry and hLowC.
+- The precise issue was a single intermediate calc target: hentry has
+  parent endpoint pHeO m ... (oTil m), but the written intermediate target
+  incorrectly used oTil (m+1). Changed that target to oTil m, allowing
+  hLowC.symm to start at its actual left endpoint. The final C-orientation
+  conversion remains unchanged.
+- No other proof declarations were altered. Await a full Lean build on
+  this exact correction before proceeding.
