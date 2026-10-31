@@ -3342,6 +3342,25 @@ noncomputable def defectO8
   Matrix.trace ((pOpO m θ ax o) ^ 8) -
     Matrix.trace ((pOpO m θ ax' o) ^ 8)
 
+
+/-- The eighth-moment defect depends on the orientation only through its
+values on flux edges. -/
+theorem defectO8_congr
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (h : ∀ p q : Point, p ≠ q →
+      EdgeB m p.1 p.2 q.1 q.2 = true →
+      (if p ≤ q then (p, q) else (q, p)) ∈ fluxEdges m →
+      (o p q ↔ o' p q)) :
+    defectO8 m θ ax ax' o = defectO8 m θ ax ax' o' := by
+  have e : ∀ b : ℕ → Axis, pOpO m θ b o = pOpO m θ b o' := by
+    intro b
+    funext x y
+    exact pHeO_orient_congr m θ b o o' h x.1.1 y.1.1 x.2 y.2
+  unfold defectO8
+  rw [e ax, e ax']
+
+
 /-- Exact level recursion for the eighth-moment axis defect. The three
 copy defects are separated, and the difference of the two complete H8
 boundary corrections is retained explicitly. No boundary cancellation

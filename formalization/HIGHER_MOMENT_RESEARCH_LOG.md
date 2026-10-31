@@ -3690,3 +3690,30 @@ defect. The remaining mathematical work is to analyze the boundary
 difference for that actual pair, with support and degree conditions proved
 at the appropriate level; only then can one infer an all-level growth law.
 The current theorem is not a closed-form H8 result.
+
+
+## 2026-10-31 — Standard-orientation transport for the H8 defect
+
+The exact general recurrence defectO8_succ on the verified parent
+8023cc210b8ecb3c20ad101d168e8a45d5847522 is now specialized to the actual standard orientation. The
+degree-eight flux-edge congruence theorem defectO8_congr and its
+face-transfer wrapper orient_transfer8 are added in direct analogy
+with defectO6_congr and orient_transfer6.
+
+For oNum(m+1), the copy transports are:
+- A: oNum(m+1) -> oNum(m), by the face endpoint index identity;
+- B: oBo(m,oNum(m+1)) -> oNum(m), by the flipped-B face inequality;
+- C: oCo(m,oNum(m+1)) -> oTil(m), retaining the exceptional corner
+  edge in the oTil clause.
+
+Consequently defectO8_succ_num proves
+[
+D^{num}_8(m+1)=2D^{num}_8(m)+D^{til}_8(m)
++\mathrm{glueRHS8}(m,sgK(faceAxis,oNum(m+1)))
+-\mathrm{glueRHS8}(m,sgK(fixedZ,oNum(m+1))).
+]
+This conclusion uses the same m >= 3 and OAnti(m+1,oNum(m+1))
+and periodicity assumptions already proved for faceAxis and fixed Z.
+No boundary cancellation is assumed. The next step is the analogous
+oTil recurrence, followed by subtraction of the two exact recurrences
+to isolate the boundary-residual difference.

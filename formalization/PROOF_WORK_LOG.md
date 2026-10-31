@@ -1096,3 +1096,26 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   not establish a closed form or a scalar recurrence for the faceAxis/Z
   specialization.
 - Fresh full Lean and Python CI for the new source SHA are pending.
+
+
+## 2026-10-31 — Specialize the exact H8 recursion to the standard orientation
+
+- Parent 8023cc210b8ecb3c20ad101d168e8a45d5847522 passed full Lean build:
+  [41156780325](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41156780325)
+  (lake build EvgenyTheorem, 3,060 jobs). Python 3.12 passed in
+  [41156780329](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41156780329);
+  Python 3.11 was still running when this step began.
+- Added defectO8_congr and orient_transfer8, the degree-eight
+  versions of the established flux-edge orientation-transfer results.
+  The proof still depends only on agreement over the ordered face edges
+  and anti-symmetry, exactly as the lower-moment transfer does.
+- Added transfer_A8, transfer_B8, and transfer_C8. Their
+  geometric proofs are the already-established A/B/C face transport
+  arguments; the C-copy exceptional corner remains represented by
+  oTil m, not silently identified with oNum m.
+- Added defectO8_succ_num. For oNum (m+1), the three copy terms
+  reduce to 2 D8(m,oNum(m)) + D8(m,oTil(m)), while the difference
+  glueRHS8(faceAxis)-glueRHS8(fixed-Z) remains explicit.
+- No stabilization or vanishing of the boundary residual is asserted.
+  The result is a specialized exact recurrence, not a closed formula.
+  Fresh full Lean and Python CI for the new SHA are pending.
