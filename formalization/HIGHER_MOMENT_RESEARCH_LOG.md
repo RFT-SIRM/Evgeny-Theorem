@@ -4188,3 +4188,21 @@ remain open. The next proof obligation is the spin-resolved local
 matrix-entry bridge on the X and Y radius-three boxes, followed by the
 degree-1--3 row/column support transfer and the generic degree-six/seven
 diagonal identity.
+
+## 2026-10-31 — X radius-three local entry transport
+
+The X finite-state radius-three support equivalence now has a matching
+spin-resolved local entry bridge for the two copy labels that occur at the
+glued X partner roots: A and C. The point-level bridge pulls high-level
+coordinates back through the B shift, uses the geometric exclusion of the
+two glued endpoints, and then proves equality of the actual tilde-oriented
+point-operator entries. The A state theorem packages that bridge directly;
+the C state theorem performs the additional C-orientation conversion with
+Hc_C_num_eq_parent_til on both levels.
+
+This is still only a pointwise local matrix-entry statement. It does not
+yet show the full finite-state diagonal transport for powers six/seven,
+and it has no Y counterpart. The next step is to build the X sixth/seventh
+diagonal transport using the radius-three support equivalence, with row
+and column vanishing in degrees one through three on both levels. H8 and
+H10 remain open.

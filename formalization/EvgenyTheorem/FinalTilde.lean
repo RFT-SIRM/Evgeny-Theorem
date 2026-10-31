@@ -5873,4 +5873,220 @@ private theorem sgK_O_diag_six_seven_transport
     hRowOne hColOne hRowTwo hColTwo hRowThree hColThree
     hRowOne' hColOne' hRowTwo' hColTwo' hRowThree' hColThree'
 
+
+/-- Spin-resolved radius-three transport at the X corner. The B-shift
+pullback avoids both B-copy glued endpoints by the geometric radius-three
+transport lemma. The orientation conversion is kept explicit: the high
+tilde orientation is reduced to numbering, the B-local entry is transported,
+and the parent B orientation is converted back to the parent tilde graph. -/
+theorem pHeO_corner_X_radius_three_box_entry_next_til
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 3) (hpy : p.2 ≤ 3)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO m θ ax (oTil (m + 1)) p' q' i j := by
+  rcases corner_X_radius_three_transport m hm hp hpx hpy with
+    ⟨p', hp', rfl, hp0, hpY⟩
+  rcases corner_X_radius_three_transport m hm hq hqx hqy with
+    ⟨q', hq', rfl, _, _⟩
+  have hhighOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB (m + 1) a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges (m + 1) →
+        (oTil (m + 2) a b ↔ oNum (m + 2) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem (m + 1) a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder (m + 1) :=
+      (mem_vertexOrder_iff (m + 1) a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder (m + 1) :=
+      (mem_vertexOrder_iff (m + 1) b).mpr hmEdge.2
+    obtain ⟨h1, h2⟩ := cp1_not_A (m + 1) (by omega) ha hb
+    exact oTil_of_no_corner h1 h2
+  have hhigh := pHeO_orient_congr (m + 1) θ ax
+    (oTil (m + 2)) (oNum (m + 2)) hhighOrient
+  have hmiddleOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB m a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges m →
+        (oBo m (oNum (m + 2)) a b ↔
+          oBo m (oNum (m + 1)) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m b).mpr hmEdge.2
+    have haB : shiftPoint (2 ^ m) 1 0 a ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr ⟨a, ha, rfl⟩))
+    have hbB : shiftPoint (2 ^ m) 1 0 b ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr ⟨b, hb, rfl⟩))
+    unfold oBo
+    exact oNum_succ_restrict m haB hbB
+  have hparentOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB m a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges m →
+        (oBo m (oNum (m + 1)) a b ↔ oTil (m + 1) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m b).mpr hmEdge.2
+    have hbo : oBo m (oNum (m + 1)) a b ↔ oNum m a b :=
+      oBo_num_iff_oNum m ha hb
+    have hnum : oNum m a b ↔ oNum (m + 1) a b := by
+      unfold oNum
+      rw [vIdx_succ_of_mem ha, vIdx_succ_of_mem hb]
+    obtain ⟨h1, h2⟩ := cp1_not_A m (by omega) ha hb
+    calc
+      oBo m (oNum (m + 1)) a b ↔ oNum m a b := hbo
+      _ ↔ oNum (m + 1) a b := hnum
+      _ ↔ oTil (m + 1) a b := (oTil_of_no_corner h1 h2).symm
+  have hlocal :
+      pHeO (m + 1) θ ax (oNum (m + 2))
+          (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+        pHeO m θ ax (oBo m (oNum (m + 2))) p' q' i j :=
+    pHeO_succ_B_local_entry m θ ax (oNum (m + 2)) hax
+      hp' hq' hp0 hpY i j
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+      pHeO (m + 1) θ ax (oNum (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j :=
+      hhigh _ _ i j
+    _ = pHeO m θ ax (oBo m (oNum (m + 2))) p' q' i j := hlocal
+    _ = pHeO m θ ax (oBo m (oNum (m + 1))) p' q' i j :=
+      pHeO_orient_congr m θ ax
+        (oBo m (oNum (m + 2))) (oBo m (oNum (m + 1)))
+        hmiddleOrient p' q' i j
+    _ = pHeO m θ ax (oTil (m + 1)) p' q' i j :=
+      pHeO_orient_congr m θ ax
+        (oBo m (oNum (m + 1))) (oTil (m + 1))
+        hparentOrient p' q' i j
+
+
+/-- A-copy entries in the X radius-three box transport to their parent
+B-shift representatives. This is the direct state-level bridge needed by
+the X finite-support diagonal argument. -/
+theorem sgK_A_X_entry_next_til_radius_three
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 3) (hpy : p.2 ≤ 3)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+      q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, (p', i))
+        (GCopy.A, (q', j)) := by
+  rcases pHeO_corner_X_radius_three_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
+  change pHeO (m + 1) θ ax (oTil (m + 2))
+      (shiftPoint (2 ^ m) 1 0 p0) (shiftPoint (2 ^ m) 1 0 q0) i j =
+    pHeO m θ ax (oTil (m + 1)) p0 q0 i j
+  exact hentry
+
+
+/-- C-copy entries in the X radius-three box transport to their parent
+B-shift representatives. The C-orientation conversion remains explicit
+and separate from the underlying B-shift point transport. -/
+theorem sgK_C_X_entry_next_til_radius_three
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 3) (hpy : p.2 ≤ 3)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 3) (hqy : q.2 ≤ 3)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+      q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.C, (p', i))
+        (GCopy.C, (q', j)) := by
+  rcases pHeO_corner_X_radius_three_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, hpEq, hqEq, hentry⟩
+  have hHighOrient : ∀ a b : Point,
+      oCo (m + 1) (oTil (m + 2)) a b ↔
+        oCo (m + 1) (oNum (m + 2)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC (m + 1) (p := a) (q := b)
+    change oTil (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b) ↔
+      oNum (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hHighC :
+      pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := by
+    have h := Hc_C_num_eq_parent_til (m + 1) (by omega) θ ax
+      (oNum_anti (m + 2))
+      ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i)
+      ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)
+    change pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j at h
+    exact h
+  have hLowOrient : ∀ a b : Point,
+      oCo m (oTil (m + 1)) a b ↔ oCo m (oNum (m + 1)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC m (p := a) (q := b)
+    change oTil (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b) ↔
+      oNum (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hLowC :
+      pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
+        pHeO m θ ax (oTil m) p0 q0 i j := by
+    have h := Hc_C_num_eq_parent_til m (by omega) θ ax
+      (oNum_anti (m + 1))
+      ((⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m), i)
+      ((⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), j)
+    change pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
+      pHeO m θ ax (oTil m) p0 q0 i j at h
+    exact h
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), hpEq, hqEq, ?_⟩
+  change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j
+  calc
+    pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
+        p q i j (hHighOrient p q)
+    _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
+    _ = pHeO m θ ax (oTil (m + 1)) p0 q0 i j := hentry
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j := hLowC.symm
+    _ = pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
+        p0 q0 i j (hLowOrient p0 q0)).symm
+
+
 end EvgenyTheorem

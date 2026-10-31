@@ -1546,3 +1546,21 @@ this repair succeeds.
   or H8 boundary-residual stability. H8/H10 remain open.
 - Full Lean build and Python 3.11/3.12 fast and slow suites must be checked
   on the new exact commit before any further code changes.
+
+## 2026-10-31 — H8 X radius-three spin-resolved entry bridges
+
+- On parent commit b5d09f34789931823488164327833d0ab03e9e9d, the full
+  Lean formalization build passed; Python 3.12 fast and slow suites passed,
+  and Python 3.11 fast passed. Its slow suite was still running when this
+  change was prepared, so the next commit is gated on that exact check
+  finishing successfully.
+- Added a point-level X radius-three entry transport using
+  corner_X_radius_three_transport. It explicitly uses the two excluded
+  B-shift endpoints and reconciles the high tilde, B-local, and parent
+  tilde orientations.
+- Added the state-level X entry bridges for copies A and C, including the
+  C-copy orientation conversion via Hc_C_num_eq_parent_til.
+- No X diagonal transport has been claimed yet: the finite-support entry
+  equivalence still needs to be assembled with the degree-1--3 row/column
+  support transfer. Y radius-three entry bridges remain open. H8/H10 remain
+  open.
