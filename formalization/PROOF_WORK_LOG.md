@@ -1254,3 +1254,24 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   lemma itself remains used only through degree five.
 - This is a compile-error repair only. No mathematical claim is treated
   as verified until the next full Lean workflow succeeds.
+
+
+## 2026-10-31 — H8: second repair based on repository proof precedents
+
+- Re-read the full Lean failure from run 41163149778 and compared the new
+  asymmetric finite-sum lemma with the already compiling theorem
+  trace_kernel_diagonal_kernel_diagonal_collapse in TraceExpand.lean.
+- The previous proof had inserted an extra first branch after
+  Finset.sum_eq_single. In this project, the verified pattern is:
+  first prove the off-diagonal summands vanish, then close the impossible
+  excluded-index case with simp. The new helper now follows that exact
+  pattern. The unused Finset.mul_sum simp argument was also removed.
+- The two no-progress errors in the r=4 outer sum came from a let-bound
+  predicate g: after unfolding sg_trace_four_N_boundary_sum the outer
+  guard is still written through (sgGlue m).g. The hfour branches now
+  unfold g in the same way as the already repaired htop branch.
+- The previous ring failure in the three-diagonal reduction was downstream
+  of the failed asymmetric helper application. It will be reassessed from
+  the next Lean log rather than pre-emptively changing algebraic tactics.
+- No change to the moment statement, cyclic coefficients, word order,
+  or geometric assumptions.

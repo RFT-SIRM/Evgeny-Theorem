@@ -3895,3 +3895,20 @@ the outer conditional.
 Nothing in this repair changes a trace word, cyclic weight, orientation
 hypothesis, or moment statement. The complete H8 boundary comparison is
 still pending a clean full build; H8/H10 remain open.
+
+
+## 2026-10-31 — H8: second Lean repair checked against existing library patterns
+
+Run 41163149778 did not establish the new asymmetric trace reduction.
+The helper's Finset.sum_eq_single goals were ordered differently from the
+existing working implementation: the off-diagonal-index implication is the
+first branch, and the excluded-index case is the second. The repair makes
+that structure identical to TraceExpand.lean's compiling supported trace
+collapse proof. It also removes a simp argument reported unused by Lean.
+
+The r=4 outer sum has a separate elaboration issue: its conditional is
+introduced by unfolding the private boundary-sum definition, while the
+proof's local g is a let abbreviation. The outer positive and negative
+branches now explicitly unfold that abbreviation. The next full build is
+needed to distinguish any remaining independent failures from earlier
+cascades.

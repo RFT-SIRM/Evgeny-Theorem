@@ -2701,14 +2701,13 @@ private theorem trace_two_kernel_diagonal_kernel_diagonal_collapse
       Matrix.trace (A * Matrix.diagonal a * C * Matrix.diagonal d) =
         ∑ x, ∑ y, A x y * a y * C y x * d x := by
     simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
-      Finset.mul_sum, mul_assoc]
+      mul_assoc]
   rw [hexpand]
   apply Finset.sum_congr rfl
   intro x hx
   by_cases hgx : g x
   · simp only [if_pos hgx]
     rw [Finset.sum_eq_single x]
-    · simp
     · intro y hy hne
       by_cases hgy : g y
       · have hxy : A x y = 0 := hA x y hgx hgy (Ne.symm hne)
@@ -2843,7 +2842,7 @@ theorem glueRHS8_congr_of_glued_row_pow
     apply Finset.sum_congr rfl
     intro x hx
     by_cases hgx : g x
-    · simp only [if_pos hgx]
+    · simp only [g, if_pos hgx]
       have hinner :
           (∑ y, if g y then
             ((K ^ a) x y *
@@ -2863,7 +2862,7 @@ theorem glueRHS8_congr_of_glued_row_pow
         · simp [hgy]
       have hσx := hσ x hgx
       rw [hinner, hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x)]
-    · simp [hgx]
+    · simp [g, hgx]
   have hcollapse
       (L : Matrix (WSG m) (WSG m) ℂ)
       (hkg : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
