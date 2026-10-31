@@ -1381,3 +1381,20 @@ unchanged.
 The style-linter warnings in FinalTilde.lean are not the build failure:
 the green parent d74731b has the same class of warnings. The failure
 is the two explicit proof errors above. No timeout occurred.
+
+## 2026-10-31 — H8 transport: repair the reindexing mismatch (run 41169771612)
+
+On SHA 3b17a66 the previous rewrite bundle still failed at FinalTilde.lean:3305.
+The `Equiv.sum_comp` identity was correct, but its source sum had not been
+normalized to the target-root summand: Lean retained `(e xr).1` on the left.
+The earlier log wording that the root rewrite had been correctly applied
+therefore overstated what the compiler had verified.
+
+The hpow2Row summand proof is now split explicitly:
+first use the two local-entry equalities to identify the K-products with
+`L (e xr).1 ...`; then prove the separate root-value equality using
+`hrootVal`; only after the outer sum has the form
+`sum z in S, L x' (e z) ...` is `Equiv.sum_comp e` invoked.
+This changes neither the matrix factor order nor the theorem hypotheses.
+The previous failed SHA is retained as a failure record; the new full Lean
+build is required before proceeding.

@@ -4020,3 +4020,17 @@ reindexing.
 This is a proof-script correction only. It does not yet instantiate the
 generic lemma on the six concrete radius-three corner supports and does
 not prove level stability of the full H8 boundary expression.
+
+## 2026-10-31 — Correction to the H8 root-rewrite audit after CI
+
+CI on SHA 3b17a66 showed that placing `hrootVal` in the same `rw` bundle
+as the two `hEntry` rewrites did not establish the sum's required
+left-hand normal form. The error was not in `Equiv.sum_comp`; its expected
+source summand already uses `L x'`, whereas the actual source sum still
+contained `L (e xr).1`.
+
+The corrected hpow2Row proof separates these obligations at summand level:
+local matrix-entry transport first, then a dedicated equality rewriting
+the root value, then finite-sum reindexing. This supersedes the claim in
+the preceding audit that the bundled rewrite had normalized the row sum.
+No geometric support or H8 residual theorem is changed by this correction.

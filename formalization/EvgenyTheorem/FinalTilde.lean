@@ -3302,6 +3302,12 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
         rw [hEntry xr z, hEntry z y, hrootVal]
       _ = ∑ z : {z : V // z ∈ T},
           L x' z.1 * L z.1 (e y).1 := by
+        apply Finset.sum_congr rfl
+        intro z hz
+        calc
+          L (e xr).1 (e z).1 * L (e z).1 (e y).1 =
+              L x' (e z).1 * L (e z).1 (e y).1 := by
+            rw [hrootVal]
         exact Equiv.sum_comp e
           (fun z : {z : V // z ∈ T} => L x' z.1 * L z.1 (e y).1)
       _ = ∑ z, L x' z * L z (e y).1 := by
