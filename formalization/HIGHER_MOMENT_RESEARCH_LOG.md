@@ -4558,3 +4558,18 @@ not a reported mismatch in the cyclic-class weights or the diagonal
 boundary formula. The command now has a local 1000000-heartbeat allowance;
 all other commands retain their existing limits. CI must confirm that the
 larger statement and its proof compile.
+
+
+
+## 2026-10-31 — H10 three-N cyclic stratum vanishing
+
+- Added the Sierpinski specialization `sg_trace_p10_three_N_stratum_zero`.
+- The complete r=3 stratum has 12 cyclic representatives of positive
+  three-part compositions of 10. Each class has weight 10; the total
+  coefficient is 120 = choose(10,3).
+- Each ordered trace is rotated without changing factor order to a
+  three-pairing normal form. The selected middle exponent is at most 3,
+  so `trace_three_N_word_zero_of_OAnti` applies for m >= 3.
+- This closes only the p=10 r=3 odd stratum. It does not assemble the
+  complete p=10 expansion or prove cancellation/stabilization of the
+  remaining even boundary strata. H10 remains open.

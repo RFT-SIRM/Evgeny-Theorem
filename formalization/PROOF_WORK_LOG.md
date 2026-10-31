@@ -1861,3 +1861,16 @@ default 200000-heartbeat budget while reducing the declaration's large
 heartbeat budget (1000000) to this aggregate theorem alone. No project-wide
 option was changed, and no proof hypothesis or mathematical statement was
 altered. The theorem still needs a fresh full Lean build.
+
+
+
+## 2026-10-31 — Formalize the H10 three-N odd stratum
+
+- Added `sg_trace_p10_three_N_stratum_zero` in GlueTrace.lean.
+- Enumerated all 12 cyclic classes of positive triples summing to ten;
+  each has multiplicity 10, giving total weight 120 = C(10,3).
+- Preserved every matrix-factor order and used cyclic trace rotation to
+  invoke the existing three-N corner-vanishing theorem. The selected
+  middle exponents are at most three, below 2^m for m >= 3.
+- Only the r=3 odd stratum is closed by this theorem. Other odd strata,
+  the total ordered p=10 expansion, and the boundary recurrence remain open.

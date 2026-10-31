@@ -4107,6 +4107,292 @@ theorem sg_trace_p8_all_even_strata_boundary
 vanishes. Its orbit weight is eight and its representative is
 K^7 * (K*N). The generic single-pairing lemma applies because K is
 block diagonal across the glued copies; no OAnti hypothesis is needed. -/
+/-- The complete three-N cyclic stratum of the p=10 ordered-word expansion
+vanishes under OAnti. Its twelve cyclic classes have orbit weight ten
+(the weights sum to choose(10,3)=120). Each representative is rotated
+to the three-pairing normal form; its first selected gap is at most three,
+so the existing corner-vanishing theorem applies for m >= 3. -/
+theorem sg_trace_p10_three_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0
+  have hside : 3 < 2 ^ m := by
+    calc
+      3 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hrot_r3_1 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 7) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), (K * N), K, K,
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_1 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) = 0 := by
+    rw [hrot_r3_1]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 1 7 (by omega)
+  have hrot_r3_2 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 6) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, (K * N), K,
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_2 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) = 0 := by
+    rw [hrot_r3_2]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 2 6 (by omega)
+  have hrot_r3_3 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 5) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, (K * N),
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_3 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) = 0 := by
+    rw [hrot_r3_3]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 3 5 (by omega)
+  have hrot_r3_4 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 4) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        (K * N), K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_4 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) = 0 := by
+    rw [hrot_r3_4]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 4 4 (by omega)
+  have hrot_r3_5 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 5 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        K, (K * N), K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_5 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+    rw [hrot_r3_5]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 5 3 (by omega)
+  have hrot_r3_6 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 6 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        K, K, (K * N), K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_6 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) = 0 := by
+    rw [hrot_r3_6]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 6 2 (by omega)
+  have hrot_r3_7 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 7 * N * K ^ 1) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        K, K, K, (K * N),
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_7 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) = 0 := by
+    rw [hrot_r3_7]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 7 1 (by omega)
+  have hrot_r3_8 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 5) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, (K * N),
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_8 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) = 0 := by
+    rw [hrot_r3_8]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 2 5 (by omega)
+  have hrot_r3_9 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 4) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, K,
+        (K * N), K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_9 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) = 0 := by
+    rw [hrot_r3_9]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 3 4 (by omega)
+  have hrot_r3_10 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 4 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, K,
+        K, (K * N), K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_10 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+    rw [hrot_r3_10]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 4 3 (by omega)
+  have hrot_r3_11 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 5 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, K,
+        K, K, (K * N), K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_11 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) = 0 := by
+    rw [hrot_r3_11]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 5 2 (by omega)
+  have hrot_r3_12 :
+      Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 3 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, K, (K * N), K,
+        K, (K * N), K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_12 :
+      Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+    rw [hrot_r3_12]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 3 3 3 (by omega)
+  simp [
+    hzero_r3_1,
+    hzero_r3_2,
+    hzero_r3_3,
+    hzero_r3_4,
+    hzero_r3_5,
+    hzero_r3_6,
+    hzero_r3_7,
+    hzero_r3_8,
+    hzero_r3_9,
+    hzero_r3_10,
+    hzero_r3_11,
+    hzero_r3_12
+  ]
+
+
 theorem sg_trace_p8_one_N_stratum_zero
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o] :
