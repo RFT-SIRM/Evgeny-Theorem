@@ -1489,3 +1489,15 @@ passed both fast and slow suites (run 41177720577).
   diagonal transport or the H8 boundary residual recurrence.
 - Run full Lean and both Python suites on this exact new SHA before
   continuing.
+
+## 2026-10-31 — Repair Lean namespace placement in O entry bridge
+
+Lean run 41185762593 failed because the A/O entry bridge and the common
+A/B/C dispatcher had been appended after the final `end EvgenyTheorem`
+in FinalTilde.lean. Consequently their names (Axis, Point, GCopy, sgK,
+pHeO, vertexOrder) were out of scope. The declarations are now moved
+inside the existing EvgenyTheorem namespace. The failed Lean run did not
+reach proof checking of these declarations, so the fresh full build is
+required to reveal and address any proof-level issues. The Python 3.12
+job passed; Python 3.11 was still running when the Lean failure was
+inspected.

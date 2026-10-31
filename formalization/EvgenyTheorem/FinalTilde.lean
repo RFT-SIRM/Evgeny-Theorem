@@ -5335,8 +5335,6 @@ theorem defectO6_num_growth_recurrence
   simp [defectO6_num_residual_constant]
   ring
 
-end EvgenyTheorem
-
 
 /-- A-copy entries in the O radius-three box transport by the O/A
 numbering bridge; no copy shift or periodicity hypothesis is needed. -/
@@ -5384,3 +5382,5 @@ private theorem sgK_O_entry_next_til_radius_three
   | A => exact sgK_A_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j
   | B => exact sgK_B_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j
   | C => exact sgK_C_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j
+
+end EvgenyTheorem

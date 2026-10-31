@@ -4127,3 +4127,14 @@ retains both spin indices, giving the same parent-level O entry for each
 copy. This closes only the local-entry component of the O finite-support
 transport. The sixth/seventh diagonal instantiation and the H8 boundary
 residual recurrence remain open.
+
+## 2026-10-31 — Lean failure diagnosis: namespace boundary
+
+The first integration of the A-copy O radius-three entry bridge and
+A/B/C dispatcher placed them after the file's closing `end EvgenyTheorem`.
+Lean therefore reported the project identifiers as unknown at the appended
+declarations. This is a source-placement error, not evidence for or
+against the underlying entry identity. The declarations have been moved
+inside the established namespace. A fresh Lean build must now typecheck
+their proof bodies; no degree-six/seven diagonal conclusion is claimed
+from this failed run.
