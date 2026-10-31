@@ -1025,3 +1025,23 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   assumed simplifier behaviour. The actual error goal must be inspected, and
   all base cases of any recursive normalization (here `pow_succ` plus
   `pow_zero`) must be checked against the target expression before pushing.
+
+
+## 2026-10-31 — Complete the H8 word normalization with associativity
+
+- Fresh Lean run [41142514999](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41142514999)
+  on `4053b622ca7c1f605b1c091856d106e2b1391f8c` still failed at line 3291, in the same
+  `linear_combination`; Python run
+  [41142515198](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41142515198)
+  passed for Python 3.11 and 3.12.
+- The fresh log confirms `pow_zero` and `Matrix.one_mul` were used,
+  but the compared trace products still had different parenthesizations.
+  It also explicitly reports `Matrix.mul_one` as unused.
+- Compared with the already-green H6 ordered-split proof: its working
+  normalization uses `simp [pow_succ, Matrix.mul_assoc]` before
+  `linear_combination`. The H8 proof had omitted associativity from its
+  normalization. The line now includes `Matrix.mul_assoc` and drops the
+  unused `Matrix.mul_one`. No factor order or mathematical statement is
+  altered; associativity only normalizes parentheses.
+- This is a focused correction to the same failed line. Full Lean
+  verification on the new SHA is pending.

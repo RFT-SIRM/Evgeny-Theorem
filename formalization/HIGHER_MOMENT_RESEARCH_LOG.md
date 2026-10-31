@@ -3615,3 +3615,19 @@ now reduces `pow_succ` together with the base case `pow_zero` and both
 matrix identity multiplications. This is a proof normalization repair,
 not a new mathematical result; it remains unverified until the fresh
 project-wide Lean build passes.
+
+
+## 2026-10-31 — H8 assembly follow-up: preserve factor order while normalizing parentheses
+
+The run on `4053b622ca7c1f605b1c091856d106e2b1391f8c` showed that the attempted zero-power correction did
+not suffice. The simplifier log explicitly marked `Matrix.mul_one` unused,
+while the `linear_combination` failure persisted. Comparing the proof with
+the green H6 assembly identified the missing normalization rule:
+`Matrix.mul_assoc`. The H6 proof uses associativity to put all matrix words
+into the same parenthesization before combining their trace equalities.
+
+The H8 normalization is therefore changed to include
+`Matrix.mul_assoc` and removes the unused `Matrix.mul_one`. This is
+strictly reassociation of products; it does not exchange adjacent factors,
+reverse words, invoke conjugation, or alter any orbit coefficient.
+The new full Lean build remains the required test of this correction.
