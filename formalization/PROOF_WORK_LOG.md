@@ -1832,3 +1832,21 @@ wrapper had been stated for m >= 3. The aggregate theorem itself already
 assumes m >= 4. Tightened the helper's lower-bound premise to m >= 4,
 matching the exact dependency; no mathematical claim or matrix identity
 was changed.
+
+
+## 2026-10-31 — Assemble the complete H10 six-N cyclic stratum
+
+- Enumerated all positive six-tuples summing to ten modulo cyclic rotation.
+  Burnside's count gives (126 + 6) / 6 = 22 classes: 20 have orbit size
+  six and two have orbit size three. The period-three representatives are
+  (1,1,3,1,1,3) and (1,2,2,1,2,2).
+- Added the ordered three-diagonal boundary term and a parametric
+  specialization of the generic six-pairing boundary lemma, using the
+  existing degree-nine support theorem for the three selected middle powers.
+- Added sg_trace_p10_six_N_stratum_boundary, with all 22 cyclic
+  representatives. The 20 full-orbit classes have coefficient 10;
+  the two period-three classes have coefficient 5. The weights sum to
+  210 = choose(10,6), the exact number of placements of six N factors.
+- This completes the six-N/four-pairing boundary reduction only. It does
+  not establish cancellation with the two-N, four-N, eight-N or ten-N
+  strata, or an H10 residual recurrence. Full Lean and Python CI are pending.

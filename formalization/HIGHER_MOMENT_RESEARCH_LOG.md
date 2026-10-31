@@ -4527,3 +4527,23 @@ support theorem through degree nine requires m >= 4. The parameterized
 four-N boundary helper now uses that same bound. The aggregate theorem was
 already correctly restricted to m >= 4, so this is a dependency-alignment
 correction, not a weakening of the final statement.
+
+
+## 2026-10-31 — H10 six-N stratum: complete 22-class boundary reduction
+
+A complete cyclic enumeration of positive six-tuples summing to ten gives
+22 classes. There are 20 classes with orbit size six, and two classes with
+period three: (1,1,3,1,1,3) and (1,2,2,1,2,2). Burnside's count is
+(126 + 6) / 6 = 22.
+
+Added sg_trace_p10_six_N_boundary_term,
+sg_trace_p10_six_N_powers_boundary_sum, and
+sg_trace_p10_six_N_stratum_boundary. The generic six-pairing boundary
+theorem converts each selected N-K^n-N block to a diagonal corner factor;
+the intervening K powers remain in their original order. The aggregate
+contains all 22 canonical representatives with weights 10 (orbit size six)
+or 5 (orbit size three). The total weight is 210 = choose(10,6).
+
+This is the complete boundary reduction of the six-N stratum, not the full
+H10 result. H10 still requires assembling all even strata and proving the
+resulting boundary residual stabilizes by level.
