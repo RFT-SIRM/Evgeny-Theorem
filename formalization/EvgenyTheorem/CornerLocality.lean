@@ -479,4 +479,171 @@ theorem corner_Y_radius_two_box_iff
       rw [pow_succ]
       omega
 
+ 
+/--
+For m ≥ 4, every level-(m+1) vertex in the radius-three coordinate box
+around O lies in the old A copy. The box also avoids the two other glued
+geometric corners, so the degree recursion has no extra corner contribution.
+-/
+theorem corner_O_radius_three_transport
+    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : z.1 ≤ 3) (hy : z.2 ≤ 3) :
+    z ∈ vertexOrder m ∧
+      z ≠ (2 ^ m, 0) ∧ z ≠ (0, 2 ^ m) := by
+  have hpow : 3 < 2 ^ m := by
+    calc
+      3 < 2 ^ 4 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · refine ⟨hzA, ?_, ?_⟩
+    · intro heq
+      have hcoord : z.1 = 2 ^ m := congrArg Prod.fst heq
+      omega
+    · intro heq
+      have hcoord : z.2 = 2 ^ m := congrArg Prod.snd heq
+      omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    omega
+
+/--
+The radius-three box around X at level m+1 is contained in copy B.
+Its inverse B-shift avoids both B-copy glued corners when m ≥ 4.
+-/
+theorem corner_X_radius_three_transport
+    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : 2 ^ (m + 1) ≤ z.1 + 3) (hy : z.2 ≤ 3) :
+    ∃ p ∈ vertexOrder m,
+      z = shiftPoint (2 ^ m) 1 0 p ∧
+        p ≠ (0, 0) ∧ p ≠ (0, 2 ^ m) := by
+  have hpow : 3 < 2 ^ m := by
+    calc
+      3 < 2 ^ 4 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hsep : 2 ^ m + 3 < 2 ^ (m + 1) := by
+    rw [pow_succ]
+    omega
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · have hbound := vertexOrder_sum_le m z hzA
+    omega
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    have hp0 : p ≠ (0, 0) := by
+      intro heq
+      have hpx : p.1 = 0 := congrArg Prod.fst heq
+      omega
+    have hpY : p ≠ (0, 2 ^ m) := by
+      intro heq
+      have hpy : p.2 = 2 ^ m := congrArg Prod.snd heq
+      omega
+    exact ⟨p, hp, rfl, hp0, hpY⟩
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    omega
+
+/--
+Exact coordinate-box equivalence at X for radius three. The level-(m+1)
+box is precisely the image under the B shift of the corresponding level-m
+box; this statement concerns coordinates only, not matrix entries.
+-/
+theorem corner_X_radius_three_box_iff
+    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1)) :
+    (2 ^ (m + 1) ≤ z.1 + 3 ∧ z.2 ≤ 3) ↔
+      ∃ p, p ∈ vertexOrder m ∧
+        2 ^ m ≤ p.1 + 3 ∧ p.2 ≤ 3 ∧
+          z = shiftPoint (2 ^ m) 1 0 p := by
+  constructor
+  · rintro ⟨hx, hy⟩
+    obtain ⟨p, hp, hzEq, _, _⟩ :=
+      corner_X_radius_three_transport m hm hz hx hy
+    refine ⟨p, hp, ?_, ?_, hzEq⟩
+    · rw [hzEq] at hx
+      simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+      rw [pow_succ] at hx
+      omega
+    · rw [hzEq] at hy
+      simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hy
+      exact hy
+  · rintro ⟨p, hp, hpx, hpy, rfl⟩
+    constructor
+    · simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+      rw [pow_succ]
+      omega
+    · simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero]
+      exact hpy
+
+/--
+The radius-three box around Y at level m+1 is contained in copy C.
+Its inverse C-shift avoids both C-copy glued corners when m ≥ 4.
+-/
+theorem corner_Y_radius_three_transport
+    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1))
+    (hx : z.1 ≤ 3) (hy : 2 ^ (m + 1) ≤ z.2 + 3) :
+    ∃ p ∈ vertexOrder m,
+      z = shiftPoint (2 ^ m) 0 1 p ∧
+        p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0) := by
+  have hpow : 3 < 2 ^ m := by
+    calc
+      3 < 2 ^ 4 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hsep : 2 ^ m + 3 < 2 ^ (m + 1) := by
+    rw [pow_succ]
+    omega
+  rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
+  · have hbound := vertexOrder_sum_le m z hzA
+    omega
+  · obtain ⟨p, _hp, rfl⟩ := List.mem_map.mp hzB
+    simp only [shiftPoint, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hx
+    omega
+  · obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hzC
+    simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+    have hp0 : p ≠ (0, 0) := by
+      intro heq
+      have hpy : p.2 = 0 := congrArg Prod.snd heq
+      omega
+    have hpX : p ≠ (2 ^ m, 0) := by
+      intro heq
+      have hpx : p.1 = 2 ^ m := congrArg Prod.fst heq
+      omega
+    exact ⟨p, hp, rfl, hp0, hpX⟩
+
+/--
+Exact coordinate-box equivalence at Y for radius three. The level-(m+1)
+box is precisely the image under the C shift of the corresponding level-m
+box; this statement concerns coordinates only, not matrix entries.
+-/
+theorem corner_Y_radius_three_box_iff
+    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (hz : z ∈ vertexOrder (m + 1)) :
+    (z.1 ≤ 3 ∧ 2 ^ (m + 1) ≤ z.2 + 3) ↔
+      ∃ p, p ∈ vertexOrder m ∧
+        p.1 ≤ 3 ∧ 2 ^ m ≤ p.2 + 3 ∧
+          z = shiftPoint (2 ^ m) 0 1 p := by
+  constructor
+  · rintro ⟨hx, hy⟩
+    obtain ⟨p, hp, hzEq, _, _⟩ :=
+      corner_Y_radius_three_transport m hm hz hx hy
+    refine ⟨p, hp, ?_, ?_, hzEq⟩
+    · rw [hzEq] at hx
+      simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hx
+      exact hx
+    · rw [hzEq] at hy
+      simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero] at hy
+      rw [pow_succ] at hy
+      omega
+  · rintro ⟨p, hp, hpx, hpy, rfl⟩
+    constructor
+    · simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+      exact hpx
+    · simp only [shiftPoint, Nat.zero_mul, Nat.one_mul, Nat.add_zero]
+      rw [pow_succ]
+      omega
+
 end EvgenyTheorem

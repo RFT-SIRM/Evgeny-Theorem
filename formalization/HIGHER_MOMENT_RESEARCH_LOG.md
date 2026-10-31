@@ -4043,3 +4043,22 @@ does the sum have the exact summand expected by `Equiv.sum_comp e`.
 Attempting `Finset.sum_congr rfl` across S and T subtypes is ill-typed
 because the finite index types differ. The proof now exposes these two
 steps as separate calc links; no `sum_congr` is used across the equivalence.
+## 2026-10-31 — H8 radius-three geometry checkpoint
+
+The missing geometric radius for powers six and seven is now addressed
+at the coordinate level, conditionally for m >= 4:
+
+- O: vertices with x <= 3 and y <= 3 belong to old copy A and are
+  distinct from (2^m,0) and (0,2^m).
+- X: vertices satisfying 2^(m+1) <= x+3 and y <= 3 are in copy B;
+  their inverse B-shift belongs to vertexOrder m, satisfies
+  2^m <= x_parent+3 and y_parent <= 3, and avoids (0,0),(0,2^m).
+- Y: the symmetric C statement has x <= 3 and
+  2^(m+1) <= y+3; its inverse C-shift avoids (0,0),(2^m,0).
+
+The X/Y box iff theorems give exact finite-neighborhood reindexing maps.
+These are coordinate-set facts only. They do not yet prove that the
+corresponding WSG finite supports are equivalent, that spin-resolved
+sgK entries agree under the maps, or that powers one through three have
+the required row/column support. The six concrete corner transports and
+the H8 residual recurrence remain open.

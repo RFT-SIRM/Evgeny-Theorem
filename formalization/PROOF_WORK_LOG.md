@@ -1412,3 +1412,18 @@ step transporting the already-normalized S-sum to the T-sum.
 This is a proof-structure correction, not a new mathematical assumption.
 The full Lean result for the intermediate SHA must not be treated as
 verification; a fresh full build is required for the corrected SHA.
+## 2026-10-31 — H8: radius-three corner coordinate transport
+
+Added only the geometric coordinate layer in CornerLocality.lean:
+- corner_O_radius_three_transport: the level-(m+1) O box [0,3]^2
+  lies in the old A copy and avoids its two non-root glued corners;
+- corner_X_radius_three_transport and corner_Y_radius_three_transport:
+  the corresponding boxes lie in B and C, with the inverse-copy points
+  avoiding the respective glued corners;
+- exact X/Y radius-three box equivalences under the B/C shifts.
+
+All statements use m >= 4, so 3 < 2^m and 2^m + 3 < 2^(m+1).
+This is the first geometric input needed by the already-compiled generic
+degree-six/seven diagonal transport lemma. No matrix-entry, spin, axis,
+operator-power, r=6 trace, or residual-stability claim is included.
+Full Lean and Python CI on the exact resulting SHA are required.
