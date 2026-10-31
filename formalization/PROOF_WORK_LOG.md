@@ -1682,3 +1682,19 @@ until the fresh full Lean build passes.
   dispatcher used in the sixth-moment boundary argument.
 - This assembles local diagonal-transport infrastructure only; it does not
   claim H8/H10 closure.
+
+ 
+## 2026-10-31 — Repair Y support transport and assemble diagonal powers one–seven
+ 
+- Corrected the two Y entry-bridge natural-number arguments by deriving
+  3 ≤ m from the existing 4 ≤ m hypothesis.
+- Corrected the Y diagonal transport specialization to use the C-shift
+  periodicity 2 * 3^m, parent root (0, 2^m), Y parent support, Y support
+  equivalence, and Y box equivalence for both endpoints.
+- Corrected the high-level B/Y orientation for powers 3, 6, and 7 to
+  oTil (m+2).
+- Combined the existing O/X/Y transports for powers 1, 2, 3, 6, and 7 with
+  the established fourth/fifth-power six-case dispatcher into one
+  glued-partner theorem returning powers 1–7.
+- This is an intermediate transport/assembly result; no H8/H10 closure
+  is claimed.

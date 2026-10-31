@@ -3362,7 +3362,7 @@ theorem pHeO_corner_Y_radius_three_box_entry_next_til
     ((⟨q', List.mem_toFinset.mpr hq'⟩ : Pt m), j)
   change pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j =
     pHeO m θ ax (oTil m) p' q' i j at hCnum
-  have hcpM := cp1_not_O_radius_three m hm hpx' hqx'
+  have hcpM := cp1_not_O_radius_three m (by omega) hpx' hqx'
   have hcpM1 := cp1_not_A m (by omega) hp' hq'
   have hnum : oNum m p' q' ↔ oNum (m + 1) p' q' := by
     unfold oNum
@@ -3461,7 +3461,7 @@ theorem sgK_B_Y_entry_next_til_radius_three
       _ ↔ oNum (m + 2) p q := (oNum_succ_restrict m hp hq).symm
       _ ↔ oTil (m + 2) p q :=
         (oTil_of_no_corner hHighLocal.1 hHighLocal.2).symm
-  have hLowBShift := cp1_not_B_shift_radius_three m hm hpx' hqx'
+  have hLowBShift := cp1_not_B_shift_radius_three m (by omega) hpx' hqx'
   have hLowBNum :
       oBo m (oTil (m + 1)) p0 q0 ↔ oNum m p0 q0 := by
     calc
@@ -6759,7 +6759,7 @@ private theorem sgK_C_X_diag_six_seven_transport
 
 private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
-    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     (c : GCopy) {w : WSG (m + 1)}
     (hwCopy : w.1 = c)
     (hwPoint : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point))
@@ -6804,7 +6804,7 @@ private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
   have hwS : w ∈ S := by
     simp [S, sgK_radius_three_support]
   have hpull : x'.2.1.1 = ((0, 2 ^ m) : Point) := by
-    change (sgK_root_pullback_pt m w.2.1).1 = ((2 ^ m, 0) : Point)
+    change (sgK_root_pullback_pt m w.2.1).1 = ((0, 2 ^ m) : Point)
     exact sgK_root_pullback_pt_Y m hwPoint
   have hrootX : x'.2.1.1.1 = 0 := by
     have h := congrArg Prod.fst hpull
@@ -6814,7 +6814,7 @@ private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
     simpa using h
 
   have hwT : x' ∈ T := by
-    simp only [T, sgK_radius_three_X_parent_support, Finset.mem_filter,
+    simp only [T, sgK_radius_three_Y_parent_support, Finset.mem_filter,
       Finset.mem_univ, true_and]
     refine ⟨?_, ?_, ?_⟩
     · change w.1 = w.1
@@ -6826,7 +6826,7 @@ private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
 
   have hroot : e ⟨w, hwS⟩ = ⟨x', hwT⟩ := by
     apply Subtype.ext
-    simp [e, sgK_radius_three_support_X_equiv, x',
+    simp [e, sgK_radius_three_support_Y_equiv, x',
       sgK_root_pullback, sgK_root_pullback_pt, hwPoint,
       pow_succ, Nat.mul_two]
 
@@ -6841,7 +6841,7 @@ private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
     have haBox :=
       (sgK_radius_three_support_Y_box_iff m hm hwPoint).mp haS
     have hbBox :=
-      (sgK_radius_three_support_X_box_iff m hm hwPoint).mp hbS
+      (sgK_radius_three_support_Y_box_iff m hm hwPoint).mp hbS
     have haCopy : a.1.1 = c := haBox.1.trans hwCopy
     have hbCopy : b.1.1 = c := hbBox.1.trans hwCopy
 
@@ -6928,7 +6928,7 @@ private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
     have hzs := hz
     simp only [sgK_radius_three_support, Finset.mem_filter,
       Finset.mem_univ, true_and] at hzs
-    simp only [T, sgK_radius_three_X_parent_support, Finset.mem_filter,
+    simp only [T, sgK_radius_three_Y_parent_support, Finset.mem_filter,
       Finset.mem_univ, true_and]
     refine ⟨?_, ?_, ?_⟩
     · have hxCopy : x'.1 = w.1 := rfl
@@ -7048,11 +7048,11 @@ private theorem sgK_B_Y_diag_one_two_three_six_seven_transport
       (sgK m θ ax (oTil (m + 1)) ^ 1) (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
     (sgK (m + 1) θ ax (oTil (m + 2)) ^ 2) w w =
       (sgK m θ ax (oTil (m + 1)) ^ 2) (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
-    (sgK (m + 1) θ ax (oTil (m + 1)) ^ 3) w w =
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 3) w w =
       (sgK m θ ax (oTil (m + 1)) ^ 3) (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
-    (sgK (m + 1) θ ax (oTil (m + 1)) ^ 6) w w =
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 6) w w =
       (sgK m θ ax (oTil (m + 1)) ^ 6) (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
-    (sgK (m + 1) θ ax (oTil (m + 1)) ^ 7) w w =
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 7) w w =
       (sgK m θ ax (oTil (m + 1)) ^ 7) (sgK_root_pullback m w) (sgK_root_pullback m w) := by
   exact sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
     m hm θ ax hax GCopy.B hwCopy hwPoint (by
@@ -7099,6 +7099,39 @@ private theorem sgK_glued_partner_diag_one_two_three_six_seven_transport
   · exact sgK_A_Y_diag_one_two_three_six_seven_transport m hm θ ax haxY hA hY
   · exact sgK_C_X_diag_six_seven_transport m hm θ ax haxX hC hX
   · exact sgK_B_Y_diag_one_two_three_six_seven_transport m hm θ ax haxY hB hY
+
+
+/-- Combined diagonal transport for every glued partner, including all
+intermediate powers needed by the eighth-moment boundary correction. -/
+private theorem sgK_glued_partner_diag_one_to_seven_transport
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
+    let v := (sgGlue (m + 1)).σ w
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 1) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 1) (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 2) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 2) (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 3) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 3) (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 4) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 4) (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 5) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 5) (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 6) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 6) (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 7) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 7) (sgK_root_pullback m v) (sgK_root_pullback m v) := by
+  classical
+  dsimp
+  obtain ⟨h1, h2, h3, h6, h7⟩ :=
+    sgK_glued_partner_diag_one_two_three_six_seven_transport
+      m hm θ ax haxX haxY hw
+  obtain ⟨h4, h5⟩ :=
+    sgK_glued_partner_diag_four_five_transport
+      m (by omega) θ ax haxX haxY hw
+  exact ⟨h1, h2, h3, h4, h5, h6, h7⟩
 
 
 end EvgenyTheorem
