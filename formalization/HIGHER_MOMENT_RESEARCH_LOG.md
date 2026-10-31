@@ -4066,3 +4066,11 @@ the H8 residual recurrence remain open.
 ## 2026-10-31 — H8 radius-three coordinate proof repair
 
 The first full build on 6ded225 found two missing coordinate normalizations in the B/C copy branches. The B branch now normalizes y <= 3 before excluding (0, 2^m), and the C branch normalizes x <= 3 before excluding (2^m, 0). The theorem statements and threshold m >= 4 are unchanged. This does not prove WSG radius-three support equivalences, spin-entry transports, or H8 residual stability. A fresh full Lean build and both Python suites must pass on the corrected SHA before proceeding.
+
+
+## 2026-10-31 — H8 radius-three WSG support: O-corner reindexing
+
+- The exact parent commit 90ba45a was rechecked: the full Lean formalization build and both Python 3.11/3.12 suites, including the slow tests, completed successfully (Actions runs 41174250278 and 41174250275).
+- Added the concrete finite-state radius-three support around O in FinalTilde.lean. The support equivalence retains the copy index, coordinate, and spin, and uses corner_O_radius_three_transport at the geometric layer.
+- The result is only a finite-set equivalence. It does not yet prove equality of high/low operator entries on the support, row/column support for powers one through three, any of the six corner transports, or H8 boundary-residual stability. The next step is to prove the corresponding O-corner spin-resolved entry bridge on the radius-three support and then derive row/column support for degrees 1–3.
+- Full Lean and Python CI on the new exact SHA are required before treating the addition as verified.

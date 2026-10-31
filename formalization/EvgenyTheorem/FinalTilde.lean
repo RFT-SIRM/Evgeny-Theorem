@@ -1903,6 +1903,77 @@ noncomputable def sgK_radius_two_support_O_equiv
     apply Subtype.ext
     rfl
 
+/-- The level-(m+1) radius-three support around O is exactly the old
+A-copy coordinate box. The copy coordinate and spin are retained. -/
+theorem sgK_radius_three_support_O_box_iff
+    (m : ℕ) (hm : 4 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 0) : Point)) :
+    z ∈ sgK_radius_three_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        z.2.1.1 ∈ vertexOrder m ∧
+        z.2.1.1.1 ≤ 3 ∧ z.2.1.1.2 ≤ 3 := by
+  simp only [sgK_radius_three_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, _, hx, _, hy⟩
+    have hzX : z.2.1.1.1 ≤ 3 := by simpa [hw] using hx
+    have hzY : z.2.1.1.2 ≤ 3 := by simpa [hw] using hy
+    have hmem := corner_O_radius_three_transport m hm
+      (z := z.2.1.1) (List.mem_toFinset.mp z.2.1.2) hzX hzY
+    exact ⟨hcopy, hmem.1, hzX, hzY⟩
+  · rintro ⟨hcopy, _, hx, hy⟩
+    exact ⟨hcopy, by simp [hw], by simpa [hw] using hx,
+      by simp [hw], by simpa [hw] using hy⟩
+
+/-- Parent-level finite state support for the radius-three box around O.
+It keeps the block index fixed and leaves spin unrestricted. -/
+def sgK_radius_three_O_parent_support (m : ℕ) (c : GCopy) :
+    Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ z.2.1.1.1 ≤ 3 ∧ z.2.1.1.2 ≤ 3
+
+/-- The level-(m+1) radius-three support at O is bijective to the
+parent-level support by retaining the same point, copy, and spin. This is
+a finite-state reindexing statement; it does not yet compare matrix entries. -/
+noncomputable def sgK_radius_three_support_O_equiv
+    (m : ℕ) (hm : 4 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 0) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_three_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_three_O_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    have hz := (sgK_radius_three_support_O_box_iff m hm hw).mp z.2
+    refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hz.2.1⟩,
+      z.1.2.2)), ?_⟩
+    change _ ∈ sgK_radius_three_O_parent_support m w.1
+    simp only [sgK_radius_three_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hz.2.2.1, hz.2.2.2⟩
+  · intro z
+    have hp : z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inl (List.mem_toFinset.mp z.1.2.1.2)
+    refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+      z.1.2.2)), ?_⟩
+    apply (sgK_radius_three_support_O_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_three_O_parent_support m w.1 :=
+      z.2
+    simp only [sgK_radius_three_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, List.mem_toFinset.mp z.1.2.1.2,
+      hparent.2.1, hparent.2.2⟩
+  · intro z
+    apply Subtype.ext
+    rfl
+  · intro z
+    apply Subtype.ext
+    rfl
+
 /-- The level-(m+1) radius-two support at X is the image of the level-m
 box under the B-copy shift. This is a support-set characterization, not
 yet an equality of the weighted path sums. -/
