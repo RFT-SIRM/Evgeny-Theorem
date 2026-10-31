@@ -4169,9 +4169,9 @@ theorem sg_trace_p10_three_N_stratum_zero
       (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
     10 * Matrix.trace
       (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0
-  have hside : 3 < 2 ^ m := by
+  have hside : 7 < 2 ^ m := by
     calc
-      3 < 2 ^ 3 := by norm_num
+      7 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hrot_r3_1 :
       Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) =

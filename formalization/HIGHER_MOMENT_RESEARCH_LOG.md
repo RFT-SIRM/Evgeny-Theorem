@@ -4568,7 +4568,7 @@ larger statement and its proof compile.
   three-part compositions of 10. Each class has weight 10; the total
   coefficient is 120 = choose(10,3).
 - Each ordered trace is rotated without changing factor order to a
-  three-pairing normal form. The selected middle exponent is at most 3,
+  three-pairing normal form. The selected middle exponent is at most 7,
   so `trace_three_N_word_zero_of_OAnti` applies for m >= 3.
 - This closes only the p=10 r=3 odd stratum. It does not assemble the
   complete p=10 expansion or prove cancellation/stabilization of the

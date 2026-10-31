@@ -1871,6 +1871,6 @@ altered. The theorem still needs a fresh full Lean build.
   each has multiplicity 10, giving total weight 120 = C(10,3).
 - Preserved every matrix-factor order and used cyclic trace rotation to
   invoke the existing three-N corner-vanishing theorem. The selected
-  middle exponents are at most three, below 2^m for m >= 3.
+  middle exponents are at most seven, below 2^m for m >= 3.
 - Only the r=3 odd stratum is closed by this theorem. Other odd strata,
   the total ordered p=10 expansion, and the boundary recurrence remain open.
