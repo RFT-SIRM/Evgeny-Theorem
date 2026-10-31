@@ -4103,10 +4103,6 @@ theorem sg_trace_p8_all_even_strata_boundary
   ring
 
 
-/-- The unique r=1 cyclic class in the p=8 ordered-word expansion
-vanishes. Its orbit weight is eight and its representative is
-K^7 * (K*N). The generic single-pairing lemma applies because K is
-block diagonal across the glued copies; no OAnti hypothesis is needed. -/
 /-- The complete three-N cyclic stratum of the p=10 ordered-word expansion
 vanishes under OAnti. Its twelve cyclic classes have orbit weight ten
 (the weights sum to choose(10,3)=120). Each representative is rotated
@@ -4169,9 +4165,9 @@ theorem sg_trace_p10_three_N_stratum_zero
       (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
     10 * Matrix.trace
       (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0
-  have hside : 7 < 2 ^ m := by
+  have hside : 3 < 2 ^ m := by
     calc
-      7 < 2 ^ 3 := by norm_num
+      3 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hrot_r3_1 :
       Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) =
@@ -4377,22 +4373,20 @@ theorem sg_trace_p10_three_N_stratum_zero
     rw [hrot_r3_12]
     exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
       1 3 3 3 (by omega)
-  simp [
-    hzero_r3_1,
-    hzero_r3_2,
-    hzero_r3_3,
-    hzero_r3_4,
-    hzero_r3_5,
-    hzero_r3_6,
-    hzero_r3_7,
-    hzero_r3_8,
-    hzero_r3_9,
-    hzero_r3_10,
-    hzero_r3_11,
-    hzero_r3_12
-  ]
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc] at
+    hzero_r3_1 hzero_r3_2 hzero_r3_3 hzero_r3_4
+    hzero_r3_5 hzero_r3_6 hzero_r3_7 hzero_r3_8
+    hzero_r3_9 hzero_r3_10 hzero_r3_11 hzero_r3_12 ⊢
+  linear_combination
+    hzero_r3_1 + hzero_r3_2 + hzero_r3_3 + hzero_r3_4 +
+    hzero_r3_5 + hzero_r3_6 + hzero_r3_7 + hzero_r3_8 +
+    hzero_r3_9 + hzero_r3_10 + hzero_r3_11 + hzero_r3_12
 
 
+/-- The unique r=1 cyclic class in the p=8 ordered-word expansion
+vanishes. Its orbit weight is eight and its representative is
+K^7 * (K*N). The generic single-pairing lemma applies because K is
+block diagonal across the glued copies; no OAnti hypothesis is needed. -/
 theorem sg_trace_p8_one_N_stratum_zero
     (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o] :
