@@ -289,6 +289,47 @@ theorem defectO8_orientation_difference_succ
 
 
 
+/-- The complete H8 boundary correction is unchanged by the exceptional
+orientation flip once the glued rows agree through degree seven. -/
+theorem glueRHS8_num_eq_til
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis) :
+    glueRHS8 m (sgK m θ ax (oNum (m + 1))) =
+      glueRHS8 m (sgK m θ ax (oTil (m + 1))) := by
+  apply glueRHS8_congr_of_glued_row_pow m hm θ ax
+    (oNum (m + 1)) (oTil (m + 1))
+    (oNum_anti (m + 1)) (oTil_anti (m + 1))
+  intro w hw n hn z
+  exact sgK_pow_row_eq_num_til_on_glue_up_to_seven
+    m hm θ ax w hw n hn z
+
+/-- The H8 orientation gap is level-independent from level four onward.
+Its finite value at level four is retained; this is not a claim that the gap
+vanishes. -/
+theorem defectO8_orientation_difference_succ_invariant
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (defectO8 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) -
+      defectO8 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1))) =
+    (defectO8 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO8 m θ faceAxis (fun _ => 2) (oTil m)) := by
+  rw [defectO8_orientation_difference_succ m (by omega) θ,
+    glueRHS8_num_eq_til m hm θ faceAxis,
+    glueRHS8_num_eq_til m hm θ (fun _ => 2)]
+  ring
+
+/-- All higher-level H8 orientation gaps reduce to the exact level-four
+base value. No zero value is asserted for that base gap. -/
+theorem defectO8_orientation_difference_eq_level4
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (defectO8 m θ faceAxis (fun _ => 2) (oNum m) -
+      defectO8 m θ faceAxis (fun _ => 2) (oTil m)) =
+    (defectO8 4 θ faceAxis (fun _ => 2) (oNum 4) -
+      defectO8 4 θ faceAxis (fun _ => 2) (oTil 4)) := by
+  induction m, hm using Nat.le_induction with
+  | base => rfl
+  | succ n hn ih =>
+      rw [defectO8_orientation_difference_succ_invariant n hn θ, ih]
+
+
 
 /-- The one edge reversed by oTil, in the local coordinates of copy B. -/
 def p6FlipEndpoint (m : ℕ) (w : WSG m) : Prop :=

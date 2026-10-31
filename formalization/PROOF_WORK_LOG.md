@@ -1202,3 +1202,33 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   reduced to the specific glued-row/diagonal comparisons.
 - The new full Lean and Python workflows are pending. H8 and H10 remain
   open; H10 is deferred until the H8 boundary comparison is proved.
+
+
+## 2026-10-31 — H8: prove orientation invariance of the complete boundary correction
+
+- Parent 132e84074e08009e4d3f54d923e873b3ce6b06a4 has a successful full
+  Lean formalization build in run 41160699748. Its Python 3.11 fast and slow
+  suites passed; Python 3.12 fast tests passed and the slow suite was still
+  running when this change was prepared.
+- Added a support-sensitive trace lemma for three ordered kernel factors
+  separated by three supported diagonal weights. It allows the three kernel
+  factors to differ and preserves their order.
+- Added glueRHS8_congr_of_glued_row_pow. Its hypothesis is equality of
+  every row starting at a glued state, for every power through degree seven.
+  The proof explicitly treats all four r=2 weighted sums, all ten nested
+  r=4 sums, all four r=6 ordered traces, and the r=8 fourth-power endpoint.
+  The exact coefficients and factor order in glueRHS8 are unchanged.
+- The r=6 traces are each reduced to an exact pointwise sum by the new
+  three-diagonal trace lemma. The off-diagonal hypotheses needed for this
+  reduction are discharged separately for both orientations using the
+  existing degree-five glued-corner support theorem. The diagonal powers
+  are then compared by the degree-seven row equality.
+- Applied the congruence to oNum (m+1) and oTil (m+1). This proves that
+  the H8 orientation gap is constant from level four onward and reduces
+  every such gap to its exact level-four value. The proof does not assert
+  that the level-four value is zero.
+- This is a full comparison of glueRHS8, not yet the all-level H8 moment
+  identity: the remaining task is to control the level dependence of the
+  common boundary residual itself and derive the exact scalar recurrence.
+  H8 and H10 are not marked closed.
+- The new Lean and Python CI runs are pending at this commit.

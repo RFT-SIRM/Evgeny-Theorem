@@ -2683,6 +2683,264 @@ noncomputable def glueRHS8
 
 
 
+/-- With three supported diagonal insertions, the trace reduces to the
+product of the three kernel diagonal entries and the three weights. The
+three kernel matrices may differ; no factor is permuted. -/
+private theorem trace_three_supported_diagonal_collapse
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (A B C : Matrix X X ℂ) (d1 d2 d3 : X → ℂ)
+    (hd1 : ∀ x, ¬ g x → d1 x = 0)
+    (hd2 : ∀ x, ¬ g x → d2 x = 0)
+    (hd3 : ∀ x, ¬ g x → d3 x = 0)
+    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0)
+    (hB : ∀ x y, g x → g y → x ≠ y → B x y = 0)
+    (hC : ∀ x y, g x → g y → x ≠ y → C x y = 0) :
+    Matrix.trace (A * Matrix.diagonal d1 * B * Matrix.diagonal d2 *
+      C * Matrix.diagonal d3) =
+    ∑ x, if g x then
+      A x x * d1 x * B x x * d2 x * C x x * d3 x else 0 := by
+  classical
+  let e : X → ℂ := fun x => d1 x * B x x * d2 x
+  have he : ∀ x, ¬ g x → e x = 0 := by
+    intro x hx
+    simp [e, hd1 x hx]
+  have hmid :
+      Matrix.diagonal d1 * B * Matrix.diagonal d2 =
+        Matrix.diagonal e := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simp [e, Matrix.mul_apply, Matrix.diagonal_apply, mul_assoc]
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      have hentry :
+          (Matrix.diagonal d1 * B * Matrix.diagonal d2) x y =
+            d1 x * B x y * d2 y := by
+        simp [Matrix.mul_apply, Matrix.diagonal_apply]
+      rw [hentry]
+      by_cases hx : g x
+      · by_cases hy : g y
+        · have hzero : B x y = 0 := hB x y hx hy hxy
+          simp [hzero]
+        · simp [hd2 y hy]
+      · simp [hd1 x hx]
+  calc
+    Matrix.trace (A * Matrix.diagonal d1 * B * Matrix.diagonal d2 *
+        C * Matrix.diagonal d3) =
+      Matrix.trace (A * (Matrix.diagonal d1 * B *
+        Matrix.diagonal d2) * C * Matrix.diagonal d3) := by
+          simp [Matrix.mul_assoc]
+    _ = Matrix.trace (A * Matrix.diagonal e * C *
+        Matrix.diagonal d3) := by rw [hmid]
+    _ = ∑ x, if g x then A x x * e x * C x x * d3 x else 0 := by
+          exact trace_kernel_diagonal_kernel_diagonal_collapse
+            A g e d3 he hd3 hA hC
+    _ = ∑ x, if g x then
+          A x x * d1 x * B x x * d2 x * C x x * d3 x else 0 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : g x
+          · simp only [if_pos hg]
+            simp [e]
+            ring
+          · simp [hg]
+
+
+/-- The complete p=8 boundary correction is insensitive to replacing K by
+K' whenever every row starting on the glued set agrees through degree seven.
+This checks all four r=2 terms, all ten ordered r=4 terms, all four ordered
+r=6 traces, and the r=8 endpoint term with their original coefficients. -/
+theorem glueRHS8_congr_of_glued_row_pow
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o o' : Point → Point → Prop)
+    [DecidableRel o] [DecidableRel o']
+    (hanti : OAnti (m + 1) o) (hanti' : OAnti (m + 1) o')
+    (hrow : ∀ w, (sgGlue m).g w → ∀ n, n ≤ 7 → ∀ z,
+      (sgK m θ ax o ^ n) w z = (sgK m θ ax o' ^ n) w z) :
+    glueRHS8 m (sgK m θ ax o) =
+      glueRHS8 m (sgK m θ ax o') := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let K' : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o'
+  let g : WSG m → Prop := (sgGlue m).g
+  have hσ (x : WSG m) (hx : g x) : g ((sgGlue m).σ x) :=
+    (sgGlue m).g_σ x hx
+  have hkgK : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
+      (K ^ n) x y = 0 := by
+    intro n hn x y hx hy hne
+    by_cases hcopy : x.1 = y.1
+    · exact sgK_pow_hkg_up_to_five_of_OAnti m (by omega) θ ax o hanti
+        n hn x y hx hy hcopy hne
+    · change (blockK (Hc m θ ax o) ^ n) x y = 0
+      rw [blockK_pow_local]
+      simp [blockK, hcopy]
+  have hkgK' : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
+      (K' ^ n) x y = 0 := by
+    intro n hn x y hx hy hne
+    by_cases hcopy : x.1 = y.1
+    · exact sgK_pow_hkg_up_to_five_of_OAnti m (by omega) θ ax o' hanti'
+        n hn x y hx hy hcopy hne
+    · change (blockK (Hc m θ ax o') ^ n) x y = 0
+      rw [blockK_pow_local]
+      simp [blockK, hcopy]
+  have hgap (a b : ℕ) (ha : a ≤ 7) (hb : b ≤ 7) :
+      (∑ x, if g x then
+        (K ^ a) x x * (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) =
+      (∑ x, if g x then
+        (K' ^ a) x x * (K' ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [if_pos hgx]
+      have hσx := hσ x hgx
+      rw [hrow x hgx a ha x, hrow ((sgGlue m).σ x) hσx b hb
+        ((sgGlue m).σ x)]
+    · simp [hgx]
+  have hfour (a b c d : ℕ)
+      (ha : a ≤ 7) (hb : b ≤ 7) (hc : c ≤ 7) (hd : d ≤ 7) :
+      sg_trace_four_N_boundary_sum m K a b c d =
+        sg_trace_four_N_boundary_sum m K' a b c d := by
+    unfold sg_trace_four_N_boundary_sum
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [if_pos hgx]
+      have hinner :
+          (∑ y, if g y then
+            ((K ^ a) x y *
+              (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                (K ^ c) y x else 0) =
+          (∑ y, if g y then
+            ((K' ^ a) x y *
+              (K' ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                (K' ^ c) y x else 0) := by
+        apply Finset.sum_congr rfl
+        intro y hy
+        by_cases hgy : g y
+        · simp only [if_pos hgy]
+          have hσy := hσ y hgy
+          rw [hrow x hgx a ha y, hrow ((sgGlue m).σ y) hσy b hb
+            ((sgGlue m).σ y), hrow y hgy c hc x]
+        · simp [hgy]
+      have hσx := hσ x hgx
+      rw [hinner, hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x)]
+    · simp [hgx]
+  have hcollapse
+      (L : Matrix (WSG m) (WSG m) ℂ)
+      (hkg : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
+        (L ^ n) x y = 0)
+      (a b c d e f : ℕ)
+      (ha : a ≤ 5) (hb : b ≤ 7) (hc : c ≤ 5)
+      (hd : d ≤ 7) (he : e ≤ 5) (hf : f ≤ 7) :
+      Matrix.trace (L ^ a * Matrix.diagonal (fun y =>
+          if g y then (L ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        L ^ c * Matrix.diagonal (fun y =>
+          if g y then (L ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        L ^ e * Matrix.diagonal (fun y =>
+          if g y then (L ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+      ∑ x, if g x then
+        (L ^ a) x x * (L ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (L ^ c) x x * (L ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) *
+        (L ^ e) x x * (L ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0 := by
+    exact trace_three_supported_diagonal_collapse
+      g (L ^ a) (L ^ c) (L ^ e)
+      (fun y => if g y then (L ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+      (fun y => if g y then (L ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+      (fun y => if g y then (L ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+      (by intro x hx; simp [hx])
+      (by intro x hx; simp [hx])
+      (by intro x hx; simp [hx])
+      (by
+        intro x y hx hy hne
+        exact hkg a ha x y hx hy hne)
+      (by
+        intro x y hx hy hne
+        exact hkg c hc x y hx hy hne)
+      (by
+        intro x y hx hy hne
+        exact hkg e he x y hx hy hne)
+  have hsix (a b c d e f : ℕ)
+      (ha : a ≤ 5) (hb : b ≤ 7) (hc : c ≤ 5)
+      (hd : d ≤ 7) (he : e ≤ 5) (hf : f ≤ 7) :
+      Matrix.trace (K ^ a * Matrix.diagonal (fun y =>
+          if g y then (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K ^ c * Matrix.diagonal (fun y =>
+          if g y then (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K ^ e * Matrix.diagonal (fun y =>
+          if g y then (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+      Matrix.trace (K' ^ a * Matrix.diagonal (fun y =>
+          if g y then (K' ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K' ^ c * Matrix.diagonal (fun y =>
+          if g y then (K' ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K' ^ e * Matrix.diagonal (fun y =>
+          if g y then (K' ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+    rw [hcollapse K hkgK a b c d e f ha hb hc hd he hf,
+      hcollapse K' hkgK' a b c d e f ha hb hc hd he hf]
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [if_pos hgx]
+      have hσx := hσ x hgx
+      rw [hrow x hgx a ha x,
+        hrow ((sgGlue m).σ x) hσx b hb ((sgGlue m).σ x),
+        hrow x hgx c hc x,
+        hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x),
+        hrow x hgx e he x,
+        hrow ((sgGlue m).σ x) hσx f hf ((sgGlue m).σ x)]
+    · simp [hgx]
+  have htop :
+      (∑ x, if g x then
+        (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) =
+      (∑ x, if g x then
+        (K' x x * K' ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [if_pos hgx]
+      have hσx := hσ x hgx
+      have hxx : K x x = K' x x := by
+        simpa [K, K', pow_one] using hrow x hgx 1 (by omega) x
+      have hσσ : K ((sgGlue m).σ x) ((sgGlue m).σ x) =
+          K' ((sgGlue m).σ x) ((sgGlue m).σ x) := by
+        simpa [K, K', pow_one] using
+          hrow ((sgGlue m).σ x) hσx 1 (by omega) ((sgGlue m).σ x)
+      rw [hxx, hσσ]
+    · simp [hgx]
+  change glueRHS8 m K = glueRHS8 m K'
+  dsimp [glueRHS8]
+  simp only [pow_zero, Matrix.one_mul]
+  rw [
+    hgap 1 7 (by omega) (by omega),
+    hgap 2 6 (by omega) (by omega),
+    hgap 3 5 (by omega) (by omega),
+    hgap 4 4 (by omega) (by omega),
+    hfour 1 1 1 5 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 1 4 2 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 2 1 4 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 1 2 4 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 1 3 3 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 3 2 2 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 2 3 2 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 3 1 3 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 2 2 3 (by omega) (by omega) (by omega) (by omega),
+    hfour 2 2 2 2 (by omega) (by omega) (by omega) (by omega),
+    hsix 1 1 1 1 1 3 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    hsix 1 1 1 1 2 2 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    hsix 1 1 1 2 1 2 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    hsix 1 1 2 1 1 2 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    htop
+  ]
+
+
+
 /-- Original p=8 even-stratum contribution before boundary reduction.
 The sum contains all positive even insertion strata r=2,4,6,8 with
 exact cyclic-orbit weights; the r=0 word is kept separate as trace(K^8). -/

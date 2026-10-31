@@ -3838,3 +3838,36 @@ the complete r=2, r=4, r=6, and r=8 expressions have each been rewritten
 using the relevant boundary diagonal or row equalities. In particular,
 do not omit the four ordered r=6 trace terms or the top r=8 fourth-power
 term.
+
+
+## 2026-10-31 — H8: complete boundary-orientation comparison and exact level-four gap
+
+The degree-seven row comparison has now been applied to the entire boundary
+functional, not just to its r=2 diagonal terms. The proof obligations are
+organized by the actual definition of glueRHS8:
+
+1. For r=2, each of the four weighted gap sums uses the degree-a row at a
+   glued point x and the degree-b row at σ(x). The exponents run through
+   (1,7), (2,6), (3,5), and (4,4).
+2. For r=4, each of the ten ordered nested sums compares the rows at x and y
+   and the diagonal rows at σ(y) and σ(x). The exact ordered exponent
+   quadruples and weights in glueRHS8 are retained.
+3. For r=6, each of the four traces has the form
+   trace(K^a D_b K^c D_d K^e D_f). A new generic three-supported-diagonal
+   trace reduction proves its exact diagonal sum using separate support
+   hypotheses for the three kernel powers. Here a,c,e are at most two,
+   while the diagonal exponents b,d,f are the displayed values 1,2,3.
+   The required glued off-diagonal vanishing is established for each
+   orientation independently; no symmetry or commutation of K is used.
+4. For r=8, the pointwise fourth-power endpoint is compared at x and σ(x)
+   using the degree-one row equality.
+
+The support fact g(σ(x)) is supplied by the existing involutive glue
+property. Thus the degree-seven row hypothesis applies to every endpoint
+used above. The result is the exact equality of the two full boundary
+functionals for the numbering and flipped orientations, for m >= 4. Combined
+with the already-proved adjacent-level difference recurrence, the H8
+orientation gap reduces to its finite value at level four. That value is not
+claimed to vanish. The common boundary residual still needs a level
+transport/stability proof before the full H8 recurrence is closed; H10
+remains deferred.
