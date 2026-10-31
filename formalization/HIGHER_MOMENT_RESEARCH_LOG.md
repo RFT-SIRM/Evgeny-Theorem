@@ -3940,3 +3940,22 @@ factors, and cyclicity of trace. H8/H10 remain open.
 ## 2026-10-31 — H8 declaration-order audit
 
 The 0f2fc5c full Lean build compiled GlueTrace and stopped only in FinalTilde at a forward reference to sgK_pow_row_eq_num_til_on_glue_up_to_seven. The theorem existed later in that file; Lean does not permit forward references. The H8 boundary comparison and its two dependent orientation-gap corollaries have been moved after the degree-seven row theorem without changing statements or proof terms. Await the next full build.
+
+
+## 2026-10-31 — Checkpoint audit and syntax-boundary repair
+
+The verified baseline for this branch's current H8 work is commit
+132e84074e08009e4d3f54d923e873b3ce6b06a4, with both full Lean and Python
+workflows successful. The subsequent experimental r=6 trace-collapse
+attempts were the source of the early Lean failures; these were replaced
+at 0f2fc5c by direct comparison of the three existing supported diagonal
+blocks, using the already-proved six-N boundary identity.
+
+The next failure chain was not mathematical: 0f2fc5c put the degree-seven
+row-congruence use before its declaration; 175bdfa moved the dependent
+theorem block after the row lemma but accidentally removed the opening
+documentation-comment line before the p=6 residual theorem. The compiler
+reported only this parser error in that run. The full comment is restored
+without changing the proof. There is no local Lean/Lake toolchain in the
+execution image, so the next full Actions build is the authoritative compile
+check.

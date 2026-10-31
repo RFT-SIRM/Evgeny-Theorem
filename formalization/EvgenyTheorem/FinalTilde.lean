@@ -648,6 +648,7 @@ theorem defectO8_orientation_difference_eq_level4
 
 
 
+/-- The p=6 boundary residual is independent of the single flipped edge.
 Every glued diagonal of powers up to five is unchanged, since a walk of length
 at most five from a glued corner cannot reach either endpoint of that edge. -/
 theorem glueRHS6_highPowerResidual_num_eq_til

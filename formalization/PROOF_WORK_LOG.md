@@ -1302,3 +1302,25 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 ## 2026-10-31 — H8 declaration order fix
 
 The Lean run 41165333999 compiled GlueTrace but failed in FinalTilde at the use of sgK_pow_row_eq_num_til_on_glue_up_to_seven. The theorem was declared later in the same file. Lean declarations are sequential, so this was a forward-reference error, not a mathematical failure. Moved glueRHS8_num_eq_til and its two dependent orientation-gap corollaries after the degree-seven row theorem. Statements and proof terms are unchanged. A full build is required to confirm.
+
+
+## 2026-10-31 — Sandbox/history audit and comment-boundary repair
+
+- The last fully green checkpoint is 132e84074e08009e4d3f54d923e873b3ce6b06a4:
+  full Lean build run 41160699748 and Python run 41160699737 both succeeded.
+- The intervening H8 commits only attempted the degree-seven boundary
+  congruence. Their successive Lean failures were:
+  29987eb: invalid reuse of the symmetric two-kernel trace collapse;
+  030b3f6: same mismatch persisted in the asymmetric helper proof;
+  05f4e52: sum-branch and local-predicate simplification errors;
+  0f2fc5c: GlueTrace passed, but FinalTilde referenced the seven-power
+  row theorem before its declaration;
+  175bdfa: after moving declarations, one syntax error remained because
+  the first line of the following p=6 documentation comment was omitted.
+- Restored the complete existing p=6 comment. This is a pure syntax repair;
+  no theorem statement, proof term, hypothesis, or coefficient changed.
+- The local execution image does not contain Lean/Lake and cannot reach
+  GitHub from the shell, so an independent local lake build is unavailable.
+  The code was cross-checked against the exact GitHub source blobs and
+  complete Actions logs; the next full GitHub Lean workflow is the executable
+  formalization check.
