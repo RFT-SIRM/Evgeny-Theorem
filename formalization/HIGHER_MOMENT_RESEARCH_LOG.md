@@ -4350,3 +4350,84 @@ until the fresh full Lean build passes.
 - Proved the exact identity glueRHS8 = glueRHS8_diagonal_form, preserving
   every even stratum and its cyclic multiplicity. No cancellation, omitted
   term, or level-stability assumption is introduced in this reduction.
+
+
+## 2026-10-31 — Recovery audit: restore the last fully verified H8/H10 checkpoint
+
+The H8/H10 work branch was restored to commit
+`575597d5d66dd5c5de9044a9c15f284a23669388`, the last checkpoint for which
+both repository workflows are confirmed successful on the exact same SHA:
+
+- Lean formalization run `41227907808`: success (full build).
+- Python tests run `41227907792`: success on Python 3.11 and 3.12, including
+  both fast and slow suites.
+
+The branch was moved back from `8f969cdf` with an expected-head
+(force-with-lease) check. The merged H6 base on `main`, PR #9, and all
+main-branch history were left unchanged. No new branch or PR was created.
+
+### Exact proof state at the restored SHA
+
+**H8 results already present and compiled:**
+
+- The complete ordered p=8 trace expansion is split into the r=0 term,
+  vanishing odd strata r=1,3,5,7, and all 19 positive-even cyclic classes.
+- The complete even boundary functional `glueRHS8` preserves all four
+  even strata r=2,4,6,8 and their exact cyclic coefficients.
+- `glueRHS8_eq_diagonal_form` rewrites the complete boundary functional
+  into the exact supported diagonal pair-product form. It does not delete
+  the r=8 top term or assume cross-stratum cancellation.
+- `defectO8_succ` and `defectO8_succ_til` give the exact defect recurrences
+  with the complete boundary difference still explicit.
+- The glued-row comparison through degree seven proves
+  `glueRHS8_num_eq_til`; hence
+  `defectO8_orientation_difference_eq_level4` reduces the numbering-versus-
+  flipped-orientation gap to its exact level-four value.
+
+**The H8 obstruction still open at this checkpoint:**
+
+The common flipped-orientation boundary residual comparing
+`glueRHS8 m (sgK m θ faceAxis (oTil (m+1)))` with
+`glueRHS8 m (sgK m θ (fun _ => 2) (oTil (m+1)))`
+has not been shown stable between adjacent levels. The local radius-three
+O/X/Y transport and the glued-partner diagonal transport through degrees
+one to seven are infrastructure for this comparison, not the comparison
+itself. Consequently there is no proved fixed H8 residual constant, no
+H8 scalar affine recurrence with a fixed constant, and no H8 closed form
+at this SHA.
+
+**H10 proof state at this checkpoint:**
+
+The file contains several conditional/concrete boundary reductions for
+the p=10 r=2, r=4, r=6, r=8, and r=10 strata. They preserve the ordered
+trace factors and cyclic weights. The top r=10 contribution is retained
+as a fifth-power diagonal trace. There is not yet a complete p=10 ordered
+trace split assembled into one total weighted even-boundary functional,
+nor a theorem comparing the complete weighted sum between the two target
+operator configurations, nor an H10 level residual recurrence. H10 is not
+closed.
+
+### Failed continuation audit
+
+The subsequent experimental commits
+`acf6e6a`, `167d15a`, `019c510`, `ba837d4`, and `8f969cd`
+were not a verified continuation: their Lean workflow runs failed. In
+particular, the final attempt's build reached the H8 closed-form induction
+and failed at `linear_combination hgap` in
+`defectO8_succ_num_level4_constant_boundary`; the algebraic target still
+contained twice the orientation gap, so the attempted closed form was not
+established. The intervening subtype-sum transport attempt also had earlier
+file-visibility and binder errors. These declarations were removed by
+restoring the verified parent, not patched further.
+
+### Next permitted mathematical step
+
+Resume from `575597d5` by proving exactly one missing statement:
+adjacent-level stability of the common H8 flipped-orientation boundary
+difference for the two axes. First state and prove the required
+degree-seven diagonal/row transport for the six glued-partner cases under
+the already-present O/X/Y local-entry and radius-three support hypotheses;
+then instantiate the complete 19-term `glueRHS8) comparison. Do not
+introduce a residual constant or closed form until this exact comparison
+compiles. H10 remains deferred until the H8 residual transport is proved
+and the complete H8 recurrence is genuinely closed.
