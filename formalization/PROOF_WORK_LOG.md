@@ -1798,3 +1798,26 @@ before adding a constant definition, scalar recurrence, or H8 closed form.
   four-N stratum theorem, no complete p=10 ordered expansion, and no H10
   boundary recurrence are claimed yet. Full Lean build and Python suites
   are pending on the new SHA.
+
+
+## 2026-10-31 — Assemble the complete H10 four-N cyclic stratum
+
+- Corrected the prior partial inventory: the nine named class lemmas in
+  GlueAlg.lean are not all cyclic compositions of four positive K-run
+  lengths summing to ten. The full set has 22 cyclic representatives.
+- Enumerated all positive compositions of 10 into four parts modulo cyclic
+  rotation. There are 20 orbit-size-four classes and two period-two classes:
+  (1,4,1,4) and (2,3,2,3). No period-one class exists because 4 does not
+  divide 10.
+- Added a parametric Sierpinski boundary-sum definition and reduction for
+  arbitrary four positive powers. It uses the existing degree-nine support
+  theorem and the generic trace_four_N_powers_explicit without changing
+  matrix-factor order.
+- Added sg_trace_p10_four_N_stratum_boundary, listing all 22 representatives
+  with exact coefficients 10 for orbit-size-four classes and 5 for
+  period-two classes. The coefficient total is 20*10 + 2*5 = 210 = C(10,4).
+- This closes the boundary reduction for the whole r=4/four-N stratum,
+  not H10 as a whole. The remaining H10 work still includes complete
+  expansion/cancellation with the two-N, six-N, eight-N and ten-N strata,
+  and proving the resulting boundary residual stabilizes by level.
+- Full Lean and Python CI are pending for the new commit.

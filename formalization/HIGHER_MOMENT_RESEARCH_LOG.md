@@ -4497,3 +4497,24 @@ the r=4 stratum. It is not yet the aggregate weighted r=4 boundary identity:
 the next step is to assemble the nine class wrappers with their exact
 multiplicities and compare that aggregate with the other H10 strata.
 H10 remains open.
+
+
+## 2026-10-31 — H10 four-N stratum: complete 22-class boundary reduction
+
+The previous nine concrete class wrappers were only a subset of all
+four-N cyclic compositions. A complete orbit enumeration of positive
+four-tuples summing to ten gives 22 cyclic classes:
+20 with orbit size four and two with orbit size two. The exceptional
+period-two classes are (1,4,1,4) and (2,3,2,3); there is no period-one class.
+
+Added the parametric sg_trace_p10_four_N_powers_boundary_sum lemma and
+the aggregate theorem sg_trace_p10_four_N_stratum_boundary. The aggregate
+contains every cyclic representative, with coefficient 10 for each
+orbit-size-four class and coefficient 5 for each period-two class. The
+weights sum to 210, exactly the number of choices of four N positions
+among ten factors.
+
+The theorem reduces the complete r=4 contribution to the corresponding
+ordered nested sums over glued corners. This is still only one stratum:
+it does not prove cancellation against the r=2, r=6, r=8 or r=10 strata,
+and it does not yet give the H10 recurrence. H10 remains open.
