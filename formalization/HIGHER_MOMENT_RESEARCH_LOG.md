@@ -4547,3 +4547,14 @@ or 5 (orbit size three). The total weight is 210 = choose(10,6).
 This is the complete boundary reduction of the six-N stratum, not the full
 H10 result. H10 still requires assembling all even strata and proving the
 resulting boundary residual stabilizes by level.
+
+
+## 2026-10-31 — H10 six-N aggregate: elaboration resource correction
+
+The initial full build reached sg_trace_p10_six_N_stratum_boundary but
+timed out during WHNF reduction of its 22-term matrix-trace statement at
+the default 200000 heartbeats. This is an elaboration-resource failure,
+not a reported mismatch in the cyclic-class weights or the diagonal
+boundary formula. The command now has a local 1000000-heartbeat allowance;
+all other commands retain their existing limits. CI must confirm that the
+larger statement and its proof compile.

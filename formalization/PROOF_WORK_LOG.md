@@ -1850,3 +1850,14 @@ was changed.
 - This completes the six-N/four-pairing boundary reduction only. It does
   not establish cancellation with the two-N, four-N, eight-N or ten-N
   strata, or an H10 residual recurrence. Full Lean and Python CI are pending.
+
+
+## 2026-10-31 — Scope the H10 six-N aggregate elaboration budget
+
+The first CI attempt for sg_trace_p10_six_N_stratum_boundary did not
+report a type mismatch or a failed boundary identity. Lean exhausted its
+default 200000-heartbeat budget while reducing the declaration's large
+22-term matrix-trace expression at GlueTrace.lean:2244. Scoped a larger
+heartbeat budget (1000000) to this aggregate theorem alone. No project-wide
+option was changed, and no proof hypothesis or mathematical statement was
+altered. The theorem still needs a fresh full Lean build.

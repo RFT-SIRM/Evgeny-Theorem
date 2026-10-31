@@ -2161,6 +2161,7 @@ the two period-three classes (1,1,3,1,1,3) and (1,2,2,1,2,2)
 have coefficient 5. The coefficients sum to choose(10,6)=210.
 This theorem is a boundary reduction only; it does not assert
 cancellation with the other H10 strata. -/
+set_option maxHeartbeats 1000000 in
 theorem sg_trace_p10_six_N_stratum_boundary
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
