@@ -3935,3 +3935,8 @@ removes the unsupported hkg side conditions from the comparison step. The
 only mathematical inputs are the existing exact six-N boundary identity,
 the degree-seven row congruence, support of the three diagonal boundary
 factors, and cyclicity of trace. H8/H10 remain open.
+
+
+## 2026-10-31 — H8 declaration-order audit
+
+The 0f2fc5c full Lean build compiled GlueTrace and stopped only in FinalTilde at a forward reference to sgK_pow_row_eq_num_til_on_glue_up_to_seven. The theorem existed later in that file; Lean does not permit forward references. The H8 boundary comparison and its two dependent orientation-gap corollaries have been moved after the degree-seven row theorem without changing statements or proof terms. Await the next full build.

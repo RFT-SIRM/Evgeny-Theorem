@@ -1297,3 +1297,8 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   factors. The four original orbit weights 8, 8, 8, and 4 are unchanged.
 - The next full Lean build is the required verification. H8 and H10 remain
   open until the shared boundary residual has its level-transport proof.
+
+
+## 2026-10-31 — H8 declaration order fix
+
+The Lean run 41165333999 compiled GlueTrace but failed in FinalTilde at the use of sgK_pow_row_eq_num_til_on_glue_up_to_seven. The theorem was declared later in the same file. Lean declarations are sequential, so this was a forward-reference error, not a mathematical failure. Moved glueRHS8_num_eq_til and its two dependent orientation-gap corollaries after the degree-seven row theorem. Statements and proof terms are unchanged. A full build is required to confirm.
