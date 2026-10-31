@@ -3295,4 +3295,43 @@ theorem sg_trace_p8_ordered_expansion_boundary
       rw [sg_trace_p8_all_even_strata_boundary m hm θ ax o hanti]
 
 
+/-- The actual level-(m+1) operator has the exact p=8 trace split into
+the three copy contributions and the full even boundary correction.
+The boundary term is retained; no axis-independence or cancellation is
+asserted here. -/
+theorem pOpO_trace8_glue_final
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ 8) =
+      (∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 8)) +
+        glueRHS8 m (sgK m θ ax o) := by
+  let K := sgK m θ ax o
+  let N := (sgGlue m).N
+  have hwords :
+      Matrix.trace ((pOpO (m + 1) θ ax o) ^ 8) =
+        ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum := by
+    simpa [K, N] using
+      (pOpO_succ_trace_ordered_words m θ ax o hax1 hax2 8 (by omega))
+  have hordered :
+      ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum =
+        Matrix.trace (K ^ 8) + glueRHS8 m K := by
+    rw [← trace_orderedWordExpansion K (K * N) 8]
+    simpa [K, N] using
+      (sg_trace_p8_ordered_expansion_boundary m hm θ ax o hanti)
+  have hcopy :
+      Matrix.trace (K ^ 8) =
+        ∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 8) := by
+    simpa [K, sgK] using (trace_blockK_pow (Hc m θ ax o) 8)
+  calc
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ 8) =
+        ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum := hwords
+    _ = Matrix.trace (K ^ 8) + glueRHS8 m K := hordered
+    _ = (∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 8)) +
+        glueRHS8 m K := by
+      rw [hcopy]
+
+
 end EvgenyTheorem

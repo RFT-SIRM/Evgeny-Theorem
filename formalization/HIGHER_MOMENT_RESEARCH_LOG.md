@@ -3631,3 +3631,30 @@ The H8 normalization is therefore changed to include
 strictly reassociation of products; it does not exchange adjacent factors,
 reverse words, invoke conjugation, or alter any orbit coefficient.
 The new full Lean build remains the required test of this correction.
+
+
+## 2026-10-31 — H8 local trace split composed with the actual operator lift
+
+At the verified parent `16c78a8fb79e49ab60c7c7b99dc447be765ec37e`, the level-local identity
+[
+\operatorname{Tr}((K+KN)^8)
+=\operatorname{Tr}(K^8)+\mathrm{glueRHS8}(m,K)
+]
+has a full Lean proof for (m\ge3) under (OAnti(m+1,o)). The actual
+level-lift lemma `pOpO_succ_trace_ordered_words` and the block-diagonal
+trace identity `trace_blockK_pow` are both available at arbitrary positive
+degree. The new theorem `pOpO_trace8_glue_final` composes these facts at
+degree eight and yields
+[
+\operatorname{Tr}(pOpO(m+1,\theta,ax,o)^8)
+=\sum_{c\in GCopy}\operatorname{Tr}(Hc(m,\theta,ax,o,c)^8)
++\mathrm{glueRHS8}(m,sgK(m,\theta,ax,o)).
+]
+
+This theorem preserves the entire positive-even boundary correction,
+including the top (r=8) contribution. It does not assume that
+`glueRHS8` vanishes, is axis-independent, or is the same for the two
+operators in the defect. The next theorem should mirror the existing
+`defectO6_succ`: subtract the two axis instances and identify the three
+copy defects plus the explicit difference of `glueRHS8`. The subsequent
+stabilization question is a separate mathematical obligation.

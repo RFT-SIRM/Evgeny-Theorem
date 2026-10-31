@@ -1045,3 +1045,30 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   altered; associativity only normalizes parentheses.
 - This is a focused correction to the same failed line. Full Lean
   verification on the new SHA is pending.
+
+
+## 2026-10-31 — Lift the verified H8 trace split to the actual glued operator
+
+- Parent `16c78a8fb79e49ab60c7c7b99dc447be765ec37e` passed the complete Lean project build:
+  [run 41154816237](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41154816237),
+  with `Build completed successfully (3060 jobs)`.
+- Added `pOpO_trace8_glue_final`, the degree-eight analogue of the
+  existing `pOpO_trace6_glue_final`. It composes:
+  1. `pOpO_succ_trace_ordered_words` at (p=8);
+  2. the complete local H8 ordered split
+     `sg_trace_p8_ordered_expansion_boundary`;
+  3. the arbitrary-degree block trace identity
+     `trace_blockK_pow` at degree eight.
+- The precise conclusion is
+  `Tr(pOpO(m+1)^8) = Σ_c Tr(Hc(c)^8) + glueRHS8(m,sgK)`.
+  The full boundary correction remains explicit. No equality of its
+  values for different axis configurations, no cancellation, and no
+  level recurrence are claimed by this wrapper.
+- This is one proof-composition step only. Fresh full Lean build is pending;
+  Python workflow for parent `16c78a8fb79e49ab60c7c7b99dc447be765ec37e` was still running at the time of
+  this step and is tracked independently.
+- Next mathematical target after green Lean: define the eighth-moment
+  axis defect and derive its exact copy-split recurrence with the difference
+  of the two `glueRHS8` corrections retained. Only then investigate whether
+  that boundary difference stabilizes under the actual `faceAxis` versus
+  fixed-Z configuration.
