@@ -3432,9 +3432,8 @@ theorem glueRHS8_eq_diagonal_form
   dsimp at hSix
   unfold glueRHS8
   dsimp
-  linear_combination hTwo + hFour + hSix + htop
   unfold glueRHS8_diagonal_form
-  simp [glueRHS8_pair_sum, glueRHS8_pair_product, glueRHS8_pair_value]
+  linear_combination hTwo + hFour + hSix + htop
 
 
 /-- Original p=8 even-stratum contribution before boundary reduction.
