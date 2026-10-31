@@ -4373,10 +4373,31 @@ theorem sg_trace_p10_three_N_stratum_zero
     rw [hrot_r3_12]
     exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
       1 3 3 3 (by omega)
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc] at
-    hzero_r3_1 hzero_r3_2 hzero_r3_3 hzero_r3_4
-    hzero_r3_5 hzero_r3_6 hzero_r3_7 hzero_r3_8
-    hzero_r3_9 hzero_r3_10 hzero_r3_11 hzero_r3_12 ⊢
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_1
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_2
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_3
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_4
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_5
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_6
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_7
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_8
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_9
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_10
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_11
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_12
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
   linear_combination
     hzero_r3_1 + hzero_r3_2 + hzero_r3_3 + hzero_r3_4 +
     hzero_r3_5 + hzero_r3_6 + hzero_r3_7 + hzero_r3_8 +

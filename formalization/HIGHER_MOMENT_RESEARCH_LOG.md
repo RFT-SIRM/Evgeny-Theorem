@@ -4573,3 +4573,12 @@ larger statement and its proof compile.
 - This closes only the p=10 r=3 odd stratum. It does not assemble the
   complete p=10 expansion or prove cancellation/stabilization of the
   remaining even boundary strata. H10 remains open.
+
+
+## 2026-10-31 — H10 r=3 proof parser correction
+
+The Lean parser rejected the line-broken multi-location list after
+`simp ... at`. The proof now simplifies each of the twelve zero-trace
+identities explicitly, then normalizes the target before combining them.
+This is a tactic syntax correction only; the orbit inventory, coefficients,
+and vanishing statements are unchanged.

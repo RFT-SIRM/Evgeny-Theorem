@@ -1874,3 +1874,11 @@ altered. The theorem still needs a fresh full Lean build.
   middle exponents are at most three, below 2^m for m >= 3.
 - Only the r=3 odd stratum is closed by this theorem. Other odd strata,
   the total ordered p=10 expansion, and the boundary recurrence remain open.
+
+
+## 2026-10-31 — Correct Lean tactic-location syntax in H10 r=3 proof
+
+The first retry revealed that the multiline `simp ... at` location list
+was parsed incorrectly. Replaced it with separate explicit simplification
+commands for each of the twelve established zero-trace identities and the
+target. This is syntax-only; no hypotheses or mathematical statements change.
