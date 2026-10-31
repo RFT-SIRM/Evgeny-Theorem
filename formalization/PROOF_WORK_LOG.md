@@ -1592,3 +1592,21 @@ this repair succeeds.
   conversion remains unchanged.
 - No other proof declarations were altered. Await a full Lean build on
   this exact correction before proceeding.
+
+
+## 2026-10-31 — X radius-three sixth/seventh diagonal transport
+
+- Added a common X-corner diagonal transport theorem parameterized by a
+  spin-resolved local-entry bridge. It uses the radius-three X support
+  equivalence and the root pullback at (2^m, 0), not the O-corner origin.
+- The proof explicitly verifies the parent X support contains the pulled
+  root and that every radius-three state around that parent root lies in
+  the parent X support. It transfers row and column vanishing for powers
+  one, two, and three on both levels, then applies the existing finite
+  matrix identity for powers six and seven.
+- Instantiated the common result for the A and C copies using the two
+  already-established X radius-three spin-resolved entry bridges.
+- This completes the X/A and X/C local diagonal-transport components only.
+  The B/Y partner cases, the full H8 boundary-residual stabilization, and
+  H10 remain open. The new declarations are provisional until full Lean
+  CI and both Python test versions pass on this exact commit.

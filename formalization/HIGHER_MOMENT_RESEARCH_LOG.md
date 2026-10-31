@@ -4229,3 +4229,21 @@ parent orientation is oTil m, not oTil (m+1). Corrected that target only;
 hLowC.symm and the final C-shift orientation congruence then line up in
 the intended order. The corrected state wrapper remains unverified until
 the next full Lean build.
+
+
+## 2026-10-31 — X radius-three diagonal transport (A/C copies)
+
+The X radius-three finite-state equivalence is now assembled with the
+spin-resolved A- and C-copy entry bridges into sixth/seventh diagonal
+transport. The proof is centered at the pulled-back X root (2^m, 0). Its
+parent X support is characterized by the lower x-bound and upper y-bound;
+the containment required for the low-level power truncations is derived
+from the radius-three support inequalities relative to that nonzero root.
+For both levels, row and column entries outside the chosen support vanish
+for powers one through three. The generic finite-matrix identity then
+transfers the sixth and seventh diagonal entries.
+
+This is restricted to X with copy A or C and the stated axis-periodicity
+hypothesis. It does not cover Y, the remaining partner copy, the global H8
+boundary residual, or H10. Full Lean and Python CI on the new SHA is still
+required before counting the result as formally established.
