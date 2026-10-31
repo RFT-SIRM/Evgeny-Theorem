@@ -3438,6 +3438,180 @@ theorem glueRHS8_eq_diagonal_form
   linear_combination hTwo + hFour + hSix + htop
 
 
+/-- Convert a finite sum with a conditional zero extension to the
+corresponding sum over the support subtype. -/
+private theorem glueRHS8_sum_ite_eq_subtype
+    {α : Type*} [Fintype α] (p : α → Prop) [DecidablePred p]
+    (f : α → ℂ) :
+    (∑ x, if p x then f x else 0) =
+      ∑ x : {x // p x}, f x.1 := by
+  classical
+  calc
+    (∑ x, if p x then f x else 0) =
+      (∑ x : {x // p x}, if p x.1 then f x.1 else 0) +
+        ∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0 := by
+          exact (Fintype.sum_subtype_add_sum_subtype p
+            (fun x => if p x then f x else 0)).symm
+    _ = _ := by
+      have hpos :
+          (∑ x : {x // p x}, if p x.1 then f x.1 else 0) =
+            ∑ x : {x // p x}, f x.1 := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        exact if_pos x.2
+      have hneg :
+          (∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0) = 0 := by
+        apply Finset.sum_eq_zero
+        intro x hx
+        exact if_neg x.2
+      rw [hpos, hneg]
+      exact add_zero _
+
+/-- Reindex one H8 diagonal pair-product across adjacent levels.
+The first power is evaluated at the glued root and the second at its
+partner. The hypotheses preserve both entries through degree seven. -/
+private theorem glueRHS8_pair_product_transport
+    (m : ℕ)
+    (Khi : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
+    (Klo : Matrix (WSG m) (WSG m) ℂ)
+    (e : {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w})
+    (hpow : ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w),
+      ∀ n, n ≤ 7 →
+        (Khi ^ n) w w =
+          (Klo ^ n) (e ⟨w, hw⟩).1 (e ⟨w, hw⟩).1 ∧
+        (Khi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+          (Klo ^ n) ((sgGlue m).σ (e ⟨w, hw⟩).1)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1))
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w)
+    (ps : List (ℕ × ℕ))
+    (hbound : ∀ p ∈ ps, p.1 ≤ 7 ∧ p.2 ≤ 7) :
+    glueRHS8_pair_product (m + 1) Khi w ps =
+      glueRHS8_pair_product m Klo (e ⟨w, hw⟩).1 ps := by
+  classical
+  revert hbound
+  induction ps with
+  | nil =>
+      intro _
+      rfl
+  | cons p ps ih =>
+      intro hbound
+      have hp := hbound p (by simp)
+      have htail : ∀ q ∈ ps, q.1 ≤ 7 ∧ q.2 ≤ 7 := by
+        intro q hq
+        exact hbound q (by simp [hq])
+      have hvalue :
+          glueRHS8_pair_value (m + 1) Khi w p =
+            glueRHS8_pair_value m Klo (e ⟨w, hw⟩).1 p := by
+        have hfirst := (hpow w hw p.1 hp.1).1
+        have hsecond := (hpow w hw p.2 hp.2).2
+        simp only [glueRHS8_pair_value, hfirst, hsecond]
+      change
+        glueRHS8_pair_value (m + 1) Khi w p *
+            glueRHS8_pair_product (m + 1) Khi w ps =
+          glueRHS8_pair_value m Klo (e ⟨w, hw⟩).1 p *
+            glueRHS8_pair_product m Klo (e ⟨w, hw⟩).1 ps
+      rw [hvalue, ih htail]
+
+/-- A complete finite sum of H8 diagonal pair-products transports across
+an equivalence of the glued-state subtypes. No terms outside the glued set
+are introduced: the conditional sums are converted to subtype sums first. -/
+private theorem glueRHS8_pair_sum_transport
+    (m : ℕ)
+    (Khi : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
+    (Klo : Matrix (WSG m) (WSG m) ℂ)
+    (e : {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w})
+    (hpow : ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w),
+      ∀ n, n ≤ 7 →
+        (Khi ^ n) w w =
+          (Klo ^ n) (e ⟨w, hw⟩).1 (e ⟨w, hw⟩).1 ∧
+        (Khi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+          (Klo ^ n) ((sgGlue m).σ (e ⟨w, hw⟩).1)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1))
+    (ps : List (ℕ × ℕ))
+    (hbound : ∀ p ∈ ps, p.1 ≤ 7 ∧ p.2 ≤ 7) :
+    glueRHS8_pair_sum (m + 1) Khi ps =
+      glueRHS8_pair_sum m Klo ps := by
+  classical
+  unfold glueRHS8_pair_sum
+  calc
+    (∑ w, if (sgGlue (m + 1)).g w then
+        glueRHS8_pair_product (m + 1) Khi w ps else 0) =
+      ∑ w : {w : WSG (m + 1) // (sgGlue (m + 1)).g w},
+        glueRHS8_pair_product (m + 1) Khi w.1 ps := by
+          exact glueRHS8_sum_ite_eq_subtype
+            (fun w : WSG (m + 1) => (sgGlue (m + 1)).g w)
+            (fun w => glueRHS8_pair_product (m + 1) Khi w ps)
+    _ = ∑ w : {w : WSG (m + 1) // (sgGlue (m + 1)).g w},
+        glueRHS8_pair_product m Klo (e w).1 ps := by
+          apply Finset.sum_congr rfl
+          intro w hw
+          exact glueRHS8_pair_product_transport m Khi Klo e hpow
+            (w := w.1) w.2 ps hbound
+    _ = ∑ w : {w : WSG m // (sgGlue m).g w},
+        glueRHS8_pair_product m Klo w.1 ps := by
+          exact Equiv.sum_comp e
+            (fun w : {w : WSG m // (sgGlue m).g w} =>
+              glueRHS8_pair_product m Klo w.1 ps)
+    _ = ∑ w, if (sgGlue m).g w then
+        glueRHS8_pair_product m Klo w ps else 0 := by
+          exact (glueRHS8_sum_ite_eq_subtype
+            (fun w : WSG m => (sgGlue m).g w)
+            (fun w => glueRHS8_pair_product m Klo w ps)).symm
+
+/-- Adjacent-level transport of the complete H8 boundary correction.
+The exact diagonal normal form contains nineteen pair-product sums. Each
+is reindexed by the same glued-root equivalence, using both root and partner
+diagonal powers through degree seven. -/
+theorem glueRHS8_adjacent_level_eq_of_diagonal_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (oHi oLo : Point → Point → Prop)
+    [DecidableRel oHi] [DecidableRel oLo]
+    (hantiHi : OAnti (m + 2) oHi)
+    (hantiLo : OAnti (m + 1) oLo)
+    (e : {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w})
+    (hpow : ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w),
+      ∀ n, n ≤ 7 →
+        (sgK (m + 1) θ ax oHi ^ n) w w =
+          (sgK m θ ax oLo ^ n) (e ⟨w, hw⟩).1 (e ⟨w, hw⟩).1 ∧
+        (sgK (m + 1) θ ax oHi ^ n) ((sgGlue (m + 1)).σ w)
+            ((sgGlue (m + 1)).σ w) =
+          (sgK m θ ax oLo ^ n)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1)) :
+    glueRHS8 (m + 1) (sgK (m + 1) θ ax oHi) =
+      glueRHS8 m (sgK m θ ax oLo) := by
+  rw [glueRHS8_eq_diagonal_form (m + 1) (by omega) θ ax oHi hantiHi,
+    glueRHS8_eq_diagonal_form m hm θ ax oLo hantiLo]
+  unfold glueRHS8_diagonal_form
+  have hsum (ps : List (ℕ × ℕ))
+      (hbound : ∀ p ∈ ps, p.1 ≤ 7 ∧ p.2 ≤ 7) :=
+    glueRHS8_pair_sum_transport m
+      (sgK (m + 1) θ ax oHi) (sgK m θ ax oLo) e hpow ps hbound
+  rw [
+    hsum [(1, 7)] (by norm_num),
+    hsum [(2, 6)] (by norm_num),
+    hsum [(3, 5)] (by norm_num),
+    hsum [(4, 4)] (by norm_num),
+    hsum [(1, 1), (1, 5)] (by norm_num),
+    hsum [(1, 1), (4, 2)] (by norm_num),
+    hsum [(1, 2), (1, 4)] (by norm_num),
+    hsum [(1, 1), (2, 4)] (by norm_num),
+    hsum [(1, 1), (3, 3)] (by norm_num),
+    hsum [(1, 3), (2, 2)] (by norm_num),
+    hsum [(1, 2), (3, 2)] (by norm_num),
+    hsum [(1, 3), (1, 3)] (by norm_num),
+    hsum [(1, 2), (2, 3)] (by norm_num),
+    hsum [(2, 2), (2, 2)] (by norm_num),
+    hsum [(1, 1), (1, 1), (1, 3)] (by norm_num),
+    hsum [(1, 1), (1, 1), (2, 2)] (by norm_num),
+    hsum [(1, 1), (1, 2), (1, 2)] (by norm_num),
+    hsum [(1, 1), (2, 1), (1, 2)] (by norm_num),
+    hsum [(1, 1), (1, 1), (1, 1), (1, 1)] (by norm_num)
+  ]
+
 /-- Original p=8 even-stratum contribution before boundary reduction.
 The sum contains all positive even insertion strata r=2,4,6,8 with
 exact cyclic-orbit weights; the r=0 word is kept separate as trace(K^8). -/

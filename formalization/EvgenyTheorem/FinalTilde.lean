@@ -7134,4 +7134,133 @@ private theorem sgK_glued_partner_diag_one_to_seven_transport
   exact ⟨h1, h2, h3, h4, h5, h6, h7⟩
 
 
+/-- The complete glued-state diagonal transport through degree seven.
+The existing six-case theorem transports the partner diagonals. Applying
+it once more at the partner and using sigma-involutivity transports the
+root diagonals; sgK_root_pullback_sigma aligns the partner on the parent. -/
+private theorem sgK_glued_state_diag_one_to_seven_transport
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
+    ∀ n, n ≤ 7 →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w w =
+        (sgK m θ ax (oTil (m + 1)) ^ n)
+          (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n)
+          ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (sgK m θ ax (oTil (m + 1)) ^ n)
+          ((sgGlue m).σ (sgK_root_pullback m w))
+          ((sgGlue m).σ (sgK_root_pullback m w)) := by
+  classical
+  have hwσ : (sgGlue (m + 1)).g ((sgGlue (m + 1)).σ w) :=
+    (sgGlue (m + 1)).g_σ w hw
+  have hσσ : (sgGlue (m + 1)).σ ((sgGlue (m + 1)).σ w) = w :=
+    (sgGlue (m + 1)).σσ w hw
+  have hrootRaw :=
+    sgK_glued_partner_diag_one_to_seven_transport
+      m hm θ ax haxX haxY (w := (sgGlue (m + 1)).σ w) hwσ
+  dsimp at hrootRaw
+  rcases hrootRaw with ⟨hr1, hr2, hr3, hr4, hr5, hr6, hr7⟩
+  rw [hσσ] at hr1 hr2 hr3 hr4 hr5 hr6 hr7
+  have hpartnerRaw :=
+    sgK_glued_partner_diag_one_to_seven_transport
+      m hm θ ax haxX haxY (w := w) hw
+  dsimp at hpartnerRaw
+  rcases hpartnerRaw with ⟨hp1, hp2, hp3, hp4, hp5, hp6, hp7⟩
+  rw [sgK_root_pullback_sigma m hw] at hp1 hp2 hp3 hp4 hp5 hp6 hp7
+  have hroot :
+      ∀ n, n ≤ 7 →
+        (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w w =
+          (sgK m θ ax (oTil (m + 1)) ^ n)
+            (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+    intro n hn
+    rcases n with _ | n
+    · simp
+    · have hn' : n ≤ 6 := by omega
+      interval_cases n <;> simp [hr1, hr2, hr3, hr4, hr5, hr6, hr7]
+  have hpartner :
+      ∀ n, n ≤ 7 →
+        (sgK (m + 1) θ ax (oTil (m + 2)) ^ n)
+            ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+          (sgK m θ ax (oTil (m + 1)) ^ n)
+            ((sgGlue m).σ (sgK_root_pullback m w))
+            ((sgGlue m).σ (sgK_root_pullback m w)) := by
+    intro n hn
+    rcases n with _ | n
+    · simp
+    · have hn' : n ≤ 6 := by omega
+      interval_cases n <;> simp [hp1, hp2, hp3, hp4, hp5, hp6, hp7]
+  intro n hn
+  exact ⟨hroot n hn, hpartner n hn⟩
+
+/-- Adjacent-level stability of the complete H8 boundary for the exceptional
+orientation. The root and partner diagonal transports are both supplied by
+the six-case glued-state transport above. -/
+theorem glueRHS8_sgK_til_succ
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ)
+    (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k) :
+    glueRHS8 (m + 1) (sgK (m + 1) θ ax (oTil (m + 2))) =
+      glueRHS8 m (sgK m θ ax (oTil (m + 1))) := by
+  apply glueRHS8_adjacent_level_eq_of_diagonal_transport
+    m (by omega) θ ax (oTil (m + 2)) (oTil (m + 1))
+    (oTil_anti (m + 2)) (oTil_anti (m + 1))
+    (sgK_glued_root_equiv m)
+  intro w hw n hn
+  exact sgK_glued_state_diag_one_to_seven_transport
+    m hm θ ax haxX haxY hw n hn
+
+
+/-- The complete exceptional-orientation H8 boundary is stable from level
+four onward. Its value is retained exactly at level four. -/
+theorem glueRHS8_sgK_til_faceAxis_eq_level4
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    glueRHS8 m (sgK m θ faceAxis (oTil (m + 1))) =
+      glueRHS8 4 (sgK 4 θ faceAxis (oTil 5)) := by
+  induction m, hm using Nat.le_induction with
+  | base => rfl
+  | succ n hn ih =>
+      rw [glueRHS8_sgK_til_succ n hn θ faceAxis
+        (faceAxis_pow1 n (by omega)) (faceAxis_pow2 n (by omega)), ih]
+
+/-- The corresponding H8 boundary for the constant axis is also stable. -/
+theorem glueRHS8_sgK_til_const_eq_level4
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    glueRHS8 m (sgK m θ (fun _ => 2) (oTil (m + 1))) =
+      glueRHS8 4 (sgK 4 θ (fun _ => 2) (oTil 5)) := by
+  induction m, hm using Nat.le_induction with
+  | base => rfl
+  | succ n hn ih =>
+      rw [glueRHS8_sgK_til_succ n hn θ (fun _ => 2)
+        (by intro k; rfl) (by intro k; rfl), ih]
+
+/-- Exact level-four correction in the H8 affine recurrence. It consists
+of the face-axis versus constant-axis boundary residual, minus the level-four
+gap between numbering and exceptional orientations. -/
+
+noncomputable def defectO8_num_residual_constant (θ : ℝ) : ℂ :=
+  (glueRHS8 4 (sgK 4 θ faceAxis (oTil 5)) -
+    glueRHS8 4 (sgK 4 θ (fun _ => 2) (oTil 5))) -
+  (defectO8 4 θ faceAxis (fun _ => 2) (oNum 4) -
+    defectO8 4 θ faceAxis (fun _ => 2) (oTil 4))
+
+/-- The numbering-orientation H8 recurrence now has a fixed level-four
+boundary constant. Neither the boundary residual nor the level-four
+orientation gap is assumed to vanish. -/
+theorem defectO8_succ_num_level4_constant_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    defectO8 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
+      3 * defectO8 m θ faceAxis (fun _ => 2) (oNum m) +
+        defectO8_num_residual_constant θ := by
+  rw [defectO8_succ_num m (by omega) θ,
+    glueRHS8_num_eq_til m hm θ faceAxis,
+    glueRHS8_num_eq_til m hm θ (fun _ => 2),
+    glueRHS8_sgK_til_faceAxis_eq_level4 m hm θ,
+    glueRHS8_sgK_til_const_eq_level4 m hm θ]
+  have hgap := defectO8_orientation_difference_eq_level4 m hm θ
+  unfold defectO8_num_residual_constant
+  linear_combination -2 * hgap
+
 end EvgenyTheorem
