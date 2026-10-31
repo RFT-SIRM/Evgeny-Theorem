@@ -4303,3 +4303,19 @@ until the fresh full Lean build passes.
   transport for degrees 6/7 or H8 boundary stabilization. The previous
   SHA's Python 3.11 slow job was still in progress when this commit was
   made; this fact is recorded separately from the new SHA's CI status.
+
+ 
+## 2026-10-31 — Assemble Y radius-three diagonal transport
+ 
+- Fixed the two Y bridge argument mismatches by deriving 3 ≤ m from
+  the existing 4 ≤ m hypothesis.
+- Extended the existing finite-support matrix identity to return the
+  diagonal comparisons for powers 1, 2, and 3 together with powers 6 and 7.
+  The support equivalence and row/column locality hypotheses are unchanged.
+- Adapted the existing X support-local diagonal assembly to the Y/C shift,
+  using the already-proved Y support equivalence and A/B entry bridges.
+- Added the six-case glued-partner assembly for diagonal powers 1, 2, 3, 6,
+  and 7. Powers 4 and 5 remain supplied by the existing radius-two
+  dispatcher used in the sixth-moment boundary argument.
+- This assembles local diagonal-transport infrastructure only; it does not
+  claim H8/H10 closure.
