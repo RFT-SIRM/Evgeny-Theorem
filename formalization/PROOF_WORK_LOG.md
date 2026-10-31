@@ -1232,3 +1232,25 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   common boundary residual itself and derive the exact scalar recurrence.
   H8 and H10 are not marked closed.
 - The new Lean and Python CI runs are pending at this commit.
+
+
+## 2026-10-31 — H8: repair the first failed full-boundary comparison build
+
+- The Lean run for commit 29987eb98f597c8c2fb6691abaa0d1acefad9fe6
+  failed in GlueTrace.lean. The first type error showed that the existing
+  two-kernel collapse theorem only accepts the same kernel on both sides;
+  the new r=6 proof had supplied independent left and right support
+  hypotheses, so that theorem was not applicable.
+- Added an asymmetric two-kernel trace-collapse lemma from the explicit
+  two-index finite-sum formula. It uses the support of both diagonal
+  weights and the separate off-diagonal hypotheses for A and C; it does
+  not assume symmetry or identify A with C.
+- Corrected the r=6 intermediate sum to retain the support indicators
+  inside the diagonal weights until the outer glued-point conditional is
+  simplified. The previous simplifier calls failed because the condition
+  was hidden behind the local abbreviation g.
+- Lifted the three kernel-power bounds from <= 5 to <= 7 when applying
+  the degree-seven row-comparison hypothesis; the off-diagonal support
+  lemma itself remains used only through degree five.
+- This is a compile-error repair only. No mathematical claim is treated
+  as verified until the next full Lean workflow succeeds.

@@ -3871,3 +3871,27 @@ orientation gap reduces to its finite value at level four. That value is not
 claimed to vanish. The common boundary residual still needs a level
 transport/stability proof before the full H8 recurrence is closed; H10
 remains deferred.
+
+
+## 2026-10-31 — H8: repair audit after failed compile
+
+The failed run 41162087152 exposed a mismatch in the generic trace interface:
+the existing theorem trace_kernel_diagonal_kernel_diagonal_collapse has the
+same matrix K on both sides of its two diagonal weights. The three-insertion
+r=6 stratum needs independent matrices A, B, C (instantiated by K^a, K^c,
+K^e), so passing separate off-diagonal hypotheses into the old theorem was
+invalid. The repair introduces an asymmetric two-kernel collapse from its
+explicit two-index trace expansion, after the middle diagonal sandwich has
+been shown diagonal.
+
+The r=6 diagonal weights are supported on the glued set; the remaining
+kernel powers need off-diagonal vanishing on that set only through degree
+five. Comparison of the values on the diagonal still uses the degree-seven
+row equality. The error on the <= 5 / <= 7 argument was a missing monotonic
+bound, not a gap in the geometric support estimate. The nested r=4 proof
+also needed the local predicate abbreviation g unfolded when simplifying
+the outer conditional.
+
+Nothing in this repair changes a trace word, cyclic weight, orientation
+hypothesis, or moment statement. The complete H8 boundary comparison is
+still pending a clean full build; H8/H10 remain open.

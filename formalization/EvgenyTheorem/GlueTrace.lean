@@ -2683,6 +2683,42 @@ noncomputable def glueRHS8
 
 
 
+
+/-- Asymmetric two-kernel version of the supported diagonal trace collapse.
+The left and right kernel factors are independent; their order is retained. -/
+private theorem trace_two_kernel_diagonal_kernel_diagonal_collapse
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (A C : Matrix X X ℂ) (a d : X → ℂ)
+    (ha : ∀ x, ¬ g x → a x = 0)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0)
+    (hC : ∀ x y, g x → g y → x ≠ y → C x y = 0) :
+    Matrix.trace (A * Matrix.diagonal a * C * Matrix.diagonal d) =
+      ∑ x, if g x then A x x * a x * C x x * d x else 0 := by
+  classical
+  have hexpand :
+      Matrix.trace (A * Matrix.diagonal a * C * Matrix.diagonal d) =
+        ∑ x, ∑ y, A x y * a y * C y x * d x := by
+    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
+      Finset.mul_sum, mul_assoc]
+  rw [hexpand]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : g x
+  · simp only [if_pos hgx]
+    rw [Finset.sum_eq_single x]
+    · simp
+    · intro y hy hne
+      by_cases hgy : g y
+      · have hxy : A x y = 0 := hA x y hgx hgy (Ne.symm hne)
+        have hyx : C y x = 0 := hC y x hgy hgx hne
+        simp [hxy, hyx]
+      · simp [ha y hgy]
+    · simp
+  · simp [hgx, hd x hgx]
+
+
 /-- With three supported diagonal insertions, the trace reduces to the
 product of the three kernel diagonal entries and the three weights. The
 three kernel matrices may differ; no factor is permuted. -/
@@ -2734,8 +2770,8 @@ private theorem trace_three_supported_diagonal_collapse
     _ = Matrix.trace (A * Matrix.diagonal e * C *
         Matrix.diagonal d3) := by rw [hmid]
     _ = ∑ x, if g x then A x x * e x * C x x * d3 x else 0 := by
-          exact trace_kernel_diagonal_kernel_diagonal_collapse
-            A g e d3 he hd3 hA hC
+          exact trace_two_kernel_diagonal_kernel_diagonal_collapse
+            g A C e d3 he hd3 hA hC
     _ = ∑ x, if g x then
           A x x * d1 x * B x x * d2 x * C x x * d3 x else 0 := by
           apply Finset.sum_congr rfl
@@ -2842,9 +2878,12 @@ theorem glueRHS8_congr_of_glued_row_pow
         L ^ e * Matrix.diagonal (fun y =>
           if g y then (L ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
       ∑ x, if g x then
-        (L ^ a) x x * (L ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) *
-        (L ^ c) x x * (L ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) *
-        (L ^ e) x x * (L ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        (L ^ a) x x *
+          (if g x then (L ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
+        (L ^ c) x x *
+          (if g x then (L ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
+        (L ^ e) x x *
+          (if g x then (L ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)
         else 0 := by
     exact trace_three_supported_diagonal_collapse
       g (L ^ a) (L ^ c) (L ^ e)
@@ -2878,6 +2917,9 @@ theorem glueRHS8_congr_of_glued_row_pow
           if g y then (K' ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
         K' ^ e * Matrix.diagonal (fun y =>
           if g y then (K' ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+    have ha7 : a ≤ 7 := by omega
+    have hc7 : c ≤ 7 := by omega
+    have he7 : e ≤ 7 := by omega
     rw [hcollapse K hkgK a b c d e f ha hb hc hd he hf,
       hcollapse K' hkgK' a b c d e f ha hb hc hd he hf]
     apply Finset.sum_congr rfl
@@ -2885,11 +2927,11 @@ theorem glueRHS8_congr_of_glued_row_pow
     by_cases hgx : g x
     · simp only [if_pos hgx]
       have hσx := hσ x hgx
-      rw [hrow x hgx a ha x,
+      rw [hrow x hgx a ha7 x,
         hrow ((sgGlue m).σ x) hσx b hb ((sgGlue m).σ x),
-        hrow x hgx c hc x,
+        hrow x hgx c hc7 x,
         hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x),
-        hrow x hgx e he x,
+        hrow x hgx e he7 x,
         hrow ((sgGlue m).σ x) hσx f hf ((sgGlue m).σ x)]
     · simp [hgx]
   have htop :
@@ -2900,7 +2942,7 @@ theorem glueRHS8_congr_of_glued_row_pow
     apply Finset.sum_congr rfl
     intro x hx
     by_cases hgx : g x
-    · simp only [if_pos hgx]
+    · simp only [g, if_pos hgx]
       have hσx := hσ x hgx
       have hxx : K x x = K' x x := by
         simpa [K, K', pow_one] using hrow x hgx 1 (by omega) x
@@ -2909,7 +2951,7 @@ theorem glueRHS8_congr_of_glued_row_pow
         simpa [K, K', pow_one] using
           hrow ((sgGlue m).σ x) hσx 1 (by omega) ((sgGlue m).σ x)
       rw [hxx, hσσ]
-    · simp [hgx]
+    · simp [g, hgx]
   change glueRHS8 m K = glueRHS8 m K'
   dsimp [glueRHS8]
   simp only [pow_zero, Matrix.one_mul]
