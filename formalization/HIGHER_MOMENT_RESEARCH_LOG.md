@@ -4247,3 +4247,14 @@ This is restricted to X with copy A or C and the stated axis-periodicity
 hypothesis. It does not cover Y, the remaining partner copy, the global H8
 boundary residual, or H10. Full Lean and Python CI on the new SHA is still
 required before counting the result as formally established.
+
+
+## 2026-10-31 — X diagonal theorem declaration ordering correction
+
+A source review caught that the first insertion placed the X diagonal theorem
+before the matrix identity and entry-bridge declarations it depends on.
+Moved the theorem block after all of those declarations, at the end of
+FinalTilde.lean, and made the local bridge's membership proofs explicit in
+its binder types. This is a source-ordering correction, not a change to the
+mathematical statement. The prior SHA is not considered validated; full CI
+must run against this corrected SHA.

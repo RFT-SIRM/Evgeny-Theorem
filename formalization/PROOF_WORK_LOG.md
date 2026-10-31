@@ -1610,3 +1610,14 @@ this repair succeeds.
   The B/Y partner cases, the full H8 boundary-residual stabilization, and
   H10 remain open. The new declarations are provisional until full Lean
   CI and both Python test versions pass on this exact commit.
+
+
+## 2026-10-31 — X diagonal theorem declaration ordering correction
+
+A source review caught that the first insertion placed the X diagonal theorem
+before the matrix identity and entry-bridge declarations it depends on.
+Moved the theorem block after all of those declarations, at the end of
+FinalTilde.lean, and made the local bridge's membership proofs explicit in
+its binder types. This is a source-ordering correction, not a change to the
+mathematical statement. The prior SHA is not considered validated; full CI
+must run against this corrected SHA.
