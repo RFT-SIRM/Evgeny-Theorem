@@ -1119,3 +1119,32 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
 - No stabilization or vanishing of the boundary residual is asserted.
   The result is a specialized exact recurrence, not a closed formula.
   Fresh full Lean and Python CI for the new SHA are pending.
+
+
+## 2026-10-31 — Specialize the exact H8 recurrence to the flipped-corner orientation
+
+- Rechecked branch work/h8-h10-exact-recurrence-certificates at parent
+  c801797d9fbab6186d333644de915b2a81ca536c; the complete Lean build passed
+  (lake build EvgenyTheorem, 3,060 jobs) in
+  [41157905894](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41157905894).
+  Python 3.11 and 3.12 fast and slow suites both passed in
+  [41157905863](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41157905863).
+- Added defectO8_succ_til in FinalTilde.lean, using the general
+  defectO8_succ and the verified degree-eight orientation-transfer theorem.
+- The copy transports are explicit: A maps oTil (m+1) to oNum m
+  because cp1_not_A excludes the exceptional edge; B maps to oTil m
+  because cp1_shiftB transports both directions of the exceptional edge;
+  C maps to oTil m because cp1_shiftC proves that neither directed
+  exceptional edge occurs in that copy. Thus the child contribution is
+  exactly one oNum term and two oTil terms.
+- The theorem retains
+  glueRHS8(m, sgK(faceAxis,oTil(m+1))) -
+  glueRHS8(m, sgK(fixed-Z,oTil(m+1)))
+  as an explicit boundary difference. No cancellation, vanishing, or
+  level-independence is asserted.
+- Hypotheses remain m >= 3, θ : ℝ, OAnti (m+1) (oTil (m+1))
+  (provided by oTil_anti), and the already proved two period identities
+  for faceAxis; the fixed-Z axis identities are reflexive.
+- Fresh full Lean and Python CI for the new commit are pending. H8 is still
+  open: next derive the exact orientation-difference recurrence and then
+  prove the needed H8 boundary-residual comparison. H10 remains deferred.

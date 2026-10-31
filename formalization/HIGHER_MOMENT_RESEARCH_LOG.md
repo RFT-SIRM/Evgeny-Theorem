@@ -3717,3 +3717,55 @@ and periodicity assumptions already proved for faceAxis and fixed Z.
 No boundary cancellation is assumed. The next step is the analogous
 oTil recurrence, followed by subtraction of the two exact recurrences
 to isolate the boundary-residual difference.
+
+
+## 2026-10-31 — H8 recurrence for the flipped-corner orientation
+
+Let D8_num(m) be the trace defect for faceAxis versus fixed Z with
+orientation oNum(m), and let D8_til(m) be the same defect with orientation
+oTil(m).
+
+The H8 copy-split theorem defectO8_succ applies to o = oTil (m+1)
+because oTil_anti (m+1) supplies the required OAnti hypothesis. The
+axis-periodicity assumptions are the existing faceAxis_pow1 and
+faceAxis_pow2; they hold for fixed Z by reflexivity.
+
+The three restrictions of the flipped-corner orientation are not identical,
+and the proof keeps their geometry separate:
+
+1. Copy A: cp1_not_A proves that neither direction of the exceptional
+   edge occurs among level-m A-copy face edges. Therefore oTil agrees
+   with oNum there; faceA transports the numbering orientation down a
+   level. The A contribution is D8_num(m).
+2. Copy B: cp1_shiftB identifies both directions of the exceptional
+   level-(m+1) edge after the B shift with the corresponding level-m
+   cp1 edge. Together with faceB, oTil_transport gives the exact
+   B-copy orientation oTil(m). Its contribution is D8_til(m).
+3. Copy C: cp1_shiftC rules out both directions of the exceptional
+   edge on every C-shifted face edge. Hence oTil reduces to oNum
+   on those high-level edges, and faceC transports this to oTil(m).
+   Its contribution is another D8_til(m).
+
+The resulting Lean theorem defectO8_succ_til is the exact identity
+\[
+D^{til}_8(m+1)=D^{num}_8(m)+2D^{til}_8(m)+\Delta B^{til}_8(m),
+\]
+where
+\[
+\begin{aligned}
+\Delta B^{til}_8(m)={}&
+\mathrm{glueRHS8}(m,\mathrm{sgK}(m,\theta,\mathrm{faceAxis},oTil(m+1)))\\
+&-\mathrm{glueRHS8}(m,\mathrm{sgK}(m,\theta,\mathrm{fixedZ},oTil(m+1))).
+\end{aligned}
+\]
+The complete weighted even-boundary sum, including its top stratum, remains
+inside glueRHS8; this recurrence does not claim that the boundary difference
+vanishes or is independent of m.
+
+The next algebraic step is to subtract the already established
+defectO8_succ_til recurrence from defectO8_succ_num (with the order chosen
+consistently) to isolate
+\(\Delta B^{num}_8(m)-\Delta B^{til}_8(m)\).
+That difference still requires a separate H8-specific diagonal-power and
+support/degree audit. No H6 residual lemma is being assumed for degree eight.
+H8 and H10 remain open at this checkpoint.
