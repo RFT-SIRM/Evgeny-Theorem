@@ -2989,7 +2989,7 @@ private theorem trace_two_kernels_supported_diagonal
           · subst y
             simp
           · by_cases hgy : g y
-            · have hzero := hA x y hgx hgy hyx.symm
+            · have hzero := hA x y hgx hgy (Ne.symm hyx)
               simp [hzero]
             · have hazero := ha y hgy
               simp [hazero]
@@ -3124,7 +3124,7 @@ private theorem sg_trace_four_N_boundary_sum_pair_diagonal
           · subst y
             simp [hgx]
           · by_cases hgy : (sgGlue m).g y
-            · have hzero := hAoff x y hgx hgy hyx.symm
+            · have hzero := hAoff x y hgx hgy (Ne.symm hyx)
               simp [hgy, hzero]
             · simp [hgy]
         _ = _ := by simp
@@ -3186,7 +3186,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
       _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
           (K ^ 1) * Matrix.diagonal (d 1) * (K ^ 1) *
           Matrix.diagonal (d 3)) := by
-            simp [pow_zero, pow_one, Matrix.one_mul, D]
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
       _ = ∑ x, if g x then
             ((K ^ 1) x x * d 1 x) *
               ((K ^ 1) x x * d 1 x) *
@@ -3200,7 +3200,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
             · simp only [if_pos hg]
               simp [d, g, hg]
               ring
-            · simp [hg]
+            · simp [d, g, hg]
   have h111122 :
       Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) =
         glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] := by
@@ -3211,7 +3211,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
       _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
           (K ^ 1) * Matrix.diagonal (d 1) * (K ^ 2) *
           Matrix.diagonal (d 2)) := by
-            simp [pow_zero, pow_one, Matrix.one_mul, D]
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
       _ = ∑ x, if g x then
             ((K ^ 1) x x * d 1 x) *
               ((K ^ 1) x x * d 1 x) *
@@ -3225,7 +3225,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
             · simp only [if_pos hg]
               simp [d, g, hg]
               ring
-            · simp [hg]
+            · simp [d, g, hg]
   have h111212 :
       Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) =
         glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] := by
@@ -3236,7 +3236,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
       _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
           (K ^ 1) * Matrix.diagonal (d 2) * (K ^ 1) *
           Matrix.diagonal (d 2)) := by
-            simp [pow_zero, pow_one, Matrix.one_mul, D]
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
       _ = ∑ x, if g x then
             ((K ^ 1) x x * d 1 x) *
               ((K ^ 1) x x * d 2 x) *
@@ -3250,7 +3250,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
             · simp only [if_pos hg]
               simp [d, g, hg]
               ring
-            · simp [hg]
+            · simp [d, g, hg]
   have h112112 :
       Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) =
         glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
@@ -3261,7 +3261,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
       _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
           (K ^ 2) * Matrix.diagonal (d 1) * (K ^ 1) *
           Matrix.diagonal (d 2)) := by
-            simp [pow_zero, pow_one, Matrix.one_mul, D]
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
       _ = ∑ x, if g x then
             ((K ^ 1) x x * d 1 x) *
               ((K ^ 2) x x * d 1 x) *
@@ -3275,7 +3275,7 @@ private theorem sg_trace_p8_six_N_stratum_pair_diagonal
             · simp only [if_pos hg]
               simp [d, g, hg]
               ring
-            · simp [hg]
+            · simp [d, g, hg]
   rw [sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti]
   rw [h111113, h111122, h111212, h112112]
 
@@ -3354,6 +3354,8 @@ private theorem sg_trace_p8_four_N_stratum_pair_diagonal
     4 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 3), (1, 3)] +
     8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (2, 3)] +
     2 * glueRHS8_pair_sum m (sgK m θ ax o) [(2, 2), (2, 2)] := by
+  classical
+  dsimp
   rw [sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti]
   rw [
     sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 1 5 (by omega) (by omega),
@@ -3397,32 +3399,6 @@ private theorem sg_trace_p8_top_stratum_pair_diagonal
             ring
           · simp [hg]
 
-/-- Exact diagonal normal form of glueRHS8. No term is discarded: the r=4
-and r=6 reductions use off-diagonal glued-state vanishing, and the top r=8
-term remains as the fourth-power endpoint. -/
-private noncomputable def glueRHS8_diagonal_form
-    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
-  8 * glueRHS8_pair_sum m K [(1, 7)] +
-  8 * glueRHS8_pair_sum m K [(2, 6)] +
-  8 * glueRHS8_pair_sum m K [(3, 5)] +
-  4 * glueRHS8_pair_sum m K [(4, 4)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (1, 5)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (4, 2)] +
-  8 * glueRHS8_pair_sum m K [(1, 2), (1, 4)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (2, 4)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (3, 3)] +
-  8 * glueRHS8_pair_sum m K [(1, 3), (2, 2)] +
-  8 * glueRHS8_pair_sum m K [(1, 2), (3, 2)] +
-  4 * glueRHS8_pair_sum m K [(1, 3), (1, 3)] +
-  8 * glueRHS8_pair_sum m K [(1, 2), (2, 3)] +
-  2 * glueRHS8_pair_sum m K [(2, 2), (2, 2)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] +
-  8 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] +
-  4 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] +
-  glueRHS8_pair_sum m K
-    [(1, 1), (1, 1), (1, 1), (1, 1)]
-
 /-- Exact normal form of the complete H8 boundary correction. All four even
 insertion strata remain present with their original cyclic weights. -/
 theorem glueRHS8_eq_diagonal_form
@@ -3432,13 +3408,26 @@ theorem glueRHS8_eq_diagonal_form
     glueRHS8 m (sgK m θ ax o) =
       glueRHS8_diagonal_form m (sgK m θ ax o) := by
   classical
+  have htop :
+      (∑ x, if (sgGlue m).g x then
+        (sgK m θ ax o x x *
+          sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) =
+      glueRHS8_pair_sum m (sgK m θ ax o)
+        [(1, 1), (1, 1), (1, 1), (1, 1)] := by
+    unfold glueRHS8_pair_sum
+    simp only [glueRHS8_pair_product, glueRHS8_pair_value, pow_one]
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hg : (sgGlue m).g x
+    · simp only [if_pos hg]
+      ring
+    · simp [hg]
   unfold glueRHS8 glueRHS8_diagonal_form
-  rw [
-    sg_trace_p8_two_N_stratum_pair_diagonal m hm θ ax o hanti,
-    sg_trace_p8_four_N_stratum_pair_diagonal m hm θ ax o hanti,
-    sg_trace_p8_six_N_stratum_pair_diagonal m hm θ ax o hanti,
-    sg_trace_p8_top_stratum_pair_diagonal m hm θ ax o hanti
-  ]
+  rw [← sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti]
+  rw [sg_trace_p8_four_N_stratum_pair_diagonal m hm θ ax o hanti]
+  rw [sg_trace_p8_six_N_stratum_pair_diagonal m hm θ ax o hanti]
+  rw [htop]
+  simp [glueRHS8_pair_sum, glueRHS8_pair_product, glueRHS8_pair_value]
 
 
 /-- Original p=8 even-stratum contribution before boundary reduction.
