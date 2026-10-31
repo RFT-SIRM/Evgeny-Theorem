@@ -1346,3 +1346,16 @@ The Lean run 41165333999 compiled GlueTrace but failed in FinalTilde at the use 
 - The full Lean workflow on the parent d74731b succeeded. The parent
   Python 3.11/3.12 slow suites were still reported in progress at the last
   status poll; the new commit will be checked independently.
+
+
+## 2026-10-31 — H8 degree-six/seven helper: CI correction
+
+- Lean run 41167830823 on parent 4e4f1bb found two elaboration issues in
+  the new generic helper, both local to root-value rewriting:
+  (1) the degree-two column calculation needed hrootVal after hEntry z xr;
+  (2) the degree-three row reindexing already had x' and must not rewrite
+      hrootVal a second time.
+- Applied only those two proof-script corrections and removed empty lines
+  inside the theorem proof that triggered style warnings. The matrix
+  factorizations, finite-support hypotheses, and theorem statement are
+  unchanged. Full Lean verification is required on the corrected commit.

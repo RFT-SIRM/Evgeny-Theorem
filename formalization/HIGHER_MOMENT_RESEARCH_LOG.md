@@ -3986,3 +3986,16 @@ diagonal-times-kernel blocks. It does not collapse those traces to
 pointwise diagonal sums or invoke a new asymmetric trace-collapse theorem.
 The earlier experimental r=6 collapse attempts are historical failure
 records only; they are not part of the current proof.
+
+
+## 2026-10-31 — Audit of the degree-six/seven Lean failure
+
+The first CI run of the generic local transport lemma exposed no
+mathematical counterexample and no failure of the K^6=K^3K^3 or
+K^7=K^3K^4 decompositions. It found two missing/redundant rewrites of the
+matched root value in the finite-sum transport proof. The column degree-two
+case now explicitly rewrites e(root) to the target root after applying the
+local-entry hypothesis; the row degree-three case no longer tries to rewrite
+a root expression after it has already been normalized to the target root.
+This repairs the proof script only. The concrete radius-three Sierpinski
+support equivalences and H8 residual-level stability remain unproved.

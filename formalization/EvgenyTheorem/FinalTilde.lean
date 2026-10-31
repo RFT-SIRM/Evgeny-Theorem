@@ -3283,7 +3283,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
   classical
   let xr : {z : W // z ∈ S} := ⟨x, hx⟩
   have hrootVal : (e xr).1 = x' := congrArg Subtype.val hroot
-
   have hpow2Row : ∀ y : {z : W // z ∈ S},
       (K ^ 2) x y.1 = (L ^ 2) x' (e y).1 := by
     intro y
@@ -3303,7 +3302,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
         rw [hEntry xr z, hEntry z y]
       _ = ∑ z : {z : V // z ∈ T},
           L x' z.1 * L z.1 (e y).1 := by
-        rw [hrootVal]
         exact Equiv.sum_comp e
           (fun z : {z : V // z ∈ T} => L x' z.1 * L z.1 (e y).1)
       _ = ∑ z, L x' z * L z (e y).1 := by
@@ -3315,7 +3313,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
             simp [hRowOne' z hz])
       _ = (L ^ 2) x' (e y).1 := by
         simp [pow_two, Matrix.mul_apply]
-
   have hpow2Col : ∀ y : {z : W // z ∈ S},
       (K ^ 2) y.1 x = (L ^ 2) (e y).1 x' := by
     intro y
@@ -3332,7 +3329,7 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           L (e y).1 (e z).1 * L (e z).1 x' := by
         apply Finset.sum_congr rfl
         intro z hz
-        rw [hEntry y z, hEntry z xr]
+        rw [hEntry y z, hEntry z xr, hrootVal]
       _ = ∑ z : {z : V // z ∈ T},
           L (e y).1 z.1 * L z.1 x' :=
         Equiv.sum_comp e
@@ -3347,7 +3344,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
             simp [hColOne' z hz])
       _ = (L ^ 2) (e y).1 x' := by
         simp [pow_two, Matrix.mul_apply]
-
   have hpow3Row : ∀ y : {z : W // z ∈ S},
       (K ^ 3) x y.1 = (L ^ 3) x' (e y).1 := by
     intro y
@@ -3384,7 +3380,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
       _ = (L ^ 3) x' (e y).1 := by
         rw [show (3 : ℕ) = 2 + 1 by norm_num,
           pow_add, pow_one, Matrix.mul_apply]
-
   have hpow3Col : ∀ y : {z : W // z ∈ S},
       (K ^ 3) y.1 x = (L ^ 3) (e y).1 x' := by
     intro y
@@ -3420,7 +3415,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
       _ = (L ^ 3) (e y).1 x' := by
         rw [show (3 : ℕ) = 1 + 2 by norm_num,
           pow_add, pow_one, Matrix.mul_apply]
-
   have hpow4Col : ∀ y : {z : W // z ∈ S},
       (K ^ 4) y.1 x = (L ^ 4) (e y).1 x' := by
     intro y
@@ -3456,7 +3450,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
       _ = (L ^ 4) (e y).1 x' := by
         rw [show (4 : ℕ) = 1 + 3 by norm_num,
           pow_add, pow_one, Matrix.mul_apply]
-
   have hsixK : (K ^ 6) x x =
       ∑ y : {z : W // z ∈ S},
         (K ^ 3) x y.1 * (K ^ 3) y.1 x := by
@@ -3471,7 +3464,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           (by
             intro y hy
             simp [hRowThree y hy])
-
   have hsixL : (L ^ 6) x' x' =
       ∑ y : {z : V // z ∈ T},
         (L ^ 3) x' y.1 * (L ^ 3) y.1 x' := by
@@ -3486,7 +3478,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           (by
             intro y hy
             simp [hRowThree' y hy])
-
   have hsevenK : (K ^ 7) x x =
       ∑ y : {z : W // z ∈ S},
         (K ^ 3) x y.1 * (K ^ 4) y.1 x := by
@@ -3501,7 +3492,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           (by
             intro y hy
             simp [hRowThree y hy])
-
   have hsevenL : (L ^ 7) x' x' =
       ∑ y : {z : V // z ∈ T},
         (L ^ 3) x' y.1 * (L ^ 4) y.1 x' := by
@@ -3516,7 +3506,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           (by
             intro y hy
             simp [hRowThree' y hy])
-
   constructor
   · calc
       (K ^ 6) x x =
@@ -3548,7 +3537,6 @@ private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
           (fun y : {z : V // z ∈ T} =>
             (L ^ 3) x' y.1 * (L ^ 4) y.1 x')
       _ = (L ^ 7) x' x' := hsevenL.symm
-
 
 /-- Symmetry of the finite radius-two support around its center. -/
 private theorem sgK_radius_two_support_symm
