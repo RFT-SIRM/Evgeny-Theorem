@@ -1072,3 +1072,27 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   of the two `glueRHS8` corrections retained. Only then investigate whether
   that boundary difference stabilizes under the actual `faceAxis` versus
   fixed-Z configuration.
+
+
+## 2026-10-31 — Exact H8 defect recurrence with the boundary difference retained
+
+- Parent `8ee1dee5cbd78776bdd28904d9a575f457091618` was verified by both CI workflows:
+  Lean [41155855127](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41155855127)
+  passed the full `lake build EvgenyTheorem` (3,060 jobs), and Python
+  [41155855107](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/runs/41155855107)
+  passed both Python 3.11 and 3.12.
+- Added `defectO8`, the difference of the two degree-eight traces for
+  arbitrary axis functions `ax` and `ax'`.
+- Added `defectO8_succ`, under the exact same hypotheses pattern as the
+  verified `defectO6_succ`: (m\ge3), `OAnti (m+1) o`, and the two
+  level-periodicity equations for each axis function.
+- The proof applies `pOpO_trace8_glue_final` to both axis configurations,
+  rewrites the two block sums with `sum_gcopy` and the defining identities
+  for `Hc), then closes the subtraction identity by ring normalization.
+- The exact conclusion is
+  `D8(m+1)=D8(m,o)+D8(m,oBo)+D8(m,oCo)+ΔB8(m)`, where
+  `ΔB8(m)=glueRHS8(m,sgK(ax,o))-glueRHS8(m,sgK(ax',o))`.
+  The boundary difference is not set to zero, and this theorem alone does
+  not establish a closed form or a scalar recurrence for the faceAxis/Z
+  specialization.
+- Fresh full Lean and Python CI for the new source SHA are pending.

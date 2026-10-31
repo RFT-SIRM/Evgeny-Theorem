@@ -3334,4 +3334,44 @@ theorem pOpO_trace8_glue_final
       rw [hcopy]
 
 
+/-- Eighth-moment defect between two axis configurations at the same
+level and orientation. -/
+noncomputable def defectO8
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] : ℂ :=
+  Matrix.trace ((pOpO m θ ax o) ^ 8) -
+    Matrix.trace ((pOpO m θ ax' o) ^ 8)
+
+/-- Exact level recursion for the eighth-moment axis defect. The three
+copy defects are separated, and the difference of the two complete H8
+boundary corrections is retained explicitly. No boundary cancellation
+or stabilization is assumed. -/
+theorem defectO8_succ
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hax1' : ∀ k, ax' (3 ^ m + k) = ax' k)
+    (hax2' : ∀ k, ax' (2 * 3 ^ m + k) = ax' k) :
+    defectO8 (m + 1) θ ax ax' o =
+      defectO8 m θ ax ax' o +
+      defectO8 m θ ax ax' (oBo m o) +
+      defectO8 m θ ax ax' (oCo m o) +
+      (glueRHS8 m (sgK m θ ax o) -
+        glueRHS8 m (sgK m θ ax' o)) := by
+  have hA : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.A = pOpO m θ b o := fun _ => rfl
+  have hB : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.B = pOpO m θ b (oBo m o) := fun _ => rfl
+  have hC : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.C = pOpO m θ b (oCo m o) := fun _ => rfl
+  unfold defectO8
+  rw [pOpO_trace8_glue_final m hm θ ax o hax1 hax2 hanti,
+    pOpO_trace8_glue_final m hm θ ax' o hax1' hax2' hanti]
+  rw [sum_gcopy, sum_gcopy,
+    hA ax, hA ax', hB ax, hB ax', hC ax, hC ax']
+  ring
+
+
 end EvgenyTheorem

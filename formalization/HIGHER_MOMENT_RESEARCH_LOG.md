@@ -3658,3 +3658,35 @@ operators in the defect. The next theorem should mirror the existing
 `defectO6_succ`: subtract the two axis instances and identify the three
 copy defects plus the explicit difference of `glueRHS8`. The subsequent
 stabilization question is a separate mathematical obligation.
+
+
+## 2026-10-31 — Exact eighth-moment defect recursion
+
+For arbitrary axis functions (ax,ax'), define
+[
+D_8(m,\theta,ax,ax',o)
+=\operatorname{Tr}(pOpO(m,\theta,ax,o)^8)
+-\operatorname{Tr}(pOpO(m,\theta,ax',o)^8).
+]
+The new theorem `defectO8_succ` proves, for (m\ge3), `OAnti(m+1,o)`,
+and the stated level-periodicity assumptions on both axis functions,
+[
+\begin{aligned}
+D_8(m+1,o)={}&D_8(m,o)+D_8(m,oBo(m,o))\\
+&+D_8(m,oCo(m,o))\\
+&+\bigl(\mathrm{glueRHS8}(m,sgK(ax,o))
+-\mathrm{glueRHS8}(m,sgK(ax',o))\bigr).
+\end{aligned}
+]
+The identity is obtained only by subtracting the two independently proved
+`pOpO_trace8_glue_final` identities, using the exact three-copy
+decomposition. Every boundary contribution is retained inside the named
+`glueRHS8) expression. There is no hypothesis or conclusion that this
+difference is zero, constant in (m), or independent of the axis function.
+
+This is an exact copy-split recurrence for the general orientation defect,
+not yet the scalar recurrence for the particular `faceAxis` versus fixed-Z
+defect. The remaining mathematical work is to analyze the boundary
+difference for that actual pair, with support and degree conditions proved
+at the appropriate level; only then can one infer an all-level growth law.
+The current theorem is not a closed-form H8 result.
