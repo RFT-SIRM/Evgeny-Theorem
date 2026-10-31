@@ -1173,3 +1173,32 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   R8_num(m)-R8_til(m), auditing all diagonal powers through the boundary
   degree and the precise support/degree conditions. Do not reuse the
   degree-six residual theorem without a separate degree-eight proof.
+
+
+## 2026-10-31 — H8: extend flip-insensitivity of glued rows through degree seven
+
+- Parent f15bdb55a5404c36dce8e2c4ba7d0c546a8a1848 has a successful
+  full Lean build in run 41159919623. Python 3.11 fast and slow suites
+  passed in run 41159919646; Python 3.12 fast passed and its slow suite
+  was still running at the time of this step.
+- The source audit of glueRHS8 shows that its largest explicit boundary
+  diagonal power is seven, in the r=2 term (K^1)xx (K^7)sigma(x),sigma(x).
+  The other r=2 terms use powers 2, 6, 3, 5, and 4; the r=4/r=6/r=8
+  terms use powers no larger than those displayed in the definition.
+- The existing flip-insensitivity lemma only covers rows through power
+  five, because the distance from the B-copy glued corners to the
+  exceptional edge is at least seven when m=3. That does not justify
+  a degree-seven path argument at m=3.
+- Added sgK_pow_zero_from_glue_to_flip_up_to_six for m >= 4,
+  using the actual coordinate gap 2^m - 1 > 7 >= n, and then
+  sgK_pow_row_eq_num_til_on_glue_up_to_seven and its diagonal
+  corollary. The proof changes no operator or orientation hypotheses:
+  the comparison is between oNum (m+1) and oTil (m+1), and is
+  obtained from the previously proved row congruence away from the flip.
+- This establishes the support/entry-comparison prerequisite for the
+  H8 boundary residual audit. It does not yet prove that all of
+  glueRHS8 is invariant, because each of its 19 boundary classes,
+  including the four ordered r=6 traces and the top r=8 term, must be
+  reduced to the specific glued-row/diagonal comparisons.
+- The new full Lean and Python workflows are pending. H8 and H10 remain
+  open; H10 is deferred until the H8 boundary comparison is proved.

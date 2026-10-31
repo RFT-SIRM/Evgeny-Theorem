@@ -524,6 +524,89 @@ theorem sgK_pow_diag_eq_num_til_on_glue
 
 
 
+
+/-- The flipped edge is farther than six steps from every glued state in
+copy B once m ≥ 4. This is the degree-eight analogue of the p=6 bound. -/
+theorem sgK_pow_zero_from_glue_to_flip_up_to_six
+    (m n : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (w z : WSG m) (hw : (sgGlue m).g w)
+    (hz : p6FlipEndpoint m z) (hn : n ≤ 6) :
+    (sgK m θ ax o ^ n) w z = 0 := by
+  classical
+  by_cases hb : w.1 = GCopy.B
+  · have hpB : w.2.1.1 = (0, 0) ∨ w.2.1.1 = (0, 2 ^ m) :=
+      glued_B_point m hw hb
+    have hpow : 16 ≤ 2 ^ m := by
+      calc
+        16 = 2 ^ 4 := by norm_num
+        _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+    have hside : 7 < 2 ^ m - 1 := by omega
+    rcases hz with ⟨hzB, hzpt⟩
+    have hxw : w.2.1.1.1 = 0 := by
+      rcases hpB with hp | hp <;> simp [hp]
+    rcases hzpt with hzpt | hzpt
+    · apply sgK_pow_entry_zero_of_coord_gap m n θ ax o w z
+      right
+      left
+      rw [hxw, congrArg Prod.fst hzpt]
+      omega
+    · apply sgK_pow_entry_zero_of_coord_gap m n θ ax o w z
+      right
+      left
+      rw [hxw, congrArg Prod.fst hzpt]
+      omega
+  · have hcopy : w.1 ≠ z.1 := by
+      intro h
+      apply hb
+      rw [hz.1] at h
+      exact h
+    change (blockK (Hc m θ ax o) ^ n) w z = 0
+    rw [blockK_pow_local]
+    simp [blockK, hcopy]
+
+/-- For levels m ≥ 4, every row of K^n starting at a glued state is
+unchanged by the single exceptional orientation flip for n ≤ 7. The
+induction uses the preceding distance bound only at the penultimate step. -/
+theorem sgK_pow_row_eq_num_til_on_glue_up_to_seven
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (w : WSG m) (hw : (sgGlue m).g w) :
+    ∀ n, n ≤ 7 → ∀ z,
+      (sgK m θ ax (oNum (m + 1)) ^ n) w z =
+        (sgK m θ ax (oTil (m + 1)) ^ n) w z := by
+  classical
+  intro n
+  induction n with
+  | zero =>
+      intro hn z
+      simp
+  | succ n ih =>
+      intro hn z
+      have hn6 : n ≤ 6 := by omega
+      rw [pow_succ, pow_succ, Matrix.mul_apply, Matrix.mul_apply]
+      apply Finset.sum_congr rfl
+      intro y hy
+      by_cases hflip : p6FlipEndpoint m y
+      · have hnum := sgK_pow_zero_from_glue_to_flip_up_to_six
+          m n hm θ ax (oNum (m + 1)) w y hw hflip hn6
+        have htil := sgK_pow_zero_from_glue_to_flip_up_to_six
+          m n hm θ ax (oTil (m + 1)) w y hw hflip hn6
+        rw [hnum, htil]
+        simp
+      · have hn7 : n ≤ 7 := by omega
+        rw [ih hn7 y, sgK_num_til_row_eq_away_flip m (by omega) θ ax y z hflip]
+
+/-- Diagonal specialization of the seven-power glued-row comparison. -/
+theorem sgK_pow_diag_eq_num_til_on_glue_up_to_seven
+    (m n : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (w : WSG m) (hw : (sgGlue m).g w) (hn : n ≤ 7) :
+    (sgK m θ ax (oNum (m + 1)) ^ n) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ n) w w :=
+  sgK_pow_row_eq_num_til_on_glue_up_to_seven m hm θ ax w hw n hn w
+
+
+
+
 /-- The p=6 boundary residual is independent of the single flipped edge.
 Every glued diagonal of powers up to five is unchanged, since a walk of length
 at most five from a glued corner cannot reach either endpoint of that edge. -/

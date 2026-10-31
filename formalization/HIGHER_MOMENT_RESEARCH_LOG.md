@@ -3799,3 +3799,42 @@ degree hypotheses for both orientations. The degree-six argument controlling
 only its power-five endpoint residual cannot be promoted to degree eight
 by analogy. Until this H8-specific comparison is proved, neither constancy
 of G8 nor a scalar closed recurrence for D8_num follows.
+
+
+## 2026-10-31 — H8 flipped-edge distance threshold for boundary powers
+
+The definition of glueRHS8 is an exact sum of all positive even boundary
+strata. Its first four r=2 terms contain corner diagonal powers
+(1,7), (2,6), (3,5), and (4,4). The r=4 boundary terms are ten weighted
+four-N boundary sums with exponent tuples
+(1,1,1,5), (1,1,4,2), (1,2,1,4), (1,1,2,4), (1,1,3,3),
+(1,3,2,2), (1,2,3,2), (1,3,1,3), (1,2,2,3), and (2,2,2,2).
+The r=6 part consists of four diagonal-insertion traces with powers
+(1,1,1,3), (1,1,2,2), (1,2,1,2), and (1,2,1,2) in their diagonal
+factors. The r=8 top term is the fourth power of the product of the two
+first-power corner diagonals. Thus the maximal power needed to compare
+individual glued-corner diagonals in the full boundary correction is seven.
+
+The exceptional edge distinguishing oNum(m+1) and oTil(m+1) lies in
+copy B at local bottom-edge coordinates 2^m-1 and 2^m. Every glued
+B-copy state is at local point (0,0) or (0,2^m), so its first coordinate
+is zero. The generic coordinate-propagation lemma for sgK^n therefore
+makes a row entry to either flipped endpoint vanish whenever the first
+coordinate gap is greater than n.
+
+For degree six the old argument uses m>=3 and powers through five. For
+degree eight, the power-seven endpoint is not covered uniformly at m=3:
+the exceptional endpoint (2^3-1,0) has first-coordinate gap exactly
+seven. For m>=4, however, 2^m-1 >= 15, so every power n<=6 is strictly
+shorter than the gap. This is the exact threshold used in the new Lean
+lemma sgK_pow_zero_from_glue_to_flip_up_to_six.
+
+By induction on n, that zero-entry lemma and the already proved row
+equality away from the flipped endpoint yield
+sgK_pow_row_eq_num_til_on_glue_up_to_seven; its diagonal specialization
+is sgK_pow_diag_eq_num_til_on_glue_up_to_seven. These are local operator
+comparison facts only. They do not yet imply glueRHS8 invariance until
+the complete r=2, r=4, r=6, and r=8 expressions have each been rewritten
+using the relevant boundary diagonal or row equalities. In particular,
+do not omit the four ordered r=6 trace terms or the top r=8 fourth-power
+term.
