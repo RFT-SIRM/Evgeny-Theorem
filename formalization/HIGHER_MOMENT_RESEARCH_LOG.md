@@ -3959,3 +3959,30 @@ reported only this parser error in that run. The full comment is restored
 without changing the proof. There is no local Lean/Lake toolchain in the
 execution image, so the next full Actions build is the authoritative compile
 check.
+
+
+## 2026-10-31 — H8: degree-seven corner transport target
+
+For a diagonal entry (K^n)xx, every intermediate vertex in a
+length-n closed walk from x is within graph distance min(j,n-j) after j
+steps. Thus degrees at most seven require only the radius-three
+neighborhood of each glued corner. The H6 transport already proves
+degrees four and five using radius-two supports; the missing H8 case is
+degrees six and seven.
+
+A new generic finite-neighborhood lemma in FinalTilde.lean,
+matrix_pow_six_seven_diag_eq_of_local_equiv, isolates the algebraic part.
+It proves degree-six and degree-seven diagonal equality from matched local
+entries and root row/column support through degree three, using the ordered
+factorizations K^6=K^3K^3 and K^7=K^3K^4. The concrete Sierpinski
+radius-three support equivalences and their copy/orientation entry bridges
+remain to be established. This lemma does not by itself show that any
+H8 boundary residual is level-independent.
+
+Clarification of the preceding orientation-comparison audit: the current
+glueRHS8_congr_of_glued_row_pow compares the four r=6 traces by cyclically
+rotating each original ordered trace and equating the three supported
+diagonal-times-kernel blocks. It does not collapse those traces to
+pointwise diagonal sums or invoke a new asymmetric trace-collapse theorem.
+The earlier experimental r=6 collapse attempts are historical failure
+records only; they are not part of the current proof.

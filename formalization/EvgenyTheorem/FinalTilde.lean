@@ -3251,6 +3251,305 @@ private theorem matrix_pow_four_five_diag_eq_of_local_equiv
       _ = (L ^ 5) x' x' := hfiveL.symm
 
 
+
+/-- Local entries on matched radius-three neighborhoods determine the
+sixth- and seventh-power diagonal entries at their roots. The factorizations
+are K^6 = K^3*K^3 and K^7 = K^3*K^4; the support hypotheses restrict the
+intermediate index to the matched finite neighborhood without reversing any
+matrix word. -/
+private theorem matrix_pow_six_seven_diag_eq_of_local_equiv
+    {W V : Type*} [Fintype W] [DecidableEq W] [Fintype V] [DecidableEq V]
+    (K : Matrix W W ℂ) (L : Matrix V V ℂ)
+    (S : Finset W) (T : Finset V)
+    (e : {z : W // z ∈ S} ≃ {z : V // z ∈ T})
+    (x : W) (x' : V) (hx : x ∈ S) (hx' : x' ∈ T)
+    (hroot : e ⟨x, hx⟩ = ⟨x', hx'⟩)
+    (hEntry : ∀ a b : {z : W // z ∈ S},
+      K a.1 b.1 = L (e a).1 (e b).1)
+    (hRowOne : ∀ z, z ∉ S → K x z = 0)
+    (hColOne : ∀ z, z ∉ S → K z x = 0)
+    (hRowTwo : ∀ z, z ∉ S → (K ^ 2) x z = 0)
+    (hColTwo : ∀ z, z ∉ S → (K ^ 2) z x = 0)
+    (hRowThree : ∀ z, z ∉ S → (K ^ 3) x z = 0)
+    (hColThree : ∀ z, z ∉ S → (K ^ 3) z x = 0)
+    (hRowOne' : ∀ z, z ∉ T → L x' z = 0)
+    (hColOne' : ∀ z, z ∉ T → L z x' = 0)
+    (hRowTwo' : ∀ z, z ∉ T → (L ^ 2) x' z = 0)
+    (hColTwo' : ∀ z, z ∉ T → (L ^ 2) z x' = 0)
+    (hRowThree' : ∀ z, z ∉ T → (L ^ 3) x' z = 0)
+    (hColThree' : ∀ z, z ∉ T → (L ^ 3) z x' = 0) :
+    (K ^ 6) x x = (L ^ 6) x' x' ∧
+      (K ^ 7) x x = (L ^ 7) x' x' := by
+  classical
+  let xr : {z : W // z ∈ S} := ⟨x, hx⟩
+  have hrootVal : (e xr).1 = x' := congrArg Subtype.val hroot
+
+  have hpow2Row : ∀ y : {z : W // z ∈ S},
+      (K ^ 2) x y.1 = (L ^ 2) x' (e y).1 := by
+    intro y
+    calc
+      (K ^ 2) x y.1 = ∑ z, K x z * K z y.1 := by
+        simp [pow_two, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S}, K x z.1 * K z.1 y.1 :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K x z * K z y.1)
+          (by
+            intro z hz
+            simp [hRowOne z hz])
+      _ = ∑ z : {z : W // z ∈ S},
+          L (e xr).1 (e z).1 * L (e z).1 (e y).1 := by
+        apply Finset.sum_congr rfl
+        intro z hz
+        rw [hEntry xr z, hEntry z y]
+      _ = ∑ z : {z : V // z ∈ T},
+          L x' z.1 * L z.1 (e y).1 := by
+        rw [hrootVal]
+        exact Equiv.sum_comp e
+          (fun z : {z : V // z ∈ T} => L x' z.1 * L z.1 (e y).1)
+      _ = ∑ z, L x' z * L z (e y).1 := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L x' z * L z (e y).1)
+          (by
+            intro z hz
+            simp [hRowOne' z hz])
+      _ = (L ^ 2) x' (e y).1 := by
+        simp [pow_two, Matrix.mul_apply]
+
+  have hpow2Col : ∀ y : {z : W // z ∈ S},
+      (K ^ 2) y.1 x = (L ^ 2) (e y).1 x' := by
+    intro y
+    calc
+      (K ^ 2) y.1 x = ∑ z, K y.1 z * K z x := by
+        simp [pow_two, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S}, K y.1 z.1 * K z.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K y.1 z * K z x)
+          (by
+            intro z hz
+            simp [hColOne z hz])
+      _ = ∑ z : {z : W // z ∈ S},
+          L (e y).1 (e z).1 * L (e z).1 x' := by
+        apply Finset.sum_congr rfl
+        intro z hz
+        rw [hEntry y z, hEntry z xr]
+      _ = ∑ z : {z : V // z ∈ T},
+          L (e y).1 z.1 * L z.1 x' :=
+        Equiv.sum_comp e
+          (fun z : {z : V // z ∈ T} =>
+            L (e y).1 z.1 * L z.1 x')
+      _ = ∑ z, L (e y).1 z * L z x' := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L (e y).1 z * L z x')
+          (by
+            intro z hz
+            simp [hColOne' z hz])
+      _ = (L ^ 2) (e y).1 x' := by
+        simp [pow_two, Matrix.mul_apply]
+
+  have hpow3Row : ∀ y : {z : W // z ∈ S},
+      (K ^ 3) x y.1 = (L ^ 3) x' (e y).1 := by
+    intro y
+    calc
+      (K ^ 3) x y.1 =
+          ∑ z, (K ^ 2) x z * K z y.1 := by
+        rw [show (3 : ℕ) = 2 + 1 by norm_num,
+          pow_add, pow_one, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S},
+          (K ^ 2) x z.1 * K z.1 y.1 :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => (K ^ 2) x z * K z y.1)
+          (by
+            intro z hz
+            simp [hRowTwo z hz])
+      _ = ∑ z : {z : W // z ∈ S},
+          (L ^ 2) x' (e z).1 * L (e z).1 (e y).1 := by
+        apply Finset.sum_congr rfl
+        intro z hz
+        rw [hpow2Row z, hEntry z y]
+      _ = ∑ z : {z : V // z ∈ T},
+          (L ^ 2) x' z.1 * L z.1 (e y).1 := by
+        rw [hrootVal]
+        exact Equiv.sum_comp e
+          (fun z : {z : V // z ∈ T} =>
+            (L ^ 2) x' z.1 * L z.1 (e y).1)
+      _ = ∑ z, (L ^ 2) x' z * L z (e y).1 := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => (L ^ 2) x' z * L z (e y).1)
+          (by
+            intro z hz
+            simp [hRowTwo' z hz])
+      _ = (L ^ 3) x' (e y).1 := by
+        rw [show (3 : ℕ) = 2 + 1 by norm_num,
+          pow_add, pow_one, Matrix.mul_apply]
+
+  have hpow3Col : ∀ y : {z : W // z ∈ S},
+      (K ^ 3) y.1 x = (L ^ 3) (e y).1 x' := by
+    intro y
+    calc
+      (K ^ 3) y.1 x =
+          ∑ z, K y.1 z * (K ^ 2) z x := by
+        rw [show (3 : ℕ) = 1 + 2 by norm_num,
+          pow_add, pow_one, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S},
+          K y.1 z.1 * (K ^ 2) z.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K y.1 z * (K ^ 2) z x)
+          (by
+            intro z hz
+            simp [hColTwo z hz])
+      _ = ∑ z : {z : W // z ∈ S},
+          L (e y).1 (e z).1 * (L ^ 2) (e z).1 x' := by
+        apply Finset.sum_congr rfl
+        intro z hz
+        rw [hEntry y z, hpow2Col z]
+      _ = ∑ z : {z : V // z ∈ T},
+          L (e y).1 z.1 * (L ^ 2) z.1 x' :=
+        Equiv.sum_comp e
+          (fun z : {z : V // z ∈ T} =>
+            L (e y).1 z.1 * (L ^ 2) z.1 x')
+      _ = ∑ z, L (e y).1 z * (L ^ 2) z x' := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L (e y).1 z * (L ^ 2) z x')
+          (by
+            intro z hz
+            simp [hColTwo' z hz])
+      _ = (L ^ 3) (e y).1 x' := by
+        rw [show (3 : ℕ) = 1 + 2 by norm_num,
+          pow_add, pow_one, Matrix.mul_apply]
+
+  have hpow4Col : ∀ y : {z : W // z ∈ S},
+      (K ^ 4) y.1 x = (L ^ 4) (e y).1 x' := by
+    intro y
+    calc
+      (K ^ 4) y.1 x =
+          ∑ z, K y.1 z * (K ^ 3) z x := by
+        rw [show (4 : ℕ) = 1 + 3 by norm_num,
+          pow_add, pow_one, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S},
+          K y.1 z.1 * (K ^ 3) z.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => K y.1 z * (K ^ 3) z x)
+          (by
+            intro z hz
+            simp [hColThree z hz])
+      _ = ∑ z : {z : W // z ∈ S},
+          L (e y).1 (e z).1 * (L ^ 3) (e z).1 x' := by
+        apply Finset.sum_congr rfl
+        intro z hz
+        rw [hEntry y z, hpow3Col z]
+      _ = ∑ z : {z : V // z ∈ T},
+          L (e y).1 z.1 * (L ^ 3) z.1 x' :=
+        Equiv.sum_comp e
+          (fun z : {z : V // z ∈ T} =>
+            L (e y).1 z.1 * (L ^ 3) z.1 x')
+      _ = ∑ z, L (e y).1 z * (L ^ 3) z x' := by
+        symm
+        exact finset_sum_eq_subtype_of_zero_outside T
+          (fun z => L (e y).1 z * (L ^ 3) z x')
+          (by
+            intro z hz
+            simp [hColThree' z hz])
+      _ = (L ^ 4) (e y).1 x' := by
+        rw [show (4 : ℕ) = 1 + 3 by norm_num,
+          pow_add, pow_one, Matrix.mul_apply]
+
+  have hsixK : (K ^ 6) x x =
+      ∑ y : {z : W // z ∈ S},
+        (K ^ 3) x y.1 * (K ^ 3) y.1 x := by
+    calc
+      (K ^ 6) x x = ∑ y, (K ^ 3) x y * (K ^ 3) y x := by
+        rw [show (6 : ℕ) = 3 + 3 by norm_num,
+          pow_add, Matrix.mul_apply]
+      _ = ∑ y : {z : W // z ∈ S},
+          (K ^ 3) x y.1 * (K ^ 3) y.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun y => (K ^ 3) x y * (K ^ 3) y x)
+          (by
+            intro y hy
+            simp [hRowThree y hy])
+
+  have hsixL : (L ^ 6) x' x' =
+      ∑ y : {z : V // z ∈ T},
+        (L ^ 3) x' y.1 * (L ^ 3) y.1 x' := by
+    calc
+      (L ^ 6) x' x' = ∑ y, (L ^ 3) x' y * (L ^ 3) y x' := by
+        rw [show (6 : ℕ) = 3 + 3 by norm_num,
+          pow_add, Matrix.mul_apply]
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 3) x' y.1 * (L ^ 3) y.1 x' :=
+        finset_sum_eq_subtype_of_zero_outside T
+          (fun y => (L ^ 3) x' y * (L ^ 3) y x')
+          (by
+            intro y hy
+            simp [hRowThree' y hy])
+
+  have hsevenK : (K ^ 7) x x =
+      ∑ y : {z : W // z ∈ S},
+        (K ^ 3) x y.1 * (K ^ 4) y.1 x := by
+    calc
+      (K ^ 7) x x = ∑ y, (K ^ 3) x y * (K ^ 4) y x := by
+        rw [show (7 : ℕ) = 3 + 4 by norm_num,
+          pow_add, Matrix.mul_apply]
+      _ = ∑ y : {z : W // z ∈ S},
+          (K ^ 3) x y.1 * (K ^ 4) y.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun y => (K ^ 3) x y * (K ^ 4) y x)
+          (by
+            intro y hy
+            simp [hRowThree y hy])
+
+  have hsevenL : (L ^ 7) x' x' =
+      ∑ y : {z : V // z ∈ T},
+        (L ^ 3) x' y.1 * (L ^ 4) y.1 x' := by
+    calc
+      (L ^ 7) x' x' = ∑ y, (L ^ 3) x' y * (L ^ 4) y x' := by
+        rw [show (7 : ℕ) = 3 + 4 by norm_num,
+          pow_add, Matrix.mul_apply]
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 3) x' y.1 * (L ^ 4) y.1 x' :=
+        finset_sum_eq_subtype_of_zero_outside T
+          (fun y => (L ^ 3) x' y * (L ^ 4) y x')
+          (by
+            intro y hy
+            simp [hRowThree' y hy])
+
+  constructor
+  · calc
+      (K ^ 6) x x =
+          ∑ y : {z : W // z ∈ S},
+            (K ^ 3) x y.1 * (K ^ 3) y.1 x := hsixK
+      _ = ∑ y : {z : W // z ∈ S},
+          (L ^ 3) x' (e y).1 * (L ^ 3) (e y).1 x' := by
+        apply Finset.sum_congr rfl
+        intro y hy
+        rw [hpow3Row y, hpow3Col y]
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 3) x' y.1 * (L ^ 3) y.1 x' :=
+        Equiv.sum_comp e
+          (fun y : {z : V // z ∈ T} =>
+            (L ^ 3) x' y.1 * (L ^ 3) y.1 x')
+      _ = (L ^ 6) x' x' := hsixL.symm
+  · calc
+      (K ^ 7) x x =
+          ∑ y : {z : W // z ∈ S},
+            (K ^ 3) x y.1 * (K ^ 4) y.1 x := hsevenK
+      _ = ∑ y : {z : W // z ∈ S},
+          (L ^ 3) x' (e y).1 * (L ^ 4) (e y).1 x' := by
+        apply Finset.sum_congr rfl
+        intro y hy
+        rw [hpow3Row y, hpow4Col y]
+      _ = ∑ y : {z : V // z ∈ T},
+          (L ^ 3) x' y.1 * (L ^ 4) y.1 x' :=
+        Equiv.sum_comp e
+          (fun y : {z : V // z ∈ T} =>
+            (L ^ 3) x' y.1 * (L ^ 4) y.1 x')
+      _ = (L ^ 7) x' x' := hsevenL.symm
+
+
 /-- Symmetry of the finite radius-two support around its center. -/
 private theorem sgK_radius_two_support_symm
     (m : ℕ) (w z : WSG m) :

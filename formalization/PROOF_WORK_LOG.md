@@ -1324,3 +1324,25 @@ The Lean run 41165333999 compiled GlueTrace but failed in FinalTilde at the use 
   The code was cross-checked against the exact GitHub source blobs and
   complete Actions logs; the next full GitHub Lean workflow is the executable
   formalization check.
+
+
+## 2026-10-31 — H8: generic degree-six/seven diagonal transport lemma
+
+- Added matrix_pow_six_seven_diag_eq_of_local_equiv beside the existing
+  radius-two fourth/fifth-power transport lemma.
+- The new statement is purely algebraic: if two kernels agree on matched
+  finite neighborhoods and their root rows/columns through degree three
+  vanish outside those neighborhoods, then their root diagonal entries
+  agree at degrees six and seven.
+- The proof keeps matrix order explicit. It uses
+  K^6 = K^3*K^3 and K^7 = K^3*K^4, derives the required restricted
+  degree-two/three/four row or column sums, and reindexes only by the stated
+  finite-set equivalence. No symmetry, commutativity, word reversal, or
+  unproved level transport is assumed.
+- This is the algebraic prerequisite for the H8 corner-neighborhood step;
+  it does not yet prove that the concrete radius-three neighborhoods are
+  equivalent across Sierpinski levels and does not establish residual
+  stability. H8/H10 remain open.
+- The full Lean workflow on the parent d74731b succeeded. The parent
+  Python 3.11/3.12 slow suites were still reported in progress at the last
+  status poll; the new commit will be checked independently.
