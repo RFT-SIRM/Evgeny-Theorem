@@ -4138,3 +4138,19 @@ against the underlying entry identity. The declarations have been moved
 inside the established namespace. A fresh Lean build must now typecheck
 their proof bodies; no degree-six/seven diagonal conclusion is claimed
 from this failed run.
+
+## 2026-10-31 — O-corner radius-three diagonal transport (degrees 6 and 7)
+
+The O-corner finite-state transport is now instantiated at the diagonal
+level. For an arbitrary glued-state copy label and O point, the proof uses
+the radius-three equivalence retaining copy, point, and spin, with the
+common spin-resolved A/B/C entry bridge on every pair of states in the
+support. Symmetry of the radius-three support supplies column vanishing;
+the established locality result supplies row vanishing for powers 1--3
+on both levels. These hypotheses are fed into the existing finite-matrix
+identity based on K^6 = K^3 K^3 and K^7 = K^3 K^4.
+
+The resulting equality is local to the O corner and compares only the
+sixth- and seventh-power diagonal entries between adjacent levels. It does
+not establish the other five corner transports or the complete H8
+boundary-residual recurrence. H8 and H10 remain open.

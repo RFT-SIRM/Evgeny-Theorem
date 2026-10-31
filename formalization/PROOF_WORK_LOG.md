@@ -1501,3 +1501,18 @@ reach proof checking of these declarations, so the fresh full build is
 required to reveal and address any proof-level issues. The Python 3.12
 job passed; Python 3.11 was still running when the Lean failure was
 inspected.
+
+## 2026-10-31 — O radius-three diagonal transport for powers six and seven
+
+- Verified parent commit 4848115f5962aee64f4faa0041393a60db25fb1c:
+  the full Lean build passed (run 41186359604), and Python 3.11 and 3.12
+  passed both fast and slow suites (run 41186359631).
+- Added one generic O-corner theorem covering every GCopy label. It
+  instantiates the radius-three support equivalence, the spin-resolved
+  A/B/C entry dispatcher, and row/column vanishing through degree three.
+- The existing finite-matrix lemma then identifies the degree-six and
+  degree-seven diagonal entries across levels m+1 and m. No axis-periodicity
+  assumption is needed at O.
+- This closes the O-corner diagonal-transport component only. Other corner
+  transports and the H8 boundary-residual comparison remain open; H8/H10
+  are not claimed closed. Full CI on the new SHA is required next.
