@@ -1713,3 +1713,47 @@ until the fresh full Lean build passes.
 - Proved the exact identity glueRHS8 = glueRHS8_diagonal_form, preserving
   every even stratum and its cyclic multiplicity. No cancellation, omitted
   term, or level-stability assumption is introduced in this reduction.
+
+
+## 2026-10-31 — Recovery audit and verified continuation boundary
+
+Restored `work/h8-h10-exact-recurrence-certificates` to the last same-SHA
+green checkpoint `575597d5d66dd5c5de9044a9c15f284a23669388` after auditing
+the branch head, commit ancestry, research journal, proof journal, and
+Actions. Verification on that exact commit:
+
+- Full Lean build: run `41227907808`, success.
+- Python 3.11 and 3.12 fast and slow tests: run `41227907792`, success.
+
+H6 remains closed on `main` via merged PR #9; no H6 source, PR, or main
+branch state was modified.
+
+At the restored H8 checkpoint, the exact full trace split, the 19-term
+positive-even boundary functional, and its complete diagonal normal form
+are compiled. The exact defect recurrence still retains the full boundary
+difference. The numbering/flipped-orientation boundary comparison is
+proved through degree seven, and the corresponding orientation gap is
+constant from level four onward. What is missing is the common residual's
+adjacent-level transport between faceAxis and the constant axis. The
+radius-three local transport results alone do not imply that global
+19-term comparison. No fixed H8 residual constant or H8 closed form is
+currently established.
+
+H10 remains a set of individual conditional boundary reductions, not a
+complete ordered p=10 trace split or a proved weighted even-stratum
+comparison. Do not start H10 residual propagation before H8 is closed.
+
+The attempted commits after `575597d5` (`acf6e6a`, `167d15a`,
+`019c510`, `ba837d4`, `8f969cd`) were excluded from the restored
+working head because their Lean workflows failed. Specifically,
+`8f969cd` failed in the proposed H8 constant-boundary algebra at
+`linear_combination hgap`; it did not verify the proposed affine
+recurrence or closed form. Do not reuse those failed declarations without
+re-deriving and independently checking the missing hypotheses.
+
+**Next step:** prove one precise theorem on top of the restored source:
+adjacent-level invariance of the common H8 boundary residual under the
+face-axis versus constant-axis comparison for the flipped orientation.
+Build its hypotheses from the existing six-case glued-partner transport
+and the 19 explicit diagonal pair-product terms. Compile that theorem
+before adding a constant definition, scalar recurrence, or H8 closed form.
