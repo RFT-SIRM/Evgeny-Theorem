@@ -1698,3 +1698,18 @@ until the fresh full Lean build passes.
   glued-partner theorem returning powers 1–7.
 - This is an intermediate transport/assembly result; no H8/H10 closure
   is claimed.
+
+ 
+## 2026-10-31 — H8 boundary correction in diagonal normal form
+ 
+- Added a three-kernel supported-diagonal trace identity. It keeps distinct
+  middle powers and the original ordered factors; no matrix factors are
+  commuted.
+- Added glued-state off-diagonal vanishing for powers through degree five,
+  combining same-copy geometric vanishing with block-diagonal copy separation.
+- Reduced all ten four-N H8 boundary terms and all four six-N H8 traces to
+  products of diagonal powers at a glued state and its partner. The r=2 and
+  r=8 strata retain their exact diagonal formulas.
+- Proved the exact identity glueRHS8 = glueRHS8_diagonal_form, preserving
+  every even stratum and its cyclic multiplicity. No cancellation, omitted
+  term, or level-stability assumption is introduced in this reduction.
