@@ -2402,7 +2402,7 @@ private noncomputable def sg_trace_p10_four_N_boundary_sum
 identity for the tenth moment. All corner powers through degree nine are
 covered by the existing glued-state support theorem. -/
 private theorem sg_trace_p10_four_N_powers_boundary_sum
-    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o)
     (a b c d : ℕ) (hb : b ≤ 9) (hd : d ≤ 9) :

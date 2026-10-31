@@ -1821,3 +1821,14 @@ before adding a constant definition, scalar recurrence, or H8 closed form.
   expansion/cancellation with the two-N, six-N, eight-N and ten-N strata,
   and proving the resulting boundary residual stabilizes by level.
 - Full Lean and Python CI are pending for the new commit.
+
+
+## 2026-10-31 — Correct H10 four-N support threshold
+
+The first CI run of the aggregate four-N theorem exposed a genuine hypothesis
+m >= 4: the generic degree-nine support theorem
+sgK_pow_hkg_up_to_nine_of_OAnti requires m >= 4, while the new parametric
+wrapper had been stated for m >= 3. The aggregate theorem itself already
+assumes m >= 4. Tightened the helper's lower-bound premise to m >= 4,
+matching the exact dependency; no mathematical claim or matrix identity
+was changed.

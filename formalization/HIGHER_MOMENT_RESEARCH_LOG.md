@@ -4518,3 +4518,12 @@ The theorem reduces the complete r=4 contribution to the corresponding
 ordered nested sums over glued corners. This is still only one stratum:
 it does not prove cancellation against the r=2, r=6, r=8 or r=10 strata,
 and it does not yet give the H10 recurrence. H10 remains open.
+
+
+## 2026-10-31 — H10 four-N support-bound correction
+
+Lean CI on the first 22-class aggregate exposed that the generic glued-state
+support theorem through degree nine requires m >= 4. The parameterized
+four-N boundary helper now uses that same bound. The aggregate theorem was
+already correctly restricted to m >= 4, so this is a dependency-alignment
+correction, not a weakening of the final statement.
