@@ -1477,3 +1477,15 @@ passed both fast and slow suites (run 41177720577).
   other corners, and H8 boundary-residual stability remain unproved.
 - Full Lean build and Python 3.11/3.12 fast and slow suites must be checked
   on the new exact SHA before proceeding.
+
+## 2026-10-31 — O radius-three A-copy entry bridge
+
+- Parent 0c490c23e0c89e4e0a4596512ef232591a076c1b passed the full Lean
+  build and Python 3.11/3.12 workflows.
+- Added the A-copy spin-resolved O radius-three entry bridge using the
+  existing O/A next-number identity, and a dispatcher covering A, B, C.
+- This completes the local matrix-entry bridge for every copy pair in the
+  O radius-three support. It does not yet prove the degree-six/seven
+  diagonal transport or the H8 boundary residual recurrence.
+- Run full Lean and both Python suites on this exact new SHA before
+  continuing.

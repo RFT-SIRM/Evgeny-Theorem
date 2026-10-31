@@ -5336,3 +5336,51 @@ theorem defectO6_num_growth_recurrence
   ring
 
 end EvgenyTheorem
+
+
+/-- A-copy entries in the O radius-three box transport by the O/A
+numbering bridge; no copy shift or periodicity hypothesis is needed. -/
+private theorem sgK_A_O_entry_next_til_radius_three
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
+    (hqx : q.1 ≤ 3) (hqy : q.2 ≤ 3) (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr
+          (corner_O_radius_three_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr
+          (corner_O_radius_three_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  change pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+    pHeO m θ ax (oTil (m + 1)) p q i j
+  calc
+    _ = pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_til_eq_num_of_level_domain (m + 1) (by omega) θ ax p q i j
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_radius_three_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil (m + 1)) p q i j :=
+      (pHeO_til_eq_num_of_level_domain m (by omega) θ ax p q i j).symm
+
+/-- Common O radius-three entry transport for all copy labels. -/
+private theorem sgK_O_entry_next_til_radius_three
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (c : GCopy)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
+    (hqx : q.1 ≤ 3) (hqy : q.2 ≤ 3) (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (c, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (c, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (c, ((⟨p, List.mem_toFinset.mpr
+          (corner_O_radius_three_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (c, ((⟨q, List.mem_toFinset.mpr
+          (corner_O_radius_three_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  cases c with
+  | A => exact sgK_A_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j
+  | B => exact sgK_B_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j
+  | C => exact sgK_C_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j

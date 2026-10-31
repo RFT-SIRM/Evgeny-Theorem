@@ -4118,3 +4118,12 @@ support equivalence, exact spin-resolved entry equality on the entire
 support, and row/column vanishing for both levels. The remaining five
 corner transports and the H8 boundary residual comparison remain open.
 Full Lean and Python CI on the new SHA are required.
+
+## 2026-10-31 — O radius-three local entry bridge across copies
+
+The A-copy O entry bridge is now paired with the previously proved B- and
+C-copy radius-three bridges. A private dispatcher splits on GCopy and
+retains both spin indices, giving the same parent-level O entry for each
+copy. This closes only the local-entry component of the O finite-support
+transport. The sixth/seventh diagonal instantiation and the H8 boundary
+residual recurrence remain open.
