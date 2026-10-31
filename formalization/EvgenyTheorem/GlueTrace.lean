@@ -2990,9 +2990,9 @@ private theorem trace_two_kernels_supported_diagonal
             simp
           · by_cases hgy : g y
             · have hzero := hA x y hgx hgy (Ne.symm hyx)
-              simp [hzero]
+              simp [hzero, hyx]
             · have hazero := ha y hgy
-              simp [hazero]
+              simp [hazero, hyx]
         _ = _ := by simp
     rw [hinner]
   · simp [hd x hgx]
@@ -3125,8 +3125,8 @@ private theorem sg_trace_four_N_boundary_sum_pair_diagonal
             simp [hgx]
           · by_cases hgy : (sgGlue m).g y
             · have hzero := hAoff x y hgx hgy (Ne.symm hyx)
-              simp [hgy, hzero]
-            · simp [hgy]
+              simp [K, hgy, hzero, hyx]
+            · simp [hgy, hyx]
         _ = _ := by simp
     rw [hinner]
     ring
