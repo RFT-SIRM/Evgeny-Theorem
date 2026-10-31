@@ -2684,102 +2684,25 @@ noncomputable def glueRHS8
 
 
 
-/-- Asymmetric two-kernel version of the supported diagonal trace collapse.
-The left and right kernel factors are independent; their order is retained. -/
-private theorem trace_two_kernel_diagonal_kernel_diagonal_collapse
+
+/-- Left multiplication by a supported diagonal factor only reads rows of
+the right-hand matrix whose indices lie in the support. -/
+private theorem diagonal_left_mul_congr_of_supported_rows
     {X : Type*} [Fintype X] [DecidableEq X]
     (g : X → Prop) [DecidablePred g]
-    (A C : Matrix X X ℂ) (a d : X → ℂ)
-    (ha : ∀ x, ¬ g x → a x = 0)
+    (d d' : X → ℂ) (A A' : Matrix X X ℂ)
     (hd : ∀ x, ¬ g x → d x = 0)
-    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0)
-    (hC : ∀ x y, g x → g y → x ≠ y → C x y = 0) :
-    Matrix.trace (A * Matrix.diagonal a * C * Matrix.diagonal d) =
-      ∑ x, if g x then A x x * a x * C x x * d x else 0 := by
+    (hdiag : ∀ x, d x = d' x)
+    (hrow : ∀ x, g x → ∀ y, A x y = A' x y) :
+    Matrix.diagonal d * A = Matrix.diagonal d' * A' := by
   classical
-  have hexpand :
-      Matrix.trace (A * Matrix.diagonal a * C * Matrix.diagonal d) =
-        ∑ x, ∑ y, A x y * a y * C y x * d x := by
-    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
-      mul_assoc]
-  rw [hexpand]
-  apply Finset.sum_congr rfl
-  intro x hx
-  by_cases hgx : g x
-  · simp only [if_pos hgx]
-    rw [Finset.sum_eq_single x]
-    · intro y hy hne
-      by_cases hgy : g y
-      · have hxy : A x y = 0 := hA x y hgx hgy (Ne.symm hne)
-        have hyx : C y x = 0 := hC y x hgy hgx hne
-        simp [hxy, hyx]
-      · simp [ha y hgy]
-    · simp
-  · simp [hgx, hd x hgx]
-
-
-/-- With three supported diagonal insertions, the trace reduces to the
-product of the three kernel diagonal entries and the three weights. The
-three kernel matrices may differ; no factor is permuted. -/
-private theorem trace_three_supported_diagonal_collapse
-    {X : Type*} [Fintype X] [DecidableEq X]
-    (g : X → Prop) [DecidablePred g]
-    (A B C : Matrix X X ℂ) (d1 d2 d3 : X → ℂ)
-    (hd1 : ∀ x, ¬ g x → d1 x = 0)
-    (hd2 : ∀ x, ¬ g x → d2 x = 0)
-    (hd3 : ∀ x, ¬ g x → d3 x = 0)
-    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0)
-    (hB : ∀ x y, g x → g y → x ≠ y → B x y = 0)
-    (hC : ∀ x y, g x → g y → x ≠ y → C x y = 0) :
-    Matrix.trace (A * Matrix.diagonal d1 * B * Matrix.diagonal d2 *
-      C * Matrix.diagonal d3) =
-    ∑ x, if g x then
-      A x x * d1 x * B x x * d2 x * C x x * d3 x else 0 := by
-  classical
-  let e : X → ℂ := fun x => d1 x * B x x * d2 x
-  have he : ∀ x, ¬ g x → e x = 0 := by
-    intro x hx
-    simp [e, hd1 x hx]
-  have hmid :
-      Matrix.diagonal d1 * B * Matrix.diagonal d2 =
-        Matrix.diagonal e := by
-    ext x y
-    by_cases hxy : x = y
-    · subst y
-      simp [e, Matrix.mul_apply, Matrix.diagonal_apply, mul_assoc]
-    · rw [Matrix.diagonal_apply]
-      simp only [if_neg hxy]
-      have hentry :
-          (Matrix.diagonal d1 * B * Matrix.diagonal d2) x y =
-            d1 x * B x y * d2 y := by
-        simp [Matrix.mul_apply, Matrix.diagonal_apply]
-      rw [hentry]
-      by_cases hx : g x
-      · by_cases hy : g y
-        · have hzero : B x y = 0 := hB x y hx hy hxy
-          simp [hzero]
-        · simp [hd2 y hy]
-      · simp [hd1 x hx]
-  calc
-    Matrix.trace (A * Matrix.diagonal d1 * B * Matrix.diagonal d2 *
-        C * Matrix.diagonal d3) =
-      Matrix.trace (A * (Matrix.diagonal d1 * B *
-        Matrix.diagonal d2) * C * Matrix.diagonal d3) := by
-          simp [Matrix.mul_assoc]
-    _ = Matrix.trace (A * Matrix.diagonal e * C *
-        Matrix.diagonal d3) := by rw [hmid]
-    _ = ∑ x, if g x then A x x * e x * C x x * d3 x else 0 := by
-          exact trace_two_kernel_diagonal_kernel_diagonal_collapse
-            g A C e d3 he hd3 hA hC
-    _ = ∑ x, if g x then
-          A x x * d1 x * B x x * d2 x * C x x * d3 x else 0 := by
-          apply Finset.sum_congr rfl
-          intro x hx
-          by_cases hg : g x
-          · simp only [if_pos hg]
-            simp [e]
-            ring
-          · simp [hg]
+  ext x y
+  by_cases hx : g x
+  · simp [Matrix.mul_apply, Matrix.diagonal_apply, hdiag x,
+      hrow x hx y]
+  · have hdx : d x = 0 := hd x hx
+    have hd'x : d' x = 0 := by rw [← hdiag x, hdx]
+    simp [Matrix.mul_apply, Matrix.diagonal_apply, hdx, hd'x]
 
 
 /-- The complete p=8 boundary correction is insensitive to replacing K by
@@ -2801,24 +2724,6 @@ theorem glueRHS8_congr_of_glued_row_pow
   let g : WSG m → Prop := (sgGlue m).g
   have hσ (x : WSG m) (hx : g x) : g ((sgGlue m).σ x) :=
     (sgGlue m).g_σ x hx
-  have hkgK : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
-      (K ^ n) x y = 0 := by
-    intro n hn x y hx hy hne
-    by_cases hcopy : x.1 = y.1
-    · exact sgK_pow_hkg_up_to_five_of_OAnti m (by omega) θ ax o hanti
-        n hn x y hx hy hcopy hne
-    · change (blockK (Hc m θ ax o) ^ n) x y = 0
-      rw [blockK_pow_local]
-      simp [blockK, hcopy]
-  have hkgK' : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
-      (K' ^ n) x y = 0 := by
-    intro n hn x y hx hy hne
-    by_cases hcopy : x.1 = y.1
-    · exact sgK_pow_hkg_up_to_five_of_OAnti m (by omega) θ ax o' hanti'
-        n hn x y hx hy hcopy hne
-    · change (blockK (Hc m θ ax o') ^ n) x y = 0
-      rw [blockK_pow_local]
-      simp [blockK, hcopy]
   have hgap (a b : ℕ) (ha : a ≤ 7) (hb : b ≤ 7) :
       (∑ x, if g x then
         (K ^ a) x x * (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)
@@ -2863,47 +2768,9 @@ theorem glueRHS8_congr_of_glued_row_pow
       have hσx := hσ x hgx
       rw [hinner, hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x)]
     · simp [g, hgx]
-  have hcollapse
-      (L : Matrix (WSG m) (WSG m) ℂ)
-      (hkg : ∀ n, n ≤ 5 → ∀ x y, g x → g y → x ≠ y →
-        (L ^ n) x y = 0)
-      (a b c d e f : ℕ)
-      (ha : a ≤ 5) (hb : b ≤ 7) (hc : c ≤ 5)
-      (hd : d ≤ 7) (he : e ≤ 5) (hf : f ≤ 7) :
-      Matrix.trace (L ^ a * Matrix.diagonal (fun y =>
-          if g y then (L ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
-        L ^ c * Matrix.diagonal (fun y =>
-          if g y then (L ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
-        L ^ e * Matrix.diagonal (fun y =>
-          if g y then (L ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
-      ∑ x, if g x then
-        (L ^ a) x x *
-          (if g x then (L ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
-        (L ^ c) x x *
-          (if g x then (L ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) *
-        (L ^ e) x x *
-          (if g x then (L ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)
-        else 0 := by
-    exact trace_three_supported_diagonal_collapse
-      g (L ^ a) (L ^ c) (L ^ e)
-      (fun y => if g y then (L ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
-      (fun y => if g y then (L ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
-      (fun y => if g y then (L ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
-      (by intro x hx; simp [hx])
-      (by intro x hx; simp [hx])
-      (by intro x hx; simp [hx])
-      (by
-        intro x y hx hy hne
-        exact hkg a ha x y hx hy hne)
-      (by
-        intro x y hx hy hne
-        exact hkg c hc x y hx hy hne)
-      (by
-        intro x y hx hy hne
-        exact hkg e he x y hx hy hne)
   have hsix (a b c d e f : ℕ)
-      (ha : a ≤ 5) (hb : b ≤ 7) (hc : c ≤ 5)
-      (hd : d ≤ 7) (he : e ≤ 5) (hf : f ≤ 7) :
+      (ha : a ≤ 7) (hb : b ≤ 7) (hc : c ≤ 7)
+      (hd : d ≤ 7) (he : e ≤ 7) (hf : f ≤ 7) :
       Matrix.trace (K ^ a * Matrix.diagonal (fun y =>
           if g y then (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
         K ^ c * Matrix.diagonal (fun y =>
@@ -2916,23 +2783,91 @@ theorem glueRHS8_congr_of_glued_row_pow
           if g y then (K' ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
         K' ^ e * Matrix.diagonal (fun y =>
           if g y then (K' ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
-    have ha7 : a ≤ 7 := by omega
-    have hc7 : c ≤ 7 := by omega
-    have he7 : e ≤ 7 := by omega
-    rw [hcollapse K hkgK a b c d e f ha hb hc hd he hf,
-      hcollapse K' hkgK' a b c d e f ha hb hc hd he hf]
-    apply Finset.sum_congr rfl
-    intro x hx
-    by_cases hgx : g x
-    · simp only [if_pos hgx]
-      have hσx := hσ x hgx
-      rw [hrow x hgx a ha7 x,
-        hrow ((sgGlue m).σ x) hσx b hb ((sgGlue m).σ x),
-        hrow x hgx c hc7 x,
-        hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x),
-        hrow x hgx e he7 x,
-        hrow ((sgGlue m).σ x) hσx f hf ((sgGlue m).σ x)]
-    · simp [hgx]
+    let Db : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Dd : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Df : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Db' : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K' ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Dd' : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K' ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Df' : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K' ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    have hDb : Db * K ^ c = Db' * K' ^ c := by
+      apply diagonal_left_mul_congr_of_supported_rows g
+      · intro y hy
+        simp [Db, hy]
+      · intro y
+        by_cases hy : g y
+        · have hσy := hσ y hy
+          simp only [Db, Db', if_pos hy]
+          exact hrow ((sgGlue m).σ y) hσy b hb ((sgGlue m).σ y)
+        · simp [Db, Db', hy]
+      · intro x hx y
+        exact hrow x hx c hc y
+    have hDd : Dd * K ^ e = Dd' * K' ^ e := by
+      apply diagonal_left_mul_congr_of_supported_rows g
+      · intro y hy
+        simp [Dd, hy]
+      · intro y
+        by_cases hy : g y
+        · have hσy := hσ y hy
+          simp only [Dd, Dd', if_pos hy]
+          exact hrow ((sgGlue m).σ y) hσy d hd ((sgGlue m).σ y)
+        · simp [Dd, Dd', hy]
+      · intro x hx y
+        exact hrow x hx e he y
+    have hDf : Df * K ^ a = Df' * K' ^ a := by
+      apply diagonal_left_mul_congr_of_supported_rows g
+      · intro y hy
+        simp [Df, hy]
+      · intro y
+        by_cases hy : g y
+        · have hσy := hσ y hy
+          simp only [Df, Df', if_pos hy]
+          exact hrow ((sgGlue m).σ y) hσy f hf ((sgGlue m).σ y)
+        · simp [Df, Df', hy]
+      · intro x hx y
+        exact hrow x hx a ha y
+    have hcycle :
+        Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+          Matrix.trace ((Db * K ^ c) * (Dd * K ^ e) * (Df * K ^ a)) := by
+      calc
+        Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+            Matrix.trace (K ^ a * (Db * K ^ c * Dd * K ^ e * Df)) := by
+              simp only [Matrix.mul_assoc]
+        _ = Matrix.trace ((Db * K ^ c * Dd * K ^ e * Df) * K ^ a) :=
+          Matrix.trace_mul_comm _ _
+        _ = Matrix.trace ((Db * K ^ c) * (Dd * K ^ e) * (Df * K ^ a)) := by
+          simp only [Matrix.mul_assoc]
+    have hcycle' :
+        Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df') =
+          Matrix.trace ((Db' * K' ^ c) * (Dd' * K' ^ e) * (Df' * K' ^ a)) := by
+      calc
+        Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df') =
+            Matrix.trace (K' ^ a * (Db' * K' ^ c * Dd' * K' ^ e * Df')) := by
+              simp only [Matrix.mul_assoc]
+        _ = Matrix.trace ((Db' * K' ^ c * Dd' * K' ^ e * Df') * K' ^ a) :=
+          Matrix.trace_mul_comm _ _
+        _ = Matrix.trace ((Db' * K' ^ c) * (Dd' * K' ^ e) * (Df' * K' ^ a)) := by
+          simp only [Matrix.mul_assoc]
+    change Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+      Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df')
+    calc
+      Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+          Matrix.trace ((Db * K ^ c) * (Dd * K ^ e) * (Df * K ^ a)) := hcycle
+      _ = Matrix.trace ((Db' * K' ^ c) * (Dd' * K' ^ e) * (Df' * K' ^ a)) := by
+        rw [hDb, hDd, hDf]
+      _ = Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df') :=
+        hcycle'.symm
   have htop :
       (∑ x, if g x then
         (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) =

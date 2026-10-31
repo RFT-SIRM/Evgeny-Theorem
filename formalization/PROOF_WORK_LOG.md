@@ -1275,3 +1275,25 @@ The Lean log for `4eb6890bc027c1498b2d97cdfc7b7cb9da8a3698` reported one error: 
   the next Lean log rather than pre-emptively changing algebraic tactics.
 - No change to the moment statement, cyclic coefficients, word order,
   or geometric assumptions.
+
+
+## 2026-10-31 — H8: replace the failed r=6 collapse with the supported-block comparison
+
+- Re-audited the existing sg_trace_p8_six_N_stratum_boundary and its
+  generic source trace_six_N_powers_boundary. These already establish the
+  exact r=6 reduction to three ordered supported diagonal matrices
+  D_b, D_d, D_f separated by the original ordered powers of K.
+- The previous attempt added a second theorem that collapsed the trace
+  further to a diagonal-only sum. That extra reduction was unnecessary and
+  introduced the persistent Lean failure; it is removed entirely.
+- The comparison now uses cyclicity only to rotate the original trace to
+  trace((D_b*K^c)*(D_d*K^e)*(D_f*K^a)). Each D is diagonal and supported
+  on the glue set. Thus D_b*K^c only reads rows of K^c whose indices lie
+  in the glue set; the same holds for the other two blocks. The degree-seven
+  row congruence gives equality of each block, including the diagonal
+  weights at partner points because g(σ(x)) is already proved.
+- This preserves the full trace and its order. It requires neither a
+  diagonal collapse of the trace nor off-diagonal vanishing of the three
+  factors. The four original orbit weights 8, 8, 8, and 4 are unchanged.
+- The next full Lean build is the required verification. H8 and H10 remain
+  open until the shared boundary residual has its level-transport proof.

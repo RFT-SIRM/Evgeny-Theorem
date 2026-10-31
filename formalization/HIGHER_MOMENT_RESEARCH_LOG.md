@@ -3912,3 +3912,26 @@ proof's local g is a let abbreviation. The outer positive and negative
 branches now explicitly unfold that abbreviation. The next full build is
 needed to distinguish any remaining independent failures from earlier
 cascades.
+
+
+## 2026-10-31 — H8: structural correction of the r=6 orientation comparison
+
+The r=6 cyclic stratum already has the exact ordered diagonal-boundary
+representation in sg_trace_p8_six_N_stratum_boundary, based on the generic
+trace_six_N_powers_boundary. A further collapse to pointwise diagonal
+products is not required and made the proof needlessly fragile.
+
+For a word trace(K^a D_b K^c D_d K^e D_f), cyclicity gives
+trace((D_b K^c)(D_d K^e)(D_f K^a)). Each D is diagonal and supported on
+the glue set. Thus D_b K^c only reads rows of K^c whose indices are in the
+glue set; the same is true of the other two blocks. The degree-seven row
+congruence gives equality of each block, including the diagonal weights
+at partner points because g(σ(x)) is already proved. This preserves the
+full trace and its order. It requires neither a diagonal collapse of the
+trace nor off-diagonal vanishing of the three factors.
+
+The new proof replaces both experimental trace-collapse helper lemmas and
+removes the unsupported hkg side conditions from the comparison step. The
+only mathematical inputs are the existing exact six-N boundary identity,
+the degree-seven row congruence, support of the three diagonal boundary
+factors, and cyclicity of trace. H8/H10 remain open.
