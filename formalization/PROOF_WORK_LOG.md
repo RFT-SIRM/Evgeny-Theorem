@@ -1398,3 +1398,17 @@ first use the two local-entry equalities to identify the K-products with
 This changes neither the matrix factor order nor the theorem hypotheses.
 The previous failed SHA is retained as a failure record; the new full Lean
 build is required before proceeding.
+## 2026-10-31 — H8 transport: separate same-domain normalization and equivalence reindexing
+
+The first follow-up patch after run 41169771612 still had a structural
+proof error: it attempted `Finset.sum_congr rfl` directly between a sum
+over `{z : W // z ∈ S}` and a sum over `{z : V // z ∈ T}`. These are
+different index types; pointwise congruence cannot bridge them.
+
+The hpow2Row chain is now explicitly split into two independent steps:
+(1) a same-index-type sum over S, where `hrootVal` changes the fixed
+root `(e xr).1` to `x'` pointwise; (2) a separate `Equiv.sum_comp e`
+step transporting the already-normalized S-sum to the T-sum.
+This is a proof-structure correction, not a new mathematical assumption.
+The full Lean result for the intermediate SHA must not be treated as
+verification; a fresh full build is required for the corrected SHA.

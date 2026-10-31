@@ -4034,3 +4034,12 @@ local matrix-entry transport first, then a dedicated equality rewriting
 the root value, then finite-sum reindexing. This supersedes the claim in
 the preceding audit that the bundled rewrite had normalized the row sum.
 No geometric support or H8 residual theorem is changed by this correction.
+## 2026-10-31 — H8 hpow2Row: keep finite-sum index types separate
+
+A root-value rewrite and a finite-equivalence reindexing are logically
+distinct. First preserve the S-subtype as the index type and prove the
+pointwise root-normalization equality there. Only after that equality
+does the sum have the exact summand expected by `Equiv.sum_comp e`.
+Attempting `Finset.sum_congr rfl` across S and T subtypes is ill-typed
+because the finite index types differ. The proof now exposes these two
+steps as separate calc links; no `sum_congr` is used across the equivalence.
