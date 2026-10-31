@@ -4284,3 +4284,22 @@ not reversed. Corrected these argument orders for powers one through three
 at both levels. The timeout/unknown-constant diagnostics are being checked
 again after these primary type errors are removed; no success is claimed
 until the fresh full Lean build passes.
+
+
+## 2026-10-31 — Y radius-three spin-resolved entry bridges
+
+- Added a radius-three Y/C point-level entry bridge at the numbering
+  orientation, using the established Y radius-three geometric pullback
+  and the C-local entry theorem. The hypotheses explicitly exclude the
+  two exceptional C-shift endpoints for m >= 4.
+- Added the exact parent-tilde version by converting the C orientation
+  with Hc_C_num_eq_parent_til and using the radius-three exceptional-edge
+  exclusion on the parent box.
+- Packaged the point transport as state-level bridges for copies A and B.
+  The B wrapper separately removes the B orientation flip using
+  cp1_not_B_shift_radius_three at both levels and cp1_not_O_radius_three
+  on the high level.
+- These are entry-level results only. They do not yet prove Y diagonal
+  transport for degrees 6/7 or H8 boundary stabilization. The previous
+  SHA's Python 3.11 slow job was still in progress when this commit was
+  made; this fact is recorded separately from the new SHA's CI status.
