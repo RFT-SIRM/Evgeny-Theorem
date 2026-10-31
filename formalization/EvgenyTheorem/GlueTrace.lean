@@ -2155,13 +2155,13 @@ private theorem sg_trace_p10_six_N_powers_boundary_sum
         intro w w' hw hw' hcopy hne
         exact hkg f hf w w' hw hw' hcopy hne))
 
+set_option maxHeartbeats 1000000 in
 /-- Complete six-N cyclic stratum of the p=10 ordered-word expansion.
 There are 22 cyclic classes: 20 have orbit size six and coefficient 10;
 the two period-three classes (1,1,3,1,1,3) and (1,2,2,1,2,2)
 have coefficient 5. The coefficients sum to choose(10,6)=210.
 This theorem is a boundary reduction only; it does not assert
 cancellation with the other H10 strata. -/
-set_option maxHeartbeats 1000000 in
 theorem sg_trace_p10_six_N_stratum_boundary
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
