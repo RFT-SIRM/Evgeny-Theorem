@@ -1757,3 +1757,26 @@ face-axis versus constant-axis comparison for the flipped orientation.
 Build its hypotheses from the existing six-case glued-partner transport
 and the 19 explicit diagonal pair-product terms. Compile that theorem
 before adding a constant definition, scalar recurrence, or H8 closed form.
+
+
+## 2026-10-31 — Exact H8 level-two base transition and coefficient
+
+- Added computational/p8_base_certificate.py. It computes the full p=8
+  trace polynomials at levels 2, 3, and 4 with sparse 2x2 block arithmetic
+  over Gaussian-integer polynomial coefficients in c=cos(theta/2) and
+  s=sin(theta/2). No floating-point values enter the certificate.
+- The raw defects satisfy coefficient-by-coefficient
+  D_3 - 3 D_2 = D_4 - 3 D_3. The common raw polynomial reduces under
+  c^2+s^2=1 to
+  C_8 = 193600 s^2 + 75776 c s^2 + 83712 s^3 - 512 c s^3 + 192 s^4.
+- The reduced level-two value is
+  D_2 = -1335552 s^2 + 244352 c s^2 - 40064 s^3
+        + 64 c s^3 + 1920 s^4.
+- Added affine_three_recurrence_from_two and the conditional Lean wrapper
+  defectO8_num_affine_closed_form_from_level2. The wrapper exposes the
+  exact finite base equation as its only extra hypothesis; the separate
+  Python polynomial certificate discharges that finite bridge.
+- Added exact raw/reduced coefficient assertions and independent theta=pi
+  comparisons against the Gaussian-integer trace certificate. The exact
+  p=8 symbolic test is marked slow because it also computes level four.
+- H10 remains deferred. Full Lean and Python CI for this commit is pending.

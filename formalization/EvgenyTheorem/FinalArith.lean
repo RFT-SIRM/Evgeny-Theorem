@@ -44,4 +44,28 @@ theorem affine_three_recurrence (D : ℕ → ℂ) (C : ℂ)
       rw [hnidx, hrec n, ih, pow_succ]
       ring
 
+/-- Affine recurrence with an initial transition from level two. The
+finite base equation is kept as an explicit hypothesis so that an exact
+external polynomial certificate can discharge that one exceptional step. -/
+theorem affine_three_recurrence_from_two (D : ℕ → ℂ) (C : ℂ)
+    (hbase : D 3 = 3 * D 2 + C)
+    (hrec : ∀ n, D (n + 4) = 3 * D (n + 3) + C) :
+    ∀ n, D (n + 2) = (3 : ℂ) ^ n * (D 2 + C / 2) - C / 2 := by
+  have hstep : ∀ n, D (n + 3) = 3 * D (n + 2) + C := by
+    intro n
+    cases n with
+    | zero =>
+        simpa using hbase
+    | succ n =>
+        simpa [Nat.add_assoc] using hrec n
+  intro n
+  induction n with
+  | zero =>
+      simp only [zero_add, pow_zero]
+      ring
+  | succ n ih =>
+      have hidx : n + 1 + 2 = n + 3 := by omega
+      rw [hidx, hstep n, ih, pow_succ]
+      ring
+
 end EvgenyTheorem

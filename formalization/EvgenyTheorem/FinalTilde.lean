@@ -7322,4 +7322,38 @@ theorem defectO8_num_affine_closed_form_from_level3 (θ : ℝ) :
   intro n
   simpa [D] using hclosed n
 
+
+/-- Closed affine formula from level two, assuming the one finite base
+transition. The Lean recurrence supplies every step from level three onward;
+the exact polynomial certificate in computational/p8_base_certificate.py
+verifies this exceptional level-two-to-three hypothesis. -/
+theorem defectO8_num_affine_closed_form_from_level2
+    (θ : ℝ)
+    (hbase :
+      defectO8 3 θ faceAxis (fun _ => 2) (oNum 3) =
+        3 * defectO8 2 θ faceAxis (fun _ => 2) (oNum 2) +
+          defectO8_num_residual_constant θ) :
+    ∀ n : ℕ,
+      defectO8 (n + 2) θ faceAxis (fun _ => 2) (oNum (n + 2)) =
+        (3 : ℂ) ^ n *
+          (defectO8 2 θ faceAxis (fun _ => 2) (oNum 2) +
+            defectO8_num_residual_constant θ / 2) -
+          defectO8_num_residual_constant θ / 2 := by
+  let D : ℕ → ℂ := fun k =>
+    defectO8 k θ faceAxis (fun _ => 2) (oNum k)
+  have hbase' : D 3 = 3 * D 2 + defectO8_num_residual_constant θ := by
+    simpa [D] using hbase
+  have hrec : ∀ n : ℕ,
+      D (n + 4) = 3 * D (n + 3) +
+        defectO8_num_residual_constant θ := by
+    intro n
+    dsimp [D]
+    have h := defectO8_succ_num_level4_constant_boundary
+      (n + 3) (by omega) θ
+    simpa [Nat.add_assoc] using h
+  have hclosed := affine_three_recurrence_from_two D
+    (defectO8_num_residual_constant θ) hbase' hrec
+  intro n
+  simpa [D] using hclosed n
+
 end EvgenyTheorem

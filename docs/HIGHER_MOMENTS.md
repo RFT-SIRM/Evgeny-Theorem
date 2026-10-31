@@ -8,7 +8,10 @@
 `m ≥ 2`. The recurrence for `m ≥ 3` is Lean-proved; the finite transition
 `m = 2 → 3` and coefficient formula are certified by exact symbolic
 polynomial arithmetic in the Python regression suite. That base transition is
-not yet a Lean-kernel theorem. **H⁸ and H¹⁰** remain an open research program.
+not yet a Lean-kernel theorem. **H⁸** has an all-angle affine recurrence for every level \(m\ge3\), plus an
+exact symbolic finite transition \(m=2\to3\); together these give the explicit
+closed form for every \(m\ge2\). The finite transition is an exact Python
+polynomial certificate, not yet a Lean-kernel theorem. **H¹⁰** remains open.
 
 ---
 
@@ -102,11 +105,51 @@ one common H⁴ contribution.
 ### 5. What remains open
 
 - Formalize the exact finite level-2-to-3 base transition in Lean, so the combined H⁶ result is kernel-checked end to end.
-- Derive the corresponding all-angle recurrence and closed forms for H⁸ and H¹⁰.
+- H⁸ is now covered by the combined Lean recurrence plus exact finite base-transition certificate described below.
+- Derive the corresponding all-angle recurrence and closed form for H¹⁰.
 
 The path-class inventory and exact sparse certificate remain useful for
 simplifying the finite coefficient; they are not needed to claim the all-level
-affine law for H⁶ when `m ≥ 3`.---
+affine law for H⁶ when `m ≥ 3`.## H⁸: all-angle affine law from level two
+
+Let
+\[
+D_m(\theta)=\operatorname{defectO8}(m,\theta,\mathrm{faceAxis},2,\mathrm{oNum}),
+\quad c=\cos(\theta/2),\quad s=\sin(\theta/2).
+\]
+The Lean proof establishes the exact recurrence
+\[
+D_{m+1}(\theta)=3D_m(\theta)+C_8(\theta),\qquad m\ge3.
+\]
+An exact sparse-polynomial certificate computes the finite traces at levels
+2, 3, and 4 and proves coefficient-by-coefficient that
+\[
+D_3-3D_2=D_4-3D_3=C_8(\theta).
+\]
+The resulting explicit coefficient and level-two value are
+\[
+\begin{aligned}
+D_2(\theta)={}&-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4,\\
+C_8(\theta)={}&193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
+\end{aligned}
+\]
+Therefore, for every \(m\ge2\),
+\[
+D_m(\theta)=3^{m-2}D_2(\theta)
++\frac{3^{m-2}-1}{2}C_8(\theta).
+\]
+At \(\theta=\pi\), this gives \(C_8(\pi)=277504\), agreeing with the
+independent exact Gaussian-integer trace certificate.
+
+**Proof boundary.** The all-level structural recurrence and the arithmetic
+closed-form step are Lean-formalized. The exceptional \(m=2\to3\) transition
+is verified by exact polynomial arithmetic over Gaussian integers in
+computational/p8_base_certificate.py; its values at \(\theta=\pi\) are
+cross-checked against computational/higher_moment_pi_certificate.py.
+The finite transition is an exact reproducible certificate, not yet a
+Lean-kernel theorem. No sampled-angle fit is used.
+
+---
 
 ## H⁸ and H¹⁰: Numerical results
 

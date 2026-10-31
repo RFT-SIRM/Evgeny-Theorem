@@ -4431,3 +4431,52 @@ then instantiate the complete 19-term `glueRHS8` comparison. Do not
 introduce a residual constant or closed form until this exact comparison
 compiles. H10 remains deferred until the H8 residual transport is proved
 and the complete H8 recurrence is genuinely closed.
+
+
+## 2026-10-31 — H8 level-two transition and explicit all-angle coefficient
+
+The H8 recurrence and its level-four boundary residual are already present
+in Lean for every adjacent transition starting at m=3. The remaining finite
+bridge is now covered by the exact sparse-polynomial certificate
+computational/p8_base_certificate.py.
+
+With c=cos(theta/2), s=sin(theta/2), the exact level-two and level-three
+trace defects are
+\[
+\begin{aligned}
+D_2={}&-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4,\\
+D_3={}&-3813056s^2+808832cs^2-36480s^3-320cs^3+5952s^4.
+\end{aligned}
+\]
+The exact level-four computation independently returns
+\[
+D_4={}-11245568s^2+2502272cs^2-25728s^3-1472cs^3+18048s^4.
+\]
+Before reducing by c^2+s^2=1, the full raw coefficient dictionaries
+satisfy
+\[
+D_3-3D_2=D_4-3D_3.
+\]
+After reduction this common polynomial is
+\[
+C_8(theta)=193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
+\]
+In particular C_8(pi)=277504. The level-2, 3, and 4 evaluations at
+theta=pi are checked against the independent Gaussian-integer
+certificate higher_moment_pi_certificate.py.
+
+Combined with the Lean theorem defectO8_succ_num_level4_constant_boundary
+at m=3, the exact level-four residual equals the Lean-defined residual
+constant. Thus the finite certificate establishes the missing
+D_3=3D_2+C_8 transition. The general Lean recurrence then gives, for all
+m>=2,
+\[
+D_m=3^{m-2}D_2+\frac{3^{m-2}-1}{2}C_8.
+\]
+
+Formal boundary: the structural recurrence and the arithmetic extension
+are Lean-checked; the finite level-2-to-3 polynomial identity is certified
+outside the Lean kernel by exact integer arithmetic. It is not a
+floating-point angle-grid argument. H8 is now closed in the same combined
+Lean-plus-exact-certificate sense as the established H6 result. H10 remains
+open and is not started in this step.
