@@ -1440,7 +1440,7 @@ Lean run 41171919726 on parent SHA 6ded225b630b5a632124de487040819182f540ef repo
 - The result is only a finite-set equivalence. It does not yet prove equality of high/low operator entries on the support, row/column support for powers one through three, any of the six corner transports, or H8 boundary-residual stability. The next step is to prove the corresponding O-corner spin-resolved entry bridge on the radius-three support and then derive row/column support for degrees 1–3.
 - Full Lean and Python CI on the new exact SHA are required before treating the addition as verified.
 
-## 2026-10-31 — H8 radius-three O-corner spin-resolved entry transport (CI pending)
+## 2026-10-31 — H8 radius-three O-corner spin-resolved entry transport (CI verified)
 
 Added the pointwise matrix-entry bridge for the O radius-three neighborhood,
 with the two spin indices retained explicitly:
@@ -1456,7 +1456,24 @@ with the two spin indices retained explicitly:
 All new statements retain m >= 4. They are entry equalities only:
 no row/column support for powers 1, 2, or 3, no six/seven diagonal
 transport instantiation, and no H8 boundary-residual stability is claimed.
-The full Lean build and Python matrices on this commit must be checked;
-the parent commit 71fb190 now has successful full Lean, Python 3.11,
-and Python 3.12 workflows (including slow tests).
+Verification completed on the exact commit 9dabd9c56c4bbd10819116901a18ab4a046aabfc:
+full Lean build passed (run 41177720579), and Python 3.11 plus 3.12
+passed both fast and slow suites (run 41177720577).
 
+
+## 2026-10-31 — H8 radius-three support: column vanishing
+
+- Rechecked the exact parent SHA 9dabd9c56c4bbd10819116901a18ab4a046aabfc:
+  the full Lean build and both Python 3.11/3.12 fast and slow suites passed.
+- Added symmetry of the copy-preserving radius-three support. The proof
+  swaps the two coordinate-distance inequalities in each coordinate and
+  reverses the copy equality.
+- Derived the column-zero statement for every degree n <= 3 from the
+  existing row-zero theorem, using that support symmetry. No new locality
+  assumption or geometric lemma is introduced.
+- This supplies the column side only; together with the already-proved row
+  form it gives both support directions needed by the generic local
+  degree-six/seven diagonal transport. The O-corner specialization,
+  other corners, and H8 boundary-residual stability remain unproved.
+- Full Lean build and Python 3.11/3.12 fast and slow suites must be checked
+  on the new exact SHA before proceeding.

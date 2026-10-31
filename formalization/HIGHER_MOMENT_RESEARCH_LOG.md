@@ -4100,3 +4100,21 @@ the generic degree-six/seven diagonal transport, and the H8 boundary
 residual comparison remain open. No boundary cancellation or level
 stability is inferred.
 
+
+## 2026-10-31 — H8 radius-three support: symmetric column control
+
+The O radius-three entry bridge is now supported by a complete finite
+support statement in the following precise sense: the existing power
+locality theorem gives row vanishing outside the radius-three set for
+all powers n <= 3; the new symmetry lemma swaps the two endpoint states;
+and a derived column-vanishing lemma applies the row theorem in the
+reversed order. The symmetry uses the exact five conjuncts defining the
+support (copy plus the four coordinate inequalities), swapping each
+distance inequality pair.
+
+This does not identify the six/seven diagonal entries yet. The generic
+local diagonal transport still needs to be instantiated with the O
+support equivalence, exact spin-resolved entry equality on the entire
+support, and row/column vanishing for both levels. The remaining five
+corner transports and the H8 boundary residual comparison remain open.
+Full Lean and Python CI on the new SHA are required.

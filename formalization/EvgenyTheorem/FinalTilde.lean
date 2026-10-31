@@ -3888,6 +3888,31 @@ private theorem sgK_radius_two_support_symm
     rcases h with ⟨hcopy, h1, h2, h3, h4⟩
     exact ⟨hcopy.symm, h2, h1, h4, h3⟩
 
+/-- Symmetry of the finite radius-three support around its center. -/
+private theorem sgK_radius_three_support_symm
+    (m : ℕ) (w z : WSG m) :
+    z ∈ sgK_radius_three_support m w ↔ w ∈ sgK_radius_three_support m z := by
+  constructor <;> intro h
+  all_goals
+    simp only [sgK_radius_three_support, Finset.mem_filter, Finset.mem_univ,
+      true_and] at h ⊢
+    rcases h with ⟨hcopy, h1, h2, h3, h4⟩
+    exact ⟨hcopy.symm, h2, h1, h4, h3⟩
+
+/-- A radius-three column vanishes outside the support, by symmetry of the
+support and the established row-vanishing theorem for powers up to three. -/
+private theorem sgK_pow_entry_zero_outside_radius_three_col
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (n : ℕ) (hn : n ≤ 3) (w z : WSG m)
+    (hz : z ∉ sgK_radius_three_support m w) :
+    (sgK m θ ax o ^ n) z w = 0 := by
+  have hrev : w ∉ sgK_radius_three_support m z := by
+    intro hzw
+    exact hz ((sgK_radius_three_support_symm m z w).mp hzw)
+  exact sgK_pow_entry_zero_outside_radius_three
+    m θ ax o n hn z w hrev
+
 /-- A one-step matrix entry vanishes outside the radius-two support. The
 support is symmetric, so the same statement also controls columns. -/
 private theorem sgK_entry_zero_outside_radius_two
