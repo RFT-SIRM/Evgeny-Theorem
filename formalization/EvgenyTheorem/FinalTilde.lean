@@ -525,9 +525,9 @@ theorem sgK_pow_diag_eq_num_til_on_glue
 
 
 /-- The flipped edge is farther than six steps from every glued state in
-copy B once m ≥ 4. This is the degree-eight analogue of the p=6 bound. -/
+copy B once m ≥ 3. This is the degree-eight analogue of the p=6 bound. -/
 theorem sgK_pow_zero_from_glue_to_flip_up_to_six
-    (m n : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (w z : WSG m) (hw : (sgGlue m).g w)
     (hz : p6FlipEndpoint m z) (hn : n ≤ 6) :
@@ -536,11 +536,11 @@ theorem sgK_pow_zero_from_glue_to_flip_up_to_six
   by_cases hb : w.1 = GCopy.B
   · have hpB : w.2.1.1 = (0, 0) ∨ w.2.1.1 = (0, 2 ^ m) :=
       glued_B_point m hw hb
-    have hpow : 16 ≤ 2 ^ m := by
+    have hpow : 8 ≤ 2 ^ m := by
       calc
-        16 = 2 ^ 4 := by norm_num
+        8 = 2 ^ 3 := by norm_num
         _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
-    have hside : 7 < 2 ^ m - 1 := by omega
+    have hside : 6 < 2 ^ m - 1 := by omega
     rcases hz with ⟨hzB, hzpt⟩
     have hxw : w.2.1.1.1 = 0 := by
       rcases hpB with hp | hp <;> simp [hp]
@@ -564,11 +564,11 @@ theorem sgK_pow_zero_from_glue_to_flip_up_to_six
     rw [blockK_pow_local]
     simp [blockK, hcopy]
 
-/-- For levels m ≥ 4, every row of K^n starting at a glued state is
+/-- For levels m ≥ 3, every row of K^n starting at a glued state is
 unchanged by the single exceptional orientation flip for n ≤ 7. The
 induction uses the preceding distance bound only at the penultimate step. -/
 theorem sgK_pow_row_eq_num_til_on_glue_up_to_seven
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (w : WSG m) (hw : (sgGlue m).g w) :
     ∀ n, n ≤ 7 → ∀ z,
       (sgK m θ ax (oNum (m + 1)) ^ n) w z =
@@ -597,7 +597,7 @@ theorem sgK_pow_row_eq_num_til_on_glue_up_to_seven
 
 /-- Diagonal specialization of the seven-power glued-row comparison. -/
 theorem sgK_pow_diag_eq_num_til_on_glue_up_to_seven
-    (m n : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m n : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (w : WSG m) (hw : (sgGlue m).g w) (hn : n ≤ 7) :
     (sgK m θ ax (oNum (m + 1)) ^ n) w w =
       (sgK m θ ax (oTil (m + 1)) ^ n) w w :=
@@ -607,7 +607,7 @@ theorem sgK_pow_diag_eq_num_til_on_glue_up_to_seven
 /-- The complete H8 boundary correction is unchanged by the exceptional
 orientation flip once the glued rows agree through degree seven. -/
 theorem glueRHS8_num_eq_til
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis) :
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis) :
     glueRHS8 m (sgK m θ ax (oNum (m + 1))) =
       glueRHS8 m (sgK m θ ax (oTil (m + 1))) := by
   apply glueRHS8_congr_of_glued_row_pow m hm θ ax
@@ -621,7 +621,7 @@ theorem glueRHS8_num_eq_til
 Its finite value at level four is retained; this is not a claim that the gap
 vanishes. -/
 theorem defectO8_orientation_difference_succ_invariant
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
     (defectO8 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) -
       defectO8 (m + 1) θ faceAxis (fun _ => 2) (oTil (m + 1))) =
     (defectO8 m θ faceAxis (fun _ => 2) (oNum m) -
@@ -634,13 +634,15 @@ theorem defectO8_orientation_difference_succ_invariant
 /-- All higher-level H8 orientation gaps reduce to the exact level-four
 base value. No zero value is asserted for that base gap. -/
 theorem defectO8_orientation_difference_eq_level4
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
     (defectO8 m θ faceAxis (fun _ => 2) (oNum m) -
       defectO8 m θ faceAxis (fun _ => 2) (oTil m)) =
     (defectO8 4 θ faceAxis (fun _ => 2) (oNum 4) -
       defectO8 4 θ faceAxis (fun _ => 2) (oTil 4)) := by
   induction m, hm using Nat.le_induction with
-  | base => rfl
+  | base =>
+      exact (defectO8_orientation_difference_succ_invariant
+        3 (by omega) θ).symm
   | succ n hn ih =>
       rw [defectO8_orientation_difference_succ_invariant n hn θ, ih]
 
@@ -1066,7 +1068,7 @@ theorem pHeO_corner_O_box_entry
 /-- At the outer corner O, all entries whose endpoints lie in the
 coordinate box [0,3]² agree with the parent-level operator. -/
 theorem pHeO_corner_O_radius_three_entry
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
     (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
@@ -1249,7 +1251,7 @@ theorem pHeO_corner_O_box_entry_next_num
 the orientation used by the next residual, oNum (m+2), agrees with the
 parent entry using oNum (m+1). -/
 theorem pHeO_corner_O_radius_three_entry_next_num
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
     (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
@@ -1627,7 +1629,7 @@ theorem sgK_B_O_entry_next_til
 to the parent level with the exact tilde orientations. The radius-three
 separation excludes the flipped edge before the O/A entry bridge is used. -/
 theorem sgK_B_O_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
     (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
@@ -2007,7 +2009,7 @@ to the parent level with the exact tilde orientations. The C-copy
 orientation conversion and the radius-three O/A entry bridge are kept
 as separate steps. -/
 theorem sgK_C_O_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
     (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
@@ -2170,7 +2172,7 @@ noncomputable def sgK_radius_two_support_O_equiv
 /-- The level-(m+1) radius-three support around O is exactly the old
 A-copy coordinate box. The copy coordinate and spin are retained. -/
 theorem sgK_radius_three_support_O_box_iff
-    (m : ℕ) (hm : 4 ≤ m) {w z : WSG (m + 1)}
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
     (hw : w.2.1.1 = ((0, 0) : Point)) :
     z ∈ sgK_radius_three_support (m + 1) w ↔
       z.1 = w.1 ∧
@@ -2200,7 +2202,7 @@ def sgK_radius_three_O_parent_support (m : ℕ) (c : GCopy) :
 parent-level support by retaining the same point, copy, and spin. This is
 a finite-state reindexing statement; it does not yet compare matrix entries. -/
 noncomputable def sgK_radius_three_support_O_equiv
-    (m : ℕ) (hm : 4 ≤ m) {w : WSG (m + 1)}
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
     (hw : w.2.1.1 = ((0, 0) : Point)) :
     {z : WSG (m + 1) // z ∈ sgK_radius_three_support (m + 1) w} ≃
       {z : WSG m // z ∈ sgK_radius_three_O_parent_support m w.1} := by
@@ -2242,7 +2244,7 @@ noncomputable def sgK_radius_three_support_O_equiv
 parent-level box under the B-copy shift. The copy coordinate is fixed,
 and the spin coordinate is retained. -/
 theorem sgK_radius_three_support_X_box_iff
-    (m : ℕ) (hm : 4 ≤ m) {w z : WSG (m + 1)}
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
     (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
     z ∈ sgK_radius_three_support (m + 1) w ↔
       z.1 = w.1 ∧
@@ -2285,7 +2287,7 @@ def sgK_radius_three_X_parent_support (m : ℕ) (c : GCopy) :
 the inverse B shift. This is only a finite-state reindexing statement;
 it does not yet compare matrix entries. -/
 noncomputable def sgK_radius_three_support_X_equiv
-    (m : ℕ) (hm : 4 ≤ m) {w : WSG (m + 1)}
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
     (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
     {z : WSG (m + 1) // z ∈ sgK_radius_three_support (m + 1) w} ≃
       {z : WSG m // z ∈ sgK_radius_three_X_parent_support m w.1} := by
@@ -2379,7 +2381,7 @@ noncomputable def sgK_radius_three_support_X_equiv
 parent-level box under the C-copy shift. The copy coordinate is fixed,
 and the spin coordinate is retained. -/
 theorem sgK_radius_three_support_Y_box_iff
-    (m : ℕ) (hm : 4 ≤ m) {w z : WSG (m + 1)}
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
     (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
     z ∈ sgK_radius_three_support (m + 1) w ↔
       z.1 = w.1 ∧
@@ -2422,7 +2424,7 @@ def sgK_radius_three_Y_parent_support (m : ℕ) (c : GCopy) :
 the inverse C shift. This is only a finite-state reindexing statement;
 it does not yet compare matrix entries. -/
 noncomputable def sgK_radius_three_support_Y_equiv
-    (m : ℕ) (hm : 4 ≤ m) {w : WSG (m + 1)}
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
     (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
     {z : WSG (m + 1) // z ∈ sgK_radius_three_support (m + 1) w} ≃
       {z : WSG m // z ∈ sgK_radius_three_Y_parent_support m w.1} := by
@@ -3266,7 +3268,7 @@ noncomputable def sgK_glued_root_equiv (m : ℕ) :
 The geometric C pullback avoids both exceptional C-shift endpoints, and
 the parent orientation is normalized only on this restricted box. -/
 theorem pHeO_corner_Y_radius_three_box_entry_next_num
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -3285,7 +3287,7 @@ theorem pHeO_corner_Y_radius_three_box_entry_next_num
     ⟨q', hq', hqx', hqy', rfl⟩
   have hpow : 3 < 2 ^ m := by
     calc
-      3 < 2 ^ 4 := by norm_num
+      3 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hp0 : p' ≠ (0, 0) := by
     intro heq
@@ -3326,7 +3328,7 @@ theorem pHeO_corner_Y_radius_three_box_entry_next_num
 /-- The Y/C radius-three point-entry bridge with the exact tilde
 orientations needed by the adjacent-level diagonal argument. -/
 theorem pHeO_corner_Y_radius_three_box_entry_next_til
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -3391,7 +3393,7 @@ theorem pHeO_corner_Y_radius_three_box_entry_next_til
 
 /-- State-index radius-three entry bridge for the A copy at Y. -/
 theorem sgK_A_Y_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -3422,7 +3424,7 @@ theorem sgK_A_Y_entry_next_til_radius_three
 orientation conversion explicitly excludes the exceptional B-shift edge
 at both the high and parent levels. -/
 theorem sgK_B_Y_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -5862,7 +5864,7 @@ theorem defectO6_num_growth_recurrence
 /-- A-copy entries in the O radius-three box transport by the O/A
 numbering bridge; no copy shift or periodicity hypothesis is needed. -/
 private theorem sgK_A_O_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
     (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
@@ -5888,7 +5890,7 @@ private theorem sgK_A_O_entry_next_til_radius_three
 
 /-- Common O radius-three entry transport for all copy labels. -/
 private theorem sgK_O_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (c : GCopy)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (c : GCopy)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
     (hpx : p.1 ≤ 3) (hpy : p.2 ≤ 3)
@@ -5912,7 +5914,7 @@ of powers six and seven between adjacent levels. The support equivalence
 retains copy, point, and spin; the local entry bridge dispatches over all
 three copy labels. -/
 private theorem sgK_O_diag_six_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     {w : WSG (m + 1)}
     (hwPoint : w.2.1.1 = ((0, 0) : Point)) :
     (sgK (m + 1) θ ax (oTil (m + 2)) ^ 1) w w =
@@ -6138,7 +6140,7 @@ transport lemma. The orientation conversion is kept explicit: the high
 tilde orientation is reduced to numbering, the B-local entry is transported,
 and the parent B orientation is converted back to the parent tilde graph. -/
 theorem pHeO_corner_X_radius_three_box_entry_next_til
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -6241,7 +6243,7 @@ copy C to the underlying point operator. In contrast to the A-block
 transport above, this is oTil (m+1) on the high level and oTil m on
 the parent level. -/
 theorem pHeO_corner_X_radius_three_box_entry_next_parent_til
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -6260,7 +6262,7 @@ theorem pHeO_corner_X_radius_three_box_entry_next_parent_til
     ⟨q', hq', _, _, rfl⟩
   have hpow : 3 < 2 ^ m := by
     calc
-      3 < 2 ^ 4 := by norm_num
+      3 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hp0 : p' ≠ (0, 0) := by
     intro heq
@@ -6327,7 +6329,7 @@ theorem pHeO_corner_X_radius_three_box_entry_next_parent_til
 B-shift representatives. This is the direct state-level bridge needed by
 the X finite-support diagonal argument. -/
 theorem sgK_A_X_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -6358,7 +6360,7 @@ theorem sgK_A_X_entry_next_til_radius_three
 B-shift representatives. The C-orientation conversion remains explicit
 and separate from the underlying B-shift point transport. -/
 theorem sgK_C_X_entry_next_til_radius_three
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     {p q : Point}
     (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
@@ -6441,7 +6443,7 @@ The parent support is centered at the pulled-back X corner (2^m, 0);
 the proof explicitly transfers row and column vanishing through degree
 three on both levels before applying the finite-matrix identity. -/
 private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     (c : GCopy) {w : WSG (m + 1)}
     (hwCopy : w.1 = c)
@@ -6701,7 +6703,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
 
 /-- Sixth/seventh diagonal transport for the A-copy at its X corner. -/
 private theorem sgK_A_X_diag_six_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     {w : WSG (m + 1)}
     (hwCopy : w.1 = GCopy.A)
@@ -6730,7 +6732,7 @@ private theorem sgK_A_X_diag_six_seven_transport
 
 /-- Sixth/seventh diagonal transport for the C-copy at its X corner. -/
 private theorem sgK_C_X_diag_six_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (3 ^ m + k) = ax k)
     {w : WSG (m + 1)}
     (hwCopy : w.1 = GCopy.C)
@@ -6758,7 +6760,7 @@ private theorem sgK_C_X_diag_six_seven_transport
 
 
 private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     (c : GCopy) {w : WSG (m + 1)}
     (hwCopy : w.1 = c)
@@ -7018,7 +7020,7 @@ private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
 
 
 private theorem sgK_A_Y_diag_one_two_three_six_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {w : WSG (m + 1)} (hwCopy : w.1 = GCopy.A)
     (hwPoint : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
@@ -7040,7 +7042,7 @@ private theorem sgK_A_Y_diag_one_two_three_six_seven_transport
 
 
 private theorem sgK_B_Y_diag_one_two_three_six_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {w : WSG (m + 1)} (hwCopy : w.1 = GCopy.B)
     (hwPoint : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
@@ -7062,7 +7064,7 @@ private theorem sgK_B_Y_diag_one_two_three_six_seven_transport
 
 
 private theorem sgK_glued_partner_diag_one_two_three_six_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (haxX : ∀ k, ax (3 ^ m + k) = ax k)
     (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
@@ -7104,7 +7106,7 @@ private theorem sgK_glued_partner_diag_one_two_three_six_seven_transport
 /-- Combined diagonal transport for every glued partner, including all
 intermediate powers needed by the eighth-moment boundary correction. -/
 private theorem sgK_glued_partner_diag_one_to_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (haxX : ∀ k, ax (3 ^ m + k) = ax k)
     (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
@@ -7139,7 +7141,7 @@ The existing six-case theorem transports the partner diagonals. Applying
 it once more at the partner and using sigma-involutivity transports the
 root diagonals; sgK_root_pullback_sigma aligns the partner on the parent. -/
 private theorem sgK_glued_state_diag_one_to_seven_transport
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (haxX : ∀ k, ax (3 ^ m + k) = ax k)
     (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
     {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
@@ -7198,7 +7200,7 @@ private theorem sgK_glued_state_diag_one_to_seven_transport
 orientation. The root and partner diagonal transports are both supplied by
 the six-case glued-state transport above. -/
 theorem glueRHS8_sgK_til_succ
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
     (ax : ℕ → Axis)
     (haxX : ∀ k, ax (3 ^ m + k) = ax k)
     (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k) :
@@ -7216,22 +7218,26 @@ theorem glueRHS8_sgK_til_succ
 /-- The complete exceptional-orientation H8 boundary is stable from level
 four onward. Its value is retained exactly at level four. -/
 theorem glueRHS8_sgK_til_faceAxis_eq_level4
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
     glueRHS8 m (sgK m θ faceAxis (oTil (m + 1))) =
       glueRHS8 4 (sgK 4 θ faceAxis (oTil 5)) := by
   induction m, hm using Nat.le_induction with
-  | base => rfl
+  | base =>
+      exact (glueRHS8_sgK_til_succ 3 (by omega) θ faceAxis
+        (faceAxis_pow1 3 (by omega)) (faceAxis_pow2 3 (by omega))).symm
   | succ n hn ih =>
       rw [glueRHS8_sgK_til_succ n hn θ faceAxis
         (faceAxis_pow1 n (by omega)) (faceAxis_pow2 n (by omega)), ih]
 
 /-- The corresponding H8 boundary for the constant axis is also stable. -/
 theorem glueRHS8_sgK_til_const_eq_level4
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
     glueRHS8 m (sgK m θ (fun _ => 2) (oTil (m + 1))) =
       glueRHS8 4 (sgK 4 θ (fun _ => 2) (oTil 5)) := by
   induction m, hm using Nat.le_induction with
-  | base => rfl
+  | base =>
+      exact (glueRHS8_sgK_til_succ 3 (by omega) θ (fun _ => 2)
+        (by intro k; rfl) (by intro k; rfl)).symm
   | succ n hn ih =>
       rw [glueRHS8_sgK_til_succ n hn θ (fun _ => 2)
         (by intro k; rfl) (by intro k; rfl), ih]
@@ -7250,7 +7256,7 @@ noncomputable def defectO8_num_residual_constant (θ : ℝ) : ℂ :=
 boundary constant. Neither the boundary residual nor the level-four
 orientation gap is assumed to vanish. -/
 theorem defectO8_succ_num_level4_constant_boundary
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) :
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) :
     defectO8 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
       3 * defectO8 m θ faceAxis (fun _ => 2) (oNum m) +
         defectO8_num_residual_constant θ := by
@@ -7289,5 +7295,31 @@ theorem defectO8_num_affine_closed_form_from_level4 (θ : ℝ) :
     (defectO8_num_residual_constant θ) hrec
   intro n
   simpa [D, Nat.add_assoc] using hclosed n
+
+
+/-- Closed affine formula for the numbering-orientation eighth-moment defect
+starting at level three. The exact level-four correction is valid already
+for the finite transition from level three to four. -/
+theorem defectO8_num_affine_closed_form_from_level3 (θ : ℝ) :
+    ∀ n : ℕ,
+      defectO8 (n + 3) θ faceAxis (fun _ => 2) (oNum (n + 3)) =
+        (3 : ℂ) ^ n *
+          (defectO8 3 θ faceAxis (fun _ => 2) (oNum 3) +
+            defectO8_num_residual_constant θ / 2) -
+          defectO8_num_residual_constant θ / 2 := by
+  let D : ℕ → ℂ := fun k =>
+    defectO8 k θ faceAxis (fun _ => 2) (oNum k)
+  have hrec : ∀ n : ℕ,
+      D (n + 4) = 3 * D (n + 3) +
+        defectO8_num_residual_constant θ := by
+    intro n
+    dsimp [D]
+    have h := defectO8_succ_num_level4_constant_boundary
+      (n + 3) (by omega) θ
+    simpa [Nat.add_assoc] using h
+  have hclosed := affine_three_recurrence D
+    (defectO8_num_residual_constant θ) hrec
+  intro n
+  simpa [D] using hclosed n
 
 end EvgenyTheorem

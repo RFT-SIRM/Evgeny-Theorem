@@ -2710,7 +2710,7 @@ K' whenever every row starting on the glued set agrees through degree seven.
 This checks all four r=2 terms, all ten ordered r=4 terms, all four ordered
 r=6 traces, and the r=8 endpoint term with their original coefficients. -/
 theorem glueRHS8_congr_of_glued_row_pow
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o o' : Point → Point → Prop)
     [DecidableRel o] [DecidableRel o']
     (hanti : OAnti (m + 1) o) (hanti' : OAnti (m + 1) o')

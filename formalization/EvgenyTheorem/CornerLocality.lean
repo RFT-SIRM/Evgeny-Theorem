@@ -486,14 +486,14 @@ around O lies in the old A copy. The box also avoids the two other glued
 geometric corners, so the degree recursion has no extra corner contribution.
 -/
 theorem corner_O_radius_three_transport
-    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
     (hz : z ∈ vertexOrder (m + 1))
     (hx : z.1 ≤ 3) (hy : z.2 ≤ 3) :
     z ∈ vertexOrder m ∧
       z ≠ (2 ^ m, 0) ∧ z ≠ (0, 2 ^ m) := by
   have hpow : 3 < 2 ^ m := by
     calc
-      3 < 2 ^ 4 := by norm_num
+      3 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   rcases (mem_vertexOrder_succ_iff m z).mp hz with hzA | hzB | hzC
   · refine ⟨hzA, ?_, ?_⟩
@@ -512,10 +512,10 @@ theorem corner_O_radius_three_transport
 
 /--
 The radius-three box around X at level m+1 is contained in copy B.
-Its inverse B-shift avoids both B-copy glued corners when m ≥ 4.
+Its inverse B-shift avoids both B-copy glued corners when m ≥ 3.
 -/
 theorem corner_X_radius_three_transport
-    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
     (hz : z ∈ vertexOrder (m + 1))
     (hx : 2 ^ (m + 1) ≤ z.1 + 3) (hy : z.2 ≤ 3) :
     ∃ p ∈ vertexOrder m,
@@ -523,7 +523,7 @@ theorem corner_X_radius_three_transport
         p ≠ (0, 0) ∧ p ≠ (0, 2 ^ m) := by
   have hpow : 3 < 2 ^ m := by
     calc
-      3 < 2 ^ 4 := by norm_num
+      3 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hsep : 2 ^ m + 3 < 2 ^ (m + 1) := by
     rw [pow_succ]
@@ -553,7 +553,7 @@ box is precisely the image under the B shift of the corresponding level-m
 box; this statement concerns coordinates only, not matrix entries.
 -/
 theorem corner_X_radius_three_box_iff
-    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
     (hz : z ∈ vertexOrder (m + 1)) :
     (2 ^ (m + 1) ≤ z.1 + 3 ∧ z.2 ≤ 3) ↔
       ∃ p, p ∈ vertexOrder m ∧
@@ -581,10 +581,10 @@ theorem corner_X_radius_three_box_iff
 
 /--
 The radius-three box around Y at level m+1 is contained in copy C.
-Its inverse C-shift avoids both C-copy glued corners when m ≥ 4.
+Its inverse C-shift avoids both C-copy glued corners when m ≥ 3.
 -/
 theorem corner_Y_radius_three_transport
-    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
     (hz : z ∈ vertexOrder (m + 1))
     (hx : z.1 ≤ 3) (hy : 2 ^ (m + 1) ≤ z.2 + 3) :
     ∃ p ∈ vertexOrder m,
@@ -592,7 +592,7 @@ theorem corner_Y_radius_three_transport
         p ≠ (0, 0) ∧ p ≠ (2 ^ m, 0) := by
   have hpow : 3 < 2 ^ m := by
     calc
-      3 < 2 ^ 4 := by norm_num
+      3 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hsep : 2 ^ m + 3 < 2 ^ (m + 1) := by
     rw [pow_succ]
@@ -622,7 +622,7 @@ box is precisely the image under the C shift of the corresponding level-m
 box; this statement concerns coordinates only, not matrix entries.
 -/
 theorem corner_Y_radius_three_box_iff
-    (m : ℕ) (hm : 4 ≤ m) {z : Point}
+    (m : ℕ) (hm : 3 ≤ m) {z : Point}
     (hz : z ∈ vertexOrder (m + 1)) :
     (z.1 ≤ 3 ∧ 2 ^ (m + 1) ≤ z.2 + 3) ↔
       ∃ p, p ∈ vertexOrder m ∧
