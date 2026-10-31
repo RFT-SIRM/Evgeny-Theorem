@@ -5511,7 +5511,9 @@ private theorem sgK_O_diag_six_seven_transport
       simp only [T, sgK_radius_three_O_parent_support, Finset.mem_filter,
         Finset.mem_univ, true_and]
       refine ⟨?_, ?_, ?_⟩
-      · simpa [sgK_root_pullback] using hzs.1
+      · have hxCopy : x'.1 = w.1 := by
+          rfl
+        exact hzs.1.trans hxCopy
       · have hbound := hzs.2.2.1
         simpa [hrootX] using hbound
       · have hbound := hzs.2.2.2.2

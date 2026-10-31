@@ -4154,3 +4154,16 @@ The resulting equality is local to the O corner and compares only the
 sixth- and seventh-power diagonal entries between adjacent levels. It does
 not establish the other five corner transports or the complete H8
 boundary-residual recurrence. H8 and H10 remain open.
+
+## 2026-10-31 — O support inclusion proof correction
+
+A first Lean build of the new O degree-six/seven diagonal theorem exposed a
+single mismatch in the copy component of the low-level support inclusion:
+the row-support fact gives z.copy = root.copy, while the parent support is
+indexed by the original state copy. Since root is defined by
+sgK_root_pullback and that map preserves the copy coordinate by construction,
+the corrected proof composes z.copy = root.copy with root.copy = w.copy
+(definitional reflexivity). The radius bounds and all matrix-power arguments
+are unchanged. The corrected theorem is not yet certified; the fresh full
+Lean build must pass before the O degree-six/seven transport is counted as
+proved.

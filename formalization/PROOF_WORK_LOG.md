@@ -1516,3 +1516,15 @@ inspected.
 - This closes the O-corner diagonal-transport component only. Other corner
   transports and the H8 boundary-residual comparison remain open; H8/H10
   are not claimed closed. Full CI on the new SHA is required next.
+
+## 2026-10-31 — Repair O diagonal transport copy equality
+
+The first Lean check of commit cfc75dea7ecf2f04d65e32a9c242429b345174b9
+reported one type mismatch in the parent-support inclusion inside
+sgK_O_diag_six_seven_transport. After unpacking radius-three support, the
+copy equality was z.1 = x'.1, while the parent support asks for z.1 = w.1.
+The local abbreviation x' is sgK_root_pullback m w, whose copy projection
+is definitionally w.1. The proof now records x'.1 = w.1 by rfl and composes
+the equalities explicitly. No geometric premise or theorem statement changed.
+The previous Lean run therefore remains failed until a fresh full build of
+this repair succeeds.
