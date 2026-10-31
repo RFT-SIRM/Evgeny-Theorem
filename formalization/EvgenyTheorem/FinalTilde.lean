@@ -7261,6 +7261,6 @@ theorem defectO8_succ_num_level4_constant_boundary
     glueRHS8_sgK_til_const_eq_level4 m hm θ]
   have hgap := defectO8_orientation_difference_eq_level4 m hm θ
   unfold defectO8_num_residual_constant
-  linear_combination -2 * hgap
+  linear_combination -hgap
 
 end EvgenyTheorem
