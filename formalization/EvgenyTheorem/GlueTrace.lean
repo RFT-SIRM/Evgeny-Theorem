@@ -3422,15 +3422,17 @@ theorem glueRHS8_eq_diagonal_form
     · simp only [if_pos hg]
       ring
     · simp [hg]
+  have hTwo :=
+    (sg_trace_p8_two_N_stratum_boundary m hm θ ax o hanti).symm.trans
+      (sg_trace_p8_two_N_stratum_pair_diagonal m hm θ ax o hanti)
   have hFour :=
     (sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti).symm.trans
       (sg_trace_p8_four_N_stratum_pair_diagonal m hm θ ax o hanti)
   have hSix := sg_trace_p8_six_N_stratum_pair_diagonal m hm θ ax o hanti
+  dsimp at hSix
   unfold glueRHS8
   dsimp
-  linear_combination hFour
-  linear_combination hSix
-  linear_combination htop
+  linear_combination hTwo + hFour + hSix + htop
   unfold glueRHS8_diagonal_form
   simp [glueRHS8_pair_sum, glueRHS8_pair_product, glueRHS8_pair_value]
 
