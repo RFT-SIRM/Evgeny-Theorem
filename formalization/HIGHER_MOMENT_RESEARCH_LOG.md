@@ -4427,7 +4427,7 @@ adjacent-level stability of the common H8 flipped-orientation boundary
 difference for the two axes. First state and prove the required
 degree-seven diagonal/row transport for the six glued-partner cases under
 the already-present O/X/Y local-entry and radius-three support hypotheses;
-then instantiate the complete 19-term `glueRHS8) comparison. Do not
+then instantiate the complete 19-term `glueRHS8` comparison. Do not
 introduce a residual constant or closed form until this exact comparison
 compiles. H10 remains deferred until the H8 residual transport is proved
 and the complete H8 recurrence is genuinely closed.
