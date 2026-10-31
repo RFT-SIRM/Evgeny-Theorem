@@ -1632,3 +1632,18 @@ x'.1 = c directly from sgK_root_pullback and the theorem premise
 hwCopy, then composes it with the support's copy equality. This closes
 that inclusion obligation explicitly; the corrected SHA still requires a
 full Lean build and both Python suites.
+
+
+## 2026-10-31 — Correct X diagonal support center and column arguments
+
+The failed Lean run on the initial X diagonal commit identified three
+concrete errors. The parent support must be indexed by w.1, because that is
+the codomain of the X support equivalence; its root copy coordinate is
+definitionally w.1. The low-support inclusion now composes the copy
+equality with this exact coordinate identity. In addition, the radius-three
+column-vanishing helper already performs support symmetry internally, so
+its center/outside arguments must be passed in row order (root, outside),
+not reversed. Corrected these argument orders for powers one through three
+at both levels. The timeout/unknown-constant diagnostics are being checked
+again after these primary type errors are removed; no success is claimed
+until the fresh full Lean build passes.

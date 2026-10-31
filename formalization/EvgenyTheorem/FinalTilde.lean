@@ -6213,7 +6213,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
         (sgK_root_pullback m w) (sgK_root_pullback m w) := by
   classical
   let S : Finset (WSG (m + 1)) := sgK_radius_three_support (m + 1) w
-  let T : Finset (WSG m) := sgK_radius_three_X_parent_support m c
+  let T : Finset (WSG m) := sgK_radius_three_X_parent_support m w.1
   let e := sgK_radius_three_support_X_equiv m hm (w := w) hwPoint
   let x' : WSG m := sgK_root_pullback m w
 
@@ -6233,8 +6233,8 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
     simp only [T, sgK_radius_three_X_parent_support, Finset.mem_filter,
       Finset.mem_univ, true_and]
     refine ⟨?_, ?_, ?_⟩
-    · change w.1 = c
-      exact hwCopy
+    · change w.1 = w.1
+      rfl
     · rw [hrootX]
       omega
     · rw [hrootY]
@@ -6347,14 +6347,10 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
     simp only [T, sgK_radius_three_X_parent_support, Finset.mem_filter,
       Finset.mem_univ, true_and]
     refine ⟨?_, ?_, ?_⟩
-    · have hxCopy : x'.1 = c := by
-        change w.1 = c
-        exact hwCopy
+    · have hxCopy : x'.1 = w.1 := rfl
       exact hzs.1.trans hxCopy
-    · simpa [x', sgK_root_pullback, sgK_root_pullback_pt, hwPoint]
-        using hzs.2.1
-    · simpa [x', sgK_root_pullback, sgK_root_pullback_pt, hwPoint]
-        using hzs.2.2.2.2
+    · simpa only [hrootX] using hzs.2.1
+    · simpa only [hrootY] using hzs.2.2.2.2
 
   have hRowOne : ∀ z, z ∉ S →
       sgK (m + 1) θ ax (oTil (m + 2)) w z = 0 := by
@@ -6367,7 +6363,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
       sgK (m + 1) θ ax (oTil (m + 2)) z w = 0 := by
     intro z hz
     have hzero := sgK_pow_entry_zero_outside_radius_three_col
-      (m + 1) θ ax (oTil (m + 2)) 1 (by norm_num) z w
+      (m + 1) θ ax (oTil (m + 2)) 1 (by norm_num) w z
       (by simpa [S] using hz)
     simpa [pow_one] using hzero
   have hRowTwo : ∀ z, z ∉ S →
@@ -6380,7 +6376,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
       (sgK (m + 1) θ ax (oTil (m + 2)) ^ 2) z w = 0 := by
     intro z hz
     exact sgK_pow_entry_zero_outside_radius_three_col
-      (m + 1) θ ax (oTil (m + 2)) 2 (by norm_num) z w
+      (m + 1) θ ax (oTil (m + 2)) 2 (by norm_num) w z
       (by simpa [S] using hz)
   have hRowThree : ∀ z, z ∉ S →
       (sgK (m + 1) θ ax (oTil (m + 2)) ^ 3) w z = 0 := by
@@ -6392,7 +6388,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
       (sgK (m + 1) θ ax (oTil (m + 2)) ^ 3) z w = 0 := by
     intro z hz
     exact sgK_pow_entry_zero_outside_radius_three_col
-      (m + 1) θ ax (oTil (m + 2)) 3 (by norm_num) z w
+      (m + 1) θ ax (oTil (m + 2)) 3 (by norm_num) w z
       (by simpa [S] using hz)
 
   have hRowOne' : ∀ z, z ∉ T →
@@ -6405,7 +6401,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
       sgK m θ ax (oTil (m + 1)) z x' = 0 := by
     intro z hz
     have hzero := sgK_pow_entry_zero_outside_radius_three_col
-      m θ ax (oTil (m + 1)) 1 (by norm_num) z x' (hnotS z hz)
+      m θ ax (oTil (m + 1)) 1 (by norm_num) x' z (hnotS z hz)
     simpa [pow_one] using hzero
   have hRowTwo' : ∀ z, z ∉ T →
       (sgK m θ ax (oTil (m + 1)) ^ 2) x' z = 0 := by
@@ -6416,7 +6412,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
       (sgK m θ ax (oTil (m + 1)) ^ 2) z x' = 0 := by
     intro z hz
     exact sgK_pow_entry_zero_outside_radius_three_col
-      m θ ax (oTil (m + 1)) 2 (by norm_num) z x' (hnotS z hz)
+      m θ ax (oTil (m + 1)) 2 (by norm_num) x' z (hnotS z hz)
   have hRowThree' : ∀ z, z ∉ T →
       (sgK m θ ax (oTil (m + 1)) ^ 3) x' z = 0 := by
     intro z hz
@@ -6426,7 +6422,7 @@ private theorem sgK_X_diag_six_seven_transport_of_entry_bridge
       (sgK m θ ax (oTil (m + 1)) ^ 3) z x' = 0 := by
     intro z hz
     exact sgK_pow_entry_zero_outside_radius_three_col
-      m θ ax (oTil (m + 1)) 3 (by norm_num) z x' (hnotS z hz)
+      m θ ax (oTil (m + 1)) 3 (by norm_num) x' z (hnotS z hz)
 
   exact matrix_pow_six_seven_diag_eq_of_local_equiv
     (sgK (m + 1) θ ax (oTil (m + 2)))
