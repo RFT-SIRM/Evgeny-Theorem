@@ -5359,3 +5359,24 @@ This is a genuine inverse-uniqueness result for the canonical gap encoding.
 It does not yet encode arbitrary marked words, construct the rotation offset,
 or prove the global `p/r` weighted trace formula. H6 and H8 remain untouched.
 Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required.
+
+
+## 2026-11-01 — Repair the H10 first-delimiter Lean proof
+
+Full Lean run `41326478086` on `013c8ca32bf95a657e8a4ac5e6fa5bbf448aa0c7`
+failed only in `binaryFalseRun_takeWhile_before_true`, at
+`TraceExpand.lean:2512`. In the successor case, broad simplification
+normalized `[true] ++ tail` to `true :: tail` before applying the
+induction hypothesis, while the hypothesis retained the append form. The
+two terms are definitionally compatible after exposing the leading false
+symbol, so the proof now changes the target to an explicit cons equality
+and closes it with `congrArg (List.cons false) ih`. This avoids broad
+simplification and preserves the exact list boundary. The injectivity
+argument and all matrix/trace statements are unchanged.
+
+Python run `41326478084` completed successfully on the same source:
+Python 3.11 and 3.12 Fast and Slow tests all passed. The focused Lean
+repair and both journal updates are committed separately; fresh full
+Lean and Python 3.11/3.12 Fast/Slow CI is required for that new commit.
+H6 and H8 remain untouched; the marked-word rotation bijection and
+the `p/r` trace identity remain open.

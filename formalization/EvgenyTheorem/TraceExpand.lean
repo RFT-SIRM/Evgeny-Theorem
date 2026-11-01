@@ -2512,7 +2512,9 @@ theorem binaryFalseRun_takeWhile_before_true
   | succ a ih =>
       change (false :: ((binaryFalseRun a ++ [true]) ++ tail)).takeWhile
         (fun bit => !bit) = false :: binaryFalseRun a
-      simp [ih]
+      change false :: (((binaryFalseRun a ++ [true]) ++ tail).takeWhile
+        (fun bit => !bit)) = false :: binaryFalseRun a
+      exact congrArg (List.cons false) ih
 
 /-- Reading up to the first true delimiter in a nonempty gap encoding
 recovers exactly its first false run. -/
