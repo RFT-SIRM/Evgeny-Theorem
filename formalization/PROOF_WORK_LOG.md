@@ -2316,3 +2316,15 @@ as the corresponding singleton pair-products using the existing
 5 (total weight 45), including the period-two class. No new off-diagonal
 assumption, trace cyclicity, or factor reordering is used. H10 remains open;
 full Lean and Python CI are required.
+
+
+## 2026-11-01 — Reattach the r=4 doc-comment after inserting the r=2 normal form
+
+Lean on `c3ff1428c38c6268029886b71b14144b0afe2880` stopped at
+`GlueTrace.lean:3629` because the new r=2 declaration block had been inserted
+between the existing documentation comment for
+`sg_trace_p10_four_N_stratum_pair_diagonal` and that theorem. The comment is
+moved intact to immediately above the r=4 theorem. No theorem statement,
+proof, coefficient, matrix order, or existing H8/H10 result is changed.
+The r=2 diagonal form remains as committed. Full Lean and Python CI are
+required to validate the corrected declaration boundary.

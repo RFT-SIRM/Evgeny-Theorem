@@ -5002,3 +5002,13 @@ are preserved (sum 45). The proof uses only definitional expansion of the
 existing pair-sum helper; no matrix product is commuted. This supplies the
 r=2 component needed for a later all-even-strata H10 diagonal assembly.
 Validation is pending.
+
+
+## 2026-11-01 — Repair documentation-comment attachment in H10 r=2 insertion
+
+The r=2 normal-form insertion left the existing four-N theorem's doc-comment
+orphaned immediately before the new r=2 declaration, causing Lean's parser
+error at line 3629. The original comment is moved verbatim to the line
+immediately preceding `sg_trace_p10_four_N_stratum_pair_diagonal`. This is a
+source-layout repair only; the new r=2 statement and proof and all r=4 proof
+content are unchanged. Validation is pending.

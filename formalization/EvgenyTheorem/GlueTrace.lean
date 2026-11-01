@@ -3623,10 +3623,6 @@ private theorem sg_trace_p10_four_N_boundary_sum_pair_diagonal
     ring
   · simp [hgx]
 
-/-- The complete p=10 four-N boundary stratum after collapsing each
-nested glued-state sum to its ordered diagonal-pair product. This is still
-only the r=4 boundary contribution; it does not assert cross-stratum
-cancellation. -/
 /-- The exact r=2 contribution to the p=10 diagonal correction.
 Each cyclic class is one glued-state/partner diagonal pair; the balanced
 class (5,5) retains its orbit weight five. -/
@@ -3656,6 +3652,10 @@ theorem sg_trace_p10_two_N_stratum_pair_diagonal
     glueRHS8_pair_product, glueRHS8_pair_value] using
     (sg_trace_p10_two_N_stratum_boundary m hm θ ax o hanti)
 
+/-- The complete p=10 four-N boundary stratum after collapsing each
+nested glued-state sum to its ordered diagonal-pair product. This is still
+only the r=4 boundary contribution; it does not assert cross-stratum
+cancellation. -/
 theorem sg_trace_p10_four_N_stratum_pair_diagonal
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
