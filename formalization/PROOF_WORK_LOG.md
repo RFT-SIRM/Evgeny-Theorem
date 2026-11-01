@@ -1962,3 +1962,12 @@ applies trace_seven_N_powers_zero_of_OAnti. Its selected middle exponents
 are e0+1, e2+1, and e4+1; each is at most four, hence below 2^m for m >= 3.
 The aggregate theorem keeps all twelve orbit weights equal to ten.
 The new r=7 declarations are pending a fresh full Lean build.
+
+## 2026-11-01 — Pre-build syntax correction in H10 r=7 helper
+
+A final source review of 5ecd458b59f9ad0007e30a252b7b0f2094ab15ac
+found a missing closing parenthesis around the `trace_cyclic_list`
+application in the shared r=7 rotation helper. The call is closed in this
+follow-up commit. This was caught by source inspection while the CI job was
+still setting up the Lean toolchain; the r=7 theorem remains unvalidated
+until a full Lean build succeeds.

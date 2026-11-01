@@ -4658,3 +4658,12 @@ e0+1, e2+1, e4+1, the sum constraint yields each at most four, so m >= 3
 supplies the strict corner bounds. The Lean build of this new r=7 layer
 is pending. This does not resolve the even-stratum boundary cancellations
 or prove the full all-level H10 recurrence.
+
+## 2026-11-01 — Pre-build syntax correction in H10 r=7 helper
+
+A final source review of 5ecd458b59f9ad0007e30a252b7b0f2094ab15ac
+found a missing closing parenthesis around the `trace_cyclic_list`
+application in the shared r=7 rotation helper. The call is closed in this
+follow-up commit. This was caught by source inspection while the CI job was
+still setting up the Lean toolchain; the r=7 theorem remains unvalidated
+until a full Lean build succeeds.

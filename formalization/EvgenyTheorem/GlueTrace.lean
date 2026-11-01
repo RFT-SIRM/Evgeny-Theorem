@@ -5115,7 +5115,7 @@ private theorem sg_trace_p10_seven_N_class_term_zero
         ([K ^ e0, K, N, K ^ e1, K, N, K ^ e2, K, N,
           K ^ e3, K, N, K ^ e4, K, N, K ^ e5, K, N, K ^ e6] :
           List (Matrix (WSG m) (WSG m) ℂ))
-        ([K, N] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
   rw [hrot]
   exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
     1 (e0 + 1) (e1 + 1) (e2 + 1) (e3 + 1) (e4 + 1) (e5 + 1) e6
