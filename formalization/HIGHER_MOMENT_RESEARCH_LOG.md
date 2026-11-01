@@ -4949,3 +4949,18 @@ forms, while its proof unfolds the LHS and reuses the established boundary
 identity and all 22 existing termwise reductions. This does not establish
 cross-stratum cancellation or close H10. Ordinary heartbeat settings and all
 mathematical data remain unchanged. Validation is pending.
+
+
+## 2026-11-01 — H10 r=6 aggregate recast at the boundary-term level
+
+The attempt to duplicate the existing 22-term trace expression in a private
+definition timed out under the normal heartbeat budget; its displaced doc
+comment also caused a parser error. Both are removed. The r=6 aggregate now
+starts directly from the 22-term weighted boundary-term RHS of the already
+proved `sg_trace_p10_six_N_stratum_boundary` theorem and reduces it to the
+packed ordered diagonal-pair form. This cleanly separates the established
+trace-expansion bridge from the new boundary-to-diagonal reduction and avoids
+re-elaborating the large trace expressions. All 22 classes and their exact
+weights (20 of weight ten, two of weight five) remain unchanged. This is
+still only the r=6 stratum normal form, not the full H10 assembly. Validation
+is pending.

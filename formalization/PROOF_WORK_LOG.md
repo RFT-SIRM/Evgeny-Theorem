@@ -2257,3 +2257,20 @@ were extracted, the theorem signature has no expanded trace terms, and the
 proof still has 22 rewrites. No heartbeat, hypotheses, coefficients,
 representatives, or factor order are changed. Full Lean and Python CI are
 required to validate this refactor.
+
+
+## 2026-11-01 — Replace the failed expanded-trace r=6 aggregate with the boundary-term normal form
+
+The follow-up Lean run on `53f370625af70e2b4d9eaf0b85e72d454d823751`
+showed that the attempted duplicate 22-trace definition exceeded the default
+heartbeat budget. The build also exposed that its doc-comment had remained
+orphaned immediately before the new definition, so Lean rejected the second
+comment and the definition never became available. That attempted definition
+is removed entirely. The r=6 aggregate is now stated at the boundary-term
+level: its left side is the exact 22-term weighted RHS already provided by
+`sg_trace_p10_six_N_stratum_boundary`, and its right side is the packed
+ordered diagonal-pair form. The proof retains all 22 previously established
+termwise reductions. Thus the trace-to-boundary bridge remains the existing
+proved theorem, while this new lemma packages only the boundary-to-diagonal
+step. No heartbeat setting, hypotheses, weights, or factor order is changed.
+Full Lean and Python CI are required.
