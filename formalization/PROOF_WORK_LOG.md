@@ -2193,3 +2193,18 @@ in the same module. The aggregate declaration is moved intact to immediately
 after those definitions and the p=10 pair-diagonal lemma. No proof body,
 coefficient, hypothesis, or matrix-factor order is changed. The next full
 Lean build must validate this declaration-order correction.
+
+
+## 2026-11-01 — H10 r=6 ordered diagonal-pair reduction
+
+The r=4 aggregate on `954e8d168467b1f42c4a74ec64589612f9c32cc1`
+passed the full Lean build. Python fast tests passed on Python 3.11 and
+3.12; slow convergence tests were still running when this step began.
+Added a local six-N term reduction using the already-proved
+`trace_three_kernels_supported_diagonal` lemma. Its off-diagonal hypotheses
+are discharged only for the first and middle K powers (both bounded by
+five); the last K power stays in its original position and is read on the
+diagonal. The resulting three ordered pair factors are then assembled over
+all 22 r=6 classes with the original coefficients 10 and 5. The periodic
+classes retain weight five. No K factors are commuted. Full Lean and Python
+CI for this addition are required before relying on it.

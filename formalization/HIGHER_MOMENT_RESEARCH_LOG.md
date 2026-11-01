@@ -4892,3 +4892,16 @@ This is a declaration-order failure, not evidence against the diagonal
 collapse. The aggregate is moved, unchanged, to after the private pair-sum
 definitions and the H10 four-N diagonal-pair lemma. Revalidate with full
 Lean CI; do not add aliases or duplicate declarations to work around this.
+
+
+## 2026-11-01 — H10 r=6 three-pair diagonal aggregate
+
+After the r=4 aggregate passed full Lean compilation, the next level-local
+step reduces each r=6 boundary term to three ordered diagonal pairs. The
+proof specializes the existing three-kernel supported-diagonal lemma:
+the first and middle K powers satisfy the already-proved glued-support
+off-diagonal bound through degree five, and the final kernel remains as a
+diagonal entry. The stratum aggregate keeps all 22 cyclic representatives
+and their exact weights (20 of weight ten, two of weight five; total 210).
+This is a boundary normal form only, not an ordered-word-expansion bridge or
+an H10 recurrence. Validation is pending the new full CI run.
