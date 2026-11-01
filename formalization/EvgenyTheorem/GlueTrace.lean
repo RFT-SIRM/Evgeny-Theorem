@@ -5068,32 +5068,38 @@ theorem defectO8_succ
 
 
 
-/-- The p=10 stratum with nine N factors consists of a single cyclic class:
-one K factor and nine N factors, with orbit size ten. The canonical
-representative vanishes by the existing nine-pairing corner theorem.
-This closes only the r=9 cyclic class contribution. -/
+/-- Trace representative of the unique p=10 cyclic class with nine
+insertions of N. Each selected letter in the ordered expansion is K*N,
+so the class contains ten K factors and nine N factors. This representative
+places one K at the cyclic cut, with all ten K runs written as K^1. -/
+noncomputable def sg_trace_p10_nine_N_class_term
+    {n : Type*} [Fintype n]
+    (K N : Matrix n n ℂ) : ℂ :=
+  Matrix.trace
+    (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 1)
+
+/-- The p=10 nine-N cyclic class has orbit weight ten. Its trace vanishes
+by the existing nine-pairing corner theorem; all four selected middle
+powers are K^1 and are strictly below 2^m for m >= 3. -/
 theorem sg_trace_p10_nine_N_cyclic_class_zero
-    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
-    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-    10 * Matrix.trace
-      (K ^ 1 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N *
-        K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0) = 0 := by
-  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-  change 10 * Matrix.trace
-    (K ^ 1 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N *
-      K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0) = 0
+    10 * sg_trace_p10_nine_N_class_term
+      (sgK m θ ax o) (sgGlue m).N = 0 := by
+  have hside : 1 < 2 ^ m := by
+    calc
+      1 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hzero :
-      Matrix.trace
-        (K ^ 1 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N *
-          K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0) = 0 := by
-    simpa [K, N] using
-      (trace_nine_N_powers_zero_of_OAnti m θ ax o hanti
-        1 0 0 0 0 0 0 0 0 0
-        (by positivity) (by positivity) (by positivity) (by positivity))
+      sg_trace_p10_nine_N_class_term
+        (sgK m θ ax o) (sgGlue m).N = 0 := by
+    unfold sg_trace_p10_nine_N_class_term
+    exact trace_nine_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 1 1 1 1 hside hside hside hside
   simp [hzero]
+
 
 end EvgenyTheorem

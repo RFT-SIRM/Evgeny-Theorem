@@ -1911,13 +1911,24 @@ five-N zero theorem is claimed. The Python workflow passed on 5dccef5, but
 that does not override the failed Lean build. The restored branch head needs
 a fresh full Lean build and test run.
 
-## 2026-11-01 — Add the H10 nine-N cyclic-class specialization
+## 2026-11-01 — Diagnose and correct the first H10 r=9 wrapper
 
-Added `sg_trace_p10_nine_N_cyclic_class_zero` in GlueTrace.lean.
-For r=9 there is one K and nine N factors, hence one cyclic class of
-orbit size ten. Its canonical ordered representative is put directly
-into the existing `trace_nine_N_powers_zero_of_OAnti` normal form:
-the four required middle powers are all zero, so their strict bounds
-hold for every m. This is a class-level vanishing statement only; it
-does not close r=7, the even boundary cancellation, or the full H10
-recurrence. The full Lean build for this commit is pending.
+The first wrapper was mathematically malformed: it placed K^0 in every
+gap after the first N, although every N in the ordered expansion comes
+from a K*N letter. The r=9 word has nine N factors and ten K factors.
+That version therefore did not represent the intended cyclic class.
+Its full Lean build also failed with WHNF timeouts at GlueTrace.lean:5093
+and 5071 while elaborating the expanded expression. The attempted wrapper
+is withdrawn and is not a verified theorem.
+
+## 2026-11-01 — Correct H10 r=9 cyclic-class representative
+
+Replaced the malformed expression by the exact cyclic representative
+K^1*N*K^1*N*...*K^1, with nine N factors and ten K factors.
+Introduced the compact term definition
+`sg_trace_p10_nine_N_class_term` so the theorem statement does not
+repeatedly elaborate the full matrix product. The proof unfolds only this
+single term and applies `trace_nine_N_powers_zero_of_OAnti` with all ten
+K exponents equal to one. The four required middle-power bounds follow
+from m >= 3. This is one class-level weighted contribution, not the
+complete H10 expansion. Full Lean validation is pending.

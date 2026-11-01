@@ -4613,18 +4613,19 @@ a Lean-proved vanishing result. Do not revive the failed large-expression
 rotation proof by merely increasing heartbeat limits. Any new attempt must
 first establish a smaller, independently compiling rotation identity.
 
-## 2026-11-01 — H10 r=9 canonical cyclic class
+## 2026-11-01 — Correct the H10 r=9 cyclic-class representative
 
-Added a concrete GlueTrace specialization for the unique r=9 cyclic
-class in the tenth ordered-word moment. The class has one K and nine N
-factors; its ten distinct cyclic rotations give the exact orbit weight
-ten. The canonical representative is expressed in the existing
-nine-pairing normal form with all four selected middle K powers equal
-to zero. Consequently the hypotheses of
-`trace_nine_N_powers_zero_of_OAnti` follow without increasing the
-refinement lower bound.
+The first attempted r=9 wrapper was incorrect: it set the intervening
+K powers to zero. This omits the K factor that belongs to each selected
+K*N letter, so it is not a word from the p=10 ordered expansion. Its Lean
+run failed with WHNF timeouts while elaborating the large expression.
 
-This records only the vanishing of the r=9 class contribution. It does
-not establish the r=7 wrapper, cancellation of the even r=2,4,6,8,10
-boundary terms, or the all-level H10 recurrence. Full Lean validation
-of the new specialization is pending.
+The corrected representative has nine N factors and ten K factors,
+written cyclically as K^1*N*K^1*N*...*K^1. The compact definition
+`sg_trace_p10_nine_N_class_term` keeps that product out of the public
+theorem type. The class-level vanishing proof uses the existing
+`trace_nine_N_powers_zero_of_OAnti` with all ten exponents equal to one.
+For m >= 3 the four selected middle exponents satisfy the required strict
+bounds. This does not close the other odd strata, even-boundary
+cancellation, or the all-level H10 recurrence. Full Lean validation is
+pending.
