@@ -5079,11 +5079,6 @@ private def sg_trace_p10_seven_N_class_term
       K ^ e4 * (K * N) * K ^ e5 * (K * N) *
       K ^ e6 * (K * N))
 
-/-- Each p=10 seven-N cyclic representative vanishes under OAnti.
-After rotating one K from the final K*N block to the front, the trace
-has seven N factors. The three selected middle exponents are e0+1,
-e2+1, and e4+1; their strict bounds follow from the total of three
-extra K factors and m >= 3. -/
 /-- Complete p=10 seven-N stratum. The twelve cyclic classes are
 handled with explicit finite rotations (rather than a symbolic-power
 normalization), followed by the existing seven-N corner lemma. -/

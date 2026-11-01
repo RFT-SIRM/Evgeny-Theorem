@@ -1997,3 +1997,13 @@ This fact is now established once at the start of the r=7 theorem; the
 individual `omega` proofs then use the concrete exponents (each at most
 four). This is a source-level correction made before relying on the new
 CI result; full Lean validation remains pending.
+
+## 2026-11-01 — Remove orphaned H10 r=7 helper documentation
+
+Lean CI on 2b47d1a36e81300a41b9d06e51c429c397861195 failed at
+GlueTrace.lean:5086:30 with `unexpected token '/--'; expected 'lemma'`.
+The generic helper body had been withdrawn, but its preceding doc-comment
+was accidentally left immediately before the new stratum theorem's doc-comment.
+The stray comment has now been removed. The two Python jobs on that SHA
+were still in progress when checked; no Python failure is recorded or claimed.
+A fresh Lean build and both test jobs are required for this corrected source.

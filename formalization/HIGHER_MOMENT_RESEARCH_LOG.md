@@ -4690,3 +4690,13 @@ This fact is now established once at the start of the r=7 theorem; the
 individual `omega` proofs then use the concrete exponents (each at most
 four). This is a source-level correction made before relying on the new
 CI result; full Lean validation remains pending.
+
+## 2026-11-01 — Remove stale r=7 helper doc-comment
+
+The 2b47d1a Lean failure was a parser error at GlueTrace.lean:5086:
+an orphaned documentation comment from the removed generic helper
+preceded a second theorem doc-comment. Removed the orphan. This was a
+source/parser issue, not a mathematical failure of the twelve class terms.
+The Python workflow on 2b47d1a had not yet completed at the status check;
+it is not recorded as failed. Revalidate the corrected commit with full
+Lean and Python workflows.
