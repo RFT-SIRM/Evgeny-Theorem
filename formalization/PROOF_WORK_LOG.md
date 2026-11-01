@@ -2290,3 +2290,16 @@ are appended after the baseline file. A byte-for-byte source check verifies
 the entire original H8 region is unchanged. No H6/H8 proof or theorem is
 modified; the H10 helper/aggregate is kept at boundary-term level. Full
 Lean and Python CI must validate this repaired layout.
+
+
+## 2026-11-01 — Place the isolated H10 r=6 declarations inside the namespace
+
+Lean on `3a2ae2ac21ef95c9e0ddca5d0cf9e225493c4947` failed because the
+H10 r=6 declarations were appended after `end EvgenyTheorem`. They therefore
+could not resolve project-local types or helper lemmas. The four declarations
+are moved unchanged to immediately before the namespace-closing command. The
+source through the baseline namespace close is reconstructed from the last
+fully green Lean commit `954e8d168467b1f42c4a74ec64589612f9c32cc1`; the H8
+section is checked byte-for-byte. Namespace balance, declaration count, and
+absence of placeholders are checked before commit. This is a scope repair
+only. Full Lean and Python CI are required.

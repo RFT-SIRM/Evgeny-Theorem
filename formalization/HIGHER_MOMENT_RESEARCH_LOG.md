@@ -4978,3 +4978,14 @@ the four H10 r=6 declarations appended at the end. The restored H8 region is
 checked byte-for-byte against the green baseline. All 22 H10 r=6 terms and
 weights are retained; the aggregate remains a boundary-term normal form,
 not an H10 end-to-end closure. Validation is pending.
+
+
+## 2026-11-01 — Correct namespace placement of H10 r=6 declarations
+
+The latest Lean failure showed the isolated H10 additions after the file's
+final `end EvgenyTheorem`, outside the namespace that defines `WSG`, `Axis`,
+`sgK`, and the pair-sum support. They are now moved unchanged to immediately
+before that namespace close. The original green baseline source and all H8
+proofs are retained byte-for-byte. This fixes only declaration scope; no
+mathematical statement, representative, coefficient, or proof term changes.
+Validation remains pending.

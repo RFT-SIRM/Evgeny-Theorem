@@ -5754,8 +5754,6 @@ theorem sg_trace_p10_five_N_stratum_zero
   ]
 
 
-end EvgenyTheorem
-
 
 private noncomputable def glueRHS10_three_pair_sum
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
@@ -5910,3 +5908,5 @@ theorem sg_trace_p10_six_N_stratum_pair_diagonal
     sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 2 1 2 2 (by omega) (by omega)
   ]
   rfl
+
+end EvgenyTheorem
