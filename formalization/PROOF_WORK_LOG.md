@@ -2593,3 +2593,24 @@ word encoding and its counts.
 Python run `41324872447` was at this point: test (3.11)=in_progress/null; Fast=running, Slow=pending; test (3.12)=in_progress/null; Fast=running, Slow=pending. Its conclusion is
 not assumed here. Require a new full Lean and Python 3.11/3.12 Fast/Slow
 validation on the repaired commit.
+
+
+## 2026-11-01 — Prove uniqueness of the H10 canonical gap encoding
+
+The full Lean build passed on `1168f9b5fd74ebf5e85e0cdae2fbe67972fac519`
+(run `41325480306`). Python 3.12 Fast and Slow passed in run
+`41325480343`; Python 3.11 was still in progress when this next proof was
+prepared: test (3.12): completed/success; Fast=success, Slow=success; test (3.11): in_progress/null; Fast=success, Slow=pending.
+
+The new `binaryFalseRun_takeWhile_before_true` lemma recovers the leading
+false run by taking the maximal false prefix before the next true delimiter.
+The corresponding lemma for `binaryWordGapEncoding (a :: rest)` identifies
+that prefix with `binaryFalseRun a`. This yields injectivity of the gap
+encoding: equal encodings have equal first gaps, then the shared initial
+block cancels and induction proves equality of the tails. The empty/nonempty
+cases are separated by the proven count of true delimiters.
+
+This validates uniqueness of the canonical representation only. The
+bijection from arbitrary words with a distinguished true position, the
+rotation offset, and the `p/r` trace weight are still open. New full CI is
+required for this source step.

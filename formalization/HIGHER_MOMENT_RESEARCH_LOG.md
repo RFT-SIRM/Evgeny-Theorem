@@ -5336,3 +5336,26 @@ canonical gap encoding nor the separate letter-count statement. Python
 run `41324872447` status when this correction was prepared: test (3.11)=in_progress/null; Fast=running, Slow=pending; test (3.12)=in_progress/null; Fast=running, Slow=pending.
 Record its final result when complete. Fresh full Lean and Python
 3.11/3.12 Fast/Slow CI are required.
+
+
+## 2026-11-01 — Validate gap letter counts and expose unique gap decoding
+
+Commit `1168f9b5fd74ebf5e85e0cdae2fbe67972fac519` passed the complete
+Lean build (run `41325480306`). Python 3.12 Fast and Slow both passed
+in run `41325480343`; the Python 3.11 job was still running when this
+source step was prepared: test (3.12): completed/success; Fast=success, Slow=success; test (3.11): in_progress/null; Fast=success, Slow=pending. Its final state must be recorded after
+completion.
+
+Added a first-delimiter decoder lemma. In an encoding beginning with gap
+`a`, taking the maximal prefix of false bits returns exactly
+`binaryFalseRun a`; this recovers the first gap. Then proved
+`binaryWordGapEncoding_injective`: the first run determines the first
+entry by its length, and cancellation of the common first run plus its
+true delimiter reduces equality to the encodings of the tails. Empty versus
+nonempty gap lists are distinguished by the previously proved exact true
+count.
+
+This is a genuine inverse-uniqueness result for the canonical gap encoding.
+It does not yet encode arbitrary marked words, construct the rotation offset,
+or prove the global `p/r` weighted trace formula. H6 and H8 remain untouched.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required.

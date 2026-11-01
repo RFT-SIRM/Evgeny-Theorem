@@ -2500,6 +2500,75 @@ theorem binaryWordGapEncoding_false_count (gaps : List ℕ) :
   | cons a rest ih =>
       simp [binaryFalseRun_length, ih]
 
+
+/-- The initial false run before a true delimiter is recovered by
+taking the maximal prefix of false symbols. -/
+theorem binaryFalseRun_takeWhile_before_true
+    (a : ℕ) (tail : List Bool) :
+    ((binaryFalseRun a ++ [true]) ++ tail).takeWhile
+      (fun bit => !bit) = binaryFalseRun a := by
+  induction a with
+  | zero => simp [binaryFalseRun]
+  | succ a ih =>
+      change (false :: ((binaryFalseRun a ++ [true]) ++ tail)).takeWhile
+        (fun bit => !bit) = false :: binaryFalseRun a
+      simp [ih]
+
+/-- Reading up to the first true delimiter in a nonempty gap encoding
+recovers exactly its first false run. -/
+theorem binaryWordGapEncoding_takeWhile_false_cons
+    (a : ℕ) (rest : List ℕ) :
+    (binaryWordGapEncoding (a :: rest)).takeWhile
+      (fun bit => !bit) = binaryFalseRun a := by
+  change ((binaryFalseRun a ++ [true]) ++
+    binaryWordGapEncoding rest).takeWhile (fun bit => !bit) =
+      binaryFalseRun a
+  exact binaryFalseRun_takeWhile_before_true a _
+
+/-- The canonical gap encoding is injective: its first false run determines
+the first gap, and removing that run together with its true delimiter leaves
+the encoding of the remaining gaps. Thus the list representation is unique. -/
+theorem binaryWordGapEncoding_injective :
+    Function.Injective binaryWordGapEncoding := by
+  intro gaps₁ gaps₂ h
+  induction gaps₁ generalizing gaps₂ with
+  | nil =>
+      cases gaps₂ with
+      | nil => rfl
+      | cons b tail =>
+          have hcount := congrArg
+            (fun w : List Bool => (w.filter id).length) h
+          simp only [binaryWordGapEncoding_true_count,
+            List.length_nil, List.length_cons] at hcount
+          omega
+  | cons a rest ih =>
+      cases gaps₂ with
+      | nil =>
+          have hcount := congrArg
+            (fun w : List Bool => (w.filter id).length) h
+          simp only [binaryWordGapEncoding_true_count,
+            List.length_nil, List.length_cons] at hcount
+          omega
+      | cons b tail =>
+          have hfirst := congrArg
+            (fun w : List Bool => w.takeWhile (fun bit => !bit)) h
+          rw [binaryWordGapEncoding_takeWhile_false_cons a rest,
+            binaryWordGapEncoding_takeWhile_false_cons b tail] at hfirst
+          have hab : a = b := by
+            have hlen := congrArg List.length hfirst
+            simpa only [binaryFalseRun_length] using hlen
+          subst b
+          have h' :
+              (binaryFalseRun a ++ [true]) ++
+                  binaryWordGapEncoding rest =
+                (binaryFalseRun a ++ [true]) ++
+                  binaryWordGapEncoding tail := by
+            change binaryWordGapEncoding (a :: rest) =
+              binaryWordGapEncoding (a :: tail) at h
+            exact h
+          have htail := List.append_inj_right h' (by rfl)
+          exact congrArg (fun xs : List ℕ => a :: xs) (ih htail)
+
 /-- Evaluating a binary word beginning with one symbol multiplies its
 evaluation on the left by the matrix assigned to that symbol. -/
 theorem binaryWordMatrix_cons
