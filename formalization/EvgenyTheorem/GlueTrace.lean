@@ -3652,6 +3652,31 @@ theorem sg_trace_p10_two_N_stratum_pair_diagonal
     glueRHS8_pair_product, glueRHS8_pair_value] using
     (sg_trace_p10_two_N_stratum_boundary m hm θ ax o hanti)
 
+private noncomputable def glueRHS10_four_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS8_pair_sum m K [(1, 1), (1, 7)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (2, 6)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (3, 5)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (4, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (5, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (6, 2)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (1, 6)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (2, 5)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (3, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (4, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (5, 2)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (1, 5)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (2, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (3, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (4, 2)] +
+  5 * glueRHS8_pair_sum m K [(1, 4), (1, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 4), (2, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 4), (3, 2)] +
+  10 * glueRHS8_pair_sum m K [(1, 5), (2, 2)] +
+  10 * glueRHS8_pair_sum m K [(2, 2), (2, 4)] +
+  10 * glueRHS8_pair_sum m K [(2, 2), (3, 3)] +
+  5 * glueRHS8_pair_sum m K [(2, 3), (2, 3)]
+
 /-- The complete p=10 four-N boundary stratum after collapsing each
 nested glued-state sum to its ordered diagonal-pair product. This is still
 only the r=4 boundary contribution; it does not assert cross-stratum
@@ -3684,29 +3709,8 @@ theorem sg_trace_p10_four_N_stratum_pair_diagonal
     10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
     10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
     5 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 7)] +
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 6)] +
-    10 * glueRHS8_pair_sum m K [(1, 1), (3, 5)] +
-    10 * glueRHS8_pair_sum m K [(1, 1), (4, 4)] +
-    10 * glueRHS8_pair_sum m K [(1, 1), (5, 3)] +
-    10 * glueRHS8_pair_sum m K [(1, 1), (6, 2)] +
-    10 * glueRHS8_pair_sum m K [(1, 2), (1, 6)] +
-    10 * glueRHS8_pair_sum m K [(1, 2), (2, 5)] +
-    10 * glueRHS8_pair_sum m K [(1, 2), (3, 4)] +
-    10 * glueRHS8_pair_sum m K [(1, 2), (4, 3)] +
-    10 * glueRHS8_pair_sum m K [(1, 2), (5, 2)] +
-    10 * glueRHS8_pair_sum m K [(1, 3), (1, 5)] +
-    10 * glueRHS8_pair_sum m K [(1, 3), (2, 4)] +
-    10 * glueRHS8_pair_sum m K [(1, 3), (3, 3)] +
-    10 * glueRHS8_pair_sum m K [(1, 3), (4, 2)] +
-    5 * glueRHS8_pair_sum m K [(1, 4), (1, 4)] +
-    10 * glueRHS8_pair_sum m K [(1, 4), (2, 3)] +
-    10 * glueRHS8_pair_sum m K [(1, 4), (3, 2)] +
-    10 * glueRHS8_pair_sum m K [(1, 5), (2, 2)] +
-    10 * glueRHS8_pair_sum m K [(2, 2), (2, 4)] +
-    10 * glueRHS8_pair_sum m K [(2, 2), (3, 3)] +
-    5 * glueRHS8_pair_sum m K [(2, 3), (2, 3)] := by
-  dsimp
+      glueRHS10_four_N_diagonal_form m K := by
+  dsimp [glueRHS10_four_N_diagonal_form]
   rw [sg_trace_p10_four_N_stratum_boundary m hm θ ax o hanti]
   rw [
     sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 1 7 (by omega),

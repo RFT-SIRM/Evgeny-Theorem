@@ -2363,3 +2363,10 @@ steps under Matrix.trace with direct simp [Matrix.mul_assoc] calculations,
 following the already compiled r=6 trace_three_kernels_supported_diagonal
 proof style. No heartbeat was raised and no assumptions were changed.
 The exact correction now requires a fresh full Lean build and Python runs.
+
+
+## 2026-11-01 — H10 r=4 normal-form packaging (source commit; CI pending)
+
+Base: `3e2cd9c0805aae4519c0a8fbb4f563bd9c695ac7` on `work/h8-h10-exact-recurrence-certificates`. Added `glueRHS10_four_N_diagonal_form` and changed only the RHS of `sg_trace_p10_four_N_stratum_pair_diagonal` to that definition, unfolded definitionally in its proof. All 22 existing `sg_trace_p10_four_N_boundary_sum_pair_diagonal` rewrites remain present and unchanged. Census: 20 × 10 + 2 × 5 = 210 = `Nat.choose 10 4`, with the original ordered run-length representatives and pairings intact.
+
+This is a notational normal-form packaging, not a new boundary theorem and not H10 closure. The Lean full build and Python 3.11/3.12 fast and slow tests for the resulting commit are pending. Next: prove the p=10 ordered-word/cyclic-stratum bridge recursively, without materializing 1024 words or discarding multiplicities.

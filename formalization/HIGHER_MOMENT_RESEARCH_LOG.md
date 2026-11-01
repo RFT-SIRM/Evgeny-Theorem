@@ -5051,3 +5051,13 @@ ordered factors, and five class weights are unchanged. A fresh full Lean
 build is required; this correction is not treated as validated until it
 passes. Python CI for the previous SHA was still running at the time of
 diagnosis. H6 and H8 source regions remain untouched.
+
+
+## 2026-11-01 — H10 r=4 ordered-pair normal-form packaging
+
+Starting point: branch `work/h8-h10-exact-recurrence-certificates`, parent commit `3e2cd9c0805aae4519c0a8fbb4f563bd9c695ac7`.
+Added private definition `glueRHS10_four_N_diagonal_form` containing exactly the existing 22 ordered `glueRHS8_pair_sum` terms from `sg_trace_p10_four_N_stratum_pair_diagonal`. Replaced only that theorem's expanded right-hand side with the named definition and unfolded it at the start of the existing proof. The left-hand side, `sg_trace_p10_four_N_stratum_boundary`, all 22 termwise pair-diagonal rewrites, representatives, pair order, and coefficients are retained.
+
+Static census: 22 classes in the original order; 20 coefficients 10 and two coefficients 5; total weight 210 = `Nat.choose 10 4`. The two period-two classes remain `(1,4,1,4)` and `(2,3,2,3)`. No matrix factors or exponents are permuted. No placeholder or heartbeat change was introduced by this edit.
+
+Mathematical scope: packaging of the already-proved r=4 boundary-to-diagonal identity only. It proves no cross-stratum cancellation, ordered-word bridge, orientation-independence, or H10 closure. Full Lean and Python 3.11/3.12 fast/slow CI results are pending for the resulting commit. Next mathematical barrier, after validation: a recursive ordered-word-to-cyclic-strata bridge for p=10 that preserves order, multiplicity, and periodic orbit weights.
