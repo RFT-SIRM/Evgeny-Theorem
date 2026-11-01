@@ -5293,3 +5293,28 @@ can be uniquely rotated into one such encoding. The next task remains the
 rotation-and-cut bijection, with the chosen true position carried as data.
 H6 and H8 remain untouched. Full Lean and Python 3.11/3.12 Fast/Slow CI
 are required for this addition.
+
+
+## 2026-11-01 — Repair the H10 gap-word filter induction
+
+The full Lean run `41323906052` on `805bda2fcb2944d413a0043b08c036a22bdcd00a`
+failed in exactly two declarations, at lines 2469 and 2479:
+`binaryWordGapEncoding_filter_true` and
+`binaryWordGapEncoding_filter_false`. In each cons case, unrestricted
+`simp [binaryWordGapEncoding, ... , ih]` unfolded the recursive
+`binaryWordGapEncoding rest` into `List.flatMap`, while the induction
+hypothesis remained stated using the named definition. Hence Lean could not
+match the induction hypothesis to the tail filter. The block-level filters
+themselves were not the issue.
+
+The repair keeps the tail encoded word opaque: each cons case first changes
+the target to an explicit append of the one-gap block and
+`binaryWordGapEncoding rest`, and only then simplifies the two append
+filters, the one-block filter, and the induction hypothesis. Thus the
+recursive hypothesis is applied at its exact syntactic boundary. No
+definition or mathematical content is changed.
+
+At the time of this repair, Python run `41323906124` status was:
+test (3.12): in_progress/null; Fast=running, Slow=pending; test (3.11): in_progress/null; Fast=success, Slow=pending. This Python result is independent of the Lean failure and
+must be recorded after completion. A fresh full Lean and Python 3.11/3.12
+Fast/Slow CI is required for this correction.

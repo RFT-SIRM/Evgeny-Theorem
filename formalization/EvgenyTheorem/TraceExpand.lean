@@ -2467,7 +2467,10 @@ theorem binaryWordGapEncoding_filter_true (gaps : List ℕ) :
   induction gaps with
   | nil => rfl
   | cons a rest ih =>
-      simp [binaryWordGapEncoding, binaryFalseRun_filter_true, ih]
+      change ((binaryFalseRun a ++ [true]) ++
+        binaryWordGapEncoding rest).filter id =
+        List.replicate (rest.length + 1) true
+      simp [binaryFalseRun_filter_true, ih]
 
 /-- The false symbols in a canonical gap word are precisely the false runs
 that encode its gap lengths. -/
@@ -2477,7 +2480,10 @@ theorem binaryWordGapEncoding_filter_false (gaps : List ℕ) :
   induction gaps with
   | nil => rfl
   | cons a rest ih =>
-      simp [binaryWordGapEncoding, binaryFalseRun_filter_false, ih]
+      change ((binaryFalseRun a ++ [true]) ++
+        binaryWordGapEncoding rest).filter (fun b => !b) =
+        binaryFalseRun a ++ rest.flatMap binaryFalseRun
+      simp [binaryFalseRun_filter_false, ih]
 
 /-- Consequently, a gap encoding has exactly one true symbol per gap. -/
 theorem binaryWordGapEncoding_true_count (gaps : List ℕ) :

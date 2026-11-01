@@ -2555,3 +2555,25 @@ lists. Their lengths prove the separate counts `gaps.length` and
 will be used to state the parameters of the weak-composition stratum.
 It remains a one-way encoding result, not yet the inverse marked-word
 bijection or the `p/r` weight identity. Fresh full CI is required.
+
+
+## 2026-11-01 — Correct the recursive filter proof for H10 gap encodings
+
+Lean run `41323906052` failed at the cons cases of the two exact-letter
+filter theorems (TraceExpand lines 2469 and 2479). The recursive call to
+`binaryWordGapEncoding` was unfolded by the broad simp set before the
+induction hypothesis could rewrite the tail. The two filter lemmas therefore
+left goals containing `List.flatMap ... rest` instead of the named tail
+expression appearing in the hypothesis.
+
+The corrected proof explicitly changes each cons target to
+`(binaryFalseRun a ++ [true]) ++ binaryWordGapEncoding rest` (and, on
+the false-filter side, the corresponding flatMap equation on the right).
+Then the simplifier handles only the local block filters and the stated
+induction hypothesis. This preserves the recursive encoding abstraction
+and avoids unfolding the tail. No new theorem or altered word construction
+was introduced.
+
+Python run `41323906124` had this status when the Lean repair was written:
+test (3.12): in_progress/null; Fast=running, Slow=pending; test (3.11): in_progress/null; Fast=success, Slow=pending. Its final conclusion is tracked separately. Fresh full Lean
+and Python 3.11/3.12 Fast/Slow validation is required.
