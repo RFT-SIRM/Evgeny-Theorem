@@ -6068,21 +6068,23 @@ private theorem sg_trace_p10_eight_N_boundary_term_pair_diagonal
       Matrix.trace (M * Matrix.diagonal dh) =
         Matrix.trace (K ^ a * Matrix.diagonal r * K ^ g *
           Matrix.diagonal dh) := by
-    dsimp [M]
+    change Matrix.trace
+      (K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+        K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh) =
+      Matrix.trace (K ^ a * Matrix.diagonal r * K ^ g *
+        Matrix.diagonal dh)
     calc
       _ = Matrix.trace (K ^ a *
             (Matrix.diagonal db * K ^ c * Matrix.diagonal dd) *
             K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh) := by
-        congr 1
-        simp only [Matrix.mul_assoc]
+        simp [Matrix.mul_assoc]
       _ = Matrix.trace (K ^ a * Matrix.diagonal q *
             K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh) := by
         rw [hqdiag]
       _ = Matrix.trace (K ^ a *
             (Matrix.diagonal q * K ^ e * Matrix.diagonal df) *
             K ^ g * Matrix.diagonal dh) := by
-        congr 1
-        simp only [Matrix.mul_assoc]
+        simp [Matrix.mul_assoc]
       _ = Matrix.trace (K ^ a * Matrix.diagonal r *
             K ^ g * Matrix.diagonal dh) := by
         rw [hrdiag]

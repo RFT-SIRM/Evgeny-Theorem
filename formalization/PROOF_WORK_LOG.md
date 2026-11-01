@@ -2351,3 +2351,15 @@ classes with coefficients 10, 10, 10, 10, and 5. This does not close H10:
 cross-stratum cancellation, the ordered-word expansion bridge, and the
 residual recurrence remain separate obligations. H6 and H8 source regions
 are not edited. Full Lean and Python CI are required for validation.
+
+## 2026-11-01 — Focused r=8 trace-associativity correction
+
+Lean run 41308379239 on 4c6722e5a64cc82f25eb794364b68af77255d574
+reached GlueTrace.lean:6075 and failed with deterministic whnf timeout
+at 200000 heartbeats inside congr 1. The subsequent timeout at the r=8
+helper declaration and unknown private theorem in the aggregate were
+cascading diagnostics. Replaced the two congr 1; simp only [Matrix.mul_assoc]
+steps under Matrix.trace with direct simp [Matrix.mul_assoc] calculations,
+following the already compiled r=6 trace_three_kernels_supported_diagonal
+proof style. No heartbeat was raised and no assumptions were changed.
+The exact correction now requires a fresh full Lean build and Python runs.

@@ -5030,3 +5030,24 @@ cancellation with the r=2, r=4, r=6, or r=10 strata, does not bridge the
 ordered-word expansion, and does not prove the H10 residual recurrence.
 The source change requires a full Lean build and both Python test suites
 before it is treated as validated. H6 and H8 are not modified.
+
+## 2026-11-01 — H10 r=8 Lean failure diagnosis and focused associativity repair
+
+The full Lean build for 4c6722e5a64cc82f25eb794364b68af77255d574
+failed in the new sg_trace_p10_eight_N_boundary_term_pair_diagonal.
+The primary diagnostic was a deterministic 200000-heartbeat whnf timeout
+at the first congr 1 used to reassociate a Matrix.trace expression
+(GlueTrace.lean:6075); the declaration-level timeout at line 5958 and the
+unknown private helper reported by the later aggregate were cascading from
+that failed proof. No type mismatch or mathematical counterexample was
+reported in the diagonal-sandwich identities.
+
+The local r=6 proof already uses the stable pattern
+calc ... := by simp [Matrix.mul_assoc] directly on a trace expression.
+The r=8 hreduce step is now rewritten in that form, with an explicit
+change to expose the matrix product before the calculation. This changes
+only associativity normalization: all four kernel powers, support premises,
+ordered factors, and five class weights are unchanged. A fresh full Lean
+build is required; this correction is not treated as validated until it
+passes. Python CI for the previous SHA was still running at the time of
+diagnosis. H6 and H8 source regions remain untouched.
