@@ -4921,3 +4921,16 @@ encapsulated in `glueRHS10_six_N_diagonal_form`, with a small named wrapper
 for each three-pair sum. This is a type-size/elaboration refactor only; all
 22 representatives, exact weights, and ordered pair data remain unchanged.
 No heartbeat limit is increased. Validate on the next full Lean build.
+
+
+## 2026-11-01 — Verify the r=6 aggregate type is genuinely packaged
+
+The previous packaging attempt had a code-generation splice error: it cut at
+the last repeated coefficient line and left most of the explicit triple-pair
+sum in the theorem type. The corrected declaration is rebuilt from the
+original r=6 stratum signature and cut at the first RHS boundary-term line.
+Before committing, the generated signature is checked to contain no
+`sg_trace_p10_six_N_boundary_term` and no `glueRHS8_pair_sum`, and exactly
+one reference to the named packed diagonal form. This is strictly a type
+elaboration correction. All 22 tuples and weights are retained in the packed
+definition and in the rewrite proof.

@@ -3899,26 +3899,6 @@ theorem sg_trace_p10_six_N_stratum_pair_diagonal
       K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
       K ^ 2 * (sgGlue m).N * K ^ 0) =
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 5)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 4)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (3, 3)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (4, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 4)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (2, 3)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (3, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 3), (1, 3)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 3), (2, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (1, 4), (1, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 4)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (2, 3)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (3, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 2), (1, 3)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 2), (2, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (2, 3), (1, 2)]+
-    5 * glueRHS8_pair_sum m K [(1, 1), (3, 1), (1, 3)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (3, 1), (2, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 1), (3, 2), (1, 2)]+
-    10 * glueRHS8_pair_sum m K [(1, 2), (1, 2), (1, 3)]+
     glueRHS10_six_N_diagonal_form m K := by
   dsimp
   rw [sg_trace_p10_six_N_stratum_boundary m hm θ ax o hanti]

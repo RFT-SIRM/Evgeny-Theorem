@@ -2225,3 +2225,18 @@ heartbeat budget. It is now packaged in a named r=6 diagonal-form definition,
 so the public theorem type contains one scalar symbol rather than 22 expanded
 triple-pair terms. No heartbeat limit is raised and no hypotheses or
 coefficients are changed. Full Lean validation is pending.
+
+
+## 2026-11-01 — Correct the r=6 packed aggregate signature splice
+
+A source review of the follow-up r=6 commit found that the aggregate-signature
+generator used the final matching `10 * pair_sum` line as its splice point,
+not the first. Consequently, most of the explicit RHS remained in the theorem
+type, defeating the intended type-size reduction. The signature is now
+reconstructed from the authoritative existing `sg_trace_p10_six_N_stratum_boundary`
+statement and truncated at its first boundary-term RHS. A source assertion
+checks that the new aggregate signature contains zero expanded boundary-term
+or pair-sum occurrences and exactly one `glueRHS10_six_N_diagonal_form`
+reference. The proof body still rewrites the same 22 representatives. This
+fixes the generator mistake without changing any mathematics or increasing
+heartbeats; full Lean CI is required.
