@@ -1988,3 +1988,12 @@ Lean-validated p=10 r=3 proof in this file, with only concrete exponents.
 Each rotated trace is discharged by trace_seven_N_powers_zero_of_OAnti;
 the three selected middle exponents are at most four. The replacement
 full Lean build is pending; no r=7 success is claimed yet.
+
+## 2026-11-01 — Add the uniform numerical corner bound to explicit r=7 cases
+
+Review of the generated concrete cases found that their three strict
+middle-exponent bounds need the shared fact 4 < 2^m, derived from m >= 3.
+This fact is now established once at the start of the r=7 theorem; the
+individual `omega` proofs then use the concrete exponents (each at most
+four). This is a source-level correction made before relying on the new
+CI result; full Lean validation remains pending.

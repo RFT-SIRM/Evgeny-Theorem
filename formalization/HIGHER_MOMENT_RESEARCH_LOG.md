@@ -4681,3 +4681,12 @@ rotations with numeric exponents, then twelve applications of
 trace_seven_N_powers_zero_of_OAnti. This avoids normalizing arbitrary
 K^e expressions. Every selected exponent is <= 4 and hence is below
 2^m for m >= 3. The new r=7 theorem awaits a fresh full Lean build.
+
+## 2026-11-01 — Add the uniform numerical corner bound to explicit r=7 cases
+
+Review of the generated concrete cases found that their three strict
+middle-exponent bounds need the shared fact 4 < 2^m, derived from m >= 3.
+This fact is now established once at the start of the r=7 theorem; the
+individual `omega` proofs then use the concrete exponents (each at most
+four). This is a source-level correction made before relying on the new
+CI result; full Lean validation remains pending.

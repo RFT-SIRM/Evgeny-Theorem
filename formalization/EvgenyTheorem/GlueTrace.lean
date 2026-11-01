@@ -5107,6 +5107,10 @@ theorem sg_trace_p10_seven_N_stratum_zero
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0 := by
   let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
   let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  have hside : 4 < 2 ^ m := by
+    calc
+      4 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hrot1 :
       sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 =
         Matrix.trace
