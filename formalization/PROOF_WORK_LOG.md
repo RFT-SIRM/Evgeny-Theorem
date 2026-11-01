@@ -2024,3 +2024,8 @@ front, then normalized with concrete exponents (no symbolic-exponent
 normalization). The five-N lemma applies with its two required middle
 powers b=e0+1 and d=e2+1, each at most six. Since m >= 3, 6 < 2^m.
 This new stratum is pending full Lean validation.
+
+
+## 2026-11-01 — Withdraw the failed H10 r=5 rotation proof
+
+The full Lean build on 4f9b0a18c2875c0149d31846eb16bc3c5cd9025c failed deterministically in the new r=5 declarations. The first concrete rotation equality times out at GlueTrace.lean:5413, and the r=5 helper/theorem elaboration also times out at GlueTrace.lean:5365. This is the same expensive trace-word normalization failure seen in the earlier r=5 attempts; making the representative compact did not make the explicit cyclic-rotation proof tractable. The r=5 theorem is withdrawn in this commit, restoring GlueTrace.lean exactly to the preceding green checkpoint 542006e0dae9910d6738d2386eaefa17d32e0081. The successful r=9 and r=7 layers are preserved. Do not retry the same explicit `trace_cyclic_list` expansion or increase heartbeat limits; first develop and independently validate a genuinely smaller rotation lemma or a different algebraic decomposition.

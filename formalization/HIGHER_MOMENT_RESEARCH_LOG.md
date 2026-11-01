@@ -4716,3 +4716,8 @@ trace_five_N_powers_zero_of_OAnti with middle powers e0+1 and e2+1.
 Both are bounded by six, which is strictly below 2^m for m >= 3.
 No symbolic-power rotation helper or heartbeat increase is used.
 The new full r=5 stratum awaits Lean and Python validation.
+
+
+## 2026-11-01 — Withdraw the unvalidated H10 r=5 cyclic proof
+
+The attempted explicit 26-class r=5 proof on 4f9b0a18c2875c0149d31846eb16bc3c5cd9025c did not compile. Lean hit deterministic WHNF timeouts at GlueTrace.lean:5413 during the first concrete trace rotation and at 5365 during declaration elaboration. The compact class-term wrapper therefore did not solve the same matrix trace normalization bottleneck encountered in prior r=5 attempts. The code has been withdrawn and GlueTrace.lean restored exactly to the last green commit 542006e0dae9910d6738d2386eaefa17d32e0081. H10 r=5 remains open; r=9 and r=7 are retained. A future attempt must start with an independently compiling minimal rotation identity or use a different decomposition, not merely split/relabel the same large expression or increase heartbeat limits.
