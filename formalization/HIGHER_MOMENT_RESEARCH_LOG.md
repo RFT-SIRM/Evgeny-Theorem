@@ -4738,3 +4738,21 @@ Only the generic representative lemma is added at this checkpoint. It is
 deliberately separate from the 26-class weighted sum so Lean can validate
 the algebraic conversion in isolation. Do not reintroduce
 trace_cyclic_list or Matrix.trace_mul_comm rotations for this route.
+
+## 2026-11-01 — Assemble H10 r=5 from direct gap normal form
+
+The generic rotation-free theorem `sg_trace_p10_five_N_gap_word_zero`
+has passed the full Lean formalization workflow. It applies to every
+five-gap composition with sum five. The complete cyclic class inventory
+was independently regenerated: the 126 weak compositions of five into
+five slots yield 26 necklaces under cyclic rotation. The 25 non-periodic
+necklaces have orbit size five (binary-word weight 10); the fixed
+(1,1,1,1,1) necklace has binary-word weight 2. The weights sum to 252.
+
+Added a compact weighted-sum definition and a proof for each canonical
+representative, using only the generic gap lemma. Crucially, the class
+proofs do not invoke trace_cyclic_list, Matrix.trace_mul_comm, or any
+rotation-normalization helper. This is the complete r=5 cyclic stratum
+at the level of the enumerated weighted expansion, subject to full Lean
+validation of this aggregate commit. It does not by itself prove the
+even-stratum boundary cancellation or the full all-level H10 recurrence.

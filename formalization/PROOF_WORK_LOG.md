@@ -2045,3 +2045,16 @@ middle exponents are e1+1 and e3+1, each at most six and hence below
 Added only the reusable gap-word vanishing lemma, not the 26-class
 aggregate. Its full Lean validation is pending. This isolates the
 power/associativity conversion before attempting the weighted stratum.
+
+## 2026-11-01 — H10 r=5 weighted cyclic stratum from the rotation-free lemma
+
+The full Lean build succeeded for the generic rotation-free gap-word lemma
+on 26fff07391f9b8e58012ffc16fdd3748cb9a0813. This next change adds
+the weighted aggregate over the 26 canonical gap necklaces and proves
+each representative by direct application of that generic lemma.
+No trace rotation is used. The 25 aperiodic classes have weight 10;
+the all-ones gap tuple has weight 2. An independent enumeration checks
+that there are 126 weak compositions, 26 cyclic classes, and total
+binary-word orbit weight 25*10+2 = 252 = choose(10,5).
+The aggregate requires a new full Lean build; it is not called validated
+until that build succeeds.

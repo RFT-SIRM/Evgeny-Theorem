@@ -5410,5 +5410,219 @@ private theorem sg_trace_p10_five_N_gap_word_zero
     (trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       (e0 + 1) (e1 + 1) (e2 + 1) (e3 + 1) (e4 + 1) 0 hb hd)
 
+/-- Trace of a p=10 five-N gap representative. The entries are the
+numbers of extra plain K factors between the five selected K*N letters. -/
+private noncomputable def sg_trace_p10_five_N_class_term
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ)
+    (e0 e1 e2 e3 e4 : ℕ) : ℂ :=
+  Matrix.trace
+    (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+      K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+      K ^ e4 * (K * N))
+
+/-- Exact weighted sum over the 26 cyclic gap classes in the p=10
+five-N stratum. The unique periodic class has weight two; the other
+25 classes have weight ten. -/
+private noncomputable def sg_trace_p10_five_N_stratum_sum
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 0 5 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 1 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 2 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 3 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 4 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 0 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 1 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 2 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 3 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 2 0 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 2 1 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 2 2 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 3 0 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 3 1 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 4 0 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 0 1 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 0 2 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 0 3 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 1 0 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 1 1 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 1 2 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 2 0 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 2 1 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 2 0 2 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 2 1 1 1 +
+  2 * sg_trace_p10_five_N_class_term m K N 1 1 1 1 1
+
+/-- The complete p=10 five-N cyclic stratum vanishes under OAnti.
+Each of its 26 canonical gap representatives is directly in the
+five-pairing corner normal form; no cyclic trace rotation is needed.
+The orbit weights total 252 = choose(10,5). -/
+theorem sg_trace_p10_five_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    sg_trace_p10_five_N_stratum_sum m
+      (sgK m θ ax o) (sgGlue m).N = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change sg_trace_p10_five_N_stratum_sum m K N = 0
+  have hzero_r5_01 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 0 5 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 0 5 (by norm_num))
+  have hzero_r5_02 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 1 4 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 1 4 (by norm_num))
+  have hzero_r5_03 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 2 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 2 3 (by norm_num))
+  have hzero_r5_04 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 3 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 3 2 (by norm_num))
+  have hzero_r5_05 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 4 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 4 1 (by norm_num))
+  have hzero_r5_06 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 0 4 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 0 4 (by norm_num))
+  have hzero_r5_07 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 1 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 1 3 (by norm_num))
+  have hzero_r5_08 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 2 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 2 2 (by norm_num))
+  have hzero_r5_09 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 3 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 3 1 (by norm_num))
+  have hzero_r5_10 :
+      sg_trace_p10_five_N_class_term m K N 0 0 2 0 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 2 0 3 (by norm_num))
+  have hzero_r5_11 :
+      sg_trace_p10_five_N_class_term m K N 0 0 2 1 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 2 1 2 (by norm_num))
+  have hzero_r5_12 :
+      sg_trace_p10_five_N_class_term m K N 0 0 2 2 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 2 2 1 (by norm_num))
+  have hzero_r5_13 :
+      sg_trace_p10_five_N_class_term m K N 0 0 3 0 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 3 0 2 (by norm_num))
+  have hzero_r5_14 :
+      sg_trace_p10_five_N_class_term m K N 0 0 3 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 3 1 1 (by norm_num))
+  have hzero_r5_15 :
+      sg_trace_p10_five_N_class_term m K N 0 0 4 0 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 4 0 1 (by norm_num))
+  have hzero_r5_16 :
+      sg_trace_p10_five_N_class_term m K N 0 1 0 1 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 0 1 3 (by norm_num))
+  have hzero_r5_17 :
+      sg_trace_p10_five_N_class_term m K N 0 1 0 2 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 0 2 2 (by norm_num))
+  have hzero_r5_18 :
+      sg_trace_p10_five_N_class_term m K N 0 1 0 3 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 0 3 1 (by norm_num))
+  have hzero_r5_19 :
+      sg_trace_p10_five_N_class_term m K N 0 1 1 0 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 1 0 3 (by norm_num))
+  have hzero_r5_20 :
+      sg_trace_p10_five_N_class_term m K N 0 1 1 1 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 1 1 2 (by norm_num))
+  have hzero_r5_21 :
+      sg_trace_p10_five_N_class_term m K N 0 1 1 2 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 1 2 1 (by norm_num))
+  have hzero_r5_22 :
+      sg_trace_p10_five_N_class_term m K N 0 1 2 0 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 2 0 2 (by norm_num))
+  have hzero_r5_23 :
+      sg_trace_p10_five_N_class_term m K N 0 1 2 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 2 1 1 (by norm_num))
+  have hzero_r5_24 :
+      sg_trace_p10_five_N_class_term m K N 0 2 0 2 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 2 0 2 1 (by norm_num))
+  have hzero_r5_25 :
+      sg_trace_p10_five_N_class_term m K N 0 2 1 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 2 1 1 1 (by norm_num))
+  have hzero_r5_26 :
+      sg_trace_p10_five_N_class_term m K N 1 1 1 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        1 1 1 1 1 (by norm_num))
+  simp [sg_trace_p10_five_N_stratum_sum,
+    hzero_r5_01,
+    hzero_r5_02,
+    hzero_r5_03,
+    hzero_r5_04,
+    hzero_r5_05,
+    hzero_r5_06,
+    hzero_r5_07,
+    hzero_r5_08,
+    hzero_r5_09,
+    hzero_r5_10,
+    hzero_r5_11,
+    hzero_r5_12,
+    hzero_r5_13,
+    hzero_r5_14,
+    hzero_r5_15,
+    hzero_r5_16,
+    hzero_r5_17,
+    hzero_r5_18,
+    hzero_r5_19,
+    hzero_r5_20,
+    hzero_r5_21,
+    hzero_r5_22,
+    hzero_r5_23,
+    hzero_r5_24,
+    hzero_r5_25,
+    hzero_r5_26
+  ]
+
 
 end EvgenyTheorem
