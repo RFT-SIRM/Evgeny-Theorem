@@ -4721,3 +4721,20 @@ The new full r=5 stratum awaits Lean and Python validation.
 ## 2026-11-01 — Withdraw the unvalidated H10 r=5 cyclic proof
 
 The attempted explicit 26-class r=5 proof on 4f9b0a18c2875c0149d31846eb16bc3c5cd9025c did not compile. Lean hit deterministic WHNF timeouts at GlueTrace.lean:5413 during the first concrete trace rotation and at 5365 during declaration elaboration. The compact class-term wrapper therefore did not solve the same matrix trace normalization bottleneck encountered in prior r=5 attempts. The code has been withdrawn and GlueTrace.lean restored exactly to the last green commit 542006e0dae9910d6738d2386eaefa17d32e0081. H10 r=5 remains open; r=9 and r=7 are retained. A future attempt must start with an independently compiling minimal rotation identity or use a different decomposition, not merely split/relabel the same large expression or increase heartbeat limits.
+
+## 2026-11-01 — Rotation-free H10 r=5 proof route
+
+The failed r=5 attempts all spent substantial elaboration effort proving a
+cyclic rotation that is not needed for the chosen representative. The
+five-N corner theorem accepts six K exponents (a,b,c,d,e,f) and requires
+only b,d < 2^m. For the gap representative
+K^e0*(K*N)*K^e1*(K*N)*...*K^e4*(K*N), associativity and
+pow_succ put the word directly into that form with exponents
+(e0+1,e1+1,e2+1,e3+1,e4+1,0). Under e0+...+e4=5, the constrained
+middle exponents e1+1 and e3+1 are at most six; m >= 3 gives
+6 < 2^m.
+
+Only the generic representative lemma is added at this checkpoint. It is
+deliberately separate from the 26-class weighted sum so Lean can validate
+the algebraic conversion in isolation. Do not reintroduce
+trace_cyclic_list or Matrix.trace_mul_comm rotations for this route.

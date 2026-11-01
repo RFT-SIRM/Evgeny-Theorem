@@ -5383,5 +5383,32 @@ theorem sg_trace_p10_nine_N_cyclic_class_zero
       1 1 1 1 1 1 1 1 1 1 hside hside hside hside
   simp [hzero]
 
+/-- A p=10 five-N gap word is already in the normal form required by
+the five-pairing corner lemma; no cyclic trace rotation is needed.
+For five nonnegative extra-K gaps summing to five, the two constrained
+middle powers are e1+1 and e3+1, both at most six. -/
+private theorem sg_trace_p10_five_N_gap_word_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (e0 e1 e2 e3 e4 : ℕ)
+    (hgap : e0 + e1 + e2 + e3 + e4 = 5) :
+    Matrix.trace
+      (sgK m θ ax o ^ e0 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e1 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e2 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e3 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e4 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+  have hside : 6 < 2 ^ m := by
+    calc
+      6 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hb : e1 + 1 < 2 ^ m := by omega
+  have hd : e3 + 1 < 2 ^ m := by omega
+  simpa [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_one,
+    Matrix.mul_assoc] using
+    (trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      (e0 + 1) (e1 + 1) (e2 + 1) (e3 + 1) (e4 + 1) 0 hb hd)
+
 
 end EvgenyTheorem

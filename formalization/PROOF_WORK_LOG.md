@@ -2029,3 +2029,19 @@ This new stratum is pending full Lean validation.
 ## 2026-11-01 — Withdraw the failed H10 r=5 rotation proof
 
 The full Lean build on 4f9b0a18c2875c0149d31846eb16bc3c5cd9025c failed deterministically in the new r=5 declarations. The first concrete rotation equality times out at GlueTrace.lean:5413, and the r=5 helper/theorem elaboration also times out at GlueTrace.lean:5365. This is the same expensive trace-word normalization failure seen in the earlier r=5 attempts; making the representative compact did not make the explicit cyclic-rotation proof tractable. The r=5 theorem is withdrawn in this commit, restoring GlueTrace.lean exactly to the preceding green checkpoint 542006e0dae9910d6738d2386eaefa17d32e0081. The successful r=9 and r=7 layers are preserved. Do not retry the same explicit `trace_cyclic_list` expansion or increase heartbeat limits; first develop and independently validate a genuinely smaller rotation lemma or a different algebraic decomposition.
+
+## 2026-11-01 — Rotation-free H10 r=5 representative lemma
+
+After withdrawing the failed r=5 rotations, the gap word was re-examined
+against the actual statement of trace_five_N_powers_zero_of_OAnti.
+A representative
+K^e0*(K*N)*K^e1*(K*N)*...*K^e4*(K*N) is already its required
+five-N normal form after combining each K^ei*K into K^(ei+1);
+the final exponent is zero. No cyclic trace rotation is mathematically
+necessary. For five nonnegative gaps summing to five, the two constrained
+middle exponents are e1+1 and e3+1, each at most six and hence below
+2^m for m >= 3.
+
+Added only the reusable gap-word vanishing lemma, not the 26-class
+aggregate. Its full Lean validation is pending. This isolates the
+power/associativity conversion before attempting the weighted stratum.
