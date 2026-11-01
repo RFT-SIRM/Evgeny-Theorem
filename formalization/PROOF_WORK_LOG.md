@@ -2506,3 +2506,16 @@ endpoint with `List.map_congr_left` and a pointwise `rfl`. This changes only
 the proof of function-map equality and preserves the exact word list and its
 multiplicity. Full Lean and Python 3.11/3.12 Fast/Slow workflows must be
 checked on the corrected commit.
+
+
+## 2026-11-01 — Complete the H10 trace-map congruence at the correct type
+
+The trace-map correction in `47232d1` exposed a final proof-structure
+detail: after `List.map_map`, the theorem goal is equality in the scalar
+type `ℂ` of two list sums. Applying `List.map_congr_left` directly works
+at list type and is one congruence layer too low. The proof now first
+applies `congrArg List.sum`, then proves the map equality pointwise by
+`List.map_congr_left` and `rfl`. The previous CI attempt was still
+building when this correction was authored; only a fresh run on this commit
+can validate the fix. No matrix multiplication order or word multiplicity
+is affected.

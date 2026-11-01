@@ -5229,3 +5229,18 @@ not a list-level simplification. The proof now applies
 `List.map_congr_left`, introduces an arbitrary symbolic word, and closes the
 pointwise equality by reflexivity. No matrix algebra, word order, or
 multiplicities are changed. A fresh complete Lean build is required.
+
+
+## 2026-11-01 — Lift H10 trace-map congruence through the list sum
+
+The first trace-map repair commit `47232d1eb7237cf4050a54a1c90cbc534d609961`
+added the pointwise map congruence but omitted the outer congruence step:
+the theorem's target is equality of `List.sum` values, while
+`List.map_congr_left` concludes equality of lists. The required Lean goal
+after `List.map_map` is therefore handled in two explicit layers:
+`congrArg List.sum`, followed by `List.map_congr_left` and pointwise
+reflexivity. This keeps the fix at the correct type level and does not alter
+the symbolic word list, matrix evaluation, or multiplicities. The earlier
+attempt's Lean workflow was still running when this refinement was made;
+the new commit must pass a fresh full Lean build and Python 3.11/3.12
+Fast/Slow checks before further mathematics.
