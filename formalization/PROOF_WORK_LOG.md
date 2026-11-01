@@ -1894,59 +1894,19 @@ The proof now combines each established zero-trace equality with
 coefficient 10, matching the exact orbit weights. No class inventory,
 trace representative, or theorem hypothesis was changed.
 
+## 2026-11-01 — Revert the unvalidated H10 r=5 experiment
 
-## 2026-11-01 — Close the H10 five-N odd stratum
+The r=5 proof attempt was removed after repeated full Lean failures. The
+last attempted commit, 5dccef5651023c621345470cb67e1a55169da93b, still
+fails deterministically at WHNF in GlueTrace.lean:4464:50, 4534:10, and
+4513:0 (200000 heartbeats). The first location is in the generic cyclic
+rotation step based on Matrix.trace_mul_comm; the latter locations arise
+while elaborating the dependent aggregate theorem. Raising the local budget
+to 1000000 and changing the representation did not resolve the failure.
 
-- Added `sg_trace_p10_five_N_stratum_zero` to GlueTrace.lean.
-- Enumerated all 26 cyclic classes of positive five-tuples summing to ten:
-  25 classes have orbit size ten; the periodic tuple (2,2,2,2,2) has
-  orbit size two. The exact weighted total is 25*10 + 2 = 252 = C(10,5).
-- Each trace is cyclically rotated to the normal form required by
-  `trace_five_N_powers_zero_of_OAnti`. The two selected middle exponents
-  are at most six, hence below 2^m for m >= 3.
-- This closes the H10 r=5 odd stratum only. The full p=10 ordered expansion,
-  cancellation among even boundary strata, and the all-level recurrence
-  remain open.
-
-
-## 2026-11-01 — Scope the H10 five-N elaboration budget
-
-The first full Lean build reached the new 26-class r=5 theorem but exhausted
-the default 200000-heartbeat budget while elaborating its weighted trace
-statement (GlueTrace.lean:4419). Added a 1000000-heartbeat allowance scoped
-to this theorem only, following the already successful scoped option on the
-22-class six-N aggregate. No hypotheses, coefficients, representatives, or
-proof steps changed. A fresh full Lean build must validate the scoped option.
-
-
-## 2026-11-01 — Refactor the H10 five-N cyclic stratum
-
-- The explicit 26-term theorem exceeded a one-million-heartbeat budget
-  during weak-head normalization of its statement and its last cyclic
-  rotation. Do not address this by continually increasing the limit.
-- Replaced the expanded theorem statement by a private weighted-sum
-  definition, preserving the 26 canonical representatives and exact
-  weights (25 classes of weight 10, plus the alternating class of weight 2).
-- Added one generic five-N cyclic trace-rotation lemma. The 26 class proofs
-  instantiate that lemma and the existing
-  `trace_five_N_powers_zero_of_OAnti`; the final weighted sum is reduced
-  by rewriting each opaque class term to zero.
-- The selected b and d powers are at most 6, so 6 < 2^m follows from
-  m >= 3. Matrix-factor order is retained.
-- This is a structural elaboration refactor, not a claim of a successful
-  Lean build. CI must validate it before r=5 is closed.
-
-
-## 2026-11-01 — Diagnose and correct the H10 r=5 refactor
-
-- Full Lean run 41262575046 on commit 69858af4be353524453964a59e2825796b71eb09 failed in GlueTrace.lean at lines 4429, 4480, and 4505. The first diagnostic was an isDefEq timeout in the generic List.prod cyclic-rotation proof; subsequent WHNF timeouts occurred while elaborating the r=5 aggregate and its first class proof. This is an elaboration failure, not a reported counterexample or coefficient mismatch.
-- The previous refactor described the class and aggregate definitions as opaque, but ordinary noncomputable def declarations remain reducible. That description was inaccurate.
-- Replaced list-product normalization in the rotation lemma by the direct two-factor identity Matrix.trace_mul_comm, with four explicit local identities K^(r-1) * (K*N) = K^r*N. The matrix-factor order and cyclic direction are unchanged.
-- Marked the class-term and weighted-sum definitions irreducible so Lean does not unfold all 26 matrix traces while elaborating the theorem type. Each class proof explicitly unfolds only its own term; the final proof explicitly unfolds the aggregate and rewrites the 26 established zeros.
-- Exact representatives and weights remain unchanged. This correction is not considered validated until a fresh full lake build EvgenyTheorem succeeds on the resulting commit.
-
-
-## 2026-11-01 — Fix the H10 five-N rotation parser error
-
-- The subsequent Lean run 41263369944 reported `unexpected token ':='` at GlueTrace.lean:4450. Exact source inspection showed one missing closing parenthesis around the right-hand matrix product in the first `calc` equality of `trace_five_N_cyclic_rotate`. The later WHNF errors in the r=5 aggregate were parser-cascade diagnostics from that malformed declaration; they did not establish an independent failure of the irreducibility annotations.
-- Added the single missing parenthesis. No theorem, hypothesis, factor order, class representative, coefficient, or heartbeat setting changed. Await a fresh full Lean build.
+Restored GlueTrace.lean to the source at the last fully green H10 checkpoint,
+ca9580afd4b42b40935f96bab15746b33ff6900d. This retains all Lean-validated
+work present at that checkpoint. H10 r=5 is explicitly still open; no
+five-N zero theorem is claimed. The Python workflow passed on 5dccef5, but
+that does not override the failed Lean build. The restored branch head needs
+a fresh full Lean build and test run.

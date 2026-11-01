@@ -4594,49 +4594,21 @@ The final combination now weights all twelve established identities by
 10, matching the orbit multiplicity. The full Lean build must confirm this
 correction before the r=3 stratum is treated as closed.
 
+## 2026-11-01 — H10 r=5 attempt withdrawn after Lean failures
 
-## 2026-11-01 — H10 r=5 cyclic stratum
+The proposed five-N vanishing theorem is not part of the verified
+formalization. Its explicit 26-class proof exceeded Lean's WHNF budget;
+increasing the local budget to one million heartbeats still failed.
+The subsequent refactor through a generic cyclic-rotation lemma also failed:
+the latest full build reports deterministic 200000-heartbeat WHNF timeouts
+at GlueTrace.lean:4464:50 (inside the Matrix.trace_mul_comm rotation step),
+4534:10, and 4513:0 (dependent aggregate elaboration).
 
-The Sierpinski specialization now proves the entire five-N stratum vanishes.
-The 26 canonical cyclic representatives are (1,1,1,1,6), (1,1,1,2,5), (1,1,1,3,4), (1,1,1,4,3), (1,1,1,5,2), (1,1,2,1,5), (1,1,2,2,4), (1,1,2,3,3), (1,1,2,4,2), (1,1,3,1,4), (1,1,3,2,3), (1,1,3,3,2), (1,1,4,1,3), (1,1,4,2,2), (1,1,5,1,2), (1,2,1,2,4), (1,2,1,3,3), (1,2,1,4,2), (1,2,2,1,4), (1,2,2,2,3), (1,2,2,3,2), (1,2,3,1,3), (1,2,3,2,2), (1,3,1,3,2), (1,3,2,2,2), (2,2,2,2,2).
-The first 25 have orbit weight 10; the all-two tuple has period two in
-the ten-factor word and weight 2. The total multiplicity is 252 = C(10,5).
-Cyclic rotation retains the matrix-factor order and puts each word in the
-form required by `trace_five_N_powers_zero_of_OAnti`; its selected middle
-powers are at most 6, which is below 2^m for m >= 3. This does not yet
-assemble the full p=10 expansion or prove cancellation/stabilization of
-the even boundary sums.
-
-
-## 2026-11-01 — H10 r=5 elaboration resource correction
-
-Lean's first build timed out at the type of the 26-representative five-N
-aggregate, at the default 200000 heartbeats. A local 1000000-heartbeat
-allowance is now attached to the five-N theorem only. The bound mirrors the
-successful scoped allowance used for the 22-class six-N aggregate. The
-mathematical statement and its proof remain unchanged; full CI is required.
-
-
-## 2026-11-01 — Lean-friendly H10 r=5 proof structure
-
-The explicit 26-term theorem was rejected by Lean's WHNF budget even after
-a local one-million-heartbeat allowance. The r=5 proof is now structured
-with an opaque weighted-stratum definition and one generic cyclic rotation
-theorem, rather than 26 independent list-product normalizations inside a
-large theorem type. The exact cyclic classes and multiplicities are
-unchanged: 25 full-orbit classes of weight 10 and the periodic alternating
-class of weight 2, total 252 = C(10,5). Each rotated trace has the form
-required by `trace_five_N_powers_zero_of_OAnti`; only b and d require the
-upper bound 6 < 2^m. This refactor awaits full Lean validation.
-
-
-## 2026-11-01 — Correct H10 r=5 definitional unfolding and cyclic rotation
-
-The first Lean build of commit 69858af failed at the generic five-N rotation theorem (isDefEq timeout at line 4429), then at the r=5 aggregate and first class application (WHNF timeouts at lines 4480 and 4505). The first issue came from normalizing a generic List.prod expression with all five variable powers at once. The later WHNF pressure came from leaving the weighted aggregate and individual class-term functions reducible: Lean could unfold the full 26-term sum during type elaboration. The earlier description of those definitions as opaque was inaccurate.
-
-The corrected implementation proves rotation directly with Matrix.trace_mul_comm and four explicit gap identities, preserving the ordered factors. Both local definitions are marked irreducible; class terms are unfolded one at a time inside their zero proofs, and the weighted sum is unfolded only for the final finite rewrite. No coefficient, representative, matrix order, or theorem hypothesis is changed. Full Lean validation is still required before recording r=5 as closed.
-
-
-## 2026-11-01 — Parser correction in H10 r=5 cyclic rotation
-
-The Lean parser error at GlueTrace.lean:4450 was caused by one missing closing parenthesis in the first `calc` equality of the generic five-N cyclic rotation lemma. The subsequent WHNF messages occurred downstream while Lean was processing the malformed declaration and are not treated as independent mathematical failures. The one-character correction preserves the intended grouping and matrix-factor order. Full build validation remains pending.
+The experimental r=5 declarations have therefore been removed by restoring
+GlueTrace.lean to the last fully green checkpoint
+ca9580afd4b42b40935f96bab15746b33ff6900d. The existing verified H10 strata
+at that checkpoint are preserved. The complete r=5 stratum remains open;
+the 26 cyclic representatives and weights are only an enumeration, not
+a Lean-proved vanishing result. Do not revive the failed large-expression
+rotation proof by merely increasing heartbeat limits. Any new attempt must
+first establish a smaller, independently compiling rotation identity.
