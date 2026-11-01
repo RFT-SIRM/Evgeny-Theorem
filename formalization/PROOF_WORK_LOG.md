@@ -2577,3 +2577,19 @@ was introduced.
 Python run `41323906124` had this status when the Lean repair was written:
 test (3.12): in_progress/null; Fast=running, Slow=pending; test (3.11): in_progress/null; Fast=success, Slow=pending. Its final conclusion is tracked separately. Fresh full Lean
 and Python 3.11/3.12 Fast/Slow validation is required.
+
+
+## 2026-11-01 — Close the remaining replicate successor goal
+
+On `174936908daa7b7e6b779b9c01d59b5e0dba36da`, Lean's only remaining
+error was the final list equation in `binaryWordGapEncoding_filter_true`:
+the head delimiter followed by the induction-hypothesis replicate had
+to be identified with the replicate at successor length. This is exactly
+`List.replicate_succ`. Added that equation to the theorem's local simp
+set. The companion false-filter theorem no longer had a compiler error.
+The change is confined to the proof term and preserves the canonical
+word encoding and its counts.
+
+Python run `41324872447` was at this point: test (3.11)=in_progress/null; Fast=running, Slow=pending; test (3.12)=in_progress/null; Fast=running, Slow=pending. Its conclusion is
+not assumed here. Require a new full Lean and Python 3.11/3.12 Fast/Slow
+validation on the repaired commit.

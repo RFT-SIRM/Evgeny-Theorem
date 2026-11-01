@@ -5318,3 +5318,21 @@ At the time of this repair, Python run `41323906124` status was:
 test (3.12): in_progress/null; Fast=running, Slow=pending; test (3.11): in_progress/null; Fast=success, Slow=pending. This Python result is independent of the Lean failure and
 must be recorded after completion. A fresh full Lean and Python 3.11/3.12
 Fast/Slow CI is required for this correction.
+
+
+## 2026-11-01 — Finish the H10 true-delimiter filter induction
+
+Lean run `41324872449` on `174936908daa7b7e6b779b9c01d59b5e0dba36da`
+passed the recursive filter rewrite up to one final cons equality:
+`true :: List.replicate rest.length true =
+List.replicate (rest.length + 1) true`. The remaining goal is exactly
+the successor equation for `List.replicate`; the false-filter theorem
+compiled on this source. The proof now includes `List.replicate_succ`
+in the local simplification set, so the right-hand replicate unfolds at
+the successor index and matches the explicit head true.
+
+This is a proof-normalization correction only. It changes neither the
+canonical gap encoding nor the separate letter-count statement. Python
+run `41324872447` status when this correction was prepared: test (3.11)=in_progress/null; Fast=running, Slow=pending; test (3.12)=in_progress/null; Fast=running, Slow=pending.
+Record its final result when complete. Fresh full Lean and Python
+3.11/3.12 Fast/Slow CI are required.

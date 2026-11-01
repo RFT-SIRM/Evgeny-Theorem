@@ -2470,7 +2470,7 @@ theorem binaryWordGapEncoding_filter_true (gaps : List ℕ) :
       change ((binaryFalseRun a ++ [true]) ++
         binaryWordGapEncoding rest).filter id =
         List.replicate (rest.length + 1) true
-      simp [binaryFalseRun_filter_true, ih]
+      simp [binaryFalseRun_filter_true, ih, List.replicate_succ]
 
 /-- The false symbols in a canonical gap word are precisely the false runs
 that encode its gap lengths. -/
