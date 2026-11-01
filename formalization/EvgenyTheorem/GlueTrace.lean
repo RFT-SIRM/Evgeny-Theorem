@@ -2737,7 +2737,7 @@ theorem sg_trace_p10_four_N_stratum_boundary
 nested glued-state sum to its ordered diagonal-pair product. This is still
 only the r=4 boundary contribution; it does not assert cross-stratum
 cancellation. -/
-theorem sg_trace_p10_four_N_stratum_boundary
+theorem sg_trace_p10_four_N_stratum_pair_diagonal
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
