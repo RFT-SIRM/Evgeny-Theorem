@@ -4405,6 +4405,9 @@ theorem sg_trace_p10_three_N_stratum_zero
     10 * hzero_r3_10 + 10 * hzero_r3_11 + 10 * hzero_r3_12
 
 
+set_option maxHeartbeats 1000000 in
+/- The exact 26-class weighted trace statement needs a larger elaboration
+   budget; this option is scoped to the five-N theorem only. -/
 /-- The complete five-N cyclic stratum of the p=10 ordered-word expansion
 vanishes under OAnti. There are 26 cyclic classes of positive five-tuples
 summing to ten. Twenty-five have orbit weight ten; the periodic class

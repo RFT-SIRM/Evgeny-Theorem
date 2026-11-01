@@ -4606,3 +4606,12 @@ form required by `trace_five_N_powers_zero_of_OAnti`; its selected middle
 powers are at most 6, which is below 2^m for m >= 3. This does not yet
 assemble the full p=10 expansion or prove cancellation/stabilization of
 the even boundary sums.
+
+
+## 2026-11-01 — H10 r=5 elaboration resource correction
+
+Lean's first build timed out at the type of the 26-representative five-N
+aggregate, at the default 200000 heartbeats. A local 1000000-heartbeat
+allowance is now attached to the five-N theorem only. The bound mirrors the
+successful scoped allowance used for the 22-class six-N aggregate. The
+mathematical statement and its proof remain unchanged; full CI is required.

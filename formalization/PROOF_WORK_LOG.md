@@ -1907,3 +1907,13 @@ trace representative, or theorem hypothesis was changed.
 - This closes the H10 r=5 odd stratum only. The full p=10 ordered expansion,
   cancellation among even boundary strata, and the all-level recurrence
   remain open.
+
+
+## 2026-11-01 — Scope the H10 five-N elaboration budget
+
+The first full Lean build reached the new 26-class r=5 theorem but exhausted
+the default 200000-heartbeat budget while elaborating its weighted trace
+statement (GlueTrace.lean:4419). Added a 1000000-heartbeat allowance scoped
+to this theorem only, following the already successful scoped option on the
+22-class six-N aggregate. No hypotheses, coefficients, representatives, or
+proof steps changed. A fresh full Lean build must validate the scoped option.
