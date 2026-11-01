@@ -2331,4 +2331,80 @@ theorem cyclicGapOrbit_ten_period_one_card :
     (cyclicGapOrbit (List.replicate 10 1)).card = 1 := by
   decide
 
+
+/-- Symbolic binary words with exactly r occurrences of the second letter.
+The recursion appends the final bit, matching the order of
+`orderedWordExpansionByCount`: words ending in false precede those ending
+in true. The list retains occurrences rather than quotienting by value. -/
+def binaryWordExpansionByCount : ℕ → ℕ → List (List Bool)
+  | 0, 0 => [[]]
+  | 0, r + 1 => []
+  | p + 1, 0 =>
+      (binaryWordExpansionByCount p 0).map (fun w => w ++ [false])
+  | p + 1, r + 1 =>
+      (binaryWordExpansionByCount p (r + 1)).map (fun w => w ++ [false]) ++
+      (binaryWordExpansionByCount p r).map (fun w => w ++ [true])
+
+/-- Evaluate a symbolic binary word in the two noncommuting matrix letters.
+The left-to-right product follows the word order exactly. -/
+def binaryWordMatrix {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (w : List Bool) : Matrix n n ℂ :=
+  (w.map (fun bit => if bit then B else A)).prod
+
+/-- Appending one symbolic letter appends the corresponding matrix factor
+on the right; no commutation is used. -/
+theorem binaryWordMatrix_append
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (w : List Bool) (bit : Bool) :
+    binaryWordMatrix A B (w ++ [bit]) =
+      binaryWordMatrix A B w * (if bit then B else A) := by
+  simp [binaryWordMatrix, List.map_append, List.prod_append]
+
+/-- The exact-count matrix-word list is the image, occurrence by occurrence,
+of the symbolic binary-word list under evaluation in A and B. This exposes
+the positions of the B letters without losing multiplicities when two
+different binary words evaluate to the same matrix. -/
+theorem orderedWordExpansionByCount_eq_map_binaryWordExpansionByCount
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p r : ℕ) :
+    orderedWordExpansionByCount A B p r =
+      (binaryWordExpansionByCount p r).map (binaryWordMatrix A B) := by
+  induction p generalizing r with
+  | zero =>
+      cases r with
+      | zero =>
+          simp [binaryWordExpansionByCount, orderedWordExpansionByCount,
+            binaryWordMatrix]
+      | succ r =>
+          simp [binaryWordExpansionByCount, orderedWordExpansionByCount]
+  | succ p ih =>
+      cases r with
+      | zero =>
+          simp only [orderedWordExpansionByCount, binaryWordExpansionByCount,
+            ih 0, List.map_map]
+          apply List.map_congr_left
+          intro w hw
+          exact (binaryWordMatrix_append A B w false).symm
+      | succ r =>
+          simp only [orderedWordExpansionByCount, binaryWordExpansionByCount,
+            ih (r + 1), ih r, List.map_append, List.map_map]
+          apply congrArg₂ List.append
+          · apply List.map_congr_left
+            intro w hw
+            exact (binaryWordMatrix_append A B w false).symm
+          · apply List.map_congr_left
+            intro w hw
+            exact (binaryWordMatrix_append A B w true).symm
+
+/-- Trace-level symbolic form of an exact-count stratum. It is the starting
+point for marking one of the r occurrences of B and cutting the word there. -/
+theorem trace_orderedWordExpansionByCount_eq_binaryWordExpansionByCount
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p r : ℕ) :
+    ((orderedWordExpansionByCount A B p r).map Matrix.trace).sum =
+      ((binaryWordExpansionByCount p r).map
+        (fun w => Matrix.trace (binaryWordMatrix A B w))).sum := by
+  rw [orderedWordExpansionByCount_eq_map_binaryWordExpansionByCount]
+  simp only [List.map_map]
+
 end EvgenyTheorem

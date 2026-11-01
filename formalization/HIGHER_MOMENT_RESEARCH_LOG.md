@@ -5191,3 +5191,27 @@ trace, using `cyclicGapTrace_eq_of_mem_orbit` termwise, then simplifies
 the constant finite sum to the orbit cardinality. Python for the failed
 source commit was still in progress when this correction was prepared.
 Fresh full Lean and Python 3.11/3.12 Fast/Slow CI are required.
+
+
+## 2026-11-01 — H10 symbolic word layer for the marked-letter bridge
+
+The full Lean build for `c3697988e0ccaa56233c262a0c5775eb7aead5cb`
+passed (run `41319496343`). Python 3.11 and 3.12 Fast tests had passed
+at the time of this source step; both Slow convergence jobs were still
+running and must be recorded after completion.
+
+Added `binaryWordExpansionByCount p r`, a recursive list of symbolic
+Bool-words with exactly r true letters. Its final-letter recursion has
+the same order as `orderedWordExpansionByCount`: false-ending words first,
+true-ending words second. Added `binaryWordMatrix` and proved that the
+existing matrix-word list is exactly the pointwise image of this symbolic
+list. The map is an occurrence-preserving list map, so distinct words that
+evaluate to the same matrix are not collapsed. Added the trace-sum corollary.
+
+This supplies the symbolic positions needed for the marked-letter cut.
+It does not yet prove the marked-word bijection, the p/r identity, or the
+weak-composition orbit sum. The next step is to formalize words with a
+distinguished true position, rotate that position to the final slot, and
+identify the canonical final-true words with weak gap compositions.
+H6 and H8 remain untouched. Full Lean and Python 3.11/3.12 Fast/Slow CI
+are required for this addition.

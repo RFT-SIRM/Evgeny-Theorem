@@ -2474,3 +2474,22 @@ intermediate sum is now a sum of the constant representative trace, and
 `Finset.sum_congr` uses the proved equality of each orbit member to the
 representative. This repairs a latent proof-state error exposed by source
 inspection; it is not counted as validated until the new full Lean build.
+
+
+## 2026-11-01 — H10 symbolic binary-word representation
+
+After the cyclic gap rotation/product reassembly correction, the full Lean
+build passed on `c3697988e0ccaa56233c262a0c5775eb7aead5cb`
+(run `41319496343`). Python Fast tests on 3.11 and 3.12 passed; Slow
+convergence jobs were still running at the source checkpoint.
+
+Added a purely symbolic `binaryWordExpansionByCount` whose words are
+`List Bool` and whose append-last recursion mirrors the exact-count
+matrix-word recursion. The evaluation `binaryWordMatrix` maps false to
+A and true to B using a left-to-right list product. Proved the exact list
+equality between `orderedWordExpansionByCount` and the image of the
+symbolic list, then derived the corresponding trace-sum identity.
+The proof uses list maps and append lemmas only; it does not commute matrix
+factors, merge equal matrix products, or enumerate all (2^p) words.
+This is a foundation for the marked-letter/composition bijection, not
+yet that bijection or an H10 closure theorem. Fresh full CI is required.
