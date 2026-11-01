@@ -1971,3 +1971,20 @@ application in the shared r=7 rotation helper. The call is closed in this
 follow-up commit. This was caught by source inspection while the CI job was
 still setting up the Lean toolchain; the r=7 theorem remains unvalidated
 until a full Lean build succeeds.
+
+## 2026-11-01 — Replace the failed generic H10 r=7 rotation
+
+The full Lean build on 528ab3a5e0e431b121e061d90fcff41c11c4fc5d failed
+deterministically at the generic helper's symbolic-power normalization:
+GlueTrace.lean:5112:4 timed out in isDefEq and the helper declaration
+then timed out at 5082:0 during WHNF. The later unknown-constant diagnostic
+was downstream from the unbuilt helper. Increasing heartbeat limits would
+repeat the unsuccessful strategy already ruled out by earlier r=5 work.
+
+The generic helper has been removed. The replacement keeps the compact
+word definition but proves the twelve representatives separately. Each
+cyclic rotation now uses the same explicit finite-list pattern as the
+Lean-validated p=10 r=3 proof in this file, with only concrete exponents.
+Each rotated trace is discharged by trace_seven_N_powers_zero_of_OAnti;
+the three selected middle exponents are at most four. The replacement
+full Lean build is pending; no r=7 success is claimed yet.

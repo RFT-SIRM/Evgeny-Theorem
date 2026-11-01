@@ -5084,47 +5084,9 @@ After rotating one K from the final K*N block to the front, the trace
 has seven N factors. The three selected middle exponents are e0+1,
 e2+1, and e4+1; their strict bounds follow from the total of three
 extra K factors and m >= 3. -/
-private theorem sg_trace_p10_seven_N_class_term_zero
-    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o]
-    (hanti : OAnti (m + 1) o)
-    (e0 e1 e2 e3 e4 e5 e6 : ℕ)
-    (hsum : e0 + e1 + e2 + e3 + e4 + e5 + e6 = 3) :
-    sg_trace_p10_seven_N_class_term m
-      (sgK m θ ax o) (sgGlue m).N e0 e1 e2 e3 e4 e5 e6 = 0 := by
-  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-  have hside : 4 < 2 ^ m := by
-    calc
-      4 < 2 ^ 3 := by norm_num
-      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
-  have hb : e0 + 1 < 2 ^ m := by omega
-  have hd : e2 + 1 < 2 ^ m := by omega
-  have hf : e4 + 1 < 2 ^ m := by omega
-  have hrot :
-      sg_trace_p10_seven_N_class_term m K N e0 e1 e2 e3 e4 e5 e6 =
-        Matrix.trace
-          (K ^ 1 * N * K ^ (e0 + 1) * N *
-            K ^ (e1 + 1) * N * K ^ (e2 + 1) * N *
-            K ^ (e3 + 1) * N * K ^ (e4 + 1) * N *
-            K ^ (e5 + 1) * N * K ^ e6) := by
-    unfold sg_trace_p10_seven_N_class_term
-    simpa [Matrix.mul_assoc, pow_succ', pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K ^ e0, K, N, K ^ e1, K, N, K ^ e2, K, N,
-          K ^ e3, K, N, K ^ e4, K, N, K ^ e5, K, N, K ^ e6] :
-          List (Matrix (WSG m) (WSG m) ℂ))
-        ([K, N] : List (Matrix (WSG m) (WSG m) ℂ)))
-  rw [hrot]
-  exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
-    1 (e0 + 1) (e1 + 1) (e2 + 1) (e3 + 1) (e4 + 1) (e5 + 1) e6
-    hb hd hf
-
-/-- The twelve cyclic classes in the p=10 seven-N stratum have orbit
-weight ten. Their gap representatives are the twelve cyclic orbits of
-seven positive integers summing to ten. Every representative vanishes
-under OAnti, so the complete r=7 cyclic-class contribution is zero. -/
+/-- Complete p=10 seven-N stratum. The twelve cyclic classes are
+handled with explicit finite rotations (rather than a symbolic-power
+normalization), followed by the existing seven-N corner lemma. -/
 theorem sg_trace_p10_seven_N_stratum_zero
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
@@ -5145,54 +5107,222 @@ theorem sg_trace_p10_seven_N_stratum_zero
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0 := by
   let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
   let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-  have hzero1 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 0 0 0 3 (by norm_num)
-  have hzero2 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 0 0 1 2 (by norm_num)
-  have hzero3 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 0 0 2 1 (by norm_num)
-  have hzero4 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 0 1 0 2 (by norm_num)
-  have hzero5 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 0 1 1 1 (by norm_num)
-  have hzero6 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 0 2 0 1 (by norm_num)
-  have hzero7 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 1 0 0 2 (by norm_num)
-  have hzero8 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 1 0 1 1 (by norm_num)
-  have hzero9 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 1 1 0 1 (by norm_num)
-  have hzero10 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 0 2 0 0 1 (by norm_num)
-  have hzero11 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 1 0 0 1 1 (by norm_num)
-  have hzero12 :
-      sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0 :=
-    sg_trace_p10_seven_N_class_term_zero m hm θ ax o hanti
-      0 0 1 0 1 0 1 (by norm_num)
+  have hrot1 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), (K * N),
+          (K * N), K, K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero1 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 = 0 := by
+    rw [hrot1]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 1 3
+      (by omega) (by omega) (by omega)
+  have hrot2 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), (K * N),
+          K, (K * N), K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero2 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 = 0 := by
+    rw [hrot2]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 2 2
+      (by omega) (by omega) (by omega)
+  have hrot3 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), (K * N),
+          K, K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero3 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 = 0 := by
+    rw [hrot3]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 3 1
+      (by omega) (by omega) (by omega)
+  have hrot4 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), K,
+          (K * N), (K * N), K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero4 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 = 0 := by
+    rw [hrot4]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 2 1 2
+      (by omega) (by omega) (by omega)
+  have hrot5 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), K,
+          (K * N), K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero5 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 = 0 := by
+    rw [hrot5]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 2 2 1
+      (by omega) (by omega) (by omega)
+  have hrot6 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), K,
+          K, (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero6 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 = 0 := by
+    rw [hrot6]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 3 1 1
+      (by omega) (by omega) (by omega)
+  have hrot7 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, (K * N),
+          (K * N), (K * N), K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero7 : sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 = 0 := by
+    rw [hrot7]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 2 1 1 2
+      (by omega) (by omega) (by omega)
+  have hrot8 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, (K * N),
+          (K * N), K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero8 : sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 = 0 := by
+    rw [hrot8]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 2 1 2 1
+      (by omega) (by omega) (by omega)
+  have hrot9 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, (K * N),
+          K, (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero9 : sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 = 0 := by
+    rw [hrot9]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 2 2 1 1
+      (by omega) (by omega) (by omega)
+  have hrot10 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, K,
+          (K * N), (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero10 : sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 = 0 := by
+    rw [hrot10]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 3 1 1 1
+      (by omega) (by omega) (by omega)
+  have hrot11 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), K, (K * N), (K * N),
+          (K * N), K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero11 : sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 = 0 := by
+    rw [hrot11]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 2 1 1 2 1
+      (by omega) (by omega) (by omega)
+  have hrot12 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), K, (K * N), (K * N),
+          K, (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero12 : sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0 := by
+    rw [hrot12]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 2 1 2 1 1
+      (by omega) (by omega) (by omega)
   change
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 +
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 +
@@ -5206,8 +5336,20 @@ theorem sg_trace_p10_seven_N_stratum_zero
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 +
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 +
     10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0
-  simp [hzero1, hzero2, hzero3, hzero4, hzero5, hzero6,
-    hzero7, hzero8, hzero9, hzero10, hzero11, hzero12]
+  simp [
+    hzero1,
+    hzero2,
+    hzero3,
+    hzero4,
+    hzero5,
+    hzero6,
+    hzero7,
+    hzero8,
+    hzero9,
+    hzero10,
+    hzero11,
+    hzero12
+  ]
 
 
 /-- Trace representative of the unique p=10 cyclic class with nine

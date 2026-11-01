@@ -4667,3 +4667,17 @@ application in the shared r=7 rotation helper. The call is closed in this
 follow-up commit. This was caught by source inspection while the CI job was
 still setting up the Lean toolchain; the r=7 theorem remains unvalidated
 until a full Lean build succeeds.
+
+## 2026-11-01 — Rework the H10 r=7 rotation after Lean timeout
+
+The generic symbolic-exponent rotation was rejected by Lean CI at
+GlueTrace.lean:5112:4 (isDefEq timeout) and 5082:0 (WHNF timeout).
+This is the same general-normalization failure mode that must not be
+addressed by raising heartbeat limits. The generic helper is withdrawn.
+
+The revised proof follows the concrete pattern already validated in
+sg_trace_p10_three_N_stratum_zero: twelve explicit trace_cyclic_list
+rotations with numeric exponents, then twelve applications of
+trace_seven_N_powers_zero_of_OAnti. This avoids normalizing arbitrary
+K^e expressions. Every selected exponent is <= 4 and hence is below
+2^m for m >= 3. The new r=7 theorem awaits a fresh full Lean build.
