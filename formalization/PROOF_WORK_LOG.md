@@ -2101,3 +2101,16 @@ reported as failing. The correction puts `:= by` on its own line and places
 all assembly tactics uniformly inside the proof block. No mathematical
 statement or proof term in the sixteen suffix lemmas is changed. The new
 layout is pending full Lean validation.
+
+## 2026-11-01 — Normalize the singleton prefix lists in the 16-block assembly
+
+The first build after fixing the proof layout reached the final assembly but
+failed at the first block rewrite. The exact target still contained nested
+`List.map ... [1]` and `List.sum` terms: the assembly's restricted simp set
+unfolded the recursive ordered expansion but omitted the constructors for
+singleton and empty lists, so its syntax did not match the explicit 64-word
+block theorem. The focused correction adds only `List.map_cons`,
+`List.sum_cons`, `List.map_nil`, `List.sum_nil`, and `Matrix.one_mul` to
+that one assembly normalization. No block theorem, cyclic rotation, orbit
+weight, or mathematical hypothesis is changed. The result remains pending
+a complete Lean build.

@@ -4800,3 +4800,16 @@ reported as failing. The correction puts `:= by` on its own line and places
 all assembly tactics uniformly inside the proof block. No mathematical
 statement or proof term in the sixteen suffix lemmas is changed. The new
 layout is pending full Lean validation.
+
+## 2026-11-01 — Correct final H10 assembly list normalization
+
+The exact failure at the p=10 final theorem was a rewrite-pattern mismatch,
+not a failed cyclic identity. After the append-expansion lemma and recursive
+unfolding, the target retained nested maps and sums over the singleton list
+`[1]`; the suffix-block theorem states the same content as an explicit sum
+of 64 traces. The assembly simp set had map-append/sum-append but not
+map-cons/sum-cons/map-nil/sum-nil, nor the initial `1 * A = A` reduction.
+The correction adds those list constructors and `Matrix.one_mul` to the
+assembly-only simp set before rewriting the 16 block theorems. This preserves
+order and multiplicity and leaves all 108 cyclic representative weights
+untouched. Validation is pending the next full Lean CI.
