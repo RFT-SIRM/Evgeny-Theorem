@@ -3704,161 +3704,273 @@ theorem sg_trace_p10_four_N_stratum_pair_diagonal
     sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 3 2 3 (by omega)
   ]
 
-/-- Pack the complete r=6 diagonal-pair correction into one named
-scalar. This keeps the 22-class normal form out of later theorem types. -/
-private noncomputable def glueRHS10_three_pair_sum
-    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
-    (a b c d e f : ℕ) : ℂ :=
-  glueRHS8_pair_sum m K [(a, b), (c, d), (e, f)]
-
-private noncomputable def glueRHS10_six_N_diagonal_form
-    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
-  10 * glueRHS10_three_pair_sum m K 1 1 1 1 1 5 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 1 2 4 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 1 3 3 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 1 4 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 2 1 4 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 2 2 3 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 2 3 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 3 1 3 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 3 2 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 1 4 1 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 2 1 1 4 +
-  10 * glueRHS10_three_pair_sum m K 1 1 2 1 2 3 +
-  10 * glueRHS10_three_pair_sum m K 1 1 2 1 3 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 2 2 1 3 +
-  10 * glueRHS10_three_pair_sum m K 1 1 2 2 2 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 2 3 1 2 +
-  5 * glueRHS10_three_pair_sum m K 1 1 3 1 1 3 +
-  10 * glueRHS10_three_pair_sum m K 1 1 3 1 2 2 +
-  10 * glueRHS10_three_pair_sum m K 1 1 3 2 1 2 +
-  10 * glueRHS10_three_pair_sum m K 1 2 1 2 1 3 +
-  10 * glueRHS10_three_pair_sum m K 1 2 1 2 2 2 +
-  5 * glueRHS10_three_pair_sum m K 1 2 2 1 2 2
-
-/-- Collapse the three diagonal factors of a p=10 six-N boundary term.
-The two intervening kernel powers are off-diagonal-zero on glued support;
-the final kernel is kept in its original position. -/
-private theorem sg_trace_p10_six_N_boundary_term_pair_diagonal
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o]
-    (hanti : OAnti (m + 1) o)
-    (a b c d e f : ℕ) (ha : a ≤ 5) (hc : c ≤ 5) :
-    sg_trace_p10_six_N_boundary_term m (sgK m θ ax o) a b c d e f =
-      glueRHS10_three_pair_sum m (sgK m θ ax o) a b c d e f := by
-  classical
-  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-  let g : WSG m → Prop := (sgGlue m).g
-  let db : WSG m → ℂ := fun y =>
-    if g y then (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
-  let dd : WSG m → ℂ := fun y =>
-    if g y then (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
-  let df : WSG m → ℂ := fun y =>
-    if g y then (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
-  have hdb : ∀ y, ¬ g y → db y = 0 := by
-    intro y hy
-    simp [db, hy]
-  have hdd : ∀ y, ¬ g y → dd y = 0 := by
-    intro y hy
-    simp [dd, hy]
-  have hdf : ∀ y, ¬ g y → df y = 0 := by
-    intro y hy
-    simp [df, hy]
-  have hA := sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti a ha
-  have hC := sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti c hc
-  have htrace := trace_three_kernels_supported_diagonal
-    g (K ^ a) (K ^ c) (K ^ e) db dd df hdb hdd hdf hA hC
-  have hboundary :
-      sg_trace_p10_six_N_boundary_term m K a b c d e f =
-        ∑ x, if g x then
-          ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
-            ((K ^ e) x x * df x) else 0 := by
-    change Matrix.trace
-      (K ^ 0 * K ^ a * Matrix.diagonal db * K ^ c *
-        Matrix.diagonal dd * K ^ e * Matrix.diagonal df) = _
-    simpa only [pow_zero, Matrix.one_mul] using htrace
-  have hpair :
-      (∑ x, if g x then
-        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
-          ((K ^ e) x x * df x) else 0) =
-        glueRHS10_three_pair_sum m K a b c d e f := by
-    unfold glueRHS10_three_pair_sum glueRHS8_pair_sum
-    change (∑ x, if g x then
-        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
-          ((K ^ e) x x * df x) else 0) =
-      ∑ x, if g x then
-        glueRHS8_pair_product m K x [(a, b), (c, d), (e, f)] else 0
-    apply Finset.sum_congr rfl
-    intro x hx
-    by_cases hgx : g x
-    · simp [glueRHS8_pair_product, glueRHS8_pair_value,
-        db, dd, df, hgx]
-      ring
-    · simp [hgx]
-  calc
-    sg_trace_p10_six_N_boundary_term m (sgK m θ ax o) a b c d e f =
-        sg_trace_p10_six_N_boundary_term m K a b c d e f := rfl
-    _ = ∑ x, if g x then
-        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
-          ((K ^ e) x x * df x) else 0 := hboundary
-    _ = glueRHS10_three_pair_sum m K a b c d e f := hpair
-
-/-- The weighted r=6 boundary-term sum in ordered diagonal-pair form.
-All 22 classes retain their exact weights, including the two weight-five classes. -/
-theorem sg_trace_p10_six_N_stratum_pair_diagonal
-    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+/-- The p=8 six-N boundary traces also reduce to products of three diagonal
+pairs. The middle kernels may have different powers, so the reduction uses
+the three-kernel supported-diagonal identity rather than commuting factors. -/
+private theorem sg_trace_p8_six_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
     let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 1 5 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 2 4 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 3 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 4 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 1 4 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 2 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 3 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 1 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 2 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 4 1 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 1 4 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 2 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 3 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 1 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 2 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 3 1 2 +
-        5 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 1 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 2 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 2 1 2 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 1 3 +
-        10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 2 2 +
-        5 * sg_trace_p10_six_N_boundary_term m K 1 2 2 1 2 2 =
-      glueRHS10_six_N_diagonal_form m K := by
+    let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+      fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] +
+    8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] +
+    8 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] +
+    4 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
+  classical
   dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+    fun n => Matrix.diagonal (fun y => if g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  let d : ℕ → WSG m → ℂ :=
+    fun n y => if g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  have hd (n : ℕ) : ∀ y, ¬ g y → d n y = 0 := by
+    intro y hy
+    simp [d, hy]
+  have hKoff (n : ℕ) (hn : n ≤ 5) :
+      ∀ x y, g x → g y → x ≠ y → (K ^ n) x y = 0 := by
+    intro x y hx hy hxy
+    exact sgK_pow_glued_offdiag_of_OAnti m hm θ ax o hanti n hn x y hx hy hxy
+  have h111113 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) =
+        glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 1) (K ^ 1) (d 1) (d 1) (d 3)
+      (hd 1) (hd 1) (hd 3) (hKoff 1 (by omega)) (hKoff 1 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 1) * Matrix.diagonal (d 1) * (K ^ 1) *
+          Matrix.diagonal (d 3)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 1) x x * d 1 x) *
+                ((K ^ 1) x x * d 3 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  have h111122 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) =
+        glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 1) (K ^ 2) (d 1) (d 1) (d 2)
+      (hd 1) (hd 1) (hd 2) (hKoff 1 (by omega)) (hKoff 1 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 1) * Matrix.diagonal (d 1) * (K ^ 2) *
+          Matrix.diagonal (d 2)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 1) x x * d 1 x) *
+                ((K ^ 2) x x * d 2 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  have h111212 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) =
+        glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 1) (K ^ 1) (d 1) (d 2) (d 2)
+      (hd 1) (hd 2) (hd 2) (hKoff 1 (by omega)) (hKoff 1 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 1) * Matrix.diagonal (d 2) * (K ^ 1) *
+          Matrix.diagonal (d 2)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 1) x x * d 2 x) *
+                ((K ^ 1) x x * d 2 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  have h112112 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) =
+        glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 2) (K ^ 1) (d 1) (d 1) (d 2)
+      (hd 1) (hd 1) (hd 2) (hKoff 1 (by omega)) (hKoff 2 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 2) * Matrix.diagonal (d 1) * (K ^ 1) *
+          Matrix.diagonal (d 2)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 2) x x * d 1 x) *
+                ((K ^ 1) x x * d 2 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  rw [sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti]
+  rw [h111113, h111122, h111212, h112112]
+
+private noncomputable def glueRHS8_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  8 * glueRHS8_pair_sum m K [(1, 7)] +
+  8 * glueRHS8_pair_sum m K [(2, 6)] +
+  8 * glueRHS8_pair_sum m K [(3, 5)] +
+  4 * glueRHS8_pair_sum m K [(4, 4)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 5)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (4, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 2), (1, 4)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (2, 4)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (3, 3)] +
+  8 * glueRHS8_pair_sum m K [(1, 3), (2, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 2), (3, 2)] +
+  4 * glueRHS8_pair_sum m K [(1, 3), (1, 3)] +
+  8 * glueRHS8_pair_sum m K [(1, 2), (2, 3)] +
+  2 * glueRHS8_pair_sum m K [(2, 2), (2, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] +
+  4 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] +
+  glueRHS8_pair_sum m K
+    [(1, 1), (1, 1), (1, 1), (1, 1)]
+
+private theorem sg_trace_p8_two_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) =
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 7)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(2, 6)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(3, 5)] +
+    4 * glueRHS8_pair_sum m (sgK m θ ax o) [(4, 4)] := by
+  simpa [glueRHS8_pair_sum, glueRHS8_pair_product,
+    glueRHS8_pair_value] using
+    (sg_trace_p8_two_N_stratum_boundary m hm θ ax o hanti)
+
+private theorem sg_trace_p8_four_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (1, 5)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (4, 2)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (1, 4)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (2, 4)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (3, 3)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 3), (2, 2)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (3, 2)] +
+    4 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 3), (1, 3)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (2, 3)] +
+    2 * glueRHS8_pair_sum m (sgK m θ ax o) [(2, 2), (2, 2)] := by
+  classical
+  dsimp
+  rw [sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti]
   rw [
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 1 5 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 2 4 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 3 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 4 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 1 4 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 2 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 3 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 3 1 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 3 2 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 4 1 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 1 4 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 2 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 3 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 2 1 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 2 2 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 3 1 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 1 1 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 1 2 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 2 1 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 1 2 1 3 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 1 2 2 2 (by omega) (by omega),
-    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 2 1 2 2 (by omega) (by omega)
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 1 5 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 4 2 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 2 1 4 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 2 4 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 3 3 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 3 2 2 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 2 3 2 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 3 1 3 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 2 2 3 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 2 2 2 2 (by omega) (by omega)
   ]
-  rfl
+
+private theorem sg_trace_p8_top_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+      glueRHS8_pair_sum m (sgK m θ ax o)
+        [(1, 1), (1, 1), (1, 1), (1, 1)] := by
+  classical
+  have htop := sg_trace_p8_top_stratum_diagonal_fourth m hm θ ax o hanti
+  dsimp at htop
+  calc
+    _ = ∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o x x *
+            sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := htop
+    _ = glueRHS8_pair_sum m (sgK m θ ax o)
+        [(1, 1), (1, 1), (1, 1), (1, 1)] := by
+          unfold glueRHS8_pair_sum
+          simp only [glueRHS8_pair_product, glueRHS8_pair_value, pow_one]
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp only [if_pos hg]
+            ring
+          · simp [hg]
+
 /-- Exact normal form of the complete H8 boundary correction. All four even
 insertion strata remain present with their original cyclic weights. -/
 theorem glueRHS8_eq_diagonal_form
@@ -5643,3 +5755,158 @@ theorem sg_trace_p10_five_N_stratum_zero
 
 
 end EvgenyTheorem
+
+
+private noncomputable def glueRHS10_three_pair_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e f : ℕ) : ℂ :=
+  glueRHS8_pair_sum m K [(a, b), (c, d), (e, f)]
+
+private noncomputable def glueRHS10_six_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 1 5 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 2 4 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 3 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 4 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 2 1 4 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 2 2 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 2 3 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 3 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 3 2 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 4 1 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 1 1 4 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 1 2 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 1 3 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 2 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 2 2 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 3 1 2 +
+  5 * glueRHS10_three_pair_sum m K 1 1 3 1 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 3 1 2 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 3 2 1 2 +
+  10 * glueRHS10_three_pair_sum m K 1 2 1 2 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 2 1 2 2 2 +
+  5 * glueRHS10_three_pair_sum m K 1 2 2 1 2 2
+
+/-- Collapse the three diagonal factors of a p=10 six-N boundary term.
+The two intervening kernel powers are off-diagonal-zero on glued support;
+the final kernel is kept in its original position. -/
+private theorem sg_trace_p10_six_N_boundary_term_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (ha : a ≤ 5) (hc : c ≤ 5) :
+    sg_trace_p10_six_N_boundary_term m (sgK m θ ax o) a b c d e f =
+      glueRHS10_three_pair_sum m (sgK m θ ax o) a b c d e f := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let db : WSG m → ℂ := fun y =>
+    if g y then (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  let dd : WSG m → ℂ := fun y =>
+    if g y then (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  let df : WSG m → ℂ := fun y =>
+    if g y then (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  have hdb : ∀ y, ¬ g y → db y = 0 := by
+    intro y hy
+    simp [db, hy]
+  have hdd : ∀ y, ¬ g y → dd y = 0 := by
+    intro y hy
+    simp [dd, hy]
+  have hdf : ∀ y, ¬ g y → df y = 0 := by
+    intro y hy
+    simp [df, hy]
+  have hA := sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti a ha
+  have hC := sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti c hc
+  have htrace := trace_three_kernels_supported_diagonal
+    g (K ^ a) (K ^ c) (K ^ e) db dd df hdb hdd hdf hA hC
+  have hboundary :
+      sg_trace_p10_six_N_boundary_term m K a b c d e f =
+        ∑ x, if g x then
+          ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+            ((K ^ e) x x * df x) else 0 := by
+    change Matrix.trace
+      (K ^ 0 * K ^ a * Matrix.diagonal db * K ^ c *
+        Matrix.diagonal dd * K ^ e * Matrix.diagonal df) = _
+    simpa only [pow_zero, Matrix.one_mul] using htrace
+  have hpair :
+      (∑ x, if g x then
+        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+          ((K ^ e) x x * df x) else 0) =
+        glueRHS10_three_pair_sum m K a b c d e f := by
+    unfold glueRHS10_three_pair_sum glueRHS8_pair_sum
+    change (∑ x, if g x then
+        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+          ((K ^ e) x x * df x) else 0) =
+      ∑ x, if g x then
+        glueRHS8_pair_product m K x [(a, b), (c, d), (e, f)] else 0
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp [glueRHS8_pair_product, glueRHS8_pair_value,
+        db, dd, df, hgx]
+      ring
+    · simp [hgx]
+  calc
+    sg_trace_p10_six_N_boundary_term m (sgK m θ ax o) a b c d e f =
+        sg_trace_p10_six_N_boundary_term m K a b c d e f := rfl
+    _ = ∑ x, if g x then
+        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+          ((K ^ e) x x * df x) else 0 := hboundary
+    _ = glueRHS10_three_pair_sum m K a b c d e f := hpair
+
+/-- The weighted r=6 boundary-term sum in ordered diagonal-pair form.
+All 22 classes retain their exact weights, including the two weight-five classes. -/
+theorem sg_trace_p10_six_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 1 5 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 2 4 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 3 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 4 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 1 4 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 2 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 3 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 2 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 4 1 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 1 4 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 2 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 3 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 2 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 3 1 2 +
+        5 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 2 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 2 1 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 2 2 +
+        5 * sg_trace_p10_six_N_boundary_term m K 1 2 2 1 2 2 =
+      glueRHS10_six_N_diagonal_form m K := by
+  dsimp
+  rw [
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 1 5 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 2 4 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 3 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 4 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 1 4 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 2 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 3 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 3 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 3 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 4 1 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 1 4 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 2 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 3 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 2 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 2 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 3 1 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 1 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 1 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 2 1 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 1 2 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 1 2 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 2 1 2 2 (by omega) (by omega)
+  ]
+  rfl

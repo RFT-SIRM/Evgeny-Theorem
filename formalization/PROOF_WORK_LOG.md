@@ -2274,3 +2274,19 @@ termwise reductions. Thus the trace-to-boundary bridge remains the existing
 proved theorem, while this new lemma packages only the boundary-to-diagonal
 step. No heartbeat setting, hypotheses, weights, or factor order is changed.
 Full Lean and Python CI are required.
+
+
+## 2026-11-01 — Restore the H8 section and relocate the H10 r=6 declarations
+
+A source comparison against the last fully green Lean commit
+`954e8d168467b1f42c4a74ec64589612f9c32cc1` showed that the prior r=6
+aggregate replacement had accidentally displaced the H8 block containing
+`glueRHS8_diagonal_form`, its r=2/r=4/r=6 reductions, and its adjacent-level
+transport theorem. This caused the reported unknown-identifier failures.
+The complete `GlueTrace.lean` source is therefore restored from that green
+baseline, and only the four H10 r=6 declarations (pair-sum helper, packed
+22-class RHS, termwise boundary-to-diagonal theorem, and 22-class aggregate)
+are appended after the baseline file. A byte-for-byte source check verifies
+the entire original H8 region is unchanged. No H6/H8 proof or theorem is
+modified; the H10 helper/aggregate is kept at boundary-term level. Full
+Lean and Python CI must validate this repaired layout.

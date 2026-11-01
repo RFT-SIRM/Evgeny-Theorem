@@ -4964,3 +4964,17 @@ re-elaborating the large trace expressions. All 22 classes and their exact
 weights (20 of weight ten, two of weight five) remain unchanged. This is
 still only the r=6 stratum normal form, not the full H10 assembly. Validation
 is pending.
+
+
+## 2026-11-01 — Restore H8 verbatim and isolate H10 r=6 work
+
+CI on `b57209e97c69a775799ba153577fdc5e99b7e939` failed because a previous
+source splice replaced the existing H8 six-N pair-diagonal section and its
+supporting normal-form declarations. The unknown identifiers reported in
+`glueRHS8_eq_diagonal_form` were a consequence of that accidental deletion,
+not a mathematical issue in H8. The file is reconstructed from the last
+fully green Lean baseline `954e8d168467b1f42c4a74ec64589612f9c32cc1` with
+the four H10 r=6 declarations appended at the end. The restored H8 region is
+checked byte-for-byte against the green baseline. All 22 H10 r=6 terms and
+weights are retained; the aggregate remains a boundary-term normal form,
+not an H10 end-to-end closure. Validation is pending.
