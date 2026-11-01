@@ -2439,3 +2439,19 @@ tuples with orbit size 3; r=8 has its period-four tuple with orbit size 4;
 r=10 has the constant tuple with orbit size 1. This formalizes the
 stabilizer side of the existing weights, not the binary-word-to-gap
 bijection. The source commit requires full Lean and Python CI.
+
+
+## 2026-11-01 — Diagnose and correct H10 cyclic gap trace Lean failure
+
+Full Lean run `41317154470` on `25fb663188490aee06375fa96751e461f09c7e68`
+failed in `TraceExpand.lean:2256-2257` inside `cyclicGapTrace_rotate`.
+After rewriting `rotate_eq_drop_append_take_mod` and `prod_append`, Lean
+had already closed the first equality; the following `rfl` was therefore
+an unreachable tactic. The second calc equality still contained the
+non-definitional goal that cyclically exchanges the two block products.
+The corrected proof inserts an explicit `Matrix.trace_mul_comm` step
+and reconstructs the original product using `take_append_drop`.
+This preserves the internal order of every `K^a * N` block.
+
+Both Python 3.11 and 3.12 workflows for the failed source commit passed;
+only Lean failed. The corrected source requires a fresh full Lean build.

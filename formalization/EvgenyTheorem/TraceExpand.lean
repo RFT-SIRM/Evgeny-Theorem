@@ -2253,7 +2253,8 @@ theorem cyclicGapTrace_rotate
     Matrix.trace ((blocks.rotate k).prod) =
         Matrix.trace ((blocks.drop j).prod * (blocks.take j).prod) := by
           rw [List.rotate_eq_drop_append_take_mod, List.prod_append]
-          rfl
+    _ = Matrix.trace ((blocks.take j).prod * (blocks.drop j).prod) := by
+          exact Matrix.trace_mul_comm _ _
     _ = Matrix.trace blocks.prod := by
           rw [← hsplit, List.prod_append]
 

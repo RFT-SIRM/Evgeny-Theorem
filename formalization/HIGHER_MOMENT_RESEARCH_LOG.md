@@ -5154,3 +5154,19 @@ gap compositions, nor does it establish a full H10 cancellation. The
 next bridge remains the marked-letter/composition correspondence with its
 p/r multiplicity factor. H6 and H8 are untouched. Full Lean and Python
 3.11/3.12 Fast/Slow CI are required for this commit.
+
+
+## 2026-11-01 — Repair cyclic gap trace rotation proof from Lean diagnostics
+
+The first build of `25fb663188490aee06375fa96751e461f09c7e68`
+failed in `cyclicGapTrace_rotate` (run `41317154470`). The first
+`rw` sequence already closed the first calc equality, so its trailing
+`rfl` produced a "No goals to be solved" error. The remaining actual goal
+was not definitional equality: it was precisely the trace cyclicity step
+`trace (drop.prod * take.prod) = trace (take.prod * drop.prod)`.
+The proof now states that step explicitly with `Matrix.trace_mul_comm`,
+then uses `take_append_drop` and `List.prod_append` to reassemble
+the original product. No factors inside any block are commuted.
+
+Python run `41317154445` passed on both 3.11 and 3.12; the source failure
+was Lean-only. A fresh complete Lean build is required for this repair.
