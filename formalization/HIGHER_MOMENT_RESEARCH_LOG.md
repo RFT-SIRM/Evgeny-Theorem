@@ -4905,3 +4905,19 @@ diagonal entry. The stratum aggregate keeps all 22 cyclic representatives
 and their exact weights (20 of weight ten, two of weight five; total 210).
 This is a boundary normal form only, not an ordered-word-expansion bridge or
 an H10 recurrence. Validation is pending the new full CI run.
+
+
+## 2026-11-01 — r=6 proof normalization and aggregate packaging
+
+Lean's diagnostic on the first r=6 aggregate showed a scalar-expression
+mismatch in the helper proof: unfolding all three support-gated diagonal
+coefficient functions at once duplicated the same support conditional in
+each factor. The helper is restructured to keep these coefficients opaque
+through the three-kernel diagonal theorem and to discharge pair-product
+normalization separately by a pointwise support case split. The aggregate
+statement also exceeded the ordinary elaboration heartbeat budget because
+22 explicit triple-pair sums were placed directly in its type. They are now
+encapsulated in `glueRHS10_six_N_diagonal_form`, with a small named wrapper
+for each three-pair sum. This is a type-size/elaboration refactor only; all
+22 representatives, exact weights, and ordered pair data remain unchanged.
+No heartbeat limit is increased. Validate on the next full Lean build.

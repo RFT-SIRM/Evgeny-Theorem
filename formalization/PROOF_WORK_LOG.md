@@ -2208,3 +2208,20 @@ diagonal. The resulting three ordered pair factors are then assembled over
 all 22 r=6 classes with the original coefficients 10 and 5. The periodic
 classes retain weight five. No K factors are commuted. Full Lean and Python
 CI for this addition are required before relying on it.
+
+
+## 2026-11-01 — Refine the H10 r=6 diagonal-pair proof after Lean diagnostics
+
+The first r=6 build exposed two distinct elaboration issues. In the local
+three-kernel reduction, unfolding the pair-sum definition too early caused
+repeated support conditionals to remain nested under the outer support test;
+Lean therefore could not match the scalar products, despite the matrix
+identity being established. The proof is split into two explicit equalities:
+first retain the diagonal coefficient functions as opaque let-bound terms
+when applying the existing three-kernel theorem, then prove the scalar
+pair-product identity pointwise on and off glued support. Separately, the
+22-term RHS in the aggregate theorem type exceeded the default elaboration
+heartbeat budget. It is now packaged in a named r=6 diagonal-form definition,
+so the public theorem type contains one scalar symbol rather than 22 expanded
+triple-pair terms. No heartbeat limit is raised and no hypotheses or
+coefficients are changed. Full Lean validation is pending.
