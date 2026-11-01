@@ -2139,3 +2139,73 @@ theorem orderedWordExpansionByCount_small_length_checks
   simp [orderedWordExpansionByCount_length]
 
 end EvgenyTheorem
+
+
+namespace EvgenyTheorem
+
+/-- A count stratum above the word length is empty, by its exact
+binomial-length formula. -/
+theorem orderedWordExpansionByCount_eq_nil_of_lt
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p r : ℕ) (hpr : p < r) :
+    orderedWordExpansionByCount A B p r = [] := by
+  cases hW : orderedWordExpansionByCount A B p r with
+  | nil => rfl
+  | cons x xs =>
+      have hlen := orderedWordExpansionByCount_length A B p r
+      have hfalse : False := by
+        simpa [hW, Nat.choose_eq_zero_of_lt hpr] using hlen
+      exact hfalse.elim
+
+/-- Summing the exact-count strata reconstructs the full noncommutative
+power. The induction follows the last-factor recurrence; matrix factors
+are never commuted and repeated word occurrences are retained. -/
+theorem orderedWordExpansionByCount_sum_eq_pow
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p : ℕ) :
+    (∑ r ∈ Finset.range (p + 1),
+      (orderedWordExpansionByCount A B p r).sum) = (A + B) ^ p := by
+  induction p with
+  | zero =>
+      simp [orderedWordExpansionByCount]
+  | succ p ih =>
+      rw [Finset.sum_range_succ']
+      simp only [orderedWordExpansionByCount, List.sum_append,
+        matrix_list_sum_map_mul_right]
+      have hzero :
+          orderedWordExpansionByCount A B p (p + 1) = [] :=
+        orderedWordExpansionByCount_eq_nil_of_lt A B p (p + 1)
+          (Nat.lt_succ_self p)
+      have hShift :
+          (∑ r ∈ Finset.range (p + 1),
+            (orderedWordExpansionByCount A B p (r + 1)).sum) =
+          ∑ r ∈ Finset.range p,
+            (orderedWordExpansionByCount A B p (r + 1)).sum := by
+        rw [Finset.sum_range_succ]
+        simp [hzero]
+      have hA :
+          (orderedWordExpansionByCount A B p 0).sum * A +
+            (∑ r ∈ Finset.range (p + 1),
+              (orderedWordExpansionByCount A B p (r + 1)).sum) * A =
+          (∑ r ∈ Finset.range (p + 1),
+            (orderedWordExpansionByCount A B p r).sum) * A := by
+        calc
+          _ = ((orderedWordExpansionByCount A B p 0).sum +
+                ∑ r ∈ Finset.range p,
+                  (orderedWordExpansionByCount A B p (r + 1)).sum) * A := by
+            rw [hShift, ← add_mul]
+          _ = (∑ r ∈ Finset.range (p + 1),
+                (orderedWordExpansionByCount A B p r).sum) * A := by
+            rw [Finset.sum_range_succ']
+      rw [Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.sum_mul]
+      calc
+        _ = ((orderedWordExpansionByCount A B p 0).sum * A +
+              (∑ r ∈ Finset.range (p + 1),
+                (orderedWordExpansionByCount A B p (r + 1)).sum) * A) +
+            (∑ r ∈ Finset.range (p + 1),
+              (orderedWordExpansionByCount A B p r).sum) * B := by
+          ac_rfl
+        _ = (A + B) ^ (p + 1) := by
+          rw [hA, ← mul_add, ih, ← pow_succ]
+
+end EvgenyTheorem

@@ -5073,5 +5073,13 @@ CI validation for source commit `c0313f16304fa4e86a958d1537bcc5a80d1035e8`:
 Starting point: branch `work/h8-h10-exact-recurrence-certificates`, parent commit `c0313f16304fa4e86a958d1537bcc5a80d1035e8`.
 Added `orderedWordExpansionByCount`, a recursive list of the p-letter matrix words containing exactly r occurrences of the second letter. Its recursion splits by the final factor: the A-ending block precedes the B-ending block, matching the order in `orderedWordExpansion` and preserving all occurrences even when matrix products coincide. Proved `orderedWordExpansionByCount_length`: every stratum has exactly `Nat.choose p r` list entries, and added p=2 and p=3 census checks.
 
-This is the first count-stratification lemma only. It does not yet prove that the full ordered expansion is the disjoint union of these strata under trace, does not rotate or group cyclic words, and does not establish the p=10 orbit coefficients or any boundary identity. No H6/H8 theorem is modified. Full Lean and Python CI for this source commit are pending.
+This is the first count-stratification lemma only. It does not yet prove that the full ordered expansion is the disjoint union of these strata under trace, does not rotate or group cyclic words, and does not establish the p=10 orbit coefficients or any boundary identity. No H6/H8 theorem is modified. CI for `90d83d197346df54b88cb44be671bdfe4f3872b7`: full Lean build passed (run `41312962957`); Python 3.11/3.12 Fast and Slow tests passed (run `41312963195`).
 Next: prove a list-level reconstruction/decomposition theorem connecting the count-stratified lists to `orderedWordExpansion` while preserving order and multiplicity; verify p=2 and p=3 before introducing cyclic gap representatives.
+
+
+## 2026-11-01 — H10 all-count-strata reconstruction identity
+
+Base: `90d83d197346df54b88cb44be671bdfe4f3872b7` on `work/h8-h10-exact-recurrence-certificates`. Added `orderedWordExpansionByCount_eq_nil_of_lt`, deriving out-of-range empty strata from the exact binomial length theorem, and `orderedWordExpansionByCount_sum_eq_pow`, intended to reconstruct `(A+B)^p` as the sum of all exact-r matrix-list sums. The proof follows the final-factor recursion; it does not commute matrix factors or identify duplicate word occurrences.
+
+Scope: count-stratum reconstruction only. It does not yet prove cyclic trace grouping, orbit weights, or H10 closure. Lean and Python 3.11/3.12 Fast/Slow CI for this source commit are pending.
+Next: validate this induction by full Lean build; if successful, derive the trace-sum corollary, then tackle cyclic gap-composition orbits with exact periodic weights.

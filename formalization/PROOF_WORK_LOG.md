@@ -2376,4 +2376,9 @@ This is a notational normal-form packaging, not a new boundary theorem and not H
 
 Base commit: `c0313f16304fa4e86a958d1537bcc5a80d1035e8` on `work/h8-h10-exact-recurrence-certificates`. Added `orderedWordExpansionByCount`, splitting the ordered matrix-word list recursively by whether its final factor is A or B; the A-ending block is listed first. Proved the exact length theorem `orderedWordExpansionByCount_length` with `Nat.choose p r` and added small p=2 and p=3 checks. This verifies the binomial count of word occurrences without identifying equal matrix products or changing any factor order.
 
-This does not yet reconstruct the full ordered expansion from the strata and does not prove the cyclic trace/orbit-weight bridge. It is a single foundational step only. Full Lean and Python 3.11/3.12 Fast/Slow CI is pending.
+This does not yet reconstruct the full ordered expansion from the strata and does not prove the cyclic trace/orbit-weight bridge. It is a single foundational step only. CI for `90d83d197346df54b88cb44be671bdfe4f3872b7`: full Lean build passed (run `41312962957`); Python 3.11/3.12 Fast and Slow tests passed (run `41312963195`).
+
+
+## 2026-11-01 — H10 all-count-strata reconstruction identity
+
+Base commit `90d83d197346df54b88cb44be671bdfe4f3872b7`. Added an out-of-range empty-stratum lemma and a recursive theorem intended to show the sum of all exact-count strata is `(A+B)^p`, preserving the order and multiplicity of each word. This is not yet a cyclic trace bridge and does not close H10. Full Lean and Python 3.11/3.12 Fast/Slow CI is pending.
