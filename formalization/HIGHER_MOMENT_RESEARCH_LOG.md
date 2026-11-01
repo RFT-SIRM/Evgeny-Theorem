@@ -5380,3 +5380,30 @@ repair and both journal updates are committed separately; fresh full
 Lean and Python 3.11/3.12 Fast/Slow CI is required for that new commit.
 H6 and H8 remain untouched; the marked-word rotation bijection and
 the `p/r` trace identity remain open.
+
+
+## 2026-11-01 — Validate H10 first-delimiter repair and add marked-cut trace transport
+
+The repair commit `f2706e00e5c0a9129701da037d2e92711f24d4b2` passed
+the complete Lean formalization build (run `41327890185`). Both Python
+versions passed their Fast and Slow jobs in run `41327890251`. Thus the
+first-delimiter decoding and canonical gap-encoding injectivity are now
+validated on the branch.
+
+The next H10 step introduces `binaryWordMarkedRotate prefix suffix`,
+which represents cutting the word `(prefix ++ [true]) ++ suffix`
+immediately after its distinguished true symbol. Proved that this cut
+preserves total word length. Also proved equality of the two matrix-word
+traces: the original word evaluates to
+`(eval(prefix) * B) * eval(suffix)`, while the cut word evaluates to
+`eval(suffix) * (eval(prefix) * B)`; `Matrix.trace_mul_comm` exchanges
+only these two grouped factors. The order of all factors inside each
+prefix/suffix is retained.
+
+This is a trace-preserving marked cut, not yet a decoder for arbitrary
+binary words and not the marked-word/gap-list bijection. The remaining
+work is to turn the cut word ending in true into a unique gap list, prove
+the corresponding reconstruction and count the rotation offsets; only
+then can the factor `p/r` be derived. H6 and H8 remain untouched.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required for the
+new source commit.

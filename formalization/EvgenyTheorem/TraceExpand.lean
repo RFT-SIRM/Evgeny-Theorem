@@ -2589,6 +2589,71 @@ theorem binaryWordMatrix_append_words
       binaryWordMatrix A B u * binaryWordMatrix A B v := by
   simp [binaryWordMatrix, List.map_append, List.prod_append]
 
+
+
+/-- Move a distinguished true symbol to the end of a binary word.
+If the original word is `prefix ++ [true] ++ suffix`, this is the
+cyclic cut `suffix ++ prefix ++ [true]` at the marked position. -/
+def binaryWordMarkedRotate (prefix suffix : List Bool) : List Bool :=
+  (suffix ++ prefix) ++ [true]
+
+/-- Cutting a binary word immediately after a marked true symbol preserves
+its length. This is the list-level invariant needed for the gap composition. -/
+theorem binaryWordMarkedRotate_length
+    (prefix suffix : List Bool) :
+    (binaryWordMarkedRotate prefix suffix).length =
+      ((prefix ++ [true]) ++ suffix).length := by
+  simp [binaryWordMarkedRotate]
+  omega
+
+/-- The trace of a binary matrix word is unchanged when a marked true letter
+is moved from the cut position to the final position. The proof is exactly
+trace cyclicity for the two grouped factors `eval(prefix) * B` and
+`eval(suffix)`; no factors within either word are commuted. -/
+theorem binaryWordMatrix_trace_marked_rotate
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (prefix suffix : List Bool) :
+    Matrix.trace (binaryWordMatrix A B ((prefix ++ [true]) ++ suffix)) =
+      Matrix.trace (binaryWordMatrix A B (binaryWordMarkedRotate prefix suffix)) := by
+  have hleft :
+      binaryWordMatrix A B ((prefix ++ [true]) ++ suffix) =
+        (binaryWordMatrix A B prefix * B) *
+          binaryWordMatrix A B suffix := by
+    calc
+      _ = binaryWordMatrix A B (prefix ++ [true]) *
+            binaryWordMatrix A B suffix :=
+        binaryWordMatrix_append_words A B (prefix ++ [true]) suffix
+      _ = (binaryWordMatrix A B prefix * B) *
+            binaryWordMatrix A B suffix := by
+        rw [binaryWordMatrix_append_words]
+        simp [binaryWordMatrix]
+  have hright :
+      binaryWordMatrix A B ((suffix ++ prefix) ++ [true]) =
+        binaryWordMatrix A B suffix *
+          (binaryWordMatrix A B prefix * B) := by
+    calc
+      _ = binaryWordMatrix A B (suffix ++ prefix) *
+            binaryWordMatrix A B [true] :=
+        binaryWordMatrix_append_words A B (suffix ++ prefix) [true]
+      _ = (binaryWordMatrix A B suffix * binaryWordMatrix A B prefix) * B := by
+        rw [binaryWordMatrix_append_words]
+        simp [binaryWordMatrix]
+      _ = binaryWordMatrix A B suffix *
+            (binaryWordMatrix A B prefix * B) := by
+        rw [Matrix.mul_assoc]
+  calc
+    Matrix.trace (binaryWordMatrix A B ((prefix ++ [true]) ++ suffix)) =
+        Matrix.trace
+          ((binaryWordMatrix A B prefix * B) *
+            binaryWordMatrix A B suffix) := by rw [hleft]
+    _ = Matrix.trace
+          (binaryWordMatrix A B suffix *
+            (binaryWordMatrix A B prefix * B)) :=
+      Matrix.trace_mul_comm _ _
+    _ = Matrix.trace
+          (binaryWordMatrix A B (binaryWordMarkedRotate prefix suffix)) := by
+      rw [binaryWordMarkedRotate, hright]
+
 /-- A single gap block evaluates to A^a * B, with no factor reordering. -/
 theorem binaryWordMatrix_falseRun_block
     {n : Type*} [Fintype n] [DecidableEq n]
