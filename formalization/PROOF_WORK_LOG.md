@@ -2058,3 +2058,19 @@ that there are 126 weak compositions, 26 cyclic classes, and total
 binary-word orbit weight 25*10+2 = 252 = choose(10,5).
 The aggregate requires a new full Lean build; it is not called validated
 until that build succeeds.
+
+## 2026-11-01 — Diagnose and isolate the p=10 cyclic-expansion simp timeout
+
+The first Lean run for the new exact p=10 cyclic trace grouping reached
+TraceExpand.lean:3204 and exhausted the standard 200000-heartbeat budget in
+one of the generated rotation equalities. This was not a mathematical
+counterexample: each equality is an instance of the already-proved
+trace_cyclic_list theorem. The generated proof used unrestricted
+`simpa [Matrix.mul_assoc]` while hundreds of earlier rotation equalities
+were already in the local context, allowing the simplifier to inspect an
+unnecessarily large local rewrite context. The correction restricts each
+normalization to the explicit List.prod and matrix-associativity lemmas and
+restricts the final ordered-expansion normalization to its explicit list
+recursion lemmas. No heartbeat limit is raised. This correction is pending
+full Lean CI; do not treat the 108-class p=10 cyclic expansion as validated
+until the new SHA passes the complete build.
