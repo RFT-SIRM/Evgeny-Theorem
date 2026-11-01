@@ -5271,3 +5271,25 @@ does not yet prove that every exact-count word with a marked B is uniquely
 represented by a rotation offset and such a gap list, and does not yet
 derive the `p/r` trace identity. H6 and H8 are untouched. The new code
 requires fresh full Lean and Python 3.11/3.12 Fast/Slow CI.
+
+
+## 2026-11-01 — Exact letter counts for H10 canonical gap words
+
+The canonical gap encoding added in `fe98156` passed the full Lean build
+(run `41322976893`). Python 3.11 passed both Fast and Slow tests in run
+`41322976871`; Python 3.12 Fast was still running when this step began,
+so its Slow and final job conclusion must be checked separately.
+
+Added filter-based counting lemmas for `binaryWordGapEncoding`: its true
+symbols are exactly one delimiter per gap, and its false symbols are the
+false runs whose lengths are the gap entries. Thus the encoded word has
+exactly `gaps.length` second-letter occurrences and exactly `gaps.sum`
+first-letter occurrences. Together with the existing length theorem this
+makes both letter counts explicit, not merely inferred from total length.
+
+This is the count side of the weak-composition representation. It does not
+yet establish that an arbitrary binary word with a marked true position
+can be uniquely rotated into one such encoding. The next task remains the
+rotation-and-cut bijection, with the chosen true position carried as data.
+H6 and H8 remain untouched. Full Lean and Python 3.11/3.12 Fast/Slow CI
+are required for this addition.

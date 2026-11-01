@@ -2445,6 +2445,55 @@ theorem binaryWordGapEncoding_length (gaps : List ℕ) :
         List.length_cons, List.length_nil, ih]
       omega
 
+/-- The false run contains no true symbols. -/
+theorem binaryFalseRun_filter_true (a : ℕ) :
+    (binaryFalseRun a).filter id = [] := by
+  induction a with
+  | zero => rfl
+  | succ a ih => simp [binaryFalseRun, ih]
+
+/-- Filtering a false run for false symbols leaves it unchanged. -/
+theorem binaryFalseRun_filter_false (a : ℕ) :
+    (binaryFalseRun a).filter (fun b => !b) = binaryFalseRun a := by
+  induction a with
+  | zero => rfl
+  | succ a ih => simp [binaryFalseRun, ih]
+
+/-- The true symbols in a canonical gap word are exactly its delimiters:
+one final true symbol for each gap. -/
+theorem binaryWordGapEncoding_filter_true (gaps : List ℕ) :
+    (binaryWordGapEncoding gaps).filter id =
+      List.replicate gaps.length true := by
+  induction gaps with
+  | nil => rfl
+  | cons a rest ih =>
+      simp [binaryWordGapEncoding, binaryFalseRun_filter_true, ih]
+
+/-- The false symbols in a canonical gap word are precisely the false runs
+that encode its gap lengths. -/
+theorem binaryWordGapEncoding_filter_false (gaps : List ℕ) :
+    (binaryWordGapEncoding gaps).filter (fun b => !b) =
+      gaps.flatMap binaryFalseRun := by
+  induction gaps with
+  | nil => rfl
+  | cons a rest ih =>
+      simp [binaryWordGapEncoding, binaryFalseRun_filter_false, ih]
+
+/-- Consequently, a gap encoding has exactly one true symbol per gap. -/
+theorem binaryWordGapEncoding_true_count (gaps : List ℕ) :
+    ((binaryWordGapEncoding gaps).filter id).length = gaps.length := by
+  rw [binaryWordGapEncoding_filter_true]
+  simp
+
+/-- And it has exactly the sum of its gap lengths many false symbols. -/
+theorem binaryWordGapEncoding_false_count (gaps : List ℕ) :
+    ((binaryWordGapEncoding gaps).filter (fun b => !b)).length = gaps.sum := by
+  rw [binaryWordGapEncoding_filter_false]
+  induction gaps with
+  | nil => rfl
+  | cons a rest ih =>
+      simp [binaryFalseRun_length, ih]
+
 /-- Evaluating a binary word beginning with one symbol multiplies its
 evaluation on the left by the matrix assigned to that symbol. -/
 theorem binaryWordMatrix_cons

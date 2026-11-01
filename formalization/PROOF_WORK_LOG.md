@@ -2538,3 +2538,20 @@ order and do not commute matrix factors. This is only the canonical-word
 side of the marked-letter/composition correspondence; the rotation-offset
 bijection and the `p/r` weighted trace identity remain unproved. Full
 Lean and Python 3.11/3.12 Fast/Slow validation is required.
+
+
+## 2026-11-01 — Count both letters in the canonical H10 gap encoding
+
+The full Lean build for `fe9815682e4177970c8f2cb3afeede4ed971c6cc`
+passed (run `41322976893`). Python 3.11 Fast and Slow tests passed
+(run `41322976871`); Python 3.12 was still running at the time of this
+new source change, so that prior run is not described as fully green.
+
+Added explicit filtering identities. Filtering the canonical encoded word
+for true retains exactly `List.replicate gaps.length true`; filtering it
+for false returns the concatenation of the constituent `binaryFalseRun`
+lists. Their lengths prove the separate counts `gaps.length` and
+`gaps.sum`. The result complements the encoded-word length identity and
+will be used to state the parameters of the weak-composition stratum.
+It remains a one-way encoding result, not yet the inverse marked-word
+bijection or the `p/r` weight identity. Fresh full CI is required.
