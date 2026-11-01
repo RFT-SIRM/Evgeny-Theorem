@@ -4593,3 +4593,16 @@ The remaining target therefore had coefficient 9 on every class.
 The final combination now weights all twelve established identities by
 10, matching the orbit multiplicity. The full Lean build must confirm this
 correction before the r=3 stratum is treated as closed.
+
+
+## 2026-11-01 — H10 r=5 cyclic stratum
+
+The Sierpinski specialization now proves the entire five-N stratum vanishes.
+The 26 canonical cyclic representatives are (1,1,1,1,6), (1,1,1,2,5), (1,1,1,3,4), (1,1,1,4,3), (1,1,1,5,2), (1,1,2,1,5), (1,1,2,2,4), (1,1,2,3,3), (1,1,2,4,2), (1,1,3,1,4), (1,1,3,2,3), (1,1,3,3,2), (1,1,4,1,3), (1,1,4,2,2), (1,1,5,1,2), (1,2,1,2,4), (1,2,1,3,3), (1,2,1,4,2), (1,2,2,1,4), (1,2,2,2,3), (1,2,2,3,2), (1,2,3,1,3), (1,2,3,2,2), (1,3,1,3,2), (1,3,2,2,2), (2,2,2,2,2).
+The first 25 have orbit weight 10; the all-two tuple has period two in
+the ten-factor word and weight 2. The total multiplicity is 252 = C(10,5).
+Cyclic rotation retains the matrix-factor order and puts each word in the
+form required by `trace_five_N_powers_zero_of_OAnti`; its selected middle
+powers are at most 6, which is below 2^m for m >= 3. This does not yet
+assemble the full p=10 expansion or prove cancellation/stabilization of
+the even boundary sums.

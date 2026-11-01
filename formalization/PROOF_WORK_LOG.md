@@ -1893,3 +1893,17 @@ After normalization this left a residual coefficient 9 on every trace.
 The proof now combines each established zero-trace equality with
 coefficient 10, matching the exact orbit weights. No class inventory,
 trace representative, or theorem hypothesis was changed.
+
+
+## 2026-11-01 — Close the H10 five-N odd stratum
+
+- Added `sg_trace_p10_five_N_stratum_zero` to GlueTrace.lean.
+- Enumerated all 26 cyclic classes of positive five-tuples summing to ten:
+  25 classes have orbit size ten; the periodic tuple (2,2,2,2,2) has
+  orbit size two. The exact weighted total is 25*10 + 2 = 252 = C(10,5).
+- Each trace is cyclically rotated to the normal form required by
+  `trace_five_N_powers_zero_of_OAnti`. The two selected middle exponents
+  are at most six, hence below 2^m for m >= 3.
+- This closes the H10 r=5 odd stratum only. The full p=10 ordered expansion,
+  cancellation among even boundary strata, and the all-level recurrence
+  remain open.
