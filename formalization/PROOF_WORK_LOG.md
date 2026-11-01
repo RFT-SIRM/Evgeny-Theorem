@@ -2088,3 +2088,16 @@ the 16 block identities then assemble the same 108 cyclic representatives
 with the same exact orbit weights. No change is made to the matrix identities,
 stratum counts, assumptions, or heartbeat limits. Full Lean validation of the
 new structure is pending.
+
+## 2026-11-01 — Correct the final p=10 block-assembly tactic layout
+
+The 16-block proof reached the final cyclic theorem, but Lean reported an
+unsolved goal at TraceExpand.lean:8832 and then parsed the following tactic
+line as a new command. Inspection of the exact source showed the generator
+had emitted the first `rw` on the same physical line as `:= by`, while
+subsequent tactics were indented as a nested tactic block. Lean closed the
+proof layout after that first line; the block theorems themselves were not
+reported as failing. The correction puts `:= by` on its own line and places
+all assembly tactics uniformly inside the proof block. No mathematical
+statement or proof term in the sixteen suffix lemmas is changed. The new
+layout is pending full Lean validation.

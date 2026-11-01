@@ -8829,7 +8829,8 @@ theorem trace_orderedWordExpansion_ten_cyclic
       +       10 * Matrix.trace (B * B * B * B * B * B * A * B * A * B)
       +       10 * Matrix.trace (B * B * B * B * B * B * B * A * A * B)
       +       10 * Matrix.trace (B * B * B * B * B * B * B * B * A * B)
-      +       1 * Matrix.trace (B * B * B * B * B * B * B * B * B * B) := by  rw [trace_sum_orderedWordExpansion_append A B 6 4 Matrix.trace]
+      +       1 * Matrix.trace (B * B * B * B * B * B * B * B * B * B) := by
+  rw [trace_sum_orderedWordExpansion_append A B 6 4 Matrix.trace]
   simp only [orderedWordExpansion, List.map_append, List.sum_append,
     List.map_map, Function.comp_def, Matrix.mul_assoc]
   rw [

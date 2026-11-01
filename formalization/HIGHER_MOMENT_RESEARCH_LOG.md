@@ -4787,3 +4787,16 @@ original prefix/suffix multiplication order, and the main theorem recombines
 the 16 identities. The expected cyclic inventory remains
 (1,1,5,12,22,26,22,12,5,1,1) across insertion counts 0 through 10. All of
 this remains pending full Lean validation on the resulting SHA.
+
+## 2026-11-01 — Correct the final p=10 block-assembly tactic layout
+
+The 16-block proof reached the final cyclic theorem, but Lean reported an
+unsolved goal at TraceExpand.lean:8832 and then parsed the following tactic
+line as a new command. Inspection of the exact source showed the generator
+had emitted the first `rw` on the same physical line as `:= by`, while
+subsequent tactics were indented as a nested tactic block. Lean closed the
+proof layout after that first line; the block theorems themselves were not
+reported as failing. The correction puts `:= by` on its own line and places
+all assembly tactics uniformly inside the proof block. No mathematical
+statement or proof term in the sixteen suffix lemmas is changed. The new
+layout is pending full Lean validation.
