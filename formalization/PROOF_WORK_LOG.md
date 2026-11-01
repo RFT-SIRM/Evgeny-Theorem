@@ -1917,3 +1917,21 @@ statement (GlueTrace.lean:4419). Added a 1000000-heartbeat allowance scoped
 to this theorem only, following the already successful scoped option on the
 22-class six-N aggregate. No hypotheses, coefficients, representatives, or
 proof steps changed. A fresh full Lean build must validate the scoped option.
+
+
+## 2026-11-01 — Refactor the H10 five-N cyclic stratum
+
+- The explicit 26-term theorem exceeded a one-million-heartbeat budget
+  during weak-head normalization of its statement and its last cyclic
+  rotation. Do not address this by continually increasing the limit.
+- Replaced the expanded theorem statement by a private weighted-sum
+  definition, preserving the 26 canonical representatives and exact
+  weights (25 classes of weight 10, plus the alternating class of weight 2).
+- Added one generic five-N cyclic trace-rotation lemma. The 26 class proofs
+  instantiate that lemma and the existing
+  `trace_five_N_powers_zero_of_OAnti`; the final weighted sum is reduced
+  by rewriting each opaque class term to zero.
+- The selected b and d powers are at most 6, so 6 < 2^m follows from
+  m >= 3. Matrix-factor order is retained.
+- This is a structural elaboration refactor, not a claim of a successful
+  Lean build. CI must validate it before r=5 is closed.

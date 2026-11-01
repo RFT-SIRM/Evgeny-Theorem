@@ -4405,575 +4405,408 @@ theorem sg_trace_p10_three_N_stratum_zero
     10 * hzero_r3_10 + 10 * hzero_r3_11 + 10 * hzero_r3_12
 
 
-set_option maxHeartbeats 1000000 in
-/- The exact 26-class weighted trace statement needs a larger elaboration
-   budget; this option is scoped to the five-N theorem only. -/
+/-- Cyclic rotation of a five-N trace word into the canonical five-pairing
+form. The gaps are positive; matrix-factor order is preserved exactly. -/
+private theorem trace_five_N_cyclic_rotate
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (a b c d e : ℕ)
+    (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
+    (hd : 0 < d) (he : 0 < e) :
+    Matrix.trace
+      (K ^ (a - 1) * (K * N) *
+        K ^ (b - 1) * (K * N) *
+        K ^ (c - 1) * (K * N) *
+        K ^ (d - 1) * (K * N) *
+        K ^ (e - 1) * (K * N)) =
+    Matrix.trace
+      (K * N * K ^ b * N * K ^ c * N *
+        K ^ d * N * K ^ e * N * K ^ (a - 1)) := by
+  have ha' : a - 1 + 1 = a := by omega
+  have hb' : b - 1 + 1 = b := by omega
+  have hc' : c - 1 + 1 = c := by omega
+  have hd' : d - 1 + 1 = d := by omega
+  have he' : e - 1 + 1 = e := by omega
+  simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+    Matrix.one_mul, Matrix.mul_one, ha', hb', hc', hd', he'] using
+    (trace_cyclic_list
+      ([K, N, K ^ b, N, K ^ c, N, K ^ d, N, K ^ e, N] :
+        List (Matrix n n ℂ))
+      ([K ^ (a - 1)] : List (Matrix n n ℂ))).symm
+
+/-- One five-N cyclic representative, expressed by its five positive
+K-gap lengths. The final K run is included before cyclic rotation. -/
+private noncomputable def sg_trace_p10_five_N_class_term
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e : ℕ) : ℂ :=
+  Matrix.trace
+    (K ^ (a - 1) * (K * N) *
+      K ^ (b - 1) * (K * N) *
+      K ^ (c - 1) * (K * N) *
+      K ^ (d - 1) * (K * N) *
+      K ^ (e - 1) * (K * N))
+
+/-- The exact weighted sum of the 26 cyclic classes in the p=10
+five-N stratum. The exceptional all-two tuple is periodic and has weight 2;
+the other 25 classes have weight 10. -/
+private noncomputable def sg_trace_p10_five_N_stratum_sum
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 1 1 6 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 1 2 5 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 1 3 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 1 4 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 1 5 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 2 1 5 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 2 2 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 2 3 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 2 4 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 3 1 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 3 2 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 3 3 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 4 1 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 4 2 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 1 5 1 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 1 2 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 1 3 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 1 4 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 2 1 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 2 2 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 2 3 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 3 1 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 2 3 2 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 3 1 3 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 1 3 2 2 2 +
+  2 * sg_trace_p10_five_N_class_term m K N 2 2 2 2 2
+
 /-- The complete five-N cyclic stratum of the p=10 ordered-word expansion
-vanishes under OAnti. There are 26 cyclic classes of positive five-tuples
-summing to ten. Twenty-five have orbit weight ten; the periodic class
-(2,2,2,2,2) has orbit weight two. The total is
+vanishes under OAnti. The 26 canonical classes carry total weight
 25*10 + 2 = 252 = choose(10,5). -/
 theorem sg_trace_p10_five_N_stratum_zero
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
-    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 5 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 4 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) +
-    2 * Matrix.trace
-      (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) = 0 := by
+    sg_trace_p10_five_N_stratum_sum m
+      (sgK m θ ax o) (sgGlue m).N = 0 := by
   let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
   let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-  change
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 5 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 4 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) +
-    10 * Matrix.trace
-      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) +
-    2 * Matrix.trace
-      (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) = 0
+  change sg_trace_p10_five_N_stratum_sum m K N = 0
   have hside : 6 < 2 ^ m := by
     calc
       6 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
-  have hrot_r5_1 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 5 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 6 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 1, N, K ^ 1, N, K ^ 6, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_1 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 5 * (K * N)) = 0 := by
-    rw [hrot_r5_1]
+      sg_trace_p10_five_N_class_term m K N 1 1 1 1 6 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (6 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 1 1 6
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 1 1 6 0
       (by omega) (by omega)
-  have hrot_r5_2 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 4 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 5 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 1, N, K ^ 2, N, K ^ 5, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_2 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 4 * (K * N)) = 0 := by
-    rw [hrot_r5_2]
+      sg_trace_p10_five_N_class_term m K N 1 1 1 2 5 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (5 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 1 2 5
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 1 2 5 0
       (by omega) (by omega)
-  have hrot_r5_3 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 4 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 1, N, K ^ 3, N, K ^ 4, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_3 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0 := by
-    rw [hrot_r5_3]
+      sg_trace_p10_five_N_class_term m K N 1 1 1 3 4 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 1 3 4
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 1 3 4 0
       (by omega) (by omega)
-  have hrot_r5_4 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 1, N, K ^ 4, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_4 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_4]
+      sg_trace_p10_five_N_class_term m K N 1 1 1 4 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 1 4 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 1 4 3 0
       (by omega) (by omega)
-  have hrot_r5_5 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 5 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 1, N, K ^ 5, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_5 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_5]
+      sg_trace_p10_five_N_class_term m K N 1 1 1 5 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (5 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 1 5 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 1 5 2 0
       (by omega) (by omega)
-  have hrot_r5_6 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 5 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 2, N, K ^ 1, N, K ^ 5, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_6 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N)) = 0 := by
-    rw [hrot_r5_6]
+      sg_trace_p10_five_N_class_term m K N 1 1 2 1 5 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (5 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 2 1 5
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 2 1 5 0
       (by omega) (by omega)
-  have hrot_r5_7 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 4 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 2, N, K ^ 2, N, K ^ 4, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_7 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) = 0 := by
-    rw [hrot_r5_7]
+      sg_trace_p10_five_N_class_term m K N 1 1 2 2 4 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 2 2 4
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 2 2 4 0
       (by omega) (by omega)
-  have hrot_r5_8 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 2, N, K ^ 3, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_8 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_8]
+      sg_trace_p10_five_N_class_term m K N 1 1 2 3 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 2 3 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 2 3 3 0
       (by omega) (by omega)
-  have hrot_r5_9 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 2, N, K ^ 4, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_9 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_9]
+      sg_trace_p10_five_N_class_term m K N 1 1 2 4 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 2 4 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 2 4 2 0
       (by omega) (by omega)
-  have hrot_r5_10 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 4 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 3, N, K ^ 1, N, K ^ 4, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_10 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) = 0 := by
-    rw [hrot_r5_10]
+      sg_trace_p10_five_N_class_term m K N 1 1 3 1 4 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 3 1 4
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 3 1 4 0
       (by omega) (by omega)
-  have hrot_r5_11 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 3, N, K ^ 2, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_11 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_11]
+      sg_trace_p10_five_N_class_term m K N 1 1 3 2 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 3 2 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 3 2 3 0
       (by omega) (by omega)
-  have hrot_r5_12 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 3, N, K ^ 3, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_12 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_12]
+      sg_trace_p10_five_N_class_term m K N 1 1 3 3 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 3 3 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 3 3 2 0
       (by omega) (by omega)
-  have hrot_r5_13 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 4, N, K ^ 1, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_13 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_13]
+      sg_trace_p10_five_N_class_term m K N 1 1 4 1 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 4 1 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 4 1 3 0
       (by omega) (by omega)
-  have hrot_r5_14 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 4, N, K ^ 2, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_14 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_14]
+      sg_trace_p10_five_N_class_term m K N 1 1 4 2 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 4 2 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 4 2 2 0
       (by omega) (by omega)
-  have hrot_r5_15 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 5 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 1, N, K ^ 5, N, K ^ 1, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_15 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_15]
+      sg_trace_p10_five_N_class_term m K N 1 1 5 1 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (5 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 1 5 1 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 1 5 1 2 0
       (by omega) (by omega)
-  have hrot_r5_16 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 1, N, K ^ 2, N, K ^ 4, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_16 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 3 * (K * N)) = 0 := by
-    rw [hrot_r5_16]
+      sg_trace_p10_five_N_class_term m K N 1 2 1 2 4 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 1 2 4
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 1 2 4 0
       (by omega) (by omega)
-  have hrot_r5_17 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 1, N, K ^ 3, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_17 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_17]
+      sg_trace_p10_five_N_class_term m K N 1 2 1 3 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 1 3 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 1 3 3 0
       (by omega) (by omega)
-  have hrot_r5_18 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 1, N, K ^ 4, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_18 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_18]
+      sg_trace_p10_five_N_class_term m K N 1 2 1 4 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 1 4 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 1 4 2 0
       (by omega) (by omega)
-  have hrot_r5_19 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 1 * N * K ^ 4 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 2, N, K ^ 1, N, K ^ 4, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_19 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 0 * (K * N) * K ^ 3 * (K * N)) = 0 := by
-    rw [hrot_r5_19]
+      sg_trace_p10_five_N_class_term m K N 1 2 2 1 4 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (4 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 2 1 4
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 2 1 4 0
       (by omega) (by omega)
-  have hrot_r5_20 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 2, N, K ^ 2, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_20 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_20]
+      sg_trace_p10_five_N_class_term m K N 1 2 2 2 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 2 2 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 2 2 3 0
       (by omega) (by omega)
-  have hrot_r5_21 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 2, N, K ^ 3, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_21 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_21]
+      sg_trace_p10_five_N_class_term m K N 1 2 2 3 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 2 3 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 2 3 2 0
       (by omega) (by omega)
-  have hrot_r5_22 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 3, N, K ^ 1, N, K ^ 3, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_22 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N)) = 0 := by
-    rw [hrot_r5_22]
+      sg_trace_p10_five_N_class_term m K N 1 2 3 1 3 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 3 1 3
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 3 1 3 0
       (by omega) (by omega)
-  have hrot_r5_23 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 3, N, K ^ 2, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_23 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_23]
+      sg_trace_p10_five_N_class_term m K N 1 2 3 2 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 2 3 2 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 3 2 2 0
       (by omega) (by omega)
-  have hrot_r5_24 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 3, N, K ^ 1, N, K ^ 3, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_24 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_24]
+      sg_trace_p10_five_N_class_term m K N 1 3 1 3 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 3 1 3 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 3 1 3 2 0
       (by omega) (by omega)
-  have hrot_r5_25 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 3, N, K ^ 2, N, K ^ 2, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 0] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_25 :
-      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_25]
+      sg_trace_p10_five_N_class_term m K N 1 3 2 2 2 = 0 := by
+    change Matrix.trace (K ^ (1 - 1) * (K * N) *
+      K ^ (3 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 1 3 2 2 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 3 2 2 2 0
       (by omega) (by omega)
-  have hrot_r5_26 :
-      Matrix.trace (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) =
-        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 1) := by
-    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-      Matrix.one_mul, Matrix.mul_one] using
-      (trace_cyclic_list
-        ([K, N, K ^ 2, N, K ^ 2, N, K ^ 2, N, K ^ 2, N] : List (Matrix (WSG m) (WSG m) ℂ))
-        ([K ^ 1] : List (Matrix (WSG m) (WSG m) ℂ))).symm
   have hzero_r5_26 :
-      Matrix.trace (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 1 * (K * N)) = 0 := by
-    rw [hrot_r5_26]
+      sg_trace_p10_five_N_class_term m K N 2 2 2 2 2 = 0 := by
+    change Matrix.trace (K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N) *
+      K ^ (2 - 1) * (K * N)) = 0
+    rw [trace_five_N_cyclic_rotate K N 2 2 2 2 2
+      (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 2 2 2 1
       (by omega) (by omega)
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_1
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_2
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_3
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_4
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_5
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_6
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_7
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_8
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_9
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_10
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_11
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_12
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_13
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_14
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_15
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_16
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_17
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_18
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_19
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_20
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_21
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_22
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_23
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_24
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_25
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-    at hzero_r5_26
-  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
-  linear_combination
-    10 * hzero_r5_1 +
-    10 * hzero_r5_2 +
-    10 * hzero_r5_3 +
-    10 * hzero_r5_4 +
-    10 * hzero_r5_5 +
-    10 * hzero_r5_6 +
-    10 * hzero_r5_7 +
-    10 * hzero_r5_8 +
-    10 * hzero_r5_9 +
-    10 * hzero_r5_10 +
-    10 * hzero_r5_11 +
-    10 * hzero_r5_12 +
-    10 * hzero_r5_13 +
-    10 * hzero_r5_14 +
-    10 * hzero_r5_15 +
-    10 * hzero_r5_16 +
-    10 * hzero_r5_17 +
-    10 * hzero_r5_18 +
-    10 * hzero_r5_19 +
-    10 * hzero_r5_20 +
-    10 * hzero_r5_21 +
-    10 * hzero_r5_22 +
-    10 * hzero_r5_23 +
-    10 * hzero_r5_24 +
-    10 * hzero_r5_25 +
-    2 * hzero_r5_26
+  unfold sg_trace_p10_five_N_stratum_sum
+  simp only [hzero_r5_1, hzero_r5_2, hzero_r5_3, hzero_r5_4, hzero_r5_5, hzero_r5_6, hzero_r5_7, hzero_r5_8, hzero_r5_9, hzero_r5_10, hzero_r5_11, hzero_r5_12, hzero_r5_13, hzero_r5_14, hzero_r5_15, hzero_r5_16, hzero_r5_17, hzero_r5_18, hzero_r5_19, hzero_r5_20, hzero_r5_21, hzero_r5_22, hzero_r5_23, hzero_r5_24, hzero_r5_25, hzero_r5_26, mul_zero, add_zero]
 
 
 /-- The unique r=1 cyclic class in the p=8 ordered-word expansion

@@ -4615,3 +4615,16 @@ aggregate, at the default 200000 heartbeats. A local 1000000-heartbeat
 allowance is now attached to the five-N theorem only. The bound mirrors the
 successful scoped allowance used for the 22-class six-N aggregate. The
 mathematical statement and its proof remain unchanged; full CI is required.
+
+
+## 2026-11-01 — Lean-friendly H10 r=5 proof structure
+
+The explicit 26-term theorem was rejected by Lean's WHNF budget even after
+a local one-million-heartbeat allowance. The r=5 proof is now structured
+with an opaque weighted-stratum definition and one generic cyclic rotation
+theorem, rather than 26 independent list-product normalizations inside a
+large theorem type. The exact cyclic classes and multiplicities are
+unchanged: 25 full-orbit classes of weight 10 and the periodic alternating
+class of weight 2, total 252 = C(10,5). Each rotated trace has the form
+required by `trace_five_N_powers_zero_of_OAnti`; only b and d require the
+upper bound 6 < 2^m. This refactor awaits full Lean validation.
