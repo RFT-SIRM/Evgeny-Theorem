@@ -1935,3 +1935,12 @@ proof steps changed. A fresh full Lean build must validate the scoped option.
   m >= 3. Matrix-factor order is retained.
 - This is a structural elaboration refactor, not a claim of a successful
   Lean build. CI must validate it before r=5 is closed.
+
+
+## 2026-11-01 — Diagnose and correct the H10 r=5 refactor
+
+- Full Lean run 41262575046 on commit 69858af4be353524453964a59e2825796b71eb09 failed in GlueTrace.lean at lines 4429, 4480, and 4505. The first diagnostic was an isDefEq timeout in the generic List.prod cyclic-rotation proof; subsequent WHNF timeouts occurred while elaborating the r=5 aggregate and its first class proof. This is an elaboration failure, not a reported counterexample or coefficient mismatch.
+- The previous refactor described the class and aggregate definitions as opaque, but ordinary noncomputable def declarations remain reducible. That description was inaccurate.
+- Replaced list-product normalization in the rotation lemma by the direct two-factor identity Matrix.trace_mul_comm, with four explicit local identities K^(r-1) * (K*N) = K^r*N. The matrix-factor order and cyclic direction are unchanged.
+- Marked the class-term and weighted-sum definitions irreducible so Lean does not unfold all 26 matrix traces while elaborating the theorem type. Each class proof explicitly unfolds only its own term; the final proof explicitly unfolds the aggregate and rewrites the 26 established zeros.
+- Exact representatives and weights remain unchanged. This correction is not considered validated until a fresh full lake build EvgenyTheorem succeeds on the resulting commit.

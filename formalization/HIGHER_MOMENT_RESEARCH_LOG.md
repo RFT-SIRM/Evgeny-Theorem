@@ -4628,3 +4628,10 @@ unchanged: 25 full-orbit classes of weight 10 and the periodic alternating
 class of weight 2, total 252 = C(10,5). Each rotated trace has the form
 required by `trace_five_N_powers_zero_of_OAnti`; only b and d require the
 upper bound 6 < 2^m. This refactor awaits full Lean validation.
+
+
+## 2026-11-01 — Correct H10 r=5 definitional unfolding and cyclic rotation
+
+The first Lean build of commit 69858af failed at the generic five-N rotation theorem (isDefEq timeout at line 4429), then at the r=5 aggregate and first class application (WHNF timeouts at lines 4480 and 4505). The first issue came from normalizing a generic List.prod expression with all five variable powers at once. The later WHNF pressure came from leaving the weighted aggregate and individual class-term functions reducible: Lean could unfold the full 26-term sum during type elaboration. The earlier description of those definitions as opaque was inaccurate.
+
+The corrected implementation proves rotation directly with Matrix.trace_mul_comm and four explicit gap identities, preserving the ordered factors. Both local definitions are marked irreducible; class terms are unfolded one at a time inside their zero proofs, and the weighted sum is unfolded only for the final finite rewrite. No coefficient, representative, matrix order, or theorem hypothesis is changed. Full Lean validation is still required before recording r=5 as closed.

@@ -4426,16 +4426,49 @@ private theorem trace_five_N_cyclic_rotate
   have hc' : c - 1 + 1 = c := by omega
   have hd' : d - 1 + 1 = d := by omega
   have he' : e - 1 + 1 = e := by omega
-  simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
-    Matrix.one_mul, Matrix.mul_one, ha', hb', hc', hd', he'] using
-    (trace_cyclic_list
-      ([K, N, K ^ b, N, K ^ c, N, K ^ d, N, K ^ e, N] :
-        List (Matrix n n ℂ))
-      ([K ^ (a - 1)] : List (Matrix n n ℂ))).symm
+  have hgap (r : ℕ) (hr : r - 1 + 1 = r) :
+      K ^ (r - 1) * (K * N) = K ^ r * N := by
+    calc
+      K ^ (r - 1) * (K * N) =
+          (K ^ (r - 1) * K) * N := by
+            rw [← Matrix.mul_assoc]
+      _ = K ^ (r - 1 + 1) * N := by
+            rw [← pow_succ]
+      _ = K ^ r * N := by rw [hr]
+  calc
+    Matrix.trace
+        (K ^ (a - 1) * (K * N) *
+          K ^ (b - 1) * (K * N) *
+          K ^ (c - 1) * (K * N) *
+          K ^ (d - 1) * (K * N) *
+          K ^ (e - 1) * (K * N)) =
+      Matrix.trace
+        (K ^ (a - 1) *
+          ((K * N) * (K ^ (b - 1) * (K * N)) *
+            (K ^ (c - 1) * (K * N)) *
+            (K ^ (d - 1) * (K * N)) *
+            (K ^ (e - 1) * (K * N))) := by
+      congr 1
+      simp only [Matrix.mul_assoc]
+    _ =
+      Matrix.trace
+        (((K * N) * (K ^ (b - 1) * (K * N)) *
+            (K ^ (c - 1) * (K * N)) *
+            (K ^ (d - 1) * (K * N)) *
+            (K ^ (e - 1) * (K * N)) *
+            K ^ (a - 1))) :=
+      Matrix.trace_mul_comm _ _
+    _ =
+      Matrix.trace
+        (K * N * K ^ b * N * K ^ c * N *
+          K ^ d * N * K ^ e * N * K ^ (a - 1)) := by
+      congr 1
+      rw [hgap b hb', hgap c hc', hgap d hd', hgap e he']
+      simp only [Matrix.mul_assoc]
 
 /-- One five-N cyclic representative, expressed by its five positive
 K-gap lengths. The final K run is included before cyclic rotation. -/
-private noncomputable def sg_trace_p10_five_N_class_term
+@[irreducible] private noncomputable def sg_trace_p10_five_N_class_term
     (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ)
     (a b c d e : ℕ) : ℂ :=
   Matrix.trace
@@ -4448,7 +4481,7 @@ private noncomputable def sg_trace_p10_five_N_class_term
 /-- The exact weighted sum of the 26 cyclic classes in the p=10
 five-N stratum. The exceptional all-two tuple is periodic and has weight 2;
 the other 25 classes have weight 10. -/
-private noncomputable def sg_trace_p10_five_N_stratum_sum
+@[irreducible] private noncomputable def sg_trace_p10_five_N_stratum_sum
     (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   10 * sg_trace_p10_five_N_class_term m K N 1 1 1 1 6 +
   10 * sg_trace_p10_five_N_class_term m K N 1 1 1 2 5 +
@@ -4495,11 +4528,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hzero_r5_1 :
       sg_trace_p10_five_N_class_term m K N 1 1 1 1 6 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (6 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 1 1 6
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4507,11 +4536,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_2 :
       sg_trace_p10_five_N_class_term m K N 1 1 1 2 5 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (5 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 1 2 5
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4519,11 +4544,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_3 :
       sg_trace_p10_five_N_class_term m K N 1 1 1 3 4 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 1 3 4
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4531,11 +4552,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_4 :
       sg_trace_p10_five_N_class_term m K N 1 1 1 4 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 1 4 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4543,11 +4560,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_5 :
       sg_trace_p10_five_N_class_term m K N 1 1 1 5 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (5 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 1 5 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4555,11 +4568,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_6 :
       sg_trace_p10_five_N_class_term m K N 1 1 2 1 5 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (5 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 2 1 5
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4567,11 +4576,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_7 :
       sg_trace_p10_five_N_class_term m K N 1 1 2 2 4 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 2 2 4
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4579,11 +4584,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_8 :
       sg_trace_p10_five_N_class_term m K N 1 1 2 3 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 2 3 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4591,11 +4592,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_9 :
       sg_trace_p10_five_N_class_term m K N 1 1 2 4 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 2 4 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4603,11 +4600,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_10 :
       sg_trace_p10_five_N_class_term m K N 1 1 3 1 4 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 3 1 4
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4615,11 +4608,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_11 :
       sg_trace_p10_five_N_class_term m K N 1 1 3 2 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 3 2 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4627,11 +4616,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_12 :
       sg_trace_p10_five_N_class_term m K N 1 1 3 3 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 3 3 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4639,11 +4624,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_13 :
       sg_trace_p10_five_N_class_term m K N 1 1 4 1 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 4 1 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4651,11 +4632,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_14 :
       sg_trace_p10_five_N_class_term m K N 1 1 4 2 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 4 2 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4663,11 +4640,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_15 :
       sg_trace_p10_five_N_class_term m K N 1 1 5 1 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (5 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 1 5 1 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4675,11 +4648,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_16 :
       sg_trace_p10_five_N_class_term m K N 1 2 1 2 4 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 1 2 4
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4687,11 +4656,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_17 :
       sg_trace_p10_five_N_class_term m K N 1 2 1 3 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 1 3 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4699,11 +4664,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_18 :
       sg_trace_p10_five_N_class_term m K N 1 2 1 4 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 1 4 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4711,11 +4672,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_19 :
       sg_trace_p10_five_N_class_term m K N 1 2 2 1 4 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (4 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 2 1 4
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4723,11 +4680,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_20 :
       sg_trace_p10_five_N_class_term m K N 1 2 2 2 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 2 2 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4735,11 +4688,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_21 :
       sg_trace_p10_five_N_class_term m K N 1 2 2 3 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 2 3 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4747,11 +4696,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_22 :
       sg_trace_p10_five_N_class_term m K N 1 2 3 1 3 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 3 1 3
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4759,11 +4704,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_23 :
       sg_trace_p10_five_N_class_term m K N 1 2 3 2 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 2 3 2 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4771,11 +4712,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_24 :
       sg_trace_p10_five_N_class_term m K N 1 3 1 3 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 3 1 3 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4783,11 +4720,7 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_25 :
       sg_trace_p10_five_N_class_term m K N 1 3 2 2 2 = 0 := by
-    change Matrix.trace (K ^ (1 - 1) * (K * N) *
-      K ^ (3 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 1 3 2 2 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
@@ -4795,18 +4728,20 @@ theorem sg_trace_p10_five_N_stratum_zero
       (by omega) (by omega)
   have hzero_r5_26 :
       sg_trace_p10_five_N_class_term m K N 2 2 2 2 2 = 0 := by
-    change Matrix.trace (K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N) *
-      K ^ (2 - 1) * (K * N)) = 0
+    unfold sg_trace_p10_five_N_class_term
     rw [trace_five_N_cyclic_rotate K N 2 2 2 2 2
       (by omega) (by omega) (by omega) (by omega) (by omega)]
     exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
       1 2 2 2 2 1
       (by omega) (by omega)
   unfold sg_trace_p10_five_N_stratum_sum
-  simp only [hzero_r5_1, hzero_r5_2, hzero_r5_3, hzero_r5_4, hzero_r5_5, hzero_r5_6, hzero_r5_7, hzero_r5_8, hzero_r5_9, hzero_r5_10, hzero_r5_11, hzero_r5_12, hzero_r5_13, hzero_r5_14, hzero_r5_15, hzero_r5_16, hzero_r5_17, hzero_r5_18, hzero_r5_19, hzero_r5_20, hzero_r5_21, hzero_r5_22, hzero_r5_23, hzero_r5_24, hzero_r5_25, hzero_r5_26, mul_zero, add_zero]
+  simp only
+    [hzero_r5_1, hzero_r5_2, hzero_r5_3, hzero_r5_4, hzero_r5_5,
+      hzero_r5_6, hzero_r5_7, hzero_r5_8, hzero_r5_9, hzero_r5_10,
+      hzero_r5_11, hzero_r5_12, hzero_r5_13, hzero_r5_14, hzero_r5_15,
+      hzero_r5_16, hzero_r5_17, hzero_r5_18, hzero_r5_19, hzero_r5_20,
+      hzero_r5_21, hzero_r5_22, hzero_r5_23, hzero_r5_24, hzero_r5_25,
+      hzero_r5_26, mul_zero, add_zero]
 
 
 /-- The unique r=1 cyclic class in the p=8 ordered-word expansion
