@@ -2733,6 +2733,89 @@ theorem sg_trace_p10_four_N_stratum_boundary
     sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 2 3 2 3 (by omega) (by omega)
   ]
 
+/-- The complete p=10 four-N boundary stratum after collapsing each
+nested glued-state sum to its ordered diagonal-pair product. This is still
+only the r=4 boundary contribution; it does not assert cross-stratum
+cancellation. -/
+theorem sg_trace_p10_four_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ :=
+      sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+    10 * glueRHS8_pair_sum m K [(1, 1), (1, 7)] +
+    10 * glueRHS8_pair_sum m K [(1, 1), (2, 6)] +
+    10 * glueRHS8_pair_sum m K [(1, 1), (3, 5)] +
+    10 * glueRHS8_pair_sum m K [(1, 1), (4, 4)] +
+    10 * glueRHS8_pair_sum m K [(1, 1), (5, 3)] +
+    10 * glueRHS8_pair_sum m K [(1, 1), (6, 2)] +
+    10 * glueRHS8_pair_sum m K [(1, 2), (1, 6)] +
+    10 * glueRHS8_pair_sum m K [(1, 2), (2, 5)] +
+    10 * glueRHS8_pair_sum m K [(1, 2), (3, 4)] +
+    10 * glueRHS8_pair_sum m K [(1, 2), (4, 3)] +
+    10 * glueRHS8_pair_sum m K [(1, 2), (5, 2)] +
+    10 * glueRHS8_pair_sum m K [(1, 3), (1, 5)] +
+    10 * glueRHS8_pair_sum m K [(1, 3), (2, 4)] +
+    10 * glueRHS8_pair_sum m K [(1, 3), (3, 3)] +
+    10 * glueRHS8_pair_sum m K [(1, 3), (4, 2)] +
+    5 * glueRHS8_pair_sum m K [(1, 4), (1, 4)] +
+    10 * glueRHS8_pair_sum m K [(1, 4), (2, 3)] +
+    10 * glueRHS8_pair_sum m K [(1, 4), (3, 2)] +
+    10 * glueRHS8_pair_sum m K [(1, 5), (2, 2)] +
+    10 * glueRHS8_pair_sum m K [(2, 2), (2, 4)] +
+    10 * glueRHS8_pair_sum m K [(2, 2), (3, 3)] +
+    5 * glueRHS8_pair_sum m K [(2, 3), (2, 3)] := by
+  dsimp
+  rw [sg_trace_p10_four_N_stratum_boundary m hm θ ax o hanti]
+  rw [
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 1 7 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 2 6 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 3 5 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 4 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 5 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 6 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 1 6 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 2 5 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 3 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 4 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 5 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 1 5 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 2 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 3 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 4 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 4 1 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 4 2 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 4 3 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 5 2 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 2 2 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 2 3 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 3 2 3 (by omega)
+  ]
+
+
+
 /-- Convert the concrete p=10 top boundary contribution into a fifth-power
 trace of the kernel times its glued-corner diagonal. This is the operator-level
 version of the generic supported-sum bridge; it does not claim cancellation

@@ -2167,3 +2167,16 @@ powers, or new support hypothesis is used. The lemma preserves the order
 of the two pairs and applies to the H10 four-N boundary definition only.
 A new full Lean build and Python validation are required before relying on
 this addition.
+
+
+## 2026-11-01 — Assemble the p=10 four-N stratum into ordered diagonal pairs
+
+The Lean build for the preceding four-N inner-index collapse passed on
+`c0d9a5264f5b98c3e945016ccb6ad20d39b65a25`. Python fast tests on 3.11 and
+3.12 also passed; their slow convergence tests were still running at the
+start of this step. Added an aggregate theorem that composes the existing
+22-class four-N boundary identity with the proved pair-diagonal collapse
+for each of its 22 gap tuples. The pair order is retained exactly, including
+the two period-two classes with coefficient five. This theorem does not
+claim cancellation with r=2, r=6, r=8, or r=10. Full Lean and Python CI for
+the new aggregate theorem are required before relying on it.

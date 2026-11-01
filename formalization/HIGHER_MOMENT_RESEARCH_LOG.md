@@ -4866,3 +4866,17 @@ powers, or new support hypothesis is used. The lemma preserves the order
 of the two pairs and applies to the H10 four-N boundary definition only.
 A new full Lean build and Python validation are required before relying on
 this addition.
+
+
+## 2026-11-01 — p=10 r=4 diagonal-pair aggregate
+
+The previous SHA `c0d9a5264f5b98c3e945016ccb6ad20d39b65a25` has a successful
+Lean formalization workflow. Both Python fast-test jobs passed; both slow
+convergence jobs were still executing when this step began. The next
+mathematical statement composes the exact 22-class r=4 trace boundary with
+the established off-diagonal support argument, replacing each nested
+(x,y)-sum by the corresponding ordered pair product `glueRHS8_pair_sum`.
+The 22 coefficients remain unchanged (20 terms of weight 10, two of weight
+5; total 210). No matrix factors are commuted, no cyclicity is newly used,
+and no cancellation against other insertion strata is claimed. This new
+aggregate remains pending complete CI.
