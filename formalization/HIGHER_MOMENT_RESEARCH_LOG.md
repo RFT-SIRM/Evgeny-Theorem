@@ -4846,3 +4846,23 @@ around the existing even-stratum boundary identities and ordered expansion
 lemmas, with a small proof that preserves list structure; no global 1024-word
 cyclic sum should be reintroduced without a materially different derivation.
 A fresh full Lean build and Python CI are required after this rollback.
+
+## 2026-11-01 — H10 four-N boundary sum: diagonal-pair collapse
+
+After the rollback, Lean full build passed on
+`dd0ec30c0efb8149b9de4fa75cee0d7d4309c73b`; Python tests were still
+running at the time of the source review. The next local H10 obligation is
+the four-N boundary kernel. Its existing theorem
+`sg_trace_p10_four_N_powers_boundary_sum` reduces each word to a nested
+sum over glued states x,y, but leaves the inner y-sum uncollapsed.
+
+Added the private parametric lemma
+`sg_trace_p10_four_N_boundary_sum_pair_diagonal`. For a ≤ 5, the already
+proved glued-support off-diagonal theorem forces the inner index y to equal
+x; the resulting expression is exactly the product of the two ordered
+corner/partner diagonal pairs represented by
+`glueRHS8_pair_sum [(a,b),(c,d)]`. No trace cyclicity, commutation of K
+powers, or new support hypothesis is used. The lemma preserves the order
+of the two pairs and applies to the H10 four-N boundary definition only.
+A new full Lean build and Python validation are required before relying on
+this addition.

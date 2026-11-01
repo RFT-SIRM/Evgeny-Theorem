@@ -3575,6 +3575,52 @@ private theorem sg_trace_four_N_boundary_sum_pair_diagonal
     ring
   · simp [hgx]
 
+/-- The p=10 four-N boundary sum collapses to two diagonal corner
+pairs. Only the first kernel power needs off-diagonal vanishing: on the
+glued support, the inner y-sum is forced to y=x. -/
+private theorem sg_trace_p10_four_N_boundary_sum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (ha : a ≤ 5) :
+    sg_trace_p10_four_N_boundary_sum m (sgK m θ ax o) a b c d =
+      glueRHS8_pair_sum m (sgK m θ ax o) [(a, b), (c, d)] := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hAoff := sgK_pow_glued_offdiag_of_OAnti m hm θ ax o hanti a ha
+  unfold sg_trace_p10_four_N_boundary_sum glueRHS8_pair_sum
+  simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : (sgGlue m).g x
+  · simp only [if_pos hgx]
+    have hinner :
+        (∑ y, if (sgGlue m).g y then
+          ((K ^ a) x y *
+            (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+              (K ^ c) y x else 0) =
+        ((K ^ a) x x *
+          (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)) *
+            (K ^ c) x x := by
+      calc
+        _ = ∑ y, if y = x then
+              ((K ^ a) x y *
+                (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                  (K ^ c) y x else 0 := by
+          apply Finset.sum_congr rfl
+          intro y hy
+          by_cases hyx : y = x
+          · subst y
+            simp [hgx]
+          · by_cases hgy : (sgGlue m).g y
+            · have hzero := hAoff x y hgx hgy (Ne.symm hyx)
+              simp [K, hgy, hzero, hyx]
+            · simp [hgy, hyx]
+        _ = _ := by simp
+    rw [hinner]
+    ring
+  · simp [hgx]
+
 /-- The p=8 six-N boundary traces also reduce to products of three diagonal
 pairs. The middle kernels may have different powers, so the reduction uses
 the three-kernel supported-diagonal identity rather than commuting factors. -/
