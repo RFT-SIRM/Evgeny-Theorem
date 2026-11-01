@@ -4934,3 +4934,18 @@ Before committing, the generated signature is checked to contain no
 one reference to the named packed diagonal form. This is strictly a type
 elaboration correction. All 22 tuples and weights are retained in the packed
 definition and in the rewrite proof.
+
+
+## 2026-11-01 — Package both sides of the H10 r=6 aggregate and repair doc-comment syntax
+
+The Lean build on `a33e4e18814dcffc4c93d8a91df1848ed417e96b` identified an
+orphaned documentation comment before the r=6 packing declarations and a
+heartbeat timeout elaborating the large aggregate trace expression. The
+comment is now attached to the local three-kernel helper theorem. The
+unmodified 22-term trace LHS is packed as
+`sg_trace_p10_six_N_stratum_trace_sum`; the RHS remains
+`glueRHS10_six_N_diagonal_form`. The public theorem compares the packed
+forms, while its proof unfolds the LHS and reuses the established boundary
+identity and all 22 existing termwise reductions. This does not establish
+cross-stratum cancellation or close H10. Ordinary heartbeat settings and all
+mathematical data remain unchanged. Validation is pending.

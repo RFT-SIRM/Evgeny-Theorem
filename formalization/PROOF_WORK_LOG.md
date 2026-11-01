@@ -2240,3 +2240,20 @@ or pair-sum occurrences and exactly one `glueRHS10_six_N_diagonal_form`
 reference. The proof body still rewrites the same 22 representatives. This
 fixes the generator mistake without changing any mathematics or increasing
 heartbeats; full Lean CI is required.
+
+
+## 2026-11-01 — Fix H10 r=6 doc-comment syntax and aggregate type-size failures
+
+Lean on `a33e4e18814dcffc4c93d8a91df1848ed417e96b` reported an orphaned
+doc-comment at the r=6 packing declarations and a deterministic heartbeat
+timeout while elaborating the aggregate theorem's 22-term trace LHS. The
+helper comment is now attached directly to the three-kernel helper theorem.
+The original 22-term LHS is extracted into the private definition
+`sg_trace_p10_six_N_stratum_trace_sum`, paired with the already packed RHS.
+The aggregate statement now compares the two named forms; its proof unfolds
+the LHS and retains the original stratum-boundary rewrite and all 22 exact
+termwise diagonal-pair rewrites. Source assertions verified 22 trace terms
+were extracted, the theorem signature has no expanded trace terms, and the
+proof still has 22 rewrites. No heartbeat, hypotheses, coefficients,
+representatives, or factor order are changed. Full Lean and Python CI are
+required to validate this refactor.
