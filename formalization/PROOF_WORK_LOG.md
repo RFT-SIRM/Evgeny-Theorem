@@ -2180,3 +2180,16 @@ for each of its 22 gap tuples. The pair order is retained exactly, including
 the two period-two classes with coefficient five. This theorem does not
 claim cancellation with r=2, r=6, r=8, or r=10. Full Lean and Python CI for
 the new aggregate theorem are required before relying on it.
+
+
+## 2026-11-01 — Fix declaration order for the p=10 r=4 aggregate
+
+Lean CI on `d64454836bb338793d46fcf257b90c1cd2a9edb6` failed at
+`GlueTrace.lean:2778` with `Unknown identifier glueRHS8_pair_sum`. This
+was a source-ordering error: the new aggregate theorem had been inserted
+before the private pair-sum definitions and before the H10 pair-diagonal
+lemma it invokes. The mathematical proof dependencies already exist later
+in the same module. The aggregate declaration is moved intact to immediately
+after those definitions and the p=10 pair-diagonal lemma. No proof body,
+coefficient, hypothesis, or matrix-factor order is changed. The next full
+Lean build must validate this declaration-order correction.

@@ -4880,3 +4880,15 @@ The 22 coefficients remain unchanged (20 terms of weight 10, two of weight
 5; total 210). No matrix factors are commuted, no cyclicity is newly used,
 and no cancellation against other insertion strata is claimed. This new
 aggregate remains pending complete CI.
+
+
+## 2026-11-01 — Reorder H10 r=4 aggregate after its prerequisites
+
+The first build of the r=4 aggregate did not reach the proof: Lean reported
+`Unknown identifier glueRHS8_pair_sum` at the aggregate statement, followed
+by the expected cascade for the pair-diagonal helper used in its proof.
+Inspection confirmed both declarations occur later in `GlueTrace.lean`.
+This is a declaration-order failure, not evidence against the diagonal
+collapse. The aggregate is moved, unchanged, to after the private pair-sum
+definitions and the H10 four-N diagonal-pair lemma. Revalidate with full
+Lean CI; do not add aliases or duplicate declarations to work around this.
