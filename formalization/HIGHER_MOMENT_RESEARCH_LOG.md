@@ -4771,3 +4771,19 @@ identity multiplication, and matrix associativity; the expansion flattening
 is similarly restricted to the defining ordered-word/list lemmas. No
 heartbeat increase, axiom, or weakened hypothesis is introduced. The
 corrected proof remains unvalidated pending the next full Lean workflow.
+
+## 2026-11-01 — Structural response to the second cyclic-expansion timeout
+
+The first restriction of the generated simp sets was insufficient: the next
+full build failed at TraceExpand.lean:3480 with deterministic `isDefEq`
+timeout at the unchanged 200000-heartbeat limit. The failure arose while
+elaborating the roughly 200th rotation fact in one declaration, after the
+local context had accumulated many prior facts. The repair does not add more
+simp restrictions or increase heartbeats. Instead the 1024 words are
+partitioned by their final four letters into 16 disjoint ordered blocks of
+64 words. Each block proves its own weighted cyclic-representative identity
+with a fresh local context. The auxiliary append-sum lemma preserves the
+original prefix/suffix multiplication order, and the main theorem recombines
+the 16 identities. The expected cyclic inventory remains
+(1,1,5,12,22,26,22,12,5,1,1) across insertion counts 0 through 10. All of
+this remains pending full Lean validation on the resulting SHA.

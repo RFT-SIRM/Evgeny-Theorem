@@ -2074,3 +2074,17 @@ restricts the final ordered-expansion normalization to its explicit list
 recursion lemmas. No heartbeat limit is raised. This correction is pending
 full Lean CI; do not treat the 108-class p=10 cyclic expansion as validated
 until the new SHA passes the complete build.
+
+## 2026-11-01 — Replace the monolithic p=10 rotation context with 16 bounded blocks
+
+The restricted-simp retry still failed in TraceExpand.lean:3480, now inside
+`isDefEq` while elaborating another generated rotation equality. This confirms
+the bottleneck is the single theorem's accumulating context of hundreds of
+local equalities, not the simp set alone. The proof is therefore reorganized
+into 16 suffix blocks, each containing exactly 64 words and its own local
+rotation facts. A separate order-preserving append-expansion lemma splits the
+full degree-ten list into its six-letter prefixes and four-letter suffixes;
+the 16 block identities then assemble the same 108 cyclic representatives
+with the same exact orbit weights. No change is made to the matrix identities,
+stratum counts, assumptions, or heartbeat limits. Full Lean validation of the
+new structure is pending.
