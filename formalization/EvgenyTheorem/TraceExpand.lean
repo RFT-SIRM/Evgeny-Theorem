@@ -2406,5 +2406,8 @@ theorem trace_orderedWordExpansionByCount_eq_binaryWordExpansionByCount
         (fun w => Matrix.trace (binaryWordMatrix A B w))).sum := by
   rw [orderedWordExpansionByCount_eq_map_binaryWordExpansionByCount]
   simp only [List.map_map]
+  apply List.map_congr_left
+  intro w hw
+  rfl
 
 end EvgenyTheorem

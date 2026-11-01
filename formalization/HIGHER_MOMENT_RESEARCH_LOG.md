@@ -5215,3 +5215,17 @@ distinguished true position, rotate that position to the final slot, and
 identify the canonical final-true words with weak gap compositions.
 H6 and H8 remain untouched. Full Lean and Python 3.11/3.12 Fast/Slow CI
 are required for this addition.
+
+
+## 2026-11-01 — H10 symbolic trace-map proof correction
+
+The full Lean build for `170a88e3d451a5c927fe0caa7a37e3fb59748d61`
+failed only in `trace_orderedWordExpansionByCount_eq_binaryWordExpansionByCount`
+(run `41320694718`, target `EvgenyTheorem.TraceExpand`, line 2406).
+After rewriting the matrix-word list and simplifying `List.map_map`, Lean
+left equality of two mapped functions: `Matrix.trace ∘ binaryWordMatrix`
+and the pointwise lambda using matrix `.trace`. This is extensional equality,
+not a list-level simplification. The proof now applies
+`List.map_congr_left`, introduces an arbitrary symbolic word, and closes the
+pointwise equality by reflexivity. No matrix algebra, word order, or
+multiplicities are changed. A fresh complete Lean build is required.

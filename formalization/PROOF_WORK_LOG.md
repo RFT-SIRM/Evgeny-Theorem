@@ -2493,3 +2493,16 @@ The proof uses list maps and append lemmas only; it does not commute matrix
 factors, merge equal matrix products, or enumerate all (2^p) words.
 This is a foundation for the marked-letter/composition bijection, not
 yet that bijection or an H10 closure theorem. Fresh full CI is required.
+
+
+## 2026-11-01 — H10 symbolic trace-map Lean repair
+
+Actions run `41320694718` failed in `TraceExpand.lean:2406` at the final
+trace-map identity. The matrix-level symbolic-word correspondence and all
+preceding declarations compiled; the remaining goal was pointwise equality
+between `Matrix.trace (binaryWordMatrix A B w)` and the equivalent `.trace`
+notation after `List.map_map`. Replaced the insufficient `simp only`
+endpoint with `List.map_congr_left` and a pointwise `rfl`. This changes only
+the proof of function-map equality and preserves the exact word list and its
+multiplicity. Full Lean and Python 3.11/3.12 Fast/Slow workflows must be
+checked on the corrected commit.
