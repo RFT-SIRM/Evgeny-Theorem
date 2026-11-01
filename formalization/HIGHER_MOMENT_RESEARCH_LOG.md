@@ -4640,3 +4640,21 @@ specialized to Matrix (WSG m) (WSG m) ℂ. This uses the established WSG
 instances in the project. The mathematical representative and its ten K,
 nine N factor counts are unchanged; no heartbeat limit is increased.
 A fresh full Lean build is required.
+
+## 2026-11-01 — H10 r=9 validated; r=7 cyclic stratum added
+
+The full Lean build succeeded on 00d79d8cf2e281d9ce0f09629afe1974b9097e68.
+The corrected r=9 representative now compiles and is discharged by
+trace_nine_N_powers_zero_of_OAnti. This validates only that one cyclic
+class contribution, not the complete H10 identity.
+
+The next step adds a uniform r=7 class proof and the aggregate over its
+twelve cyclic gap representatives. Each representative has seven
+nonnegative extra-K gaps summing to three; adding the K factor already
+contained in each selected K*N letter gives seven positive gaps summing
+to ten. The helper rotates the final K*N pair to the front and calls
+trace_seven_N_powers_zero_of_OAnti. For the selected middle exponents
+e0+1, e2+1, e4+1, the sum constraint yields each at most four, so m >= 3
+supplies the strict corner bounds. The Lean build of this new r=7 layer
+is pending. This does not resolve the even-stratum boundary cancellations
+or prove the full all-level H10 recurrence.

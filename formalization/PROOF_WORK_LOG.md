@@ -1945,3 +1945,20 @@ consequences of that failed elaboration, not accepted proof results.
 The helper is being specialized to the project's actual index type WSG m,
 which already supplies the required finite-index instances. No hypotheses
 or heartbeat settings are weakened or enlarged.
+
+## 2026-11-01 — H10 r=9 Lean validation and r=7 implementation
+
+The full Lean formalization workflow completed successfully on
+00d79d8cf2e281d9ce0f09629afe1974b9097e68. This validates the specialized
+WSG helper and the r=9 nine-N cyclic-class vanishing theorem. The Python
+workflow for this SHA was still reported in progress at the time of the
+next edit; no Python result is claimed here.
+
+Added the H10 r=7 cyclic-class reduction. The twelve representatives are
+the cyclic orbits of seven positive K-gaps summing to ten, equivalently
+the twelve cyclic orbits of seven nonnegative extras summing to three.
+A shared helper rotates each representative using trace cyclicity and
+applies trace_seven_N_powers_zero_of_OAnti. Its selected middle exponents
+are e0+1, e2+1, and e4+1; each is at most four, hence below 2^m for m >= 3.
+The aggregate theorem keeps all twelve orbit weights equal to ten.
+The new r=7 declarations are pending a fresh full Lean build.
