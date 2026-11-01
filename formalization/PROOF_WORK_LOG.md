@@ -2007,3 +2007,20 @@ was accidentally left immediately before the new stratum theorem's doc-comment.
 The stray comment has now been removed. The two Python jobs on that SHA
 were still in progress when checked; no Python failure is recorded or claimed.
 A fresh Lean build and both test jobs are required for this corrected source.
+
+## 2026-11-01 — H10 r=5 cyclic stratum
+
+Added the full p=10 five-N vanishing stratum using the established
+trace_five_N_powers_zero_of_OAnti theorem. The 126 weak compositions of
+five extra K factors into five cyclic gaps form 26 cyclic classes.
+Twenty-five representatives have five distinct cyclic rotations and
+therefore binary-word orbit weight ten; the periodic representative
+(1,1,1,1,1) has orbit weight two. The weights sum to 252, matching
+the number of ordered words with five K*N selections.
+
+Each representative is expressed by a compact class-term definition.
+Its trace is rotated explicitly by moving the final [K,N] pair to the
+front, then normalized with concrete exponents (no symbolic-exponent
+normalization). The five-N lemma applies with its two required middle
+powers b=e0+1 and d=e2+1, each at most six. Since m >= 3, 6 < 2^m.
+This new stratum is pending full Lean validation.

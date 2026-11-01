@@ -4700,3 +4700,19 @@ source/parser issue, not a mathematical failure of the twelve class terms.
 The Python workflow on 2b47d1a had not yet completed at the status check;
 it is not recorded as failed. Revalidate the corrected commit with full
 Lean and Python workflows.
+
+## 2026-11-01 — H10 r=5 stratum formalization
+
+The p=10 r=5 stratum has 252 ordered words and 26 cyclic classes.
+Representing a class by five extra-K gaps e0,...,e4 with sum five,
+the cyclic quotient has 25 orbits of size five plus the periodic
+(1,1,1,1,1) orbit of size one. Converting gap-orbit sizes to binary
+word orbit weights gives 25 weights of ten and one weight of two,
+summing to 252.
+
+Added a compact trace representative and 26 explicit cyclic rotations.
+After rotating the final K*N pair to the front, the word matches
+trace_five_N_powers_zero_of_OAnti with middle powers e0+1 and e2+1.
+Both are bounded by six, which is strictly below 2^m for m >= 3.
+No symbolic-power rotation helper or heartbeat increase is used.
+The new full r=5 stratum awaits Lean and Python validation.
