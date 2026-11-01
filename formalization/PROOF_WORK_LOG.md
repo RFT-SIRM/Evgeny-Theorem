@@ -2662,3 +2662,22 @@ the corresponding reconstruction and count the rotation offsets; only
 then can the factor `p/r` be derived. H6 and H8 remain untouched.
 Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required for the
 new source commit.
+
+
+## 2026-11-02 — Correct the H10 marked-cut parser error
+
+The Lean full build for `a40f1fa257c22e8389eb91c0ea614e398d01edbb`
+failed at `TraceExpand.lean:2597` with the first diagnostic
+`unexpected token 'prefix'; expected '_' or identifier`. The identifiers
+`prefix` used as theorem/definition binders collide with Lean's reserved
+`prefix` syntax. The diagnostics reported at lines 2603–2654 are parser
+cascades from this single reserved-word collision, not independent
+type-level or algebraic failures.
+
+Renamed the two list binders in the marked-cut definition and its lemmas
+to `pre` and `post`. The definitions, theorem propositions up to bound
+variable names, proof steps, grouped matrix factors, and use of
+`Matrix.trace_mul_comm` are otherwise unchanged. Python 3.11 and 3.12
+Fast and Slow jobs all passed on the failed source commit
+(`41346027678`); a new full Lean build and fresh Python validation are
+required for the rename commit. H6 and H8 remain untouched.

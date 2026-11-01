@@ -2592,66 +2592,66 @@ theorem binaryWordMatrix_append_words
 
 
 /-- Move a distinguished true symbol to the end of a binary word.
-If the original word is `prefix ++ [true] ++ suffix`, this is the
-cyclic cut `suffix ++ prefix ++ [true]` at the marked position. -/
-def binaryWordMarkedRotate (prefix suffix : List Bool) : List Bool :=
-  (suffix ++ prefix) ++ [true]
+If the original word is `pre ++ [true] ++ post`, this is the
+cyclic cut `post ++ pre ++ [true]` at the marked position. -/
+def binaryWordMarkedRotate (pre post : List Bool) : List Bool :=
+  (post ++ pre) ++ [true]
 
 /-- Cutting a binary word immediately after a marked true symbol preserves
 its length. This is the list-level invariant needed for the gap composition. -/
 theorem binaryWordMarkedRotate_length
-    (prefix suffix : List Bool) :
-    (binaryWordMarkedRotate prefix suffix).length =
-      ((prefix ++ [true]) ++ suffix).length := by
+    (pre post : List Bool) :
+    (binaryWordMarkedRotate pre post).length =
+      ((pre ++ [true]) ++ post).length := by
   simp [binaryWordMarkedRotate]
   omega
 
 /-- The trace of a binary matrix word is unchanged when a marked true letter
 is moved from the cut position to the final position. The proof is exactly
-trace cyclicity for the two grouped factors `eval(prefix) * B` and
-`eval(suffix)`; no factors within either word are commuted. -/
+trace cyclicity for the two grouped factors `eval(pre) * B` and
+`eval(post)`; no factors within either word are commuted. -/
 theorem binaryWordMatrix_trace_marked_rotate
     {n : Type*} [Fintype n] [DecidableEq n]
-    (A B : Matrix n n ℂ) (prefix suffix : List Bool) :
-    Matrix.trace (binaryWordMatrix A B ((prefix ++ [true]) ++ suffix)) =
-      Matrix.trace (binaryWordMatrix A B (binaryWordMarkedRotate prefix suffix)) := by
+    (A B : Matrix n n ℂ) (pre post : List Bool) :
+    Matrix.trace (binaryWordMatrix A B ((pre ++ [true]) ++ post)) =
+      Matrix.trace (binaryWordMatrix A B (binaryWordMarkedRotate pre post)) := by
   have hleft :
-      binaryWordMatrix A B ((prefix ++ [true]) ++ suffix) =
-        (binaryWordMatrix A B prefix * B) *
-          binaryWordMatrix A B suffix := by
+      binaryWordMatrix A B ((pre ++ [true]) ++ post) =
+        (binaryWordMatrix A B pre * B) *
+          binaryWordMatrix A B post := by
     calc
-      _ = binaryWordMatrix A B (prefix ++ [true]) *
-            binaryWordMatrix A B suffix :=
-        binaryWordMatrix_append_words A B (prefix ++ [true]) suffix
-      _ = (binaryWordMatrix A B prefix * B) *
-            binaryWordMatrix A B suffix := by
+      _ = binaryWordMatrix A B (pre ++ [true]) *
+            binaryWordMatrix A B post :=
+        binaryWordMatrix_append_words A B (pre ++ [true]) post
+      _ = (binaryWordMatrix A B pre * B) *
+            binaryWordMatrix A B post := by
         rw [binaryWordMatrix_append_words]
         simp [binaryWordMatrix]
   have hright :
-      binaryWordMatrix A B ((suffix ++ prefix) ++ [true]) =
-        binaryWordMatrix A B suffix *
-          (binaryWordMatrix A B prefix * B) := by
+      binaryWordMatrix A B ((post ++ pre) ++ [true]) =
+        binaryWordMatrix A B post *
+          (binaryWordMatrix A B pre * B) := by
     calc
-      _ = binaryWordMatrix A B (suffix ++ prefix) *
+      _ = binaryWordMatrix A B (post ++ pre) *
             binaryWordMatrix A B [true] :=
-        binaryWordMatrix_append_words A B (suffix ++ prefix) [true]
-      _ = (binaryWordMatrix A B suffix * binaryWordMatrix A B prefix) * B := by
+        binaryWordMatrix_append_words A B (post ++ pre) [true]
+      _ = (binaryWordMatrix A B post * binaryWordMatrix A B pre) * B := by
         rw [binaryWordMatrix_append_words]
         simp [binaryWordMatrix]
-      _ = binaryWordMatrix A B suffix *
-            (binaryWordMatrix A B prefix * B) := by
+      _ = binaryWordMatrix A B post *
+            (binaryWordMatrix A B pre * B) := by
         rw [Matrix.mul_assoc]
   calc
-    Matrix.trace (binaryWordMatrix A B ((prefix ++ [true]) ++ suffix)) =
+    Matrix.trace (binaryWordMatrix A B ((pre ++ [true]) ++ post)) =
         Matrix.trace
-          ((binaryWordMatrix A B prefix * B) *
-            binaryWordMatrix A B suffix) := by rw [hleft]
+          ((binaryWordMatrix A B pre * B) *
+            binaryWordMatrix A B post) := by rw [hleft]
     _ = Matrix.trace
-          (binaryWordMatrix A B suffix *
-            (binaryWordMatrix A B prefix * B)) :=
+          (binaryWordMatrix A B post *
+            (binaryWordMatrix A B pre * B)) :=
       Matrix.trace_mul_comm _ _
     _ = Matrix.trace
-          (binaryWordMatrix A B (binaryWordMarkedRotate prefix suffix)) := by
+          (binaryWordMatrix A B (binaryWordMarkedRotate pre post)) := by
       rw [binaryWordMarkedRotate, hright]
 
 /-- A single gap block evaluates to A^a * B, with no factor reordering. -/
