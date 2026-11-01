@@ -3627,6 +3627,35 @@ private theorem sg_trace_p10_four_N_boundary_sum_pair_diagonal
 nested glued-state sum to its ordered diagonal-pair product. This is still
 only the r=4 boundary contribution; it does not assert cross-stratum
 cancellation. -/
+/-- The exact r=2 contribution to the p=10 diagonal correction.
+Each cyclic class is one glued-state/partner diagonal pair; the balanced
+class (5,5) retains its orbit weight five. -/
+private noncomputable def glueRHS10_two_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS8_pair_sum m K [(1, 9)] +
+  10 * glueRHS8_pair_sum m K [(2, 8)] +
+  10 * glueRHS8_pair_sum m K [(3, 7)] +
+  10 * glueRHS8_pair_sum m K [(4, 6)] +
+  5 * glueRHS8_pair_sum m K [(5, 5)]
+
+/-- Package the already-proved two-N boundary formula as an ordered
+one-pair diagonal normal form, without commuting any matrix factors. -/
+theorem sg_trace_p10_two_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 9 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 8 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 5 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) =
+      glueRHS10_two_N_diagonal_form m K := by
+  dsimp
+  simpa [glueRHS10_two_N_diagonal_form, glueRHS8_pair_sum,
+    glueRHS8_pair_product, glueRHS8_pair_value] using
+    (sg_trace_p10_two_N_stratum_boundary m hm θ ax o hanti)
+
 theorem sg_trace_p10_four_N_stratum_pair_diagonal
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]

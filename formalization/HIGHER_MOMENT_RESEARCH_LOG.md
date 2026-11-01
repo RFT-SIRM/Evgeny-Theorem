@@ -4989,3 +4989,16 @@ before that namespace close. The original green baseline source and all H8
 proofs are retained byte-for-byte. This fixes only declaration scope; no
 mathematical statement, representative, coefficient, or proof term changes.
 Validation remains pending.
+
+
+## 2026-11-01 — H10 r=2 singleton-pair diagonal form
+
+The existing p=10 two-N boundary theorem already reduces the five classes
+`(1,9)`, `(2,8)`, `(3,7)`, `(4,6)`, and `(5,5)` to explicit glued-root /
+partner diagonal sums. These are now packaged into
+`glueRHS10_two_N_diagonal_form` and connected to the trace boundary by
+`sg_trace_p10_two_N_stratum_pair_diagonal`. Exact weights 10,10,10,10,5
+are preserved (sum 45). The proof uses only definitional expansion of the
+existing pair-sum helper; no matrix product is commuted. This supplies the
+r=2 component needed for a later all-even-strata H10 diagonal assembly.
+Validation is pending.

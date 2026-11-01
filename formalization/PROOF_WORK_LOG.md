@@ -2303,3 +2303,16 @@ fully green Lean commit `954e8d168467b1f42c4a74ec64589612f9c32cc1`; the H8
 section is checked byte-for-byte. Namespace balance, declaration count, and
 absence of placeholders are checked before commit. This is a scope repair
 only. Full Lean and Python CI are required.
+
+
+## 2026-11-01 — Package the H10 r=2 boundary formula as a diagonal-pair normal form
+
+The existing `sg_trace_p10_two_N_stratum_boundary` already proves the
+five cyclic trace classes equal five explicit sums of products of the root
+and partner diagonal entries. Added the named normal form
+`glueRHS10_two_N_diagonal_form` and a theorem that rewrites those five sums
+as the corresponding singleton pair-products using the existing
+`glueRHS8_pair_sum` definitions. The coefficients remain 10, 10, 10, 10,
+5 (total weight 45), including the period-two class. No new off-diagonal
+assumption, trace cyclicity, or factor reordering is used. H10 remains open;
+full Lean and Python CI are required.
