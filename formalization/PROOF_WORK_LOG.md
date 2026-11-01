@@ -2399,3 +2399,23 @@ matrix addition. Matrix multiplication remains in the same order throughout.
 This is a compiler-directed local repair, not a new mathematical result.
 Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required on the corrected
 commit. Python run `41314657466` was still in progress at the time of this entry.
+
+
+## 2026-11-01 — H10 matrix and trace exact-count bridges
+
+The first build of commit `7b487c484cc1d33ef84ae1e6e42f28fa3b5673ed`
+failed in the new matrix reconstruction proof. The compiler diagnostics
+were repaired locally and explicitly: `Finset.sum_range_succ'` places
+the shifted range sum before the zero-count term, so the proof now uses
+`add_comm` at that additive boundary; the final rearrangement is only
+matrix addition and is discharged by `abel`. No multiplication factors
+are reordered. The corrected commit
+`ec85d3be723c4e0ada4b4aca2787e39eed759f39` passed the complete Lean
+formalization build (run `41315279912`).
+
+Added a trace-level theorem by applying `Matrix.trace_sum` to the finite
+sum over exact-count strata and `trace_sum_list` within each stratum.
+It preserves ordered word occurrences and multiplicity but does not
+perform cyclic orbit grouping. Python 3.11/3.12 Fast/Slow validation for
+the corrected base commit was still in progress when this trace theorem
+was prepared; the new source commit requires fresh full CI.

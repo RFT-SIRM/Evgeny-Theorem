@@ -2210,4 +2210,21 @@ theorem orderedWordExpansionByCount_sum_eq_pow
         _ = (A + B) ^ (p + 1) := by
           rw [hA, ← mul_add, ih, ← pow_succ]
 
+
+/-- Trace-level reconstruction from exact-count strata. The outer finite sum
+is passed through the additive matrix trace, and each stratum list is passed
+through the existing list trace identity. This keeps every ordered word
+occurrence and its multiplicity; it does not yet group cyclic orbits. -/
+theorem trace_orderedWordExpansionByCount_sum_eq
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p : ℕ) :
+    Matrix.trace ((A + B) ^ p) =
+      ∑ r ∈ Finset.range (p + 1),
+        ((orderedWordExpansionByCount A B p r).map Matrix.trace).sum := by
+  rw [← orderedWordExpansionByCount_sum_eq_pow]
+  rw [Matrix.trace_sum]
+  apply Finset.sum_congr rfl
+  intro r hr
+  exact trace_sum_list (orderedWordExpansionByCount A B p r)
+
 end EvgenyTheorem

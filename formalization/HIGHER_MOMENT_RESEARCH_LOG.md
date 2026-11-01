@@ -5100,3 +5100,30 @@ in the additive commutative group of matrices. No matrix multiplication factors
 are commuted, no hypotheses or heartbeats are changed, and no placeholder is added.
 The corrected source requires a fresh full Lean build; Python workflow
 `41314657466` was still running when this correction was prepared.
+
+
+## 2026-11-01 — Validate H10 exact-count reconstruction and add its trace form
+
+The corrected matrix-level identity
+`orderedWordExpansionByCount_sum_eq_pow` now passes the full Lean
+formalization build on commit
+`ec85d3be723c4e0ada4b4aca2787e39eed759f39`
+(Lean workflow run `41315279912`, conclusion: success).
+The source correction was limited to additive normalization: the range split
+uses explicit `add_comm`, and the final reassociation of additive matrix
+terms uses `abel`; matrix multiplication order is unchanged.
+
+Added `trace_orderedWordExpansionByCount_sum_eq`, obtained by applying
+Mathlib's additive `Matrix.trace_sum` to the finite outer sum and the
+existing `trace_sum_list` to each stratum. This is the trace-level
+exact-count decomposition of `Tr((A+B)^p)), with all word occurrences
+and multiplicities retained. It is not a cyclic-orbit grouping and does
+not establish H10 closure.
+
+At the time of this entry, Python workflow `41315279893` for
+`ec85d3be723c4e0ada4b4aca2787e39eed759f39` remained in progress;
+its final 3.11/3.12 Fast/Slow results must be recorded separately.
+Next mathematical obligation: use the exact-r trace decomposition to
+derive cyclic-composition orbit grouping with correct periodic stabilizer
+weights, then connect those weighted groups to the existing H10 boundary
+strata. Avoid flattening all 1024 words or using a global giant `simp`.
