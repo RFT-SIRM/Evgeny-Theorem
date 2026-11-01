@@ -4756,3 +4756,18 @@ rotation-normalization helper. This is the complete r=5 cyclic stratum
 at the level of the enumerated weighted expansion, subject to full Lean
 validation of this aggregate commit. It does not by itself prove the
 even-stratum boundary cancellation or the full all-level H10 recurrence.
+
+## 2026-11-01 — p=10 cyclic trace grouping: first CI failure and focused correction
+
+The first CI build of the added degree-ten cyclic grouping theorem failed in
+TraceExpand.lean:3204. The diagnostic is a deterministic 200000-heartbeat
+timeout inside unrestricted `simpa [Matrix.mul_assoc]` in a generated
+rotation equality, with a consequent tactic timeout at line 3212. The word
+rotation itself is justified by `trace_cyclic_list`; the problem is proof
+normalization after a large local context of previously established
+rotation equalities had accumulated. The correction replaces unrestricted
+simp with an explicit simp set consisting only of list-product recursion,
+identity multiplication, and matrix associativity; the expansion flattening
+is similarly restricted to the defining ordered-word/list lemmas. No
+heartbeat increase, axiom, or weakened hypothesis is introduced. The
+corrected proof remains unvalidated pending the next full Lean workflow.
