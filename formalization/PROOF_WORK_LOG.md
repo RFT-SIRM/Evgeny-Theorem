@@ -1932,3 +1932,16 @@ single term and applies `trace_nine_N_powers_zero_of_OAnti` with all ten
 K exponents equal to one. The four required middle-power bounds follow
 from m >= 3. This is one class-level weighted contribution, not the
 complete H10 expansion. Full Lean validation is pending.
+
+## 2026-11-01 — Diagnose the helper typeclass failure in H10 r=9
+
+The full Lean build of commit 8b5bdb6b7783e9cb1c907050f6565a8f09682aa5
+failed at GlueTrace.lean:5079–5081 because the new generic helper quantified
+over an arbitrary matrix index type with [Fintype n] but omitted
+[DecidableEq n]. Lean therefore could not synthesize the matrix power
+instance. The later `sorry` and unused-tactic diagnostics were downstream
+consequences of that failed elaboration, not accepted proof results.
+
+The helper is being specialized to the project's actual index type WSG m,
+which already supplies the required finite-index instances. No hypotheses
+or heartbeat settings are weakened or enlarged.

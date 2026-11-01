@@ -5073,8 +5073,7 @@ insertions of N. Each selected letter in the ordered expansion is K*N,
 so the class contains ten K factors and nine N factors. This representative
 places one K at the cyclic cut, with all ten K runs written as K^1. -/
 noncomputable def sg_trace_p10_nine_N_class_term
-    {n : Type*} [Fintype n]
-    (K N : Matrix n n ℂ) : ℂ :=
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   Matrix.trace
     (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
       K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
@@ -5087,14 +5086,14 @@ theorem sg_trace_p10_nine_N_cyclic_class_zero
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
-    10 * sg_trace_p10_nine_N_class_term
+    10 * sg_trace_p10_nine_N_class_term m
       (sgK m θ ax o) (sgGlue m).N = 0 := by
   have hside : 1 < 2 ^ m := by
     calc
       1 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
   have hzero :
-      sg_trace_p10_nine_N_class_term
+      sg_trace_p10_nine_N_class_term m
         (sgK m θ ax o) (sgGlue m).N = 0 := by
     unfold sg_trace_p10_nine_N_class_term
     exact trace_nine_N_powers_zero_of_OAnti m θ ax o hanti

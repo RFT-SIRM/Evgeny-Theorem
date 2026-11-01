@@ -4629,3 +4629,14 @@ For m >= 3 the four selected middle exponents satisfy the required strict
 bounds. This does not close the other odd strata, even-boundary
 cancellation, or the all-level H10 recurrence. Full Lean validation is
 pending.
+
+## 2026-11-01 — Correct the H10 r=9 helper's matrix-index assumptions
+
+Lean CI identified a missing typeclass assumption in the first compact
+helper: arbitrary matrix indices require [DecidableEq n] in addition to
+[Fintype n] for matrix multiplication and power instances. Rather than
+expose a generic assumption unrelated to the theorem, the helper is now
+specialized to Matrix (WSG m) (WSG m) ℂ. This uses the established WSG
+instances in the project. The mathematical representative and its ten K,
+nine N factor counts are unchanged; no heartbeat limit is increased.
+A fresh full Lean build is required.
