@@ -5067,4 +5067,33 @@ theorem defectO8_succ
   ring
 
 
+
+/-- The p=10 stratum with nine N factors consists of a single cyclic class:
+one K factor and nine N factors, with orbit size ten. The canonical
+representative vanishes by the existing nine-pairing corner theorem.
+This closes only the r=9 cyclic class contribution. -/
+theorem sg_trace_p10_nine_N_cyclic_class_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    10 * Matrix.trace
+      (K ^ 1 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N *
+        K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change 10 * Matrix.trace
+    (K ^ 1 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N *
+      K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0) = 0
+  have hzero :
+      Matrix.trace
+        (K ^ 1 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N *
+          K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0 * N * K ^ 0) = 0 := by
+    simpa [K, N] using
+      (trace_nine_N_powers_zero_of_OAnti m θ ax o hanti
+        1 0 0 0 0 0 0 0 0 0
+        (by positivity) (by positivity) (by positivity) (by positivity))
+  simp [hzero]
+
 end EvgenyTheorem

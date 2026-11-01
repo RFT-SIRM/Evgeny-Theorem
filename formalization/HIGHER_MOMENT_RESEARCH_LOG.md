@@ -4612,3 +4612,19 @@ the 26 cyclic representatives and weights are only an enumeration, not
 a Lean-proved vanishing result. Do not revive the failed large-expression
 rotation proof by merely increasing heartbeat limits. Any new attempt must
 first establish a smaller, independently compiling rotation identity.
+
+## 2026-11-01 — H10 r=9 canonical cyclic class
+
+Added a concrete GlueTrace specialization for the unique r=9 cyclic
+class in the tenth ordered-word moment. The class has one K and nine N
+factors; its ten distinct cyclic rotations give the exact orbit weight
+ten. The canonical representative is expressed in the existing
+nine-pairing normal form with all four selected middle K powers equal
+to zero. Consequently the hypotheses of
+`trace_nine_N_powers_zero_of_OAnti` follow without increasing the
+refinement lower bound.
+
+This records only the vanishing of the r=9 class contribution. It does
+not establish the r=7 wrapper, cancellation of the even r=2,4,6,8,10
+boundary terms, or the all-level H10 recurrence. Full Lean validation
+of the new specialization is pending.

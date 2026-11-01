@@ -1910,3 +1910,14 @@ work present at that checkpoint. H10 r=5 is explicitly still open; no
 five-N zero theorem is claimed. The Python workflow passed on 5dccef5, but
 that does not override the failed Lean build. The restored branch head needs
 a fresh full Lean build and test run.
+
+## 2026-11-01 — Add the H10 nine-N cyclic-class specialization
+
+Added `sg_trace_p10_nine_N_cyclic_class_zero` in GlueTrace.lean.
+For r=9 there is one K and nine N factors, hence one cyclic class of
+orbit size ten. Its canonical ordered representative is put directly
+into the existing `trace_nine_N_powers_zero_of_OAnti` normal form:
+the four required middle powers are all zero, so their strict bounds
+hold for every m. This is a class-level vanishing statement only; it
+does not close r=7, the even boundary cancellation, or the full H10
+recurrence. The full Lean build for this commit is pending.
