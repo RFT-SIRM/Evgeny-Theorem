@@ -2197,6 +2197,8 @@ theorem orderedWordExpansionByCount_sum_eq_pow
           _ = (∑ r ∈ Finset.range (p + 1),
                 (orderedWordExpansionByCount A B p r).sum) * A := by
             rw [Finset.sum_range_succ']
+            congr 1
+            exact add_comm _ _
       rw [Finset.sum_add_distrib, ← Finset.sum_mul, ← Finset.sum_mul]
       calc
         _ = ((orderedWordExpansionByCount A B p 0).sum * A +
@@ -2204,7 +2206,7 @@ theorem orderedWordExpansionByCount_sum_eq_pow
                 (orderedWordExpansionByCount A B p (r + 1)).sum) * A) +
             (∑ r ∈ Finset.range (p + 1),
               (orderedWordExpansionByCount A B p r).sum) * B := by
-          ac_rfl
+          abel
         _ = (A + B) ^ (p + 1) := by
           rw [hA, ← mul_add, ih, ← pow_succ]
 

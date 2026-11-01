@@ -2382,3 +2382,20 @@ This does not yet reconstruct the full ordered expansion from the strata and doe
 ## 2026-11-01 — H10 all-count-strata reconstruction identity
 
 Base commit `90d83d197346df54b88cb44be671bdfe4f3872b7`. Added an out-of-range empty-stratum lemma and a recursive theorem intended to show the sum of all exact-count strata is `(A+B)^p`, preserving the order and multiplicity of each word. This is not yet a cyclic trace bridge and does not close H10. Full Lean and Python 3.11/3.12 Fast/Slow CI is pending.
+
+
+## 2026-11-01 — H10 count-stratum reconstruction Lean failure analysis
+
+Full Lean run `41314657418` on `7b487c484cc1d33ef84ae1e6e42f28fa3b5673ed`
+failed at `TraceExpand.lean:2198` and `:2207`; all other required modules in the
+reported build completed. At line 2198, `sum_range_succ'` rewrites the full
+sum as (shifted sum) + (zero stratum), while the intermediate expression had
+(zero stratum) + (shifted sum). The proof now closes this exact additive
+commutation with `add_comm`. At line 2207, the remaining goal was a permutation
+and reassociation of three additive matrix terms; `ac_rfl` was inappropriate
+for the goal as presented, so it is replaced by `abel`, which acts only on
+matrix addition. Matrix multiplication remains in the same order throughout.
+
+This is a compiler-directed local repair, not a new mathematical result.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required on the corrected
+commit. Python run `41314657466` was still in progress at the time of this entry.

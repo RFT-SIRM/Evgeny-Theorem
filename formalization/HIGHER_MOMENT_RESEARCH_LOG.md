@@ -5083,3 +5083,20 @@ Base: `90d83d197346df54b88cb44be671bdfe4f3872b7` on `work/h8-h10-exact-recurrenc
 
 Scope: count-stratum reconstruction only. It does not yet prove cyclic trace grouping, orbit weights, or H10 closure. Lean and Python 3.11/3.12 Fast/Slow CI for this source commit are pending.
 Next: validate this induction by full Lean build; if successful, derive the trace-sum corollary, then tackle cyclic gap-composition orbits with exact periodic weights.
+
+
+## 2026-11-01 — H10 count-stratum reconstruction: compiler-driven correction
+
+The first full Lean build of source commit `7b487c484cc1d33ef84ae1e6e42f28fa3b5673ed`
+failed only in the newly added `orderedWordExpansionByCount_sum_eq_pow`
+proof (run `41314657418`, target `EvgenyTheorem.TraceExpand`). The compiler exposed
+two additive-normalization mistakes: the `Finset.sum_range_succ'` expansion places
+the shifted sum before the zero stratum, and the final reassociation/permutation
+of additive matrix terms was not definitionally reflexive.
+
+The correction keeps all matrix products in their original order. It explicitly
+uses `add_comm` for the inner sum split and `abel` only for the final equality
+in the additive commutative group of matrices. No matrix multiplication factors
+are commuted, no hypotheses or heartbeats are changed, and no placeholder is added.
+The corrected source requires a fresh full Lean build; Python workflow
+`41314657466` was still running when this correction was prepared.
