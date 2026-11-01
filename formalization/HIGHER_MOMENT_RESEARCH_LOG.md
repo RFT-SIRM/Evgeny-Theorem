@@ -5170,3 +5170,24 @@ the original product. No factors inside any block are commuted.
 
 Python run `41317154445` passed on both 3.11 and 3.12; the source failure
 was Lean-only. A fresh complete Lean build is required for this repair.
+
+
+## 2026-11-01 — Correct the scoped list rewrite in H10 cyclic gap rotation
+
+The follow-up Lean run `41318805829` on
+`dd354ff42e995f3b72f2e681547c9fff5bbce407` reached the explicit
+`Matrix.trace_mul_comm` step successfully. Its remaining failure was
+caused by `rw [← hsplit, List.prod_append]`: rewriting `blocks` globally
+also rewrote the nested lists `blocks.take j` and `blocks.drop j`
+inside the left side. The repair isolates the product identity first:
+`(blocks.take j).prod * (blocks.drop j).prod = blocks.prod`,
+using `List.prod_append` and `List.take_append_drop`, then rewrites only
+the whole-list product in the trace goal. This leaves both sublists untouched.
+
+A source audit also found that the cyclic-orbit sum proof had applied
+`Finset.sum_congr` to an equality between identical sums. The corrected
+statement compares the orbit sum with the constant sum of the representative
+trace, using `cyclicGapTrace_eq_of_mem_orbit` termwise, then simplifies
+the constant finite sum to the orbit cardinality. Python for the failed
+source commit was still in progress when this correction was prepared.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI are required.

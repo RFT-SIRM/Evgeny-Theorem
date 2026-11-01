@@ -2455,3 +2455,22 @@ This preserves the internal order of every `K^a * N` block.
 
 Both Python 3.11 and 3.12 workflows for the failed source commit passed;
 only Lean failed. The corrected source requires a fresh full Lean build.
+
+
+## 2026-11-01 — Second H10 cyclic gap proof correction
+
+The complete Lean build on `dd354ff42e995f3b72f2e681547c9fff5bbce407`
+still failed in `cyclicGapTrace_rotate`, now at the final product
+reassembly. The issue was rewrite scope: `rw [← hsplit]` rewrote every
+occurrence of `blocks`, including those nested under `take` and `drop`,
+so it changed the sublists whose products were meant to stay fixed.
+The proof now first derives the separate equality
+`(blocks.take j).prod * (blocks.drop j).prod = blocks.prod`
+with a short append/product calculation and then rewrites only that
+whole-list product in the trace equality.
+
+The orbit-sum declaration is corrected at the same time: its first
+intermediate sum is now a sum of the constant representative trace, and
+`Finset.sum_congr` uses the proved equality of each orbit member to the
+representative. This repairs a latent proof-state error exposed by source
+inspection; it is not counted as validated until the new full Lean build.

@@ -2256,7 +2256,14 @@ theorem cyclicGapTrace_rotate
     _ = Matrix.trace ((blocks.take j).prod * (blocks.drop j).prod) := by
           exact Matrix.trace_mul_comm _ _
     _ = Matrix.trace blocks.prod := by
-          rw [← hsplit, List.prod_append]
+          have hprod :
+              (blocks.take j).prod * (blocks.drop j).prod = blocks.prod := by
+            calc
+              _ = (blocks.take j ++ blocks.drop j).prod := by
+                rw [List.prod_append]
+              _ = blocks.prod := by
+                rw [List.take_append_drop]
+          rw [← hprod]
 
 /-- Distinct cyclic rotations of a gap list. Passing to a Finset removes
 repeated rotations, so its cardinality is the true orbit size, including
@@ -2292,7 +2299,7 @@ theorem cyclicGapTrace_sum_orbit_eq
   classical
   calc
     (∑ g ∈ cyclicGapOrbit gaps, cyclicGapTrace K N g) =
-        ∑ g ∈ cyclicGapOrbit gaps, cyclicGapTrace K N gaps := by
+        ∑ _g ∈ cyclicGapOrbit gaps, cyclicGapTrace K N gaps := by
           apply Finset.sum_congr rfl
           intro g hg
           exact cyclicGapTrace_eq_of_mem_orbit K N hg
