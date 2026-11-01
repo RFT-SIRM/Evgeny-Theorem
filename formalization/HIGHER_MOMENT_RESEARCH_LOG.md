@@ -4813,3 +4813,15 @@ The correction adds those list constructors and `Matrix.one_mul` to the
 assembly-only simp set before rewriting the 16 block theorems. This preserves
 order and multiplicity and leaves all 108 cyclic representative weights
 untouched. Validation is pending the next full Lean CI.
+
+## 2026-11-01 — Remove the trailing zero summands in the p=10 block assembly
+
+A follow-up read of the actual target emitted by CI shows precisely why the
+previous list-normalization patch did not suffice: after expanding the
+singleton prefix list, every explicit trace term is followed by a trailing
+`+ 0`. The 64-term suffix theorem has the same words in the same order but,
+correctly, no explicit trailing zeros, so Lean cannot match its left-hand
+side as a rewrite pattern. The assembly-only simp set is therefore extended
+with the additive identity rules `add_zero` and `zero_add`. This is the
+specific remaining syntactic normalization; no mathematical equality or
+coefficient is altered. Validation is pending a new full Lean build.

@@ -8833,7 +8833,8 @@ theorem trace_orderedWordExpansion_ten_cyclic
   rw [trace_sum_orderedWordExpansion_append A B 6 4 Matrix.trace]
   simp only [orderedWordExpansion, List.map_append, List.sum_append,
     List.map_map, Function.comp_def, List.map_cons, List.sum_cons,
-    List.map_nil, List.sum_nil, Matrix.one_mul, Matrix.mul_assoc]
+    List.map_nil, List.sum_nil, add_zero, zero_add,
+    Matrix.one_mul, Matrix.mul_assoc]
   rw [
     trace_orderedWordExpansion_ten_suffix_0000 A B,
     trace_orderedWordExpansion_ten_suffix_1000 A B,
