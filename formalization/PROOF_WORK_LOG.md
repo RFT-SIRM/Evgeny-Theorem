@@ -2328,3 +2328,26 @@ moved intact to immediately above the r=4 theorem. No theorem statement,
 proof, coefficient, matrix order, or existing H8/H10 result is changed.
 The r=2 diagonal form remains as committed. Full Lean and Python CI are
 required to validate the corrected declaration boundary.
+
+## 2026-11-01 — H10 r=8 ordered four-pair diagonal reduction
+
+Added glueRHS10_four_pair_sum, glueRHS10_eight_N_diagonal_form,
+sg_trace_p10_eight_N_boundary_term_pair_diagonal, and
+sg_trace_p10_eight_N_stratum_pair_diagonal.
+
+The one-term proof follows the actual shape of
+trace_p10_eight_N_boundary_term: three supported diagonal factors are
+separated by four ordered kernel powers, with one further kernel diagonal
+entry at the partner endpoint. First the (b,c,d) and (d,e,f) diagonal
+sandwiches are successively reduced using off-diagonal vanishing of the
+middle powers c and e. The remaining two-kernel trace is collapsed using
+the established support lemma and off-diagonal vanishing of the first power
+a; the last power g is not commuted or assumed diagonal. The final
+pair-product identity is pointwise and preserves the exact order
+(a,b),(c,d),(e,f),(g,h).
+
+The stratum aggregate retains exactly the five already established cyclic
+classes with coefficients 10, 10, 10, 10, and 5. This does not close H10:
+cross-stratum cancellation, the ordered-word expansion bridge, and the
+residual recurrence remain separate obligations. H6 and H8 source regions
+are not edited. Full Lean and Python CI are required for validation.

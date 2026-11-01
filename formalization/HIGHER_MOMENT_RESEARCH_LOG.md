@@ -5012,3 +5012,21 @@ error at line 3629. The original comment is moved verbatim to the line
 immediately preceding `sg_trace_p10_four_N_stratum_pair_diagonal`. This is a
 source-layout repair only; the new r=2 statement and proof and all r=4 proof
 content are unchanged. Validation is pending.
+
+## 2026-11-01 — H10 r=8 boundary-to-diagonal normal form
+
+The existing p=10 eight-N theorem supplies five exact cyclic boundary classes
+with weights 10, 10, 10, 10, and 5. Added a local reduction of one
+eight-N boundary term to four ordered corner/partner diagonal pairs. The
+proof collapses the two internal supported diagonal sandwiches in their
+original order, then uses the existing two-kernel supported-diagonal trace
+lemma for the endpoint sum. It needs off-diagonal vanishing only for the
+first, second, and third kernel powers in the eight-factor word; the final
+kernel remains at the right endpoint. All five classes and their exact
+multiplicities are carried into a named aggregate normal form.
+
+This is an r=8 stratum boundary normal form only. It does not establish
+cancellation with the r=2, r=4, r=6, or r=10 strata, does not bridge the
+ordered-word expansion, and does not prove the H10 residual recurrence.
+The source change requires a full Lean build and both Python test suites
+before it is treated as validated. H6 and H8 are not modified.
