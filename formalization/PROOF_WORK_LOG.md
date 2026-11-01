@@ -2519,3 +2519,22 @@ applies `congrArg List.sum`, then proves the map equality pointwise by
 building when this correction was authored; only a fresh run on this commit
 can validate the fix. No matrix multiplication order or word multiplicity
 is affected.
+
+
+## 2026-11-01 — Canonical gap encoding for the H10 marked-letter bridge
+
+The complete Lean build and all Python 3.11/3.12 Fast and Slow tests
+passed on `010979d0bea48c4138742819aabafdd990b7f019`
+(runs `41321448729` and `41321448737`). The trace-map repair is
+validated.
+
+The next source step adds a canonical encoding of a nonnegative gap list:
+each entry `a` contributes `a` false symbols followed by one true
+symbol. Its length is the sum of the gaps plus the number of gaps. The
+matrix evaluation theorem identifies each block with `A^a * B` and the
+whole word with the ordered product of those blocks; its trace is
+definitionally the existing `cyclicGapTrace`. All proofs preserve list
+order and do not commute matrix factors. This is only the canonical-word
+side of the marked-letter/composition correspondence; the rotation-offset
+bijection and the `p/r` weighted trace identity remain unproved. Full
+Lean and Python 3.11/3.12 Fast/Slow validation is required.

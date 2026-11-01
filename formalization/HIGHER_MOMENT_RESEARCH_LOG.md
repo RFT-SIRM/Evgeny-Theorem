@@ -5244,3 +5244,30 @@ the symbolic word list, matrix evaluation, or multiplicities. The earlier
 attempt's Lean workflow was still running when this refinement was made;
 the new commit must pass a fresh full Lean build and Python 3.11/3.12
 Fast/Slow checks before further mathematics.
+
+
+## 2026-11-01 — Validate H10 symbolic trace bridge
+
+Commit `010979d0bea48c4138742819aabafdd990b7f019` passed the complete
+Lean formalization build (Actions run `41321448729`). Python 3.11 and
+3.12 both passed Fast tests and the level-7 Slow convergence tests
+(Actions run `41321448737`). The trace-map congruence repair is therefore
+validated on that exact SHA.
+
+## 2026-11-01 — Canonical H10 gap-word evaluation
+
+Added `binaryFalseRun` and `binaryWordGapEncoding`. A finite gap list
+`[a₁,...,aᵣ]` is encoded as
+`false^a₁ ++ [true] ++ ... ++ false^aᵣ ++ [true]`; each gap is the
+number of A factors immediately before its B. Proved the encoded word
+length is `gaps.sum + gaps.length`, and proved by ordered list-product
+identities that its matrix evaluation is exactly
+`(A^a₁ B) ... (A^aᵣ B)`. Consequently its trace is the already-defined
+`cyclicGapTrace` for the same gap list.
+
+This fixes the orientation convention for the marked-letter cut: the
+marked B is the final letter of the canonical representative. The result
+does not yet prove that every exact-count word with a marked B is uniquely
+represented by a rotation offset and such a gap list, and does not yet
+derive the `p/r` trace identity. H6 and H8 are untouched. The new code
+requires fresh full Lean and Python 3.11/3.12 Fast/Slow CI.

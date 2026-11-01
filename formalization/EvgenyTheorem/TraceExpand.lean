@@ -2411,4 +2411,105 @@ theorem trace_orderedWordExpansionByCount_eq_binaryWordExpansionByCount
   intro w hw
   rfl
 
+
+/-- A finite run of first-letter symbols, representing one gap before a
+marked occurrence of the second letter. -/
+def binaryFalseRun : ℕ → List Bool
+  | 0 => []
+  | a + 1 => false :: binaryFalseRun a
+
+/-- Encode a list of nonnegative gaps as the canonical binary word
+`false^a₁ true ... false^aᵣ true`. Thus each gap records the number of
+A-factors immediately preceding its corresponding B-factor. -/
+def binaryWordGapEncoding (gaps : List ℕ) : List Bool :=
+  gaps.flatMap (fun a => binaryFalseRun a ++ [true])
+
+/-- The false run has exactly its specified length. -/
+theorem binaryFalseRun_length (a : ℕ) :
+    (binaryFalseRun a).length = a := by
+  induction a with
+  | zero => rfl
+  | succ a ih => simp [binaryFalseRun, ih]
+
+/-- The encoded word has one B for each gap and one A for each unit of
+total gap size, so its length is sum(gaps) + length(gaps). -/
+theorem binaryWordGapEncoding_length (gaps : List ℕ) :
+    (binaryWordGapEncoding gaps).length = gaps.sum + gaps.length := by
+  induction gaps with
+  | nil => rfl
+  | cons a rest ih =>
+      change ((binaryFalseRun a ++ [true]) ++
+        binaryWordGapEncoding rest).length =
+        (a + rest.sum) + (rest.length + 1)
+      simp only [List.length_append, binaryFalseRun_length,
+        List.length_cons, List.length_nil, ih]
+      omega
+
+/-- Evaluating a binary word beginning with one symbol multiplies its
+evaluation on the left by the matrix assigned to that symbol. -/
+theorem binaryWordMatrix_cons
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (bit : Bool) (w : List Bool) :
+    binaryWordMatrix A B (bit :: w) =
+      (if bit then B else A) * binaryWordMatrix A B w := by
+  simp [binaryWordMatrix]
+
+/-- Evaluation of a concatenation is the ordered product of the two
+evaluations. This preserves the order of all noncommuting factors. -/
+theorem binaryWordMatrix_append_words
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (u v : List Bool) :
+    binaryWordMatrix A B (u ++ v) =
+      binaryWordMatrix A B u * binaryWordMatrix A B v := by
+  simp [binaryWordMatrix, List.map_append, List.prod_append]
+
+/-- A single gap block evaluates to A^a * B, with no factor reordering. -/
+theorem binaryWordMatrix_falseRun_block
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (a : ℕ) :
+    binaryWordMatrix A B (binaryFalseRun a ++ [true]) =
+      A ^ a * B := by
+  induction a with
+  | zero => simp [binaryFalseRun, binaryWordMatrix]
+  | succ a ih =>
+      change binaryWordMatrix A B
+        (false :: (binaryFalseRun a ++ [true])) =
+          A ^ (a + 1) * B
+      calc
+        _ = A * binaryWordMatrix A B (binaryFalseRun a ++ [true]) := by
+          simpa using
+            (binaryWordMatrix_cons A B false (binaryFalseRun a ++ [true]))
+        _ = A * (A ^ a * B) := by rw [ih]
+        _ = A ^ (a + 1) * B := by
+          rw [pow_succ']
+          simp [mul_assoc]
+
+/-- A canonical gap word evaluates to the product of its ordered blocks
+A^a * B. This is the algebraic bridge from gap compositions to the cyclic
+trace expression; no cyclic permutation or commutation is used here. -/
+theorem binaryWordMatrix_gapEncoding
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (gaps : List ℕ) :
+    binaryWordMatrix A B (binaryWordGapEncoding gaps) =
+      (gaps.map (fun a => A ^ a * B)).prod := by
+  induction gaps with
+  | nil => simp [binaryWordGapEncoding, binaryWordMatrix]
+  | cons a rest ih =>
+      change binaryWordMatrix A B
+        ((binaryFalseRun a ++ [true]) ++ binaryWordGapEncoding rest) =
+        (A ^ a * B) * (rest.map (fun a => A ^ a * B)).prod
+      rw [binaryWordMatrix_append_words,
+        binaryWordMatrix_falseRun_block, ih]
+
+/-- The trace of the canonical binary gap word is exactly cyclicGapTrace.
+The distinguished B is placed at the end, so this equality itself needs
+no trace rotation; rotations are handled by cyclicGapTrace_rotate. -/
+theorem binaryWordGapEncoding_trace_eq_cyclicGapTrace
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) :
+    Matrix.trace (binaryWordMatrix K N (binaryWordGapEncoding gaps)) =
+      cyclicGapTrace K N gaps := by
+  rw [binaryWordMatrix_gapEncoding]
+  rfl
+
 end EvgenyTheorem
