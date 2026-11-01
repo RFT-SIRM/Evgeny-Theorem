@@ -2419,3 +2419,23 @@ It preserves ordered word occurrences and multiplicity but does not
 perform cyclic orbit grouping. Python 3.11/3.12 Fast/Slow validation for
 the corrected base commit was still in progress when this trace theorem
 was prepared; the new source commit requires fresh full CI.
+
+
+## 2026-11-01 — Generic cyclic gap orbit formalization for H10
+
+Added cyclicGapTrace as the trace of the ordered product of gap blocks
+K^a * N. The theorem cyclicGapTrace_rotate proves invariance under
+List.rotate by cutting the block list into drop ++ take and applying
+Matrix.trace_mul_comm once to the two block products; no individual
+matrix factor is commuted. The finite orbit cyclicGapOrbit is the
+toFinset of List.cyclicPermutations, deliberately deduplicating
+periodic rotations. Its trace sum is proved to equal orbit-cardinality
+times the representative trace.
+
+Added decide-checked orbit-cardinality certificates for all exceptional
+periodic p=10 gap types already occurring in the boundary inventories:
+r=4 has two period-two tuples with orbit size 2; r=6 has two period-three
+tuples with orbit size 3; r=8 has its period-four tuple with orbit size 4;
+r=10 has the constant tuple with orbit size 1. This formalizes the
+stabilizer side of the existing weights, not the binary-word-to-gap
+bijection. The source commit requires full Lean and Python CI.

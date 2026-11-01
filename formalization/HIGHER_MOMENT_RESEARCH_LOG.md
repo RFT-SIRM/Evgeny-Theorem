@@ -5127,3 +5127,30 @@ Next mathematical obligation: use the exact-r trace decomposition to
 derive cyclic-composition orbit grouping with correct periodic stabilizer
 weights, then connect those weighted groups to the existing H10 boundary
 strata. Avoid flattening all 1024 words or using a global giant `simp`.
+
+
+## 2026-11-01 — H10 cyclic gap-orbit trace identity
+
+Added a compact generic representation cyclicGapTrace K N gaps, in which
+each positive gap contributes the ordered matrix block K^a * N.
+Proved that rotating the gap list leaves its trace unchanged, using the
+already established trace cyclicity for a split list of matrix factors.
+Defined the cyclic orbit as the finite set of distinct list rotations;
+the orbit trace sum is therefore its true cardinality times the
+representative trace, even when a tuple is periodic.
+
+Added machine-checked cardinality checks for the p=10 exceptional periodic
+tuples: orbit size two for the r=4 classes (1,4,1,4) and (2,3,2,3);
+orbit size three for the r=6 classes (1,1,3,1,1,3) and (1,2,2,1,2,2);
+orbit size four for the r=8 periodic class (1,1,1,2,1,1,1,2);
+and orbit size one for the all-ones r=10 tuple. These are exactly the
+stabilizer reductions behind the coefficients 5 and 1 in the existing
+p=10 stratum tables.
+
+Scope: this establishes the algebraic trace invariance and distinct-orbit
+multiplicity for a given gap representative. It does not yet prove that
+the sum over the exact-count binary words equals the sum over all positive
+gap compositions, nor does it establish a full H10 cancellation. The
+next bridge remains the marked-letter/composition correspondence with its
+p/r multiplicity factor. H6 and H8 are untouched. Full Lean and Python
+3.11/3.12 Fast/Slow CI are required for this commit.

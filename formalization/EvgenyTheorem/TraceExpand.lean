@@ -1,6 +1,7 @@
 import Mathlib.Data.Matrix.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.LinearAlgebra.Matrix.Trace
+import Mathlib.Data.List.Rotate
 import Mathlib.Tactic.NoncommRing
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic
@@ -2226,5 +2227,100 @@ theorem trace_orderedWordExpansionByCount_sum_eq
   apply Finset.sum_congr rfl
   intro r hr
   exact trace_sum_list (orderedWordExpansionByCount A B p r)
+
+
+/-- The trace of a cyclic gap word. A gap of length a contributes the
+ordered block K^a * N; the list order is retained in the product. -/
+def cyclicGapTrace {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) : ℂ :=
+  Matrix.trace ((gaps.map (fun a => K ^ a * N)).prod)
+
+/-- Rotating the gap list rotates the corresponding matrix blocks inside
+the trace. This uses only cyclicity of trace, not commutation of K and N. -/
+theorem cyclicGapTrace_rotate
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) (k : ℕ) :
+    cyclicGapTrace K N (gaps.rotate k) = cyclicGapTrace K N gaps := by
+  classical
+  unfold cyclicGapTrace
+  rw [List.map_rotate]
+  let blocks : List (Matrix n n ℂ) := gaps.map (fun a => K ^ a * N)
+  change Matrix.trace ((blocks.rotate k).prod) = Matrix.trace blocks.prod
+  let j := k % blocks.length
+  have hsplit : blocks.take j ++ blocks.drop j = blocks :=
+    List.take_append_drop j blocks
+  calc
+    Matrix.trace ((blocks.rotate k).prod) =
+        Matrix.trace ((blocks.drop j).prod * (blocks.take j).prod) := by
+          rw [List.rotate_eq_drop_append_take_mod, List.prod_append]
+          rfl
+    _ = Matrix.trace blocks.prod := by
+          rw [← hsplit, List.prod_append]
+
+/-- Distinct cyclic rotations of a gap list. Passing to a Finset removes
+repeated rotations, so its cardinality is the true orbit size, including
+periodic tuples whose stabilizer is nontrivial. -/
+def cyclicGapOrbit (gaps : List ℕ) : Finset (List ℕ) :=
+  (List.cyclicPermutations gaps).toFinset
+
+/-- Every member of a cyclic gap orbit has the same trace. -/
+theorem cyclicGapTrace_eq_of_mem_orbit
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) {gaps rotated : List ℕ}
+    (hrotated : rotated ∈ cyclicGapOrbit gaps) :
+    cyclicGapTrace K N rotated = cyclicGapTrace K N gaps := by
+  classical
+  have hrot : rotated ~r gaps := by
+    simpa [cyclicGapOrbit] using hrotated
+  rcases hrot with ⟨k, hk⟩
+  calc
+    cyclicGapTrace K N rotated =
+        cyclicGapTrace K N (rotated.rotate k) := by
+          symm
+          exact cyclicGapTrace_rotate K N rotated k
+    _ = cyclicGapTrace K N gaps := by rw [hk]
+
+/-- Summing over a cyclic orbit counts each distinct gap tuple once.
+The multiplier is the orbit cardinality, not the tuple length; this is
+the source of the reduced weights for periodic p=10 compositions. -/
+theorem cyclicGapTrace_sum_orbit_eq
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) :
+    (∑ g ∈ cyclicGapOrbit gaps, cyclicGapTrace K N g) =
+      (cyclicGapOrbit gaps).card • cyclicGapTrace K N gaps := by
+  classical
+  calc
+    (∑ g ∈ cyclicGapOrbit gaps, cyclicGapTrace K N g) =
+        ∑ g ∈ cyclicGapOrbit gaps, cyclicGapTrace K N gaps := by
+          apply Finset.sum_congr rfl
+          intro g hg
+          exact cyclicGapTrace_eq_of_mem_orbit K N hg
+    _ = (cyclicGapOrbit gaps).card • cyclicGapTrace K N gaps := by simp
+
+/-- The two p=10 period-two four-gap representatives have two distinct
+cyclic rotations, rather than four. This records the stabilizer correction
+behind their weight five (10/4 times orbit size two). -/
+theorem cyclicGapOrbit_four_period_two_card :
+    (cyclicGapOrbit [1, 4, 1, 4]).card = 2 ∧
+    (cyclicGapOrbit [2, 3, 2, 3]).card = 2 := by
+  decide
+
+/-- The p=10 six-gap period-three representatives have orbit size three,
+which yields weight five (10/6 times orbit size three). -/
+theorem cyclicGapOrbit_six_period_three_card :
+    (cyclicGapOrbit [1, 1, 3, 1, 1, 3]).card = 3 ∧
+    (cyclicGapOrbit [1, 2, 2, 1, 2, 2]).card = 3 := by
+  decide
+
+/-- The p=10 eight-gap period-four representative has four distinct
+cyclic rotations, giving the reduced weight five (10/8 times four). -/
+theorem cyclicGapOrbit_eight_period_four_card :
+    (cyclicGapOrbit [1, 1, 1, 2, 1, 1, 1, 2]).card = 4 := by
+  decide
+
+/-- The all-equal p=10 ten-gap tuple has a one-element orbit. -/
+theorem cyclicGapOrbit_ten_period_one_card :
+    (cyclicGapOrbit (List.replicate 10 1)).card = 1 := by
+  decide
 
 end EvgenyTheorem
