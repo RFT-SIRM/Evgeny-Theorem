@@ -2126,3 +2126,24 @@ side as a rewrite pattern. The assembly-only simp set is therefore extended
 with the additive identity rules `add_zero` and `zero_add`. This is the
 specific remaining syntactic normalization; no mathematical equality or
 coefficient is altered. Validation is pending a new full Lean build.
+
+## 2026-11-01 — Roll back the failed global p=10 cyclic-expansion experiment
+
+The generated `trace_orderedWordExpansion_ten_cyclic` construction was
+repeatedly unable to compile at its final rewrite stage (Lean runs
+`41277267963` and `41277758963`). The failures were not resolved by
+normalizing singleton lists or additive zero terms. The underlying issue is
+that a hand-flattened cyclic representative sum was being matched against
+nested ordered list sums with a different traversal/association structure.
+Continuing to patch this generated 1024-word theorem would be brittle and
+would not advance the mathematical H10 boundary assembly.
+
+The entire experimental append/cyclic block has therefore been removed from
+`TraceExpand.lean`, restoring that file exactly to the known green
+`af0249620e8582907e80756d1ee876941b130981` checkpoint. This rollback does
+not change the already-established H10 r=5 weighted aggregate or the
+existing p=10 stratum lemmas elsewhere. The next H10 step must be designed
+around the existing even-stratum boundary identities and ordered expansion
+lemmas, with a small proof that preserves list structure; no global 1024-word
+cyclic sum should be reintroduced without a materially different derivation.
+A fresh full Lean build and Python CI are required after this rollback.
