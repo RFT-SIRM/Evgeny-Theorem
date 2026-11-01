@@ -4447,7 +4447,7 @@ private theorem trace_five_N_cyclic_rotate
           ((K * N) * (K ^ (b - 1) * (K * N)) *
             (K ^ (c - 1) * (K * N)) *
             (K ^ (d - 1) * (K * N)) *
-            (K ^ (e - 1) * (K * N))) := by
+            (K ^ (e - 1) * (K * N)))) := by
       congr 1
       simp only [Matrix.mul_assoc]
     _ =

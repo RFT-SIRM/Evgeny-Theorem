@@ -4635,3 +4635,8 @@ upper bound 6 < 2^m. This refactor awaits full Lean validation.
 The first Lean build of commit 69858af failed at the generic five-N rotation theorem (isDefEq timeout at line 4429), then at the r=5 aggregate and first class application (WHNF timeouts at lines 4480 and 4505). The first issue came from normalizing a generic List.prod expression with all five variable powers at once. The later WHNF pressure came from leaving the weighted aggregate and individual class-term functions reducible: Lean could unfold the full 26-term sum during type elaboration. The earlier description of those definitions as opaque was inaccurate.
 
 The corrected implementation proves rotation directly with Matrix.trace_mul_comm and four explicit gap identities, preserving the ordered factors. Both local definitions are marked irreducible; class terms are unfolded one at a time inside their zero proofs, and the weighted sum is unfolded only for the final finite rewrite. No coefficient, representative, matrix order, or theorem hypothesis is changed. Full Lean validation is still required before recording r=5 as closed.
+
+
+## 2026-11-01 — Parser correction in H10 r=5 cyclic rotation
+
+The Lean parser error at GlueTrace.lean:4450 was caused by one missing closing parenthesis in the first `calc` equality of the generic five-N cyclic rotation lemma. The subsequent WHNF messages occurred downstream while Lean was processing the malformed declaration and are not treated as independent mathematical failures. The one-character correction preserves the intended grouping and matrix-factor order. Full build validation remains pending.
