@@ -5061,3 +5061,17 @@ Added private definition `glueRHS10_four_N_diagonal_form` containing exactly the
 Static census: 22 classes in the original order; 20 coefficients 10 and two coefficients 5; total weight 210 = `Nat.choose 10 4`. The two period-two classes remain `(1,4,1,4)` and `(2,3,2,3)`. No matrix factors or exponents are permuted. No placeholder or heartbeat change was introduced by this edit.
 
 Mathematical scope: packaging of the already-proved r=4 boundary-to-diagonal identity only. It proves no cross-stratum cancellation, ordered-word bridge, orientation-independence, or H10 closure. Full Lean and Python 3.11/3.12 fast/slow CI results are pending for the resulting commit. Next mathematical barrier, after validation: a recursive ordered-word-to-cyclic-strata bridge for p=10 that preserves order, multiplicity, and periodic orbit weights.
+
+
+CI validation for source commit `c0313f16304fa4e86a958d1537bcc5a80d1035e8`:
+- Lean full build: success, run `41311381921`.
+- Python workflow: success, run `41311381895`; Python 3.11 and 3.12 both passed Fast and Slow convergence tests.
+
+
+## 2026-11-01 — H10 recursive word-count stratification foundation
+
+Starting point: branch `work/h8-h10-exact-recurrence-certificates`, parent commit `c0313f16304fa4e86a958d1537bcc5a80d1035e8`.
+Added `orderedWordExpansionByCount`, a recursive list of the p-letter matrix words containing exactly r occurrences of the second letter. Its recursion splits by the final factor: the A-ending block precedes the B-ending block, matching the order in `orderedWordExpansion` and preserving all occurrences even when matrix products coincide. Proved `orderedWordExpansionByCount_length`: every stratum has exactly `Nat.choose p r` list entries, and added p=2 and p=3 census checks.
+
+This is the first count-stratification lemma only. It does not yet prove that the full ordered expansion is the disjoint union of these strata under trace, does not rotate or group cyclic words, and does not establish the p=10 orbit coefficients or any boundary identity. No H6/H8 theorem is modified. Full Lean and Python CI for this source commit are pending.
+Next: prove a list-level reconstruction/decomposition theorem connecting the count-stratified lists to `orderedWordExpansion` while preserving order and multiplicity; verify p=2 and p=3 before introducing cyclic gap representatives.

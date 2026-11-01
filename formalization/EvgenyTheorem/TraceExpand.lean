@@ -2087,3 +2087,55 @@ theorem trace_kernel_diagonal_kernel_diagonal_collapse
       · simp [ha y hgy]
     · simp
   · simp [hgx, hd x hgx]
+
+
+namespace EvgenyTheorem
+
+/-- The p-fold ordered expansion restricted to words with exactly `r`
+uses of the second letter. The recurrence splits by the last factor:
+words ending in A come first, followed by words ending in B. Therefore
+the relative order and multiplicity of all matrix words in each stratum
+are preserved, including when different words have equal matrix products. -/
+def orderedWordExpansionByCount {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) : ℕ → ℕ → List (Matrix n n ℂ)
+  | 0, 0 => [1]
+  | 0, r + 1 => []
+  | p + 1, 0 =>
+      (orderedWordExpansionByCount A B p 0).map (fun X => X * A)
+  | p + 1, r + 1 =>
+      (orderedWordExpansionByCount A B p (r + 1)).map (fun X => X * A) ++
+      (orderedWordExpansionByCount A B p r).map (fun X => X * B)
+
+/-- The r-stratum contains exactly binomial(p,r) ordered word occurrences.
+This counts multiplicities, not distinct matrix values. -/
+theorem orderedWordExpansionByCount_length
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p r : ℕ) :
+    (orderedWordExpansionByCount A B p r).length = Nat.choose p r := by
+  induction p generalizing r with
+  | zero =>
+      cases r with
+      | zero => simp [orderedWordExpansionByCount]
+      | succ r => simp [orderedWordExpansionByCount]
+  | succ p ih =>
+      cases r with
+      | zero =>
+          simp [orderedWordExpansionByCount, ih]
+      | succ r =>
+          simp only [orderedWordExpansionByCount, List.length_append,
+            List.length_map, ih]
+          rw [Nat.choose_succ_succ]
+          exact Nat.add_comm _ _
+
+/-- Small-degree census checks for the recursive count stratification. -/
+theorem orderedWordExpansionByCount_small_length_checks
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) :
+    (orderedWordExpansionByCount A B 2 0).length = 1 ∧
+    (orderedWordExpansionByCount A B 2 1).length = 2 ∧
+    (orderedWordExpansionByCount A B 2 2).length = 1 ∧
+    (orderedWordExpansionByCount A B 3 1).length = 3 ∧
+    (orderedWordExpansionByCount A B 3 2).length = 3 := by
+  simp [orderedWordExpansionByCount_length]
+
+end EvgenyTheorem

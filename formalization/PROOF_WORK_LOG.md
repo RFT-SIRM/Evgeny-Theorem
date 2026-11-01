@@ -2370,3 +2370,10 @@ The exact correction now requires a fresh full Lean build and Python runs.
 Base: `3e2cd9c0805aae4519c0a8fbb4f563bd9c695ac7` on `work/h8-h10-exact-recurrence-certificates`. Added `glueRHS10_four_N_diagonal_form` and changed only the RHS of `sg_trace_p10_four_N_stratum_pair_diagonal` to that definition, unfolded definitionally in its proof. All 22 existing `sg_trace_p10_four_N_boundary_sum_pair_diagonal` rewrites remain present and unchanged. Census: 20 × 10 + 2 × 5 = 210 = `Nat.choose 10 4`, with the original ordered run-length representatives and pairings intact.
 
 This is a notational normal-form packaging, not a new boundary theorem and not H10 closure. The Lean full build and Python 3.11/3.12 fast and slow tests for the resulting commit are pending. Next: prove the p=10 ordered-word/cyclic-stratum bridge recursively, without materializing 1024 words or discarding multiplicities.
+
+
+## 2026-11-01 — H10 recursive word-count stratification foundation
+
+Base commit: `c0313f16304fa4e86a958d1537bcc5a80d1035e8` on `work/h8-h10-exact-recurrence-certificates`. Added `orderedWordExpansionByCount`, splitting the ordered matrix-word list recursively by whether its final factor is A or B; the A-ending block is listed first. Proved the exact length theorem `orderedWordExpansionByCount_length` with `Nat.choose p r` and added small p=2 and p=3 checks. This verifies the binomial count of word occurrences without identifying equal matrix products or changing any factor order.
+
+This does not yet reconstruct the full ordered expansion from the strata and does not prove the cyclic trace/orbit-weight bridge. It is a single foundational step only. Full Lean and Python 3.11/3.12 Fast/Slow CI is pending.
