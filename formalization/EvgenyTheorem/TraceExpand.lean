@@ -4247,10 +4247,7 @@ theorem binaryWordP10GapOrbitPartition4 :
   classical
   decide
 
--- The r=6 finite composition enumeration has a larger normalization tree.
-set_option maxRecDepth 16384 in
-set_option maxHeartbeats 8000000 in
-/-- The r=5 positive-composition enumeration has 126 tuples and 26 cyclic classes.
+-- The five-insertion orbit partition checks all 126 positive compositions.
 set_option maxRecDepth 16384 in
 set_option maxHeartbeats 12000000 in
 /-- The five-insertion positive compositions are partitioned by the 26
@@ -4261,7 +4258,10 @@ theorem binaryWordP10GapOrbitPartition5 :
   classical
   decide
 
--- The six-insertion positive compositions are partitioned by the listed
+-- The r=6 finite composition enumeration has a larger normalization tree.
+set_option maxRecDepth 16384 in
+set_option maxHeartbeats 8000000 in
+/-- The six-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
 theorem binaryWordP10GapOrbitPartition6 :
     binaryWordP10PositiveGapListFinset 6 =

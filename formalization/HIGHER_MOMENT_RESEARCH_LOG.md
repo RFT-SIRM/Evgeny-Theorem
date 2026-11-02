@@ -6492,3 +6492,22 @@ the exact-word interface for r=5 only; r=7, the complete H10 even-boundary
 aggregation, the boundary-orientation comparison, and the H10 residual
 recurrence remain open. The new source SHA requires a complete Lean build.
 
+
+
+
+## 2026-11-02 — Repair the H10 r=5 partition declaration placement
+
+The first build of commit `308d484064be6b967b10be115404830e2e6cf631`
+failed in `TraceExpand.lean`: `binaryWordP10GapOrbitPartition5` had
+been inserted inside the preceding unclosed documentation comment for the
+r=6 partition. Lean therefore parsed the r=5 theorem text as comment and
+reported it as an unknown identifier in `binaryWordP10GapTraceOrbitSum5`.
+
+Moved the r=5 partition into its own correctly closed documentation block
+and restored the r=6 scoped recursion/heartbeat options immediately before
+the r=6 theorem. The 26-representative list was independently checked
+against all 126 positive five-part compositions: the 26 cyclic orbits are
+disjoint, cover the full set, and have sizes twenty-five times five plus
+one. No mathematical statement or matrix product order was changed.
+A complete Lean build on this repaired source SHA is required.
+
