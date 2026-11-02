@@ -3015,3 +3015,18 @@ subtype enumeration from `Finset.univ.filter` via
 `Fintype.subtype`. The mathematical representation and the list/vector
 inverse proofs were otherwise preserved. Full Lean validation remains
 mandatory.
+
+
+## 2026-11-02 — Finite-sum trace transport
+
+Formalized the first finite-sum consequence of the marked-cut/gap-offset
+equivalence. The sum of matrix traces over the fixed length-p, r-true
+marked-cut stratum equals the sum of cyclic gap traces over the
+corresponding fixed gap-offset stratum. The proof is a direct
+`Fintype.sum_equiv` reindexing, with its pointwise equality discharged
+by `binaryWordMarkedCut_trace_eq_cyclicGapTrace`.
+
+This makes the trace preservation usable in finite sums, while retaining
+every offset separately for periodic gap words. It does not by itself
+establish the desired r-to-p weighted formula; grouping by unmarked
+words and by gap vectors remains necessary. Require a full Lean build.

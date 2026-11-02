@@ -3583,4 +3583,34 @@ theorem binaryWordMarkedCut_trace_eq_cyclicGapTrace
     (binaryWordMatrix_trace_marked_eq_cyclicGapTrace K N pre post)
 
 
+/-- Reindex the finite trace sum over marked cuts by the exact
+fixed-(p,r) marked-cut/gap-offset equivalence. Every marked position is
+retained as a separate offset, including in periodic words. This is the
+finite-sum form of the trace-preserving correspondence. -/
+theorem binaryWordMarkedCutStratum_sum_trace_eq_gapOffsetStratum_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ cut : binaryWordMarkedCutStratum p r,
+      Matrix.trace
+        (binaryWordMatrix K N ((cut.val.1 ++ [true]) ++ cut.val.2))) =
+    ∑ data : binaryWordGapOffsetStratum p r,
+      cyclicGapTrace K N data.val.val.1 := by
+  classical
+  let e := binaryWordMarkedCutGapOffsetStratumEquiv p r
+  exact Fintype.sum_equiv e
+    (fun cut =>
+      Matrix.trace
+        (binaryWordMatrix K N ((cut.val.1 ++ [true]) ++ cut.val.2)))
+    (fun data => cyclicGapTrace K N data.val.val.1)
+    (by
+      intro cut
+      rcases cut with ⟨⟨pre, post⟩, hcut⟩
+      have hvalue :
+          (e ⟨(pre, post), hcut⟩).val.val.1 =
+            (binaryWordMarkedCutToGapOffset (pre, post)).val.1 := by
+        rfl
+      rw [hvalue]
+      exact binaryWordMarkedCut_trace_eq_cyclicGapTrace K N pre post)
+
+
 end EvgenyTheorem

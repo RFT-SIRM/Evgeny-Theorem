@@ -5873,3 +5873,22 @@ finite-model block:
 
 The list/vector equivalence and all other definitions are unchanged.
 A complete Lean rebuild is required to validate the corrections.
+
+
+## 2026-11-02 — Reindex the finite marked-cut trace sum by gap offsets
+
+Added `binaryWordMarkedCutStratum_sum_trace_eq_gapOffsetStratum_sum`.
+It applies Mathlib's finite-type sum equivalence to the already
+Lean-verified fixed-(p,r) equivalence and uses the established
+marked-cut trace identity pointwise. The resulting theorem identifies
+the complete finite trace sum over marked cuts with the sum of
+`cyclicGapTrace` over the fixed gap-offset stratum. Since the offset is
+part of the data and is not quotiented by cyclic rotation, periodic words
+retain all marked positions in this sum.
+
+This is a finite-sum reindexing theorem, not yet the weighted
+multiplicity identity: the remaining combinatorial step is to group the
+marked-cut sum by the underlying unmarked binary word and prove that
+each word contributes exactly r marks. The gap-offset side must then be
+grouped by the gap vector, with exactly p offsets. H6 and H8 are not
+modified. Full Lean build required.
