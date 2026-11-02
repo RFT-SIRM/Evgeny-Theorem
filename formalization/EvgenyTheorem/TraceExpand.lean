@@ -2419,20 +2419,16 @@ theorem binaryWordExpansionByCount_mem_iff
             | false =>
                 have hpreCount : (pre.filter id).length = r + 1 := by
                   simpa [List.concat_eq_append, List.filter_append] using hcount
-                exact Or.inl (by
-                  simpa [List.concat_eq_append] using
-                    (List.mem_map_of_mem
-                      (f := fun w : List Bool => w ++ [false])
-                      ((ih (r + 1) pre).2 ⟨hpreLen, hpreCount⟩)))
+                exact Or.inl (List.mem_map.mpr
+                  ⟨pre, (ih (r + 1) pre).2 ⟨hpreLen, hpreCount⟩,
+                    (List.concat_eq_append pre false).symm⟩)
             | true =>
                 have hcount' := hcount
                 simp [List.concat_eq_append, List.filter_append] at hcount'
                 have hpreCount : (pre.filter id).length = r := by omega
-                exact Or.inr (by
-                  simpa [List.concat_eq_append] using
-                    (List.mem_map_of_mem
-                      (f := fun w : List Bool => w ++ [true])
-                      ((ih r pre).2 ⟨hpreLen, hpreCount⟩)))
+                exact Or.inr (List.mem_map.mpr
+                  ⟨pre, (ih r pre).2 ⟨hpreLen, hpreCount⟩,
+                    (List.concat_eq_append pre true).symm⟩)
 
 /-- The recursive exact-count word list contains no repetitions. -/
 theorem binaryWordExpansionByCount_nodup (p r : ℕ) :
@@ -4469,8 +4465,7 @@ noncomputable def binaryWordExpansionByCountFinEquiv (p r : ℕ) :
     constructor
     · have hle := List.length_filter_le id word.val
       have hrp : r ≤ p := by
-        rw [← hstats.1, ← hstats.2]
-        exact hle
+        omega
       exact hrp
     · rw [hrepr]
       exact hstats.2
@@ -4533,12 +4528,12 @@ theorem binaryWordExpansionByCount_sum_trace_eq_finStratum
       simp [Word]
     _ = ∑ word ∈ (binaryWordExpansionByCount p r).attach.toFinset,
           Matrix.trace (binaryWordMatrix A B word.val) := by
-      exact List.sum_toFinset
+      exact (List.sum_toFinset
         (fun word : Word =>
-          Matrix.trace (binaryWordMatrix A B word.val)) hnodup
+          Matrix.trace (binaryWordMatrix A B word.val)) hnodup).symm
     _ = ∑ word : Word,
           Matrix.trace (binaryWordMatrix A B word.val) := by
-      simpa [hattach]
+      rw [hattach]
     _ = ∑ w : binaryWordFinStratum p r,
           Matrix.trace (binaryWordMatrix A B (List.ofFn w.val)) := by
       exact Fintype.sum_equiv (binaryWordExpansionByCountFinEquiv p r)
@@ -4551,7 +4546,7 @@ theorem binaryWordExpansionByCount_sum_trace_eq_finStratum
           exact congrArg
             (fun xs : List Bool =>
               Matrix.trace (binaryWordMatrix A B xs))
-            (binaryWordExpansionByCountFinEquiv_word p r word))
+            (binaryWordExpansionByCountFinEquiv_word p r word).symm)
 
 /-- The recursively generated matrix-word stratum is the same finite sum
 as the exact-weight binary-word stratum. This connects the weighted gap

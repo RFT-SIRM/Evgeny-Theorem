@@ -6130,3 +6130,24 @@ It reindexes the vector/offset subtype by
 This is the exact dependency used by the p-fold offset-count theorem for
 `cyclicGapTraceKN`; it preserves all p offsets and makes no periodic-orbit
 identification. Full Lean CI remains the validation gate.
+
+
+## 2026-11-02 — Resolve the five primary Lean errors in the ordered-word bridge
+
+The Lean run for `0b4f682` isolated five primary errors in
+`TraceExpand.lean`. The two recursive-list converse branches now construct
+the exact `List.mem_map` witnesses explicitly; the final equality is
+`(List.concat_eq_append pre bit).symm`, so no tactic attempts to rewrite an
+unrelated metavariable. The `r ≤ p` obligation is discharged by arithmetic
+from the length/count equalities and `List.length_filter_le`, avoiding a
+rewrite through a dependent subtype. The list/Finset sum conversion uses
+the symmetric orientation of `List.sum_toFinset`; after replacing the
+attached list's Finset with `univ`, the equality is closed by that rewrite
+alone. Finally, the finite-equivalence summand equality uses the symmetric
+direction of the reconstructed-word lemma, as required by
+`Fintype.sum_equiv`.
+
+No mathematical definitions or theorem statements were changed. The
+K/(K*N) gap blocks remain `K^(a+1)*N`, and the p distinct offsets remain
+separate. This is a source-level correction only; the next full Lean build
+is the validation gate.
