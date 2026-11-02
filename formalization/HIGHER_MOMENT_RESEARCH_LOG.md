@@ -6407,3 +6407,15 @@ commuted. This closes the r=9 word-level interface only. The remaining
 r=3,5,7 finite-word interfaces and the full ten-stratum p=10 assembly
 remain separate obligations; no H10 recurrence or cancellation is claimed.
 A full Lean build on this exact source SHA is required.
+
+
+## 2026-11-02 — Fix the r=9 orbit-partition command placement
+
+The full Lean build of d01eb18 failed at TraceExpand.lean:4251 before
+checking the r=9 proof: the local set_option maxRecDepth 4096 in command
+had been placed after the documentation comment, where Lean expected the
+declaration itself. Moved the option command before the doc comment and
+left the theorem statement and by decide proof unchanged. No orbit
+representative, orbit cardinality, trace weight, or matrix identity changed.
+A fresh full Lean build is required; this records only the parser-level
+repair and does not claim the r=9 interface is validated.

@@ -4247,9 +4247,11 @@ theorem binaryWordP10GapOrbitPartition8 :
   classical
   decide
 
+-- The finite decider enumerates the nine possible positions of the
+-- unique gap of size two and their cyclic rotations.
+set_option maxRecDepth 4096 in
 /-- The nine-insertion positive compositions form one cyclic orbit:
 the unique gap of size two can occur at any of the nine positions. -/
-set_option maxRecDepth 4096 in
 theorem binaryWordP10GapOrbitPartition9 :
     binaryWordP10PositiveGapListFinset 9 =
       binaryWordP10GapOrbitReps9.biUnion cyclicGapOrbit := by
