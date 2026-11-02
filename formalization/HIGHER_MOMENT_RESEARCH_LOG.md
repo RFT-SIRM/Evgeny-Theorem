@@ -5934,3 +5934,15 @@ valid for periodic gap vectors without dividing by orbit size.
 This completes the explicit p-fold count on the gap side. The matching
 r-fold marked-word decomposition and the weighted identity remain
 outstanding. Full Lean build required.
+
+
+## 2026-11-02 — Correct H10 multiplicity theorem declaration order
+
+The first insertion of the p-fold multiplicity theorem used the first
+`end EvgenyTheorem` in a file containing multiple namespace sections.
+That placed the theorem before the later gap-vector declarations it
+references. Moved the theorem into the final namespace section, after
+the gap-vector product equivalence and iterated-sum theorem. No theorem
+statement or proof was changed. The prior SHA
+`86d8438a0353fb8d549ed579b3edb614c816dc1b` is not a Lean-validated
+checkpoint; full build required.

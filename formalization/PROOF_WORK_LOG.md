@@ -3062,3 +3062,12 @@ independent of the offset and sums over `Fin p`, preserving all p
 offsets even in periodic cases. This completes only the gap-side
 multiplicity. The word-side r-fold count remains to be formalized.
 Full Lean build required.
+
+
+## 2026-11-02 — Correct H10 p-fold theorem source order
+
+Relocated the p-fold multiplicity theorem after its gap-vector and
+iterated-sum dependencies in the final namespace section. The previous
+commit `86d8438a0353fb8d549ed579b3edb614c816dc1b` placed it before
+those declarations because the module contains multiple namespace
+sections. The proof text was not changed. Full Lean build required.
