@@ -2764,6 +2764,31 @@ theorem binaryWordMarkedRotate_length
   simp [binaryWordMarkedRotate]
   omega
 
+/-- The marked cut is exactly a cyclic left rotation of the original word.
+The rotation amount is the length of the prefix through the marked true
+symbol, equivalently the total word length minus the trailing suffix length. -/
+theorem binaryWordMarkedRotate_eq_rotate
+    (pre post : List Bool) :
+    ((pre ++ [true]) ++ post).rotate
+        (((pre ++ [true]) ++ post).length - post.length) =
+      binaryWordMarkedRotate pre post := by
+  have hshift :
+      ((pre ++ [true]) ++ post).length - post.length =
+        (pre ++ [true]).length := by
+    simp only [List.length_append, List.length_cons, List.length_nil]
+    omega
+  calc
+    ((pre ++ [true]) ++ post).rotate
+        (((pre ++ [true]) ++ post).length - post.length) =
+      ((pre ++ [true]) ++ post).rotate (pre ++ [true]).length := by
+        rw [hshift]
+    _ = post ++ (pre ++ [true]) :=
+      List.rotate_append_length_eq (pre ++ [true]) post
+    _ = binaryWordMarkedRotate pre post := by
+      simpa [binaryWordMarkedRotate] using
+        (List.append_assoc post pre [true]).symm
+
+
 /-- The gap list obtained after cutting a word at a marked true letter has
 exactly the original number of true letters, and its total gap size is the
 original number of false letters. The offset is represented by post.length

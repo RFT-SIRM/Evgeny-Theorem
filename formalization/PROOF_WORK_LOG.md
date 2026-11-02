@@ -2769,3 +2769,17 @@ rewrite its length and true count to the original marked word using
 `binaryWordMarkedRotate_length` and `hcount`. This is the smallest
 conceptual proof of the stated result. Fresh full Lean and Python checks
 are required for this correction.
+
+
+## 2026-11-02 — H10 marked-cut rotation identity
+
+Added `binaryWordMarkedRotate_eq_rotate`, identifying the marked cut
+`post ++ pre ++ [true]` with the actual cyclic rotation of
+`(pre ++ [true]) ++ post` by its prefix length
+`(pre ++ [true]).length`, equivalently total length minus `post.length`.
+The proof uses the pinned Mathlib lemma `List.rotate_append_length_eq`
+and list associativity. It makes the offset convention explicit: the
+marked symbol index is `pre.length`; the left-rotation distance is
+`pre.length + 1`; `post.length` is the complementary suffix length.
+This does not yet establish the inverse marked-word/gap-list bijection or
+its multiplicities. A complete Lean build for this change is required.

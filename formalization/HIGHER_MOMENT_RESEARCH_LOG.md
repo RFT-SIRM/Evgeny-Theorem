@@ -5557,3 +5557,24 @@ rewritten using the established `binaryWordMarkedRotate_length` and
 more arithmetic automation. All other statements and declarations are
 unchanged. A new complete Lean build is required; no success is claimed
 until Actions confirms it. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Identify the marked cut with an actual cyclic list rotation
+
+The base commit `555fa853d1dc32dfa12333ce01842049d473ddaa` passed the
+complete Lean build (Actions run `41376710297`). Added
+`binaryWordMarkedRotate_eq_rotate`: for the marked word
+`(pre ++ [true]) ++ post`, moving the marked true symbol to the end is
+exactly `List.rotate` by the amount
+`word.length - post.length = (pre ++ [true]).length`. The proof applies
+Mathlib's `List.rotate_append_length_eq` to the prefix through the marked
+symbol, then uses list associativity. This records the shift convention
+explicitly: the marked symbol's zero-based position is `pre.length`, the
+left-rotation amount is `pre.length + 1`, and `post.length` is the
+complementary trailing-suffix length. Thus `post.length` should not be
+mistaken for the left-rotation amount.
+
+This is a list-level bridge only. The inverse reconstruction of a marked
+word from its decoded gap list and rotation amount, and the exact marked
+multiplicity identity giving \(p/r\), remain open. Full Lean validation
+for this new commit is required. H6 and H8 remain untouched.
