@@ -2783,3 +2783,26 @@ marked symbol index is `pre.length`; the left-rotation distance is
 `pre.length + 1`; `post.length` is the complementary suffix length.
 This does not yet establish the inverse marked-word/gap-list bijection or
 its multiplicities. A complete Lean build for this change is required.
+
+
+## 2026-11-02 — H10 inverse reconstruction from the gap list and offset
+
+Added `binaryWordMarkedRotate_post_length_lt` to bound the suffix offset
+strictly below the total word length, and
+`binaryWordMarkedRotate_rotate_back` to prove that the cut word rotated
+back by that offset is exactly the original marked word. By combining the
+existing decoder round trip with this inverse rotation, proved
+`binaryWordMarkedRotate_decode_reconstruct`: the decoded canonical gap
+encoding plus the suffix offset reconstructs the original binary word
+with its marked true position.
+
+Added the trace bridge
+`binaryWordMatrix_trace_marked_eq_cyclicGapTrace`. It applies the
+previously proved marked-cut trace equality and the exact matrix evaluation
+of a canonical gap encoding, with the ordered matrix factors preserved.
+
+The inverse reconstruction direction and trace transport are now explicit.
+The converse construction for every admissible gap list and offset, its
+uniqueness proof, and the resulting exact \\(p/r\\) multiplicity identity
+remain open. Full Lean validation is required for this commit; H6 and H8
+are unchanged.

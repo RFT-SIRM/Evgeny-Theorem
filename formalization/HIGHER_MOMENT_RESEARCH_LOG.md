@@ -5578,3 +5578,28 @@ This is a list-level bridge only. The inverse reconstruction of a marked
 word from its decoded gap list and rotation amount, and the exact marked
 multiplicity identity giving \(p/r\), remain open. Full Lean validation
 for this new commit is required. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Reconstruct the original H10 marked word from gaps and offset
+
+On the Lean-green base commit `36760d030f9df7e79ad5792cb77027d6778430cd`,
+added the inverse rotation formula
+`binaryWordMarkedRotate_rotate_back`: rotating the cut word
+`post ++ pre ++ [true]` by `post.length` recovers the original word
+`pre ++ [true] ++ post`. Proved that this offset is strictly below the
+original word length, so it is a valid finite position rather than an
+unbounded or ambiguous shift.
+
+Combined this with the already established round-trip decoder to obtain
+`binaryWordMarkedRotate_decode_reconstruct`: the original marked word
+is reconstructed exactly by rotating the canonical encoding of its decoded
+gap list by the suffix offset. Also added
+`binaryWordMatrix_trace_marked_eq_cyclicGapTrace`, expressing the trace
+of every marked word as the cyclic gap trace of the decoded gap list.
+
+This supplies the explicit reconstruction direction and trace transport
+needed for the marked-word/(gap list, offset) correspondence. It does not
+yet establish surjectivity/uniqueness of that correspondence or the global
+multiplicity identity giving the factor \\(p/r\\). The complete Lean
+build is the acceptance check for this source step. H6 and H8 remain
+untouched.

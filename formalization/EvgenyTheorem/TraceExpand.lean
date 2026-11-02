@@ -2789,6 +2789,43 @@ theorem binaryWordMarkedRotate_eq_rotate
         (List.append_assoc post pre [true]).symm
 
 
+/-- The marked cut can be rotated back by the length of the trailing suffix.
+The suffix length is the offset parameter; it lies strictly below the word
+length because the marked true symbol is still present. -/
+theorem binaryWordMarkedRotate_post_length_lt
+    (pre post : List Bool) :
+    post.length < ((pre ++ [true]) ++ post).length := by
+  simp only [List.length_append, List.length_cons, List.length_nil]
+  omega
+
+/-- Rotating the marked cut back by the trailing-suffix length recovers the
+original word, with the distinguished true symbol at its original position. -/
+theorem binaryWordMarkedRotate_rotate_back
+    (pre post : List Bool) :
+    (binaryWordMarkedRotate pre post).rotate post.length =
+      ((pre ++ [true]) ++ post) := by
+  simpa [binaryWordMarkedRotate, List.append_assoc] using
+    (List.rotate_append_length_eq post (pre ++ [true]))
+
+/-- The decoded gap list together with the suffix offset reconstructs the
+original marked word exactly. This is the inverse reconstruction formula
+needed for a bijection between marked words and (gap list, offset) data. -/
+theorem binaryWordMarkedRotate_decode_reconstruct
+    (pre post : List Bool) :
+    (binaryWordGapEncoding
+      (binaryWordGapDecode (binaryWordMarkedRotate pre post))).rotate
+        post.length =
+      ((pre ++ [true]) ++ post) := by
+  have hround :
+      binaryWordGapEncoding
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post)) =
+          binaryWordMarkedRotate pre post := by
+    simpa [binaryWordMarkedRotate] using
+      (binaryWordGapDecode_roundTrip_append_true (post ++ pre))
+  rw [hround]
+  exact binaryWordMarkedRotate_rotate_back pre post
+
+
 /-- The gap list obtained after cutting a word at a marked true letter has
 exactly the original number of true letters, and its total gap size is the
 original number of false letters. The offset is represented by post.length
@@ -2942,5 +2979,37 @@ theorem binaryWordGapEncoding_trace_eq_cyclicGapTrace
       cyclicGapTrace K N gaps := by
   rw [binaryWordMatrix_gapEncoding]
   rfl
+
+
+/-- Every marked binary word has the same trace as the cyclic gap trace of
+its decoded cut. The original matrix factors are not rearranged: first use
+trace cyclicity for the single marked cut, then evaluate its canonical gap
+encoding as the ordered product of K^a * N blocks. -/
+theorem binaryWordMatrix_trace_marked_eq_cyclicGapTrace
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (pre post : List Bool) :
+    Matrix.trace (binaryWordMatrix K N ((pre ++ [true]) ++ post)) =
+      cyclicGapTrace K N
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post)) := by
+  have hround :
+      binaryWordGapEncoding
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post)) =
+          binaryWordMarkedRotate pre post := by
+    simpa [binaryWordMarkedRotate] using
+      (binaryWordGapDecode_roundTrip_append_true (post ++ pre))
+  calc
+    Matrix.trace (binaryWordMatrix K N ((pre ++ [true]) ++ post)) =
+        Matrix.trace (binaryWordMatrix K N
+          (binaryWordMarkedRotate pre post)) :=
+      binaryWordMatrix_trace_marked_rotate K N pre post
+    _ = Matrix.trace (binaryWordMatrix K N
+          (binaryWordGapEncoding
+            (binaryWordGapDecode (binaryWordMarkedRotate pre post))) ) :=
+      congrArg
+        (fun w : List Bool => Matrix.trace (binaryWordMatrix K N w))
+        hround.symm
+    _ = cyclicGapTrace K N
+          (binaryWordGapDecode (binaryWordMarkedRotate pre post)) :=
+      binaryWordGapEncoding_trace_eq_cyclicGapTrace K N _
 
 end EvgenyTheorem
