@@ -6208,3 +6208,20 @@ cyclic quotient of the original words has been introduced.
 
 Full Lean build required before using these bridge theorems to rewrite
 the coefficients in the Sierpinski boundary formulas.
+
+ 
+## 2026-11-02 — Normalize H10 marked-word sums to exact cyclic-orbit weights
+
+The five p=10 even strata now have normalized word-to-orbit identities:
+for r = 2, 4, 6, 8, 10, the trace sum over exact-weight binary words
+equals the sum over canonical positive-gap cyclic representatives with
+coefficient (10/r) times the true distinct orbit cardinality. This is
+derived from the previously proved marked-cut identity and the five
+finite orbit partitions; it does not divide by a cyclic orbit size.
+Consequently the period-two, period-three, and period-four classes
+produce coefficient five, while full orbits produce coefficient ten
+(and the unique ten-insertion class coefficient one). This is the
+precise normalization needed to compare the combinatorial orbit sums
+with the existing H10 boundary-stratum lists. No H10 cross-stratum
+cancellation or all-level recurrence is claimed yet. Full Lean build
+required for this source revision.
