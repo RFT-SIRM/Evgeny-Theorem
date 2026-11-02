@@ -2905,3 +2905,20 @@ fixed-stratum declarations and their docstrings. Moved that comment to
 the theorem itself. No proof term, definition, or mathematical statement
 was changed. The fixed-(p,r) equivalence remains unverified until a fresh
 full Lean build passes; H6 and H8 are untouched.
+
+
+## 2026-11-02 — Correct the fixed-(p,r) restriction proof obligations
+
+Actions run `41400048495` for `99046a0` failed in
+`TraceExpand.lean`, not solely because of documentation placement.
+Lean reported a malformed `calc` step around the rotated encoding length,
+a decoder rewrite that did not match the let-bound cut, and two type
+mismatches when reusing the unrestricted equivalence inverse laws.
+
+Repaired those specific obligations: parenthesized the rotated list
+before taking its length; made the decoding equality explicit and
+transported it with `congrArg List.length`; and changed the subtype
+inverse goals to the underlying unrestricted map equalities before
+using the established inverse laws. No new mathematical assertions or
+new declarations were added. This correction requires a fresh complete
+Lean build. H6 and H8 remain untouched.

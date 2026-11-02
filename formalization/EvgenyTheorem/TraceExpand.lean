@@ -3292,7 +3292,7 @@ noncomputable def binaryWordGapOffsetToMarkedCutStratum
       ((cut.1 ++ [true]) ++ cut.2).length = p := by
     calc
       ((cut.1 ++ [true]) ++ cut.2).length =
-          (binaryWordGapEncoding gaps).rotate offset |>.length := by
+          ((binaryWordGapEncoding gaps).rotate offset).length := by
             rw [← hspec.1]
       _ = (binaryWordGapEncoding gaps).length := by simp
       _ = gaps.sum + gaps.length := binaryWordGapEncoding_length gaps
@@ -3304,7 +3304,11 @@ noncomputable def binaryWordGapOffsetToMarkedCutStratum
     calc
       _ = (binaryWordGapDecode (binaryWordMarkedRotate cut.1 cut.2)).length :=
         hstats.1.symm
-      _ = gaps.length := by rw [hspec.2.2]
+      _ = gaps.length := by
+        have hdecode :
+            binaryWordGapDecode (binaryWordMarkedRotate cut.1 cut.2) = gaps := by
+          simpa [cut] using hspec.2.2
+        exact congrArg List.length hdecode
       _ = r := hdata.2.1
   exact ⟨cut, hdata.1, hlen, hcount⟩
 
@@ -3320,10 +3324,16 @@ noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
   left_inv := by
     intro cut
     apply Subtype.ext
+    change
+      binaryWordGapOffsetToMarkedCut
+        (binaryWordMarkedCutToGapOffset cut.val) = cut.val
     exact binaryWordMarkedCutGapOffsetEquiv.left_inv cut.val
   right_inv := by
     intro data
     apply Subtype.ext
+    change
+      binaryWordMarkedCutToGapOffset
+        (binaryWordGapOffsetToMarkedCut data.val) = data.val
     exact binaryWordMarkedCutGapOffsetEquiv.right_inv data.val
 
 

@@ -5742,3 +5742,30 @@ statements, and proofs unchanged. No mathematical claim is added or
 weakened. This is a parser/source-order correction only; a new complete
 Lean build is required before this fixed-stratum equivalence is treated
 as validated. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair the actual fixed-stratum Lean proof failures
+
+The full Lean build for commit `99046a0a887d697af019952bea114f5dcde2aef9`
+failed in `TraceExpand.lean`. The previous diagnosis that this was
+only a docstring-placement issue was incorrect: moving the comment did
+not address the four proof errors reported by Lean.
+
+The actual diagnostics were:
+1. The `calc` expression for the length of a rotated encoding used
+   pipeline notation before `.length`, which Lean parsed as an invalid
+   relation. Replaced it with explicit parentheses around the rotated
+   list before taking its length.
+2. The decoder equality in the inverse stratum proof was rewritten
+   against an expression containing a local `let cut`, but the spec
+   theorem still exposed the chosen inverse cut. Added an explicit
+   `hdecode` equality, using `simpa [cut]`, then mapped it through
+   `List.length`.
+3. The two inverse fields of the restricted equivalence were given the
+   unrestricted equivalence laws without first exposing the underlying
+   subtype values. Added explicit `change` steps to state the exact
+   unrestricted left- and right-inverse goals before applying those laws.
+
+No new mathematical statement is introduced. The fixed-stratum
+equivalence remains unverified until the next complete Lean build
+passes. H6 and H8 are untouched.
