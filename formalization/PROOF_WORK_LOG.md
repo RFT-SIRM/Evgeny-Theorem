@@ -2756,3 +2756,16 @@ the rotated and original words, and proves the generic Bool filter-length
 partition needed for the final subtraction. No theorem statement changed.
 A new full Lean build and Python 3.11/3.12 Fast/Slow validation are required.
 H6 and H8 remain unchanged.
+
+
+## 2026-11-02 — Reuse the cut-word statistics theorem directly
+
+The previous full Lean build showed one remaining failure in
+`binaryWordMarkedRotate_gap_stats`: `omega` could not derive the final
+natural subtraction from the explicit true/false filter identities. Replace
+the redundant false-filter route with a direct application of the already
+compiled `binaryWordGapDecode_stats_append_true` to the rotated word, then
+rewrite its length and true count to the original marked word using
+`binaryWordMarkedRotate_length` and `hcount`. This is the smallest
+conceptual proof of the stated result. Fresh full Lean and Python checks
+are required for this correction.

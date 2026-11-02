@@ -2805,47 +2805,20 @@ theorem binaryWordMarkedRotate_gap_stats
         simpa [gaps] using
           (binaryWordGapDecode_true_count (binaryWordMarkedRotate pre post))
       _ = (((pre ++ [true]) ++ post).filter id).length := hcount
-  have hgapFalse :
-      gaps.sum =
-        ((binaryWordMarkedRotate pre post).filter (fun bit => !bit)).length := by
-    have h := congrArg
-      (fun word : List Bool => (word.filter (fun bit => !bit)).length) hround
-    rw [binaryWordGapEncoding_false_count] at h
-    exact h
-  have hcutFalse :
-      ((binaryWordMarkedRotate pre post).filter (fun bit => !bit)).length =
-        (post.filter (fun bit => !bit)).length +
-          (pre.filter (fun bit => !bit)).length := by
-    simp [binaryWordMarkedRotate, List.filter_append]
-  have hwordFalse :
-      (((pre ++ [true]) ++ post).filter (fun bit => !bit)).length =
-        (pre.filter (fun bit => !bit)).length +
-          (post.filter (fun bit => !bit)).length := by
-    simp [List.filter_append]
-  have hfalse :
-      ((binaryWordMarkedRotate pre post).filter (fun bit => !bit)).length =
-        (((pre ++ [true]) ++ post).filter (fun bit => !bit)).length := by
-    calc
-      _ = (post.filter (fun bit => !bit)).length +
-            (pre.filter (fun bit => !bit)).length := hcutFalse
-      _ = (pre.filter (fun bit => !bit)).length +
-            (post.filter (fun bit => !bit)).length := by omega
-      _ = _ := hwordFalse.symm
-  have hgapFalseOriginal :
-      gaps.sum =
-        (((pre ++ [true]) ++ post).filter (fun bit => !bit)).length :=
-    hgapFalse.trans hfalse
-  have hpartition (word : List Bool) :
-      (word.filter id).length +
-        (word.filter (fun bit => !bit)).length = word.length := by
-    induction word with
-    | nil => simp
-    | cons bit rest ih =>
-        cases bit <;> simp_all <;> omega
-  have hpartitionWord := hpartition ((pre ++ [true]) ++ post)
+  have hstats :=
+    binaryWordGapDecode_stats_append_true (post ++ pre)
   constructor
   · exact hgapCount
-  · omega
+  · calc
+      gaps.sum =
+          (binaryWordMarkedRotate pre post).length -
+            ((binaryWordMarkedRotate pre post).filter id).length := by
+        simpa [gaps, binaryWordMarkedRotate] using hstats.2
+      _ = ((pre ++ [true]) ++ post).length -
+            (((pre ++ [true]) ++ post).filter id).length := by
+        rw [binaryWordMarkedRotate_length, hcount]
+
+
 
 
 /-- The trace of a binary matrix word is unchanged when a marked true letter

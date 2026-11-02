@@ -5537,3 +5537,23 @@ closes the subtraction statement. The theorem statement and all preceding
 mathematical definitions are unchanged. This repair commit needs a fresh
 full Lean build and Python 3.11/3.12 Fast/Slow checks. H6 and H8 remain
 untouched.
+
+
+## 2026-11-02 — Simplify the final H10 gap-statistics proof
+
+The full Lean build for `7f31b6ab5b433f3a46f4dc10a607091e51faf6de`
+reduced the H10 statistics failure to one goal: the final `omega` call in
+`binaryWordMarkedRotate_gap_stats` could not connect a subtraction with
+the independently maintained true/false-filter counts. The preceding
+explicit filter lemmas compiled; the failure was localized to the final
+arithmetic step.
+
+Removed the redundant false-filter accounting from that theorem. It now
+reuses the already proved and fully compiled
+`binaryWordGapDecode_stats_append_true` on the rotated word
+`(post ++ pre) ++ [true]`. The remaining right-hand expression is
+rewritten using the established `binaryWordMarkedRotate_length` and
+`hcount` facts. This removes the failing `omega` step rather than adding
+more arithmetic automation. All other statements and declarations are
+unchanged. A new complete Lean build is required; no success is claimed
+until Actions confirms it. H6 and H8 remain untouched.
