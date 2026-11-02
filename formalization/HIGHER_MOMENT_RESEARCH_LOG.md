@@ -6347,3 +6347,24 @@ argument still named the old tuple even though the fifth trace and local
 proof had been corrected. That target argument is now updated to the same
 period-four representative. The failure was localized to this statement
 mismatch; the generic geometric reduction itself remained unchanged.
+
+
+## 2026-11-02 — Complete the missing H10 endpoint word strata
+
+Added the exact-count r=1 word-stratum vanishing theorem. The positive-gap
+marked-word identity reduces the complete binary-word sum to the single
+gap vector [9], whose positive gap is [10]. Its cyclic trace is
+Tr(K^10 N), and the existing block-diagonal single-pairing lemma makes it
+zero without any additional OAnti assumption.
+
+Added the exact-count r=10 word-stratum bridge. The existing orbit-average
+certificate identifies its unique word with the unique period-one cyclic
+gap orbit (orbit size one and coefficient one); the existing Sierpinski
+top-stratum theorem then gives the pointwise fifth-power diagonal sum.
+No geometric support proof or matrix-factor order was changed.
+
+Together with the previously established r=3,5,7,9 vanishing and the
+r=2,4,6,8 diagonal bridges, this closes the endpoint word/diagonal
+interfaces needed before the full H10 stratum aggregation. It does not
+yet assert cancellation among the even strata or an H10 recurrence.
+A full Lean build on this exact source SHA is required.

@@ -6304,4 +6304,97 @@ theorem sg_trace_p10_eight_N_word_stratum_diagonal
         h1, h2, h3, h4, h5, hcoef10, hcoef5]
       ring
 
+
+/-- The exact-count p=10 one-N word stratum vanishes. The marked-gap
+identity reduces its full binary-word sum to the unique positive gap [10],
+and the generic single-pairing trace lemma kills that term because K is
+block diagonal across glued copies. -/
+theorem sg_trace_p10_one_N_word_stratum_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    (∑ w : binaryWordFinStratum 10 1,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 1,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hweighted :=
+    binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 1
+  have hgap : ∀ gaps : binaryWordGapVectorStratum 10 1,
+      List.ofFn (fun i : Fin 1 => (gaps.val i).val) = [9] := by
+    intro gaps
+    have hvalue : (gaps.val 0).val = 9 := by
+      simpa using gaps.property.2
+    simp [hvalue]
+  have htrace : ∀ gaps : binaryWordGapVectorStratum 10 1,
+      cyclicGapTrace K N
+        ((List.ofFn (fun i : Fin 1 => (gaps.val i).val)).map Nat.succ) = 0 := by
+    intro gaps
+    rw [hgap gaps]
+    simpa [cyclicGapTrace] using
+      (trace_pow_mul_N_zero (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 10)
+  calc
+    _ = (1 : ℂ) * _ := by simp
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 1,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 1 => (gaps.val i).val)).map Nat.succ) :=
+      hweighted
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 1, (0 : ℂ) := by
+      congr 1
+      apply Finset.sum_congr rfl
+      intro gaps hgaps
+      exact htrace gaps
+    _ = 0 := by simp
+
+
+/-- Connect the exact-count p=10 ten-N word stratum to the already-proved
+pointwise fifth-power diagonal formula. The unique cyclic gap orbit has
+cardinality one, so the normalized word/orbit coefficient is exactly one;
+the geometric boundary proof is reused unchanged. -/
+theorem sg_trace_p10_ten_N_word_stratum_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    ∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o x x *
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ x, if (sgGlue m).g x then
+      (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0
+  have hcard :
+      (cyclicGapOrbit (List.replicate 10 1)).card = 1 := by
+    decide
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps10,
+        ((10 : ℂ) / (10 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage10 K N
+    _ = Matrix.trace
+        (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 0) := by
+      simp [binaryWordP10GapOrbitReps10, hcard, cyclicGapTrace,
+        Matrix.mul_assoc, pow_one, pow_zero, Matrix.one_mul, Matrix.mul_one]
+    _ = ∑ x, if (sgGlue m).g x then
+          (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0 := by
+      simpa [K] using
+        (sg_trace_p10_top_stratum_diagonal_fifth m hm θ ax o hanti)
+
 end EvgenyTheorem
