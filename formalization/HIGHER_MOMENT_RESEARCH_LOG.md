@@ -6067,3 +6067,22 @@ for the p=10 stratum assembly. It does not establish cancellation between
 different even strata, adjacent-level boundary stabilization, or the
 all-angle H10 recurrence. The new declarations require a complete Lean
 build before they are considered validated. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Correct the ordered-expansion bridge placement and list inverses
+
+The full Lean run for `b9f1d752692820dca57fd3511acec4af1e593c22`
+reported three root proof errors in the recursive list characterization and
+a declaration-order error: the bridge to `binaryWordFinStratum` and
+`binaryWordMatrix` had been inserted before those declarations. The later
+unknown-identifier diagnostics were consequences of this early placement.
+
+The correction keeps the list-only characterization and Nodup proof beside
+the recursive list definition, removes the redundant `omega` after
+`simp` already closes the impossible true-final-bit case, and discharges
+the two append/concat reconstruction equalities with the exact
+`List.concat_eq_append` theorem. The dependent Fin-word equivalence and
+trace-sum bridge are moved intact to the final section, after
+`binaryWordFinStratum`, `binaryWordMatrix`, the gap-vector model, and
+the weighted identity have all been declared. The theorem statements and
+mathematical claims are unchanged. A new full Lean build is required.
