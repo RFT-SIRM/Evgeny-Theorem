@@ -6302,6 +6302,6 @@ theorem sg_trace_p10_eight_N_word_stratum_diagonal
       rw [← hdiag, ← hboundary]
       simp [binaryWordP10GapOrbitReps8, cyclicGapTrace, Matrix.mul_assoc,
         h1, h2, h3, h4, h5, hcoef10, hcoef5]
-      ring
+      ring_nf
 
 end EvgenyTheorem
