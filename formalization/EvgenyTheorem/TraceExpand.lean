@@ -2419,14 +2419,20 @@ theorem binaryWordExpansionByCount_mem_iff
             | false =>
                 have hpreCount : (pre.filter id).length = r + 1 := by
                   simpa [List.concat_eq_append, List.filter_append] using hcount
-                exact Or.inl (List.mem_map.mpr
-                  ⟨pre, (ih (r + 1) pre).2 ⟨hpreLen, hpreCount⟩, by rw [List.concat_eq_append]⟩)
+                exact Or.inl (by
+                  simpa [List.concat_eq_append] using
+                    (List.mem_map_of_mem
+                      (f := fun w : List Bool => w ++ [false])
+                      ((ih (r + 1) pre).2 ⟨hpreLen, hpreCount⟩)))
             | true =>
                 have hcount' := hcount
                 simp [List.concat_eq_append, List.filter_append] at hcount'
                 have hpreCount : (pre.filter id).length = r := by omega
-                exact Or.inr (List.mem_map.mpr
-                  ⟨pre, (ih r pre).2 ⟨hpreLen, hpreCount⟩, by rw [List.concat_eq_append]⟩)
+                exact Or.inr (by
+                  simpa [List.concat_eq_append] using
+                    (List.mem_map_of_mem
+                      (f := fun w : List Bool => w ++ [true])
+                      ((ih r pre).2 ⟨hpreLen, hpreCount⟩)))
 
 /-- The recursive exact-count word list contains no repetitions. -/
 theorem binaryWordExpansionByCount_nodup (p r : ℕ) :
@@ -4179,6 +4185,224 @@ theorem binaryWordFinStratum_weighted_trace_eq_gap_vector_sum
 
 
 
+
+/-- The gap trace for the actual two choices K and K*N in the expansion
+of (K + K*N)^p. A true position contributes one K before its N, so a gap
+of a false positions gives the block K^(a+1)*N. -/
+def cyclicGapTraceKN {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) : ℂ :=
+  Matrix.trace ((gaps.map (fun a => K ^ (a + 1) * N)).prod)
+
+/-- Encoding the false-run/true-letter gap word with true evaluated as K*N
+produces the K^(a+1)*N blocks of the actual K/(K*N) expansion. -/
+theorem binaryWordMatrix_KN_gapEncoding
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) :
+    binaryWordMatrix K (K * N) (binaryWordGapEncoding gaps) =
+      (gaps.map (fun a => K ^ (a + 1) * N)).prod := by
+  rw [binaryWordMatrix_gapEncoding]
+  apply congrArg List.prod
+  apply List.map_congr_left
+  intro a ha
+  calc
+    K ^ a * (K * N) = (K ^ a * K) * N := by
+      rw [← Matrix.mul_assoc]
+    _ = K ^ (a + 1) * N := by
+      rw [pow_succ]
+
+/-- The canonical gap word for the K/(K*N) factor alphabet has exactly
+the corresponding cyclic gap trace. -/
+theorem binaryWordMatrix_KN_gapEncoding_trace_eq
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) :
+    Matrix.trace
+      (binaryWordMatrix K (K * N) (binaryWordGapEncoding gaps)) =
+        cyclicGapTraceKN K N gaps := by
+  rw [binaryWordMatrix_KN_gapEncoding]
+  rfl
+
+/-- Marking a K*N letter and rotating it to the end changes only the
+cyclic starting point. This is the trace bridge for the actual H10 alphabet. -/
+theorem binaryWordMatrix_trace_marked_eq_cyclicGapTrace_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (pre post : List Bool) :
+    Matrix.trace
+      (binaryWordMatrix K (K * N) ((pre ++ [true]) ++ post)) =
+    cyclicGapTraceKN K N
+      (binaryWordGapDecode (binaryWordMarkedRotate pre post)) := by
+  have hround :
+      binaryWordGapEncoding
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post)) =
+          binaryWordMarkedRotate pre post := by
+    simpa [binaryWordMarkedRotate] using
+      (binaryWordGapDecode_roundTrip_append_true (post ++ pre))
+  calc
+    Matrix.trace
+        (binaryWordMatrix K (K * N) ((pre ++ [true]) ++ post)) =
+        Matrix.trace
+          (binaryWordMatrix K (K * N)
+            (binaryWordMarkedRotate pre post)) :=
+      binaryWordMatrix_trace_marked_rotate K (K * N) pre post
+    _ = Matrix.trace
+          (binaryWordMatrix K (K * N)
+            (binaryWordGapEncoding
+              (binaryWordGapDecode (binaryWordMarkedRotate pre post))) ) :=
+      congrArg
+        (fun w : List Bool =>
+          Matrix.trace (binaryWordMatrix K (K * N) w))
+        hround.symm
+    _ = cyclicGapTraceKN K N
+          (binaryWordGapDecode (binaryWordMarkedRotate pre post)) :=
+      binaryWordMatrix_KN_gapEncoding_trace_eq K N _
+
+/-- The marked-cut trace sum for the actual K/(K*N) alphabet reindexes to
+gap-offset traces. Offsets are retained, including for periodic words. -/
+theorem binaryWordMarkedCutStratum_sum_trace_eq_gapOffsetStratum_sum_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ cut : binaryWordMarkedCutStratum p r,
+      Matrix.trace
+        (binaryWordMatrix K (K * N)
+          ((cut.val.1 ++ [true]) ++ cut.val.2))) =
+    ∑ data : binaryWordGapOffsetStratum p r,
+      cyclicGapTraceKN K N data.val.val.1 := by
+  classical
+  let e := binaryWordMarkedCutGapOffsetStratumEquiv p r
+  exact Fintype.sum_equiv e
+    (fun cut =>
+      Matrix.trace
+        (binaryWordMatrix K (K * N)
+          ((cut.val.1 ++ [true]) ++ cut.val.2)))
+    (fun data => cyclicGapTraceKN K N data.val.val.1)
+    (by
+      intro cut
+      rcases cut with ⟨⟨pre, post⟩, hcut⟩
+      have hvalue :
+          (e ⟨(pre, post), hcut⟩).val.val.1 =
+            (binaryWordMarkedCutToGapOffset (pre, post)).val.1 := by
+        rfl
+      rw [hvalue]
+      exact binaryWordMatrix_trace_marked_eq_cyclicGapTrace_KN
+        K N pre post)
+
+/-- Each exact-count word contributes exactly r copies to the marked-cut
+sum for the K/(K*N) alphabet. -/
+theorem binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ cut : binaryWordMarkedCutStratum p r,
+      Matrix.trace
+        (binaryWordMatrix K (K * N)
+          ((cut.val.1 ++ [true]) ++ cut.val.2))) =
+      (r : ℂ) *
+        ∑ w : binaryWordFinStratum p r,
+          Matrix.trace
+            (binaryWordMatrix K (K * N) (List.ofFn w.val)) := by
+  classical
+  calc
+    _ = ∑ cut : binaryWordMarkedCutStratum p r,
+          Matrix.trace
+            (binaryWordMatrix K (K * N)
+              (List.ofFn (binaryWordMarkedCutFinEquiv p r cut).1.val)) := by
+      apply Finset.sum_congr rfl
+      intro cut _
+      rw [← binaryWordMarkedCutFinEquiv_word p r cut]
+    _ = (r : ℂ) *
+          ∑ w : binaryWordFinStratum p r,
+            Matrix.trace
+              (binaryWordMatrix K (K * N) (List.ofFn w.val)) := by
+      exact binaryWordMarkedCutStratum_sum_eq_r_mul_word_sum p r
+        (fun w =>
+          Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)))
+
+/-- Reindex the vector/offset product by the actual K/(K*N) gap trace. -/
+theorem binaryWordGapOffsetStratum_sum_trace_eq_vector_sum_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ data : binaryWordGapOffsetStratum p r,
+      cyclicGapTraceKN K N data.val.val.1) =
+    ∑ data : binaryWordGapOffsetVectorStratum p r,
+      cyclicGapTraceKN K N
+        (List.ofFn (fun i : Fin r => (data.val.1 i).val)) := by
+  classical
+  exact Fintype.sum_equiv (binaryWordGapOffsetVectorEquiv p r)
+    (fun data => cyclicGapTraceKN K N data.val.val.1)
+    (fun data => cyclicGapTraceKN K N
+      (List.ofFn (fun i : Fin r => (data.val.1 i).val)))
+    (by
+      intro data
+      rcases data with ⟨⟨⟨gaps, offset⟩, hoffset⟩, hrp, hlen, hsum⟩
+      simp [binaryWordGapOffsetVectorEquiv,
+        binaryWordGapListToFinVector_ofFn])
+
+/-- Separating the offset from the gap vector gives exactly p copies of
+each K/(K*N) gap trace, without quotienting periodic tuples. -/
+theorem binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ data : binaryWordGapOffsetVectorStratum p r,
+      cyclicGapTraceKN K N
+        (List.ofFn (fun i : Fin r => (data.val.1 i).val))) =
+    (p : ℂ) *
+      ∑ gaps : binaryWordGapVectorStratum p r,
+        cyclicGapTraceKN K N
+          (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+  classical
+  rw [binaryWordGapOffsetVectorStratum_sum_trace_eq_gap_sum_offsets_KN]
+  calc
+    _ = ∑ gaps : binaryWordGapVectorStratum p r,
+          (p : ℂ) *
+            cyclicGapTraceKN K N
+              (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+      apply Finset.sum_congr rfl
+      intro gaps hgaps
+      simp
+    _ = (p : ℂ) *
+          ∑ gaps : binaryWordGapVectorStratum p r,
+            cyclicGapTraceKN K N
+              (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+      rw [Finset.mul_sum]
+
+/-- The exact r-fold and p-fold multiplicities for the K/(K*N) words in
+the expansion of (K + K*N)^p. The gap block includes the K attached to
+each selected K*N letter, hence its exponent is a+1. -/
+theorem binaryWordFinStratum_weighted_trace_eq_gap_vector_sum_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (r : ℂ) *
+      ∑ w : binaryWordFinStratum p r,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (p : ℂ) *
+      ∑ gaps : binaryWordGapVectorStratum p r,
+        cyclicGapTraceKN K N
+          (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+  calc
+    (r : ℂ) *
+        ∑ w : binaryWordFinStratum p r,
+          Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+      ∑ cut : binaryWordMarkedCutStratum p r,
+        Matrix.trace
+          (binaryWordMatrix K (K * N)
+            ((cut.val.1 ++ [true]) ++ cut.val.2)) :=
+      (binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum_KN
+        K N p r).symm
+    _ = ∑ data : binaryWordGapOffsetStratum p r,
+          cyclicGapTraceKN K N data.val.val.1 :=
+      binaryWordMarkedCutStratum_sum_trace_eq_gapOffsetStratum_sum_KN
+        K N p r
+    _ = ∑ data : binaryWordGapOffsetVectorStratum p r,
+          cyclicGapTraceKN K N
+            (List.ofFn (fun i : Fin r => (data.val.1 i).val)) :=
+      binaryWordGapOffsetStratum_sum_trace_eq_vector_sum_KN
+        K N p r
+    _ = (p : ℂ) *
+          ∑ gaps : binaryWordGapVectorStratum p r,
+            cyclicGapTraceKN K N
+              (List.ofFn (fun i : Fin r => (gaps.val i).val)) :=
+      binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum_KN
+        K N p r
+
+
 /-- Convert a length-p Boolean list to its Fin-indexed word without changing
 the order of its positions. -/
 def binaryWordListToFin (p : ℕ) (word : List Bool)
@@ -4208,9 +4432,11 @@ noncomputable def binaryWordExpansionByCountFinEquiv (p r : ℕ) :
     have hrepr := binaryWordListToFin_ofFn p word.val hstats.1
     refine ⟨w, ?_⟩
     constructor
-    · have hpartition :=
-        List.length_eq_length_filter_add (l := word.val) id
-      omega
+    · have hle := List.length_filter_le id word.val
+      have hrp : r ≤ p := by
+        rw [← hstats.1, ← hstats.2]
+        exact hle
+      exact hrp
     · rw [hrepr]
       exact hstats.2
   invFun word := by
@@ -4228,7 +4454,7 @@ noncomputable def binaryWordExpansionByCountFinEquiv (p r : ℕ) :
   right_inv word := by
     apply Subtype.ext
     funext i
-    simp [binaryWordListToFin, List.get_ofFn]
+    simp [binaryWordListToFin]
 
 /-- Reconstructing a list from its finite-word image under the equivalence
 returns the original list exactly. -/
@@ -4272,11 +4498,12 @@ theorem binaryWordExpansionByCount_sum_trace_eq_finStratum
       simp [Word]
     _ = ∑ word ∈ (binaryWordExpansionByCount p r).attach.toFinset,
           Matrix.trace (binaryWordMatrix A B word.val) := by
-      exact List.sum_toFinset _ hnodup
+      exact List.sum_toFinset
+        (fun word : Word =>
+          Matrix.trace (binaryWordMatrix A B word.val)) hnodup
     _ = ∑ word : Word,
           Matrix.trace (binaryWordMatrix A B word.val) := by
-      rw [hattach]
-      simp
+      simpa [hattach]
     _ = ∑ w : binaryWordFinStratum p r,
           Matrix.trace (binaryWordMatrix A B (List.ofFn w.val)) := by
       exact Fintype.sum_equiv (binaryWordExpansionByCountFinEquiv p r)
@@ -4286,8 +4513,10 @@ theorem binaryWordExpansionByCount_sum_trace_eq_finStratum
           Matrix.trace (binaryWordMatrix A B (List.ofFn w.val)))
         (by
           intro word
-          congr 1
-          exact binaryWordExpansionByCountFinEquiv_word p r word)
+          exact congrArg
+            (fun xs : List Bool =>
+              Matrix.trace (binaryWordMatrix A B xs))
+            (binaryWordExpansionByCountFinEquiv_word p r word))
 
 /-- The recursively generated matrix-word stratum is the same finite sum
 as the exact-weight binary-word stratum. This connects the weighted gap
@@ -4302,7 +4531,8 @@ theorem trace_orderedWordExpansionByCount_eq_binaryWordFinStratum_sum
   exact binaryWordExpansionByCount_sum_trace_eq_finStratum A B p r
 
 /-- Each exact-count stratum of the actual ordered expansion K + K*N
-satisfies the weighted gap identity needed for the tenth-moment assembly. -/
+satisfies the corrected weighted gap identity. Every selected K*N contributes
+its leading K, so the gap blocks are K^(a+1)*N. -/
 theorem trace_orderedWordExpansionByCount_weighted_gap_identity
     {n : Type*} [Fintype n] [DecidableEq n]
     (K N : Matrix n n ℂ) (p r : ℕ) :
@@ -4310,10 +4540,10 @@ theorem trace_orderedWordExpansionByCount_weighted_gap_identity
       ((orderedWordExpansionByCount K (K * N) p r).map Matrix.trace).sum =
     (p : ℂ) *
       ∑ gaps : binaryWordGapVectorStratum p r,
-        cyclicGapTrace K N
+        cyclicGapTraceKN K N
           (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
   rw [trace_orderedWordExpansionByCount_eq_binaryWordFinStratum_sum]
-  exact binaryWordFinStratum_weighted_trace_eq_gap_vector_sum K N p r
+  exact binaryWordFinStratum_weighted_trace_eq_gap_vector_sum_KN K N p r
 
 
 end EvgenyTheorem

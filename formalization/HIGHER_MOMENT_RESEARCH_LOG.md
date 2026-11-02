@@ -6086,3 +6086,36 @@ trace-sum bridge are moved intact to the final section, after
 `binaryWordFinStratum`, `binaryWordMatrix`, the gap-vector model, and
 the weighted identity have all been declared. The theorem statements and
 mathematical claims are unchanged. A new full Lean build is required.
+
+
+## 2026-11-02 — Correct the H10 alphabet bridge and its gap weights
+
+The Actions log for `3c2f37b` exposed five source errors. Two inverse-branch
+membership witnesses used a rewrite against an equality metavariable instead
+of constructing membership with `List.mem_map_of_mem`. The finite-word
+equivalence used an irrelevant length-partition lemma; the required
+`r ≤ p` follows directly from `List.length_filter_le`. The trace-sum
+conversion now supplies the trace function explicitly to
+`List.sum_toFinset`, removes a redundant tactic after the subtype-sum
+rewrite, and uses `congrArg` on the reconstructed word for the finite-sum
+transport.
+
+More importantly, the failed final theorem revealed a mathematical mismatch:
+`binaryWordFinStratum_weighted_trace_eq_gap_vector_sum K N` describes the
+alphabet K/N, while the actual ordered expansion is K/(K*N). These are not
+interchangeable. In the K/(K*N) alphabet, a true position contributes
+`K*N`; after cutting and rotating that marked position, a gap of a false
+run of length a gives the block `K^(a+1)*N`. Therefore the H10 gap trace is
+now explicitly `cyclicGapTraceKN`, with blocks `K^(a+1)*N`.
+
+Added the matching marked-cut trace transport, marked-word r-fold sum,
+gap-offset/vector transport, and p-fold offset identity for this exact
+alphabet. The actual ordered-stratum theorem now concludes with
+`binaryWordFinStratum_weighted_trace_eq_gap_vector_sum_KN`, not the
+older K/N identity. The older K/N identity is retained unchanged for its
+original alphabet. No cyclic rotations are quotiented: all p offsets remain
+separate, so periodic words keep their exact multiplicity.
+
+This is a proof correction to the planned final H10 interface, not yet an
+H10 closure. A full Lean build of the new block is required before any
+further p=10 stratum assembly.
