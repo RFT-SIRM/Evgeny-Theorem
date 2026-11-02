@@ -2043,6 +2043,69 @@ theorem trace_orderedWordExpansion_eight_cyclic
   ]
   ring
 
+/-- Gap vectors without a marked cyclic offset. -/
+def binaryWordGapVectorStratum (p r : ℕ) : Type :=
+  {v : Fin r → Fin (p - r + 1) //
+    r ≤ p ∧ (List.ofFn (fun i : Fin r => (v i).val)).sum = p - r}
+
+/-- The gap-vector stratum is finite as a subtype of a finite function type. -/
+noncomputable instance binaryWordGapVectorStratum_fintype
+    (p r : ℕ) : Fintype (binaryWordGapVectorStratum p r) := by
+  classical
+  unfold binaryWordGapVectorStratum
+  refine Fintype.subtype
+    (Finset.univ.filter fun v : Fin r → Fin (p - r + 1) =>
+      r ≤ p ∧ (List.ofFn (fun i : Fin r => (v i).val)).sum = p - r) ?_
+  intro v
+  simp
+
+/-- Separating the offset from the gap vector is an exact product
+decomposition. No cyclic quotient is taken: the second factor is Fin p. -/
+def binaryWordGapOffsetVectorProdEquiv (p r : ℕ) :
+    binaryWordGapOffsetVectorStratum p r ≃
+      binaryWordGapVectorStratum p r × Fin p where
+  toFun x := (⟨x.val.1, x.property⟩, x.val.2)
+  invFun x := ⟨(x.1.val, x.2), x.1.property⟩
+  left_inv x := by
+    rcases x with ⟨⟨v, k⟩, h⟩
+    rfl
+  right_inv x := by
+    rcases x with ⟨⟨v, h⟩, k⟩
+    rfl
+
+/-- The gap-offset trace sum is the iterated sum over gap vectors and all
+p offsets. Each offset remains a separate summand, even for periodic gaps. -/
+theorem binaryWordGapOffsetVectorStratum_sum_trace_eq_gap_sum_offsets
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ data : binaryWordGapOffsetVectorStratum p r,
+      cyclicGapTrace K N
+        (List.ofFn (fun i : Fin r => (data.val.1 i).val))) =
+    ∑ gaps : binaryWordGapVectorStratum p r,
+      ∑ offset : Fin p,
+        cyclicGapTrace K N
+          (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+  classical
+  let e := binaryWordGapOffsetVectorProdEquiv p r
+  calc
+    _ = ∑ pair : binaryWordGapVectorStratum p r × Fin p,
+          cyclicGapTrace K N
+            (List.ofFn (fun i : Fin r => (pair.1.val i).val)) := by
+      exact Fintype.sum_equiv e
+        (fun data => cyclicGapTrace K N
+          (List.ofFn (fun i : Fin r => (data.val.1 i).val)))
+        (fun pair => cyclicGapTrace K N
+          (List.ofFn (fun i : Fin r => (pair.1.val i).val)))
+        (by
+          intro data
+          rfl)
+    _ = ∑ gaps : binaryWordGapVectorStratum p r,
+          ∑ offset : Fin p,
+            cyclicGapTrace K N
+              (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+      rw [Fintype.sum_prod_type]
+
+
 end EvgenyTheorem
 
 

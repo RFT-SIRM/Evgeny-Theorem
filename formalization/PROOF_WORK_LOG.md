@@ -3030,3 +3030,16 @@ This makes the trace preservation usable in finite sums, while retaining
 every offset separately for periodic gap words. It does not by itself
 establish the desired r-to-p weighted formula; grouping by unmarked
 words and by gap vectors remains necessary. Require a full Lean build.
+
+
+## 2026-11-02 — H10 gap-side p-fold sum decomposition
+
+Introduced the offset-free finite gap-vector stratum and proved that the
+existing gap-vector/offset stratum is equivalent to its product with
+`Fin p`. Reindexed its cyclic trace sum into an iterated sum over each
+gap vector and all p offsets. This makes the p-fold multiplicity
+explicit, including for periodic gap vectors, because offsets remain
+distinct data.
+
+The matching r-fold decomposition on the marked-word side and the
+weighted trace identity remain outstanding. Full Lean build required.

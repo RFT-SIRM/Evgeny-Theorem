@@ -5892,3 +5892,21 @@ marked-cut sum by the underlying unmarked binary word and prove that
 each word contributes exactly r marks. The gap-offset side must then be
 grouped by the gap vector, with exactly p offsets. H6 and H8 are not
 modified. Full Lean build required.
+
+
+## 2026-11-02 — Separate H10 gap vectors from cyclic offsets
+
+Added the offset-free finite gap-vector stratum
+`binaryWordGapVectorStratum p r` and the product equivalence
+`binaryWordGapOffsetVectorProdEquiv p r`. The existing vector/offset
+stratum is now explicitly identified with a gap vector paired with
+`Fin p`. A finite-sum theorem reindexes the cyclic gap trace sum as an
+iterated sum over gap vectors and all p offsets. This retains every
+offset separately for periodic words; no cyclic orbit quotient is used.
+
+This isolates the p-fold contribution on the gap side. It does not yet
+prove the matching r-fold marked-word decomposition or the weighted
+identity. The next combinatorial obligation is to represent marked
+binary words as an unmarked length-p, r-true word together with one of
+its true positions, and prove that this representation is bijective.
+H6 and H8 remain untouched. Full Lean build required.
