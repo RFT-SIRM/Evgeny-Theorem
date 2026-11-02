@@ -6273,3 +6273,17 @@ after the finite orbit-cardinality and cyclic-gap reductions. This
 normalizes only scalar addition; it does not commute, rotate, or
 reassociate any matrix factors. The full Lean build on the updated SHA
 is the acceptance check.
+
+## 2026-11-02 — Connect the exact H10 four-N word stratum to its existing diagonal form
+
+Added sg_trace_p10_four_N_word_stratum_diagonal. The proof starts
+from the finite exact-weight binary-word sum, applies the already
+Lean-checked binaryWordP10WordTraceOrbitAverage4, uses the shared
+22-entry orbit-cardinality certificate (20 orbit sizes four and two
+orbit sizes two), and rewrites the cyclic traces to the ordered matrix
+trace sum consumed by sg_trace_p10_four_N_stratum_pair_diagonal.
+The latter is reused unchanged to reach glueRHS10_four_N_diagonal_form.
+No boundary term, representative, orbit weight, or matrix-factor order
+is redefined. This is a word-to-existing-boundary interface theorem;
+it does not prove cancellation between insertion strata or H10 recurrence.
+Full Lean build on the source SHA is required.
