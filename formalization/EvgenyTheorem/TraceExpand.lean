@@ -2713,6 +2713,71 @@ theorem binaryWordGapDecode_roundTrip_append_true (pre : List Bool) :
   simpa [binaryWordGapDecode, binaryFalseRun] using h
 
 
+/-- A cut word ending in true decodes to one gap per true symbol,
+and the sum of its gaps is exactly its number of false symbols. -/
+theorem binaryWordGapDecode_stats_append_true (pre : List Bool) :
+    (binaryWordGapDecode (pre ++ [true])).length =
+        ((pre ++ [true]).filter id).length ∧
+      (binaryWordGapDecode (pre ++ [true])).sum =
+        (pre ++ [true]).length - ((pre ++ [true]).filter id).length := by
+  constructor
+  · exact binaryWordGapDecode_true_count _
+  · have hround := binaryWordGapDecode_roundTrip_append_true pre
+    have hlen := binaryWordGapEncoding_length
+      (binaryWordGapDecode (pre ++ [true]))
+    rw [hround] at hlen
+    have hcount := binaryWordGapDecode_true_count (pre ++ [true])
+    omega
+
+/-- The gap list obtained after cutting a word at a marked true letter has
+exactly the original number of true letters, and its total gap size is the
+original number of false letters. The offset is represented by post.length
+in binaryWordMarkedRotate; this theorem establishes the two composition
+constraints needed for the marked-word/offset correspondence. -/
+theorem binaryWordMarkedRotate_gap_stats
+    (pre post : List Bool) :
+    (binaryWordGapDecode (binaryWordMarkedRotate pre post)).length =
+        (((pre ++ [true]) ++ post).filter id).length ∧
+      (binaryWordGapDecode (binaryWordMarkedRotate pre post)).sum =
+        ((pre ++ [true]) ++ post).length -
+          (((pre ++ [true]) ++ post).filter id).length := by
+  let gaps := binaryWordGapDecode (binaryWordMarkedRotate pre post)
+  have hround :
+      binaryWordGapEncoding gaps = binaryWordMarkedRotate pre post := by
+    simpa [gaps, binaryWordMarkedRotate] using
+      (binaryWordGapDecode_roundTrip_append_true (post ++ pre))
+  have hcutCount :
+      ((binaryWordMarkedRotate pre post).filter id).length =
+        (post.filter id).length + (pre.filter id).length + 1 := by
+    simp [binaryWordMarkedRotate, List.filter_append]
+  have hwordCount :
+      (((pre ++ [true]) ++ post).filter id).length =
+        (pre.filter id).length + 1 + (post.filter id).length := by
+    simp [List.filter_append]
+  have hcount :
+      ((binaryWordMarkedRotate pre post).filter id).length =
+        (((pre ++ [true]) ++ post).filter id).length := by
+    calc
+      _ = (post.filter id).length + (pre.filter id).length + 1 :=
+        hcutCount
+      _ = (pre.filter id).length + 1 + (post.filter id).length := by omega
+      _ = _ := hwordCount.symm
+  have hgapCount :
+      gaps.length = (((pre ++ [true]) ++ post).filter id).length := by
+    calc
+      gaps.length =
+          ((binaryWordMarkedRotate pre post).filter id).length := by
+        simpa [gaps] using
+          (binaryWordGapDecode_true_count (binaryWordMarkedRotate pre post))
+      _ = (((pre ++ [true]) ++ post).filter id).length := hcount
+  have hgapLength := binaryWordGapEncoding_length gaps
+  rw [hround] at hgapLength
+  have hwordLength := binaryWordMarkedRotate_length pre post
+  constructor
+  · exact hgapCount
+  · omega
+
+
 /-- Evaluating a binary word beginning with one symbol multiplies its
 evaluation on the left by the matrix assigned to that symbol. -/
 theorem binaryWordMatrix_cons

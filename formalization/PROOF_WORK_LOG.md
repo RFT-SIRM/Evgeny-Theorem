@@ -2714,3 +2714,21 @@ uniqueness of the gap list for such a cut word.
 The original marked-position/rotation-offset bijection and the trace
 multiplicity factor \(p/r\) are not yet proved. Full Lean validation for
 this new commit remains required; H6 and H8 are unchanged.
+
+
+## 2026-11-02 — H10 marked-cut gap composition statistics
+
+Added `binaryWordGapDecode_stats_append_true`, proving that a word ending
+in true decodes to a gap list whose length is the number of true delimiters
+and whose sum is the number of false letters. Added
+`binaryWordMarkedRotate_gap_stats` for a word decomposed as
+`(pre ++ [true]) ++ post`: the gap-list length is the original true count,
+and the gap sum is the original false count. The latter follows from the
+round-trip theorem and the exact gap-encoding length formula; count
+invariance is established by evaluating the filter counts on both cyclic
+cuts.
+
+The offset is still represented only by `post.length`; the inverse map and
+the exact marked-word/offset bijection remain open, as does the \(p/r\)
+trace multiplicity identity. Full Lean and Python 3.12 validation for this
+new commit remains required. H6 and H8 are unchanged.

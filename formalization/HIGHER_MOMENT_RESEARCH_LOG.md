@@ -5475,3 +5475,26 @@ This is not yet the bijection with marked positions/rotation offsets in the
 original cyclic word, and it does not yet prove the multiplicity identity
 or factor \(p/r\). Those remain explicit H10 obligations. The new source
 commit requires a fresh complete Lean build. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Derive the H10 gap-composition constraints after a marked cut
+
+The marked-cut reconstruction commit `43ea62dd3126ba190c8ff5484e5bbf56dc21beb9`
+passed the complete Lean build (Actions run `41374184498`). Python 3.11
+Fast and Slow tests passed in run `41374184462`; Python 3.12 was still
+running at the time this step was started.
+
+Added `binaryWordGapDecode_stats_append_true`: for every cut word ending
+in true, the decoded gap list has one entry per true delimiter and its gap
+sum equals the number of false letters. Specialized this to the marked cut
+`post ++ pre ++ [true]` in `binaryWordMarkedRotate_gap_stats`, proving
+that the decoded list has length equal to the original marked word's true
+count and sum equal to its false count. The proof uses the established
+round-trip reconstruction, exact encoded length, and an explicit count
+comparison across the cyclic cut; no matrix factors are rearranged.
+
+The offset remains `post.length`; proving a bijection between marked
+word-occurrences and (gap list, offset) pairs is still open. Consequently
+the exact marked-sum multiplicity and the factor \(p/r\) are not yet
+established. A fresh full Lean build and Python 3.12 validation are required
+for this source commit. H6 and H8 remain untouched.
