@@ -5647,3 +5647,13 @@ The construction keeps every offset as separate data and does not identify
 periodic rotations. The new source has been committed for GitHub's complete
 Lean validation; no build success is claimed until the Lean Actions run for
 this commit completes. H6 and H8 are untouched.
+
+
+## 2026-11-02 — Correct redundant tactic in the H10 offset decomposition
+
+The first Lean run for `3a998e08f77192564ff7cae289cd0e0e95b7f49f`
+reported one source error at the proof that the final delimiter belongs to
+the `getLast?` result: rewriting by `hdropLast` already closed the goal,
+so a following `simp` produced `No goals to be solved`. Removed only that
+redundant tactic. No theorem statement or mathematical argument changed.
+A fresh complete Lean build is required for acceptance.

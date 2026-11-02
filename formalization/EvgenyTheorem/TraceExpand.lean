@@ -2926,7 +2926,6 @@ theorem binaryWordGapEncoding_rotate_decompose
     dsimp [pre]
     have hmem : true ∈ (word.drop offset).getLast? := by
       rw [hdropLast]
-      simp
     exact List.dropLast_append_getLast? true hmem
   have hdecomp :
       word.rotate offset = ((pre ++ [true]) ++ post) := by

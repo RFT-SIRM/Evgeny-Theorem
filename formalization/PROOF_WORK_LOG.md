@@ -2839,3 +2839,12 @@ The branch base was rechecked at
 `0f6ddfb0992d481d95bad791f5ab53d0150dc4df`. The complete Lean GitHub
 Actions run for the new source is the acceptance gate; validation remains
 pending until that run reports success. H6 and H8 are unchanged.
+
+
+## 2026-11-02 — Remove the tactic after the final-delimiter rewrite
+
+The Lean run for the preceding H10 decomposition commit isolated a single
+error: the `rw [hdropLast]` step closed the membership goal, making the
+subsequent `simp` invalid. Removed the redundant `simp` and kept the
+same proof term and theorem statements otherwise. Full Lean validation
+must be rerun; H6 and H8 remain unchanged.
