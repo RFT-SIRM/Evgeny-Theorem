@@ -6044,3 +6044,23 @@ was missing the closing parenthesis for the `Matrix.trace` argument.
 Added that single delimiter. No theorem statement or proof argument was
 changed. The next full Lean build is required to check the newly exposed
 proof terms; this parser correction alone does not validate the theorem.
+
+
+## 2026-11-02 — Put the weighted H10 identity in the positive-gap coordinates
+
+The validated checkpoint `3c2d634` already proves the exact r-fold/p-fold
+weighted identity for arbitrary two-letter matrices K and B. The p=10
+boundary formulas elsewhere in `GlueTrace.lean` use positive exponents
+`K^e * N`, with the exponents summing to 10. Therefore the intended
+specialization is simply B = K*N: a nonnegative gap a then contributes
+`K^a * (K*N) = K^(a+1) * N`.
+
+Added `cyclicGapTrace_K_mul_N_eq_succ_gaps` for this identity and
+`binaryWordFinStratum_weighted_trace_eq_positive_gap_sum` as its direct
+specialization. No new combinatorial type, no second multiplicity proof,
+and no cyclic-orbit quotient is introduced. The resulting RHS is precisely
+the positive-gap coordinate convention used by the existing p=10 cyclic
+representatives. The following step can now reconcile the fixed-r finite
+gap-vector sum with those already-listed orbit representatives and their
+weights (10 for full orbits, reduced weights for periodic representatives).
+This source step is pending a full Lean build. H6 and H8 remain untouched.

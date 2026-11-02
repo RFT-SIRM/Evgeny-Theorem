@@ -4066,4 +4066,77 @@ theorem binaryWordFinStratum_weighted_trace_eq_gap_vector_sum
         K N p r
 
 
+
+/-- Substituting K*N for the second letter converts a nonnegative gap
+a into the positive block K^(a+1)*N. This is the exact change of gap
+coordinates used by the p=10 boundary representatives. -/
+theorem cyclicGapTrace_K_mul_N_eq_succ_gaps
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (gaps : List ℕ) :
+    cyclicGapTrace K (K * N) gaps =
+      cyclicGapTrace K N (gaps.map Nat.succ) := by
+  unfold cyclicGapTrace
+  have hblock :
+      gaps.map (fun a => K ^ a * (K * N)) =
+        gaps.map (fun a => K ^ (a + 1) * N) := by
+    apply List.map_congr_left
+    intro a ha
+    calc
+      K ^ a * (K * N) = (K ^ a * K) * N := by
+        rw [← Matrix.mul_assoc]
+      _ = K ^ (a + 1) * N := by
+        rw [pow_succ]
+  have hshift :
+      gaps.map (fun a => K ^ (a + 1) * N) =
+        (gaps.map Nat.succ).map (fun a => K ^ a * N) := by
+    rw [List.map_map]
+  calc
+    Matrix.trace
+        ((gaps.map (fun a => K ^ a * (K * N))).prod) =
+        Matrix.trace
+          ((gaps.map (fun a => K ^ (a + 1) * N)).prod) :=
+      congrArg
+        (fun blocks : List (Matrix n n ℂ) => Matrix.trace blocks.prod)
+        hblock
+    _ = Matrix.trace
+          (((gaps.map Nat.succ).map (fun a => K ^ a * N)).prod) :=
+      congrArg
+        (fun blocks : List (Matrix n n ℂ) => Matrix.trace blocks.prod)
+        hshift
+    _ = cyclicGapTrace K N (gaps.map Nat.succ) := rfl
+
+/-- The exact weighted H10 identity in the positive-gap coordinates used by
+the explicit p=10 cyclic representatives. Each selected K*N letter raises
+the preceding K-run exponent by one; the r-fold and p-fold multiplicities
+remain exactly those already proved. -/
+theorem binaryWordFinStratum_weighted_trace_eq_positive_gap_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (r : ℂ) *
+      ∑ w : binaryWordFinStratum p r,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (p : ℂ) *
+      ∑ gaps : binaryWordGapVectorStratum p r,
+        cyclicGapTrace K N
+          ((List.ofFn (fun i : Fin r => (gaps.val i).val)).map Nat.succ) := by
+  calc
+    (r : ℂ) *
+        ∑ w : binaryWordFinStratum p r,
+          Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+      (p : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum p r,
+          cyclicGapTrace K (K * N)
+            (List.ofFn (fun i : Fin r => (gaps.val i).val)) :=
+      binaryWordFinStratum_weighted_trace_eq_gap_vector_sum K (K * N) p r
+    _ = (p : ℂ) *
+          ∑ gaps : binaryWordGapVectorStratum p r,
+            cyclicGapTrace K N
+              ((List.ofFn (fun i : Fin r => (gaps.val i).val)).map Nat.succ) := by
+      apply congrArg (fun z : ℂ => (p : ℂ) * z)
+      apply Finset.sum_congr rfl
+      intro gaps hgaps
+      exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N
+        (List.ofFn (fun i : Fin r => (gaps.val i).val))
+
+
 end EvgenyTheorem
