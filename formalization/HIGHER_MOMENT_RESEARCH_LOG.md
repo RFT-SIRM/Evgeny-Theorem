@@ -6302,3 +6302,18 @@ glueRHS10_six_N_diagonal_form. No geometric support argument, boundary
 term, or matrix-factor order is duplicated or changed. This is an
 exact-word interface for r=6 only; it does not claim cross-stratum
 cancellation or an H10 recurrence. A full Lean build is required.
+
+## 2026-11-02 — Connect the exact H10 eight-N word stratum to its existing diagonal form
+
+Added sg_trace_p10_eight_N_word_stratum_diagonal. The exact-weight
+eight-N binary-word sum is rewritten using the validated
+binaryWordP10WordTraceOrbitAverage8. The r=8 part of the shared orbit
+cardinality theorem gives [8,8,8,8,4], yielding four coefficients ten
+and one coefficient five after normalization by eight. The five cyclic
+traces are aligned with the already-proved eight-N boundary formula,
+then sg_trace_p10_eight_N_stratum_pair_diagonal is reused unchanged to
+reach glueRHS10_eight_N_diagonal_form. No boundary term, geometric
+support proof, representative, or matrix-factor order is redefined.
+This connects only the exact r=8 word stratum to its existing diagonal
+form; it does not assert cross-stratum cancellation or the H10 recurrence.
+Full Lean build on the source SHA is required.
