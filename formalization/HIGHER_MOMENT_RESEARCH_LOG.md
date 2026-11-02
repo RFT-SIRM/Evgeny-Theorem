@@ -6170,3 +6170,15 @@ The r=4 and r=6 composition partition limits are scoped around the whole
 theorem declarations, rather than nested inside the proof bodies, so they
 cover elaboration of the large finite-set expressions too. The lists and
 all five partition equations are unchanged. Full Lean build is required.
+
+
+## 2026-11-02 — Correct Lean option-command placement in H10 finite proofs
+
+The c0e7a5f build exposed a parser error: declaration doc comments had
+been left before the scoped set_option commands. In Lean, the option
+commands must wrap the declaration and therefore precede its doc comment.
+Reordered these declarations so each local option scope comes first,
+followed by the documentation and theorem. Increased the r=6 finite
+checks' local recursion/heartbeat budget based on the prior build's
+recursion-depth failure. No definitions, representatives, statements,
+or multiplicity weights were changed. Full Lean build required.

@@ -4208,11 +4208,10 @@ theorem binaryWordP10GapOrbitPartition2 :
   classical
   set_option maxRecDepth 4096 in decide
 
-/-- The four-insertion positive compositions are partitioned by the listed
-cyclic gap orbits. -/
+-- The r=4 finite composition enumeration exceeds the default elaboration limits.
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 3000000 in
-/-- The p=10 r=4 positive compositions are partitioned by the listed
+/-- The four-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
 theorem binaryWordP10GapOrbitPartition4 :
     binaryWordP10PositiveGapListFinset 4 =
@@ -4220,11 +4219,10 @@ theorem binaryWordP10GapOrbitPartition4 :
   classical
   decide
 
-/-- The six-insertion positive compositions are partitioned by the listed
-cyclic gap orbits. -/
+-- The r=6 finite composition enumeration has a larger normalization tree.
 set_option maxRecDepth 16384 in
 set_option maxHeartbeats 8000000 in
-/-- The p=10 r=6 positive compositions are partitioned by the listed
+/-- The six-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
 theorem binaryWordP10GapOrbitPartition6 :
     binaryWordP10PositiveGapListFinset 6 =
@@ -4290,9 +4288,10 @@ theorem binaryWordP10GapOrbitReps2_pairwise_disjoint :
       | exact (hab rfl).elim
       | decide
 
-/-- The p=10 r=4 cyclic representative orbits are pairwise disjoint. -/
+-- Finite pairwise orbit checks for 22 representatives require more reduction depth.
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 8000000 in
+/-- The p=10 r=4 cyclic representative orbits are pairwise disjoint. -/
 theorem binaryWordP10GapOrbitReps4_pairwise_disjoint :
     Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps4) cyclicGapOrbit := by
   classical
@@ -4308,9 +4307,10 @@ theorem binaryWordP10GapOrbitReps4_pairwise_disjoint :
       | exact (hab rfl).elim
       | decide
 
+-- Finite pairwise orbit checks for 22 representatives require a larger recursion bound.
+set_option maxRecDepth 16384 in
+set_option maxHeartbeats 12000000 in
 /-- The p=10 r=6 cyclic representative orbits are pairwise disjoint. -/
-set_option maxRecDepth 8192 in
-set_option maxHeartbeats 8000000 in
 theorem binaryWordP10GapOrbitReps6_pairwise_disjoint :
     Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps6) cyclicGapOrbit := by
   classical
