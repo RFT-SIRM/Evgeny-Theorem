@@ -2866,3 +2866,15 @@ trace-preservation theorem connecting the marked word to cyclicGapTrace.
 This is the unrestricted data-level equivalence. Finite fixed-(p,r)
 restrictions, the weighted trace multiplicity identity, and the final H10
 application remain open. Full Lean build required; H6 and H8 are unchanged.
+
+
+## 2026-11-02 — Fix the H10 equivalence inverse direction and trace dependency
+
+Run 41395891905 failed in two places: the left-inverse proof rewrote
+hdata backwards, leaving the goal unchanged, and the trace-preservation
+corollary occurred before the theorem it referenced. Changed the rewrite
+to rw [hdata] and moved the trace corollary after
+binaryWordMatrix_trace_marked_eq_cyclicGapTrace. The equivalence data,
+its inverse maps, and the trace statement remain unchanged. Full Lean
+validation is required on the correction commit; H6 and H8 remain
+untouched.

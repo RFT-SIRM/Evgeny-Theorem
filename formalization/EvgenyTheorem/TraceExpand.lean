@@ -3220,7 +3220,7 @@ noncomputable def binaryWordMarkedCutGapOffsetEquiv :
       binaryWordGapEncoding_rotate_decompose_unique
         gaps post.length chosen.1 chosen.2 pre post
         hspec.1 hback hspec.2.1 rfl
-    rw [← hdata]
+    rw [hdata]
     change chosen = (pre, post)
     exact Prod.ext hunique.1 hunique.2
   right_inv := by
@@ -3235,20 +3235,6 @@ noncomputable def binaryWordMarkedCutGapOffsetEquiv :
       (binaryWordGapDecode (binaryWordMarkedRotate cut.1 cut.2),
         cut.2.length) = (gaps, offset)
     exact Prod.ext hspec.2.2 hspec.2.1
-
-/-- The equivalence preserves the marked-word trace as the cyclic gap
-trace of the corresponding decoded gap list. -/
-theorem binaryWordMarkedCut_trace_eq_cyclicGapTrace
-    {n : Type*} [Fintype n] [DecidableEq n]
-    (K N : Matrix n n ℂ) (pre post : List Bool) :
-    Matrix.trace
-      (binaryWordMatrix K N ((pre ++ [true]) ++ post)) =
-      cyclicGapTrace K N
-        (binaryWordMarkedCutToGapOffset (pre, post)).val.1 := by
-  simpa using
-    (binaryWordMatrix_trace_marked_eq_cyclicGapTrace K N pre post)
-
-
 
 /-- The trace of a binary matrix word is unchanged when a marked true letter
 is moved from the cut position to the final position. The proof is exactly
@@ -3378,5 +3364,19 @@ theorem binaryWordMatrix_trace_marked_eq_cyclicGapTrace
     _ = cyclicGapTrace K N
           (binaryWordGapDecode (binaryWordMarkedRotate pre post)) :=
       binaryWordGapEncoding_trace_eq_cyclicGapTrace K N _
+
+
+/-- The equivalence preserves the marked-word trace as the cyclic gap
+trace of the corresponding decoded gap list. -/
+theorem binaryWordMarkedCut_trace_eq_cyclicGapTrace
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (pre post : List Bool) :
+    Matrix.trace
+      (binaryWordMatrix K N ((pre ++ [true]) ++ post)) =
+      cyclicGapTrace K N
+        (binaryWordMarkedCutToGapOffset (pre, post)).val.1 := by
+  simpa using
+    (binaryWordMatrix_trace_marked_eq_cyclicGapTrace K N pre post)
+
 
 end EvgenyTheorem

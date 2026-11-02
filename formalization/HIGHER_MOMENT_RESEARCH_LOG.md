@@ -5688,3 +5688,19 @@ the next step is to restrict it to fixed length p and true-count r, then
 reindex finite sums and derive the exact factor p/r. The weighted identity
 and final H10 trace formula are not yet proved. Full Lean validation is
 required for this commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Correct the H10 equivalence inverse proof and trace declaration order
+
+The Lean run for a437941ded7720015c53aa3d93f8f1f9280ab12c
+reported two errors. In binaryWordMarkedCutGapOffsetEquiv.left_inv,
+the goal contained binaryWordGapOffsetToMarkedCut
+(binaryWordMarkedCutToGapOffset (pre, post)); the available equality
+hdata rewrote the forward map to the chosen subtype value, so the
+rewrite direction must be rw [hdata], not rw [← hdata].
+
+The trace corollary binaryWordMarkedCut_trace_eq_cyclicGapTrace was
+placed before binaryWordMatrix_trace_marked_eq_cyclicGapTrace, which it
+uses. Moved the corollary to after that dependency. No definitions or
+mathematical claims were changed. A fresh complete Lean build is required
+for this correction. H6 and H8 remain untouched.
