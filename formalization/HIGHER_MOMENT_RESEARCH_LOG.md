@@ -6032,3 +6032,15 @@ unmarked gap-vector cyclic-trace sum. The proof uses the common marked-cut
 sum and does not quotient periodic words. H6 and H8 are untouched.
 This is the combinatorial weighted H10 identity; the new declaration
 requires a complete Lean build before it is considered validated.
+
+
+## 2026-11-02 — Fix the parser error in the weighted H10 identity
+
+The first full Lean build for commit `a5be6de26d01e082301d93edbd5b78ebcfa12d7a`
+stopped at `TraceExpand.lean:4049:68` with
+`unexpected token ':='; expected ')', ',' or ':'`. The first
+`calc` step of `binaryWordFinStratum_weighted_trace_eq_gap_vector_sum`
+was missing the closing parenthesis for the `Matrix.trace` argument.
+Added that single delimiter. No theorem statement or proof argument was
+changed. The next full Lean build is required to check the newly exposed
+proof terms; this parser correction alone does not validate the theorem.

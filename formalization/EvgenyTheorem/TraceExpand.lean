@@ -4046,7 +4046,7 @@ theorem binaryWordFinStratum_weighted_trace_eq_gap_vector_sum
           Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)) =
       ∑ cut : binaryWordMarkedCutStratum p r,
         Matrix.trace
-          (binaryWordMatrix K N ((cut.val.1 ++ [true]) ++ cut.val.2) :=
+          (binaryWordMatrix K N ((cut.val.1 ++ [true]) ++ cut.val.2)) :=
       (binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum
         K N p r).symm
     _ = ∑ data : binaryWordGapOffsetStratum p r,
