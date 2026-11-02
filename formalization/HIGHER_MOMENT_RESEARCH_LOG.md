@@ -6064,3 +6064,15 @@ representatives. The following step can now reconcile the fixed-r finite
 gap-vector sum with those already-listed orbit representatives and their
 weights (10 for full orbits, reduced weights for periodic representatives).
 This source step is pending a full Lean build. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair the positive-gap coordinate map proof
+
+The first Lean run for `20fda313a39ecacda1ef69cc73c34e17b2dbcb04`
+reported one unsolved goal in `cyclicGapTrace_K_mul_N_eq_succ_gaps`:
+`List.map_map` exposed a composition whose pointwise equality was not
+closed by rewriting. Replaced that rewrite with `List.map_congr_left` and
+its pointwise definitional equality (`Nat.succ a = a + 1`). This changes
+only the proof of the already-stated coordinate identity; the weighted
+multiplicity theorem and positive-gap statement are unchanged. The full
+Lean build is the validation gate. H6 and H8 remain untouched.

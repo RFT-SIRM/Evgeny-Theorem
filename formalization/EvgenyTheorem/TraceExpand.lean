@@ -4089,7 +4089,9 @@ theorem cyclicGapTrace_K_mul_N_eq_succ_gaps
   have hshift :
       gaps.map (fun a => K ^ (a + 1) * N) =
         (gaps.map Nat.succ).map (fun a => K ^ a * N) := by
-    rw [List.map_map]
+    apply List.map_congr_left
+    intro a ha
+    rfl
   calc
     Matrix.trace
         ((gaps.map (fun a => K ^ a * (K * N))).prod) =
