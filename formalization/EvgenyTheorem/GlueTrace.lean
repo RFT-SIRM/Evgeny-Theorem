@@ -6190,4 +6190,42 @@ theorem sg_trace_p10_two_N_word_stratum_diagonal
       simpa [K, N] using
         (sg_trace_p10_two_N_stratum_pair_diagonal m hm θ ax o hanti)
 
+/-- The exact-count p=10 four-N word sum is the existing complete
+ordered two-pair diagonal form. The positive-gap orbit average gives
+the same 22 cyclic representatives and the two period-two corrections
+as the already-proved four-N boundary theorem. -/
+theorem sg_trace_p10_four_N_word_stratum_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 4,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    glueRHS10_four_N_diagonal_form m (sgK m θ ax o) := by
+  have hcards4 := binaryWordP10GapOrbitRepresentativeCardinals.2.1
+  simp only [List.cons.injEq] at hcards4
+  rcases hcards4 with
+    ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11,
+      h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22⟩
+  have hcoef10 : ((10 : ℂ) / (4 : ℂ)) * 4 = 10 := by norm_num
+  have hcoef5 : ((10 : ℂ) / (4 : ℂ)) * 2 = 5 := by norm_num
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps4,
+        ((10 : ℂ) / (4 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace (sgK m θ ax o) ((sgGlue m).N) rep := by
+      exact binaryWordP10WordTraceOrbitAverage4
+        (sgK m θ ax o) ((sgGlue m).N)
+    _ = glueRHS10_four_N_diagonal_form m (sgK m θ ax o) := by
+      have hdiag :=
+        sg_trace_p10_four_N_stratum_pair_diagonal m hm θ ax o hanti
+      dsimp at hdiag
+      rw [← hdiag]
+      simp [binaryWordP10GapOrbitReps4, cyclicGapTrace, Matrix.mul_assoc,
+        h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11,
+        h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22,
+        hcoef10, hcoef5]
+      <;> ring
+
 end EvgenyTheorem
