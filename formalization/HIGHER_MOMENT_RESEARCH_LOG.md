@@ -5645,24 +5645,25 @@ second build still failed. The corrected commit
 9a11b40d39d0610e3c15fe5deed07b6ba0e5206e restores that simp and removes
 the redundant rfl. Its full Lean build passed (Actions run 41392191543).
 
-## 2026-11-02 — Prove uniqueness and the converse inverse for H10 marked cuts
+## 2026-11-02 — Repair the H10 uniqueness and converse-inverse declarations
 
-Added binaryWordGapEncoding_rotate_decompose_unique: two splits of the
-same rotated canonical gap word with the same suffix length have identical
-prefix and suffix. The proof uses the exact list append-injectivity theorem
-from the pinned Lean core, so it does not assume the word has no rotational
-period.
+The full Lean run for `d554507b123512e58b4107304d8a99c7a5b220ac`
+failed with three diagnostics in `TraceExpand.lean):
 
-Added binaryWordMarkedRotate_decode_decompose_inverse: starting from an
-arbitrary marked cut pre ++ [true] ++ post, decoding the cut and using
-post.length as the offset, the canonical encoding decomposes back into
-exactly the same pre and post. This uses the existing gap statistics to
-establish that the offset is admissible, the reconstruction identity to
-compare the two decompositions, and the uniqueness theorem.
+1. `binaryWordGapEncoding_rotate_decompose_unique` had been inserted
+   between the docstring for `binaryWordMarkedRotate_gap_stats` and its
+   declaration.
+2. `binaryWordMarkedRotate_decode_decompose_inverse` had likewise been
+   inserted between the docstring for `binaryWordMatrix_trace_marked_rotate`
+   and its declaration. Both placements caused parser errors.
+3. The inverse proof used `omega` on
+   `(length - trueCount) + trueCount = length) without first providing
+   `trueCount ≤ length).
 
-Together with binaryWordGapEncoding_rotate_decompose, this establishes
-both inverse directions at the marked-cut/list-offset level. It is the
-combinatorial bijection step, not yet the summed trace multiplicity identity.
-The exact weighted identity r * S_words = p * S_gaps and its trace
-consequence remain next. The full Lean build on this commit is the
-acceptance check. H6 and H8 remain untouched.
+The repair moves both declarations before the docstrings they interrupted.
+It derives the missing bound from the pinned Mathlib identity
+`List.length_eq_length_filter_add`, then uses
+`Nat.sub_add_cancel` for the subtraction. This repairs the proof
+structure without changing the theorem statements or weakening their
+claims. The full Lean build for the repair commit is the acceptance check.
+H6 and H8 remain untouched.

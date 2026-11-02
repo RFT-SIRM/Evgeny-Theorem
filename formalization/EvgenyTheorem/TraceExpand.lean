@@ -2973,11 +2973,6 @@ theorem binaryWordGapEncoding_rotate_decompose
     simpa [word] using binaryWordGapDecode_gapEncoding gaps
   exact ⟨pre, post, hdecomp, hpostLength, hpreLength, hdecode⟩
 
-/-- The gap list obtained after cutting a word at a marked true letter has
-exactly the original number of true letters, and its total gap size is the
-original number of false letters. The offset is represented by post.length
-in binaryWordMarkedRotate; this theorem establishes the two composition
-constraints needed for the marked-word/offset correspondence. -/
 /-- A decomposition at a fixed rotation offset is unique once the
 trailing suffix length is fixed. This remains true when the underlying
 binary word has a nontrivial rotational period. -/
@@ -3007,6 +3002,11 @@ theorem binaryWordGapEncoding_rotate_decompose_unique
   exact ⟨hpre, hparts.2⟩
 
 
+/-- The gap list obtained after cutting a word at a marked true letter has
+exactly the original number of true letters, and its total gap size is the
+original number of false letters. The offset is represented by post.length
+in binaryWordMarkedRotate; this theorem establishes the two composition
+constraints needed for the marked-word/offset correspondence. -/
 theorem binaryWordMarkedRotate_gap_stats
     (pre post : List Bool) :
     (binaryWordGapDecode (binaryWordMarkedRotate pre post)).length =
@@ -3059,10 +3059,6 @@ theorem binaryWordMarkedRotate_gap_stats
 
 
 
-/-- The trace of a binary matrix word is unchanged when a marked true letter
-is moved from the cut position to the final position. The proof is exactly
-trace cyclicity for the two grouped factors `eval(pre) * B` and
-`eval(post)`; no factors within either word are commuted. -/
 /-- The two constructions are inverse on marked cuts: decode the word
 obtained by moving the marked true delimiter to the end, use the suffix
 length as the offset, and split the corresponding rotated canonical gap
@@ -3083,11 +3079,18 @@ theorem binaryWordMarkedRotate_decode_decompose_inverse
         ((pre ++ [true]) ++ post).length -
           (((pre ++ [true]) ++ post).filter id).length := by
     simpa [gaps] using binaryWordMarkedRotate_gap_stats pre post
+  have hcount_le :
+      (((pre ++ [true]) ++ post).filter id).length ≤
+        ((pre ++ [true]) ++ post).length := by
+    have hpartition :=
+      List.length_eq_length_filter_add
+        (l := ((pre ++ [true]) ++ post)) id
+    omega
   have hencodeLength :
       (binaryWordGapEncoding gaps).length =
         ((pre ++ [true]) ++ post).length := by
     rw [binaryWordGapEncoding_length, hstats.2, hstats.1]
-    omega
+    exact Nat.sub_add_cancel hcount_le
   have hoffset :
       post.length < (binaryWordGapEncoding gaps).length := by
     rw [hencodeLength]
@@ -3105,6 +3108,10 @@ theorem binaryWordMarkedRotate_decode_decompose_inverse
   exact ⟨pre', post', hdecomp, hpost, hunique.1, hunique.2⟩
 
 
+/-- The trace of a binary matrix word is unchanged when a marked true letter
+is moved from the cut position to the final position. The proof is exactly
+trace cyclicity for the two grouped factors `eval(pre) * B` and
+`eval(post)`; no factors within either word are commuted. -/
 theorem binaryWordMatrix_trace_marked_rotate
     {n : Type*} [Fintype n] [DecidableEq n]
     (A B : Matrix n n ℂ) (pre post : List Bool) :

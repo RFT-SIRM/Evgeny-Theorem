@@ -2839,19 +2839,15 @@ Both errors were diagnosed from the exact workflow logs and corrected in
 commit 9a11b40d39d0610e3c15fe5deed07b6ba0e5206e, whose full Lean build
 passed (Actions run 41392191543).
 
-## 2026-11-02 — H10 two-sided inverse at the marked-cut level
+## 2026-11-02 — Correct the H10 uniqueness and inverse proof layout
 
-Added binaryWordGapEncoding_rotate_decompose_unique, proving that a
-fixed rotated word and fixed suffix length determine the prefix and suffix
-uniquely. Added binaryWordMarkedRotate_decode_decompose_inverse, which
-starts with arbitrary pre ++ [true] ++ post, decodes its marked cut, uses
-post.length as the offset, and reconstructs exactly the same pre and post.
-The offset bound follows from binaryWordMarkedRotate_gap_stats and the
-exact encoding-length formula.
-
-These results, together with the forward decomposition theorem, provide
-the two inverse laws for the combinatorial correspondence. The next
-unproved obligation is to package the correspondence into the finite
-marked-occurrence sum and derive the exact trace multiplicity
-r * S_words = p * S_gaps. This commit requires a fresh full Lean build.
-H6 and H8 remain untouched.
+The Lean run `41393590334` for `d554507b123512e58b4107304d8a99c7a5b220ac`
+failed because both new declarations interrupted existing docstrings,
+producing parser errors. It also showed that the encoding-length arithmetic
+needed an explicit inequality bounding the number of true symbols by the
+word length. The corrected source moves the declarations outside those
+docstrings, proves the bound using
+`List.length_eq_length_filter_add`, and discharges the natural subtraction
+with `Nat.sub_add_cancel`. The previous commit is not Lean-verified; this
+repair must pass a fresh full build before the two inverse statements are
+counted as proved. H6 and H8 remain untouched.
