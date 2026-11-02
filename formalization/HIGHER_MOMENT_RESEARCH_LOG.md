@@ -6151,3 +6151,22 @@ the r=6 partition exceeded the local recursion-depth limit. Those two finite
 decisions now have narrowly scoped higher limits. The representative lists,
 orbit weights, and theorem statements are unchanged. Full Lean build is
 required.
+
+
+## 2026-11-02 — Prove H10 orbit disjointness directly in the finite-set type
+
+The 71a98e7 Lean run showed that the rotation-relation detour was
+incorrectly elaborated at the Set/Finset boundary, and its helper theorem
+attempted to prove a false non-rotation statement on diagonal pairs.
+Removed that detour. The replacement first reduces Set.PairwiseDisjoint
+to Disjoint of the actual Finset cyclic orbits. For each explicit finite
+representative set, membership is split into its list alternatives;
+diagonal pairs are discharged from a ≠ b and distinct pairs are decided
+directly by the computable finite-set disjointness procedure.
+This checks the actual deduplicated cyclicGapOrbit objects and therefore
+retains the correct reduced orbit sizes for periodic classes.
+
+The r=4 and r=6 composition partition limits are scoped around the whole
+theorem declarations, rather than nested inside the proof bodies, so they
+cover elaboration of the large finite-set expressions too. The lists and
+all five partition equations are unchanged. Full Lean build is required.
