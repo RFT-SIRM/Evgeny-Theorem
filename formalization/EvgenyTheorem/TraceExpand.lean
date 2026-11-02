@@ -2883,12 +2883,11 @@ theorem binaryWordGapEncoding_getLast?
           rw [List.getLast?_append_of_ne_nil _ htail]
           exact ih (by simp)
 
-/-- For every legal offset k, rotating a canonical gap word splits it
-uniquely at the delimiter that has moved to position p-k-1. The suffix
-has length k, and moving that delimiter to the end recovers the original
-canonical word, so decoding the marked cut returns the original gap list.
-No quotient by cyclic periodicity is taken: each legal offset remains
-separate data. -/
+/-- For every legal offset k, rotating a canonical gap word admits a split
+at the delimiter that has moved to position p-k-1. The suffix has length k,
+and moving that delimiter to the end recovers the original canonical word,
+so decoding the marked cut returns the original gap list. No quotient by
+cyclic periodicity is taken: each legal offset remains separate data. -/
 theorem binaryWordGapEncoding_rotate_decompose
     (gaps : List ℕ) (offset : ℕ)
     (hoffset : offset < (binaryWordGapEncoding gaps).length) :
@@ -2926,6 +2925,7 @@ theorem binaryWordGapEncoding_rotate_decompose
     dsimp [pre]
     have hmem : true ∈ (word.drop offset).getLast? := by
       rw [hdropLast]
+      simp
     exact List.dropLast_append_getLast? true hmem
   have hdecomp :
       word.rotate offset = ((pre ++ [true]) ++ post) := by
@@ -2934,7 +2934,6 @@ theorem binaryWordGapEncoding_rotate_decompose
         List.rotate_eq_drop_append_take hoffset'.le
       _ = (pre ++ [true]) ++ post := by
         rw [← hcut]
-        rfl
   have hpostLength : post.length = offset := by
     simp [post, Nat.min_eq_left hoffset'.le]
   have hpreLength :

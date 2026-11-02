@@ -2830,21 +2830,24 @@ Added a last-delimiter lemma for nonempty canonical gap encodings and the
 constructive decomposition theorem
 `binaryWordGapEncoding_rotate_decompose`. For each legal offset k, it
 gives an exact split of the rotated canonical word as
-`pre ++ [true] ++ post`, proves `post.length = k) and
-`pre.length = p-k-1), and proves that moving the marked delimiter to the
+`pre ++ [true] ++ post`, proves `post.length = k` and
+`pre.length = p-k-1`, and proves that moving the marked delimiter to the
 end yields the original canonical word and therefore decodes to the input
 gap list. This retains distinct offsets even when the word is periodic.
+The theorem proves existence of the split, not uniqueness of arbitrary
+witnesses. The initial Lean run failed because an extra `rfl) followed a
+rewrite that had already closed the decomposition goal.
 
-The branch base was rechecked at
-`0f6ddfb0992d481d95bad791f5ab53d0150dc4df`. The complete Lean GitHub
-Actions run for the new source is the acceptance gate; validation remains
-pending until that run reports success. H6 and H8 are unchanged.
+## 2026-11-02 — Audit both failed Lean runs for the H10 decomposition
 
+The first Lean run failed at `rfl) after `rw [← hcut]`: the rewrite
+already closed the decomposition equality, so the extra `rfl) was invalid.
+The attempted follow-up removed `simp) from the membership subproof, but
+that was a mistaken diagnosis. After rewriting `hdropLast), the remaining
+goal is `true ∈ some true`, which requires `simp); the follow-up run
+therefore exposed this unsolved goal and still had the redundant `rfl).
 
-## 2026-11-02 — Remove the tactic after the final-delimiter rewrite
-
-The Lean run for the preceding H10 decomposition commit isolated a single
-error: the `rw [hdropLast]` step closed the membership goal, making the
-subsequent `simp` invalid. Removed the redundant `simp` and kept the
-same proof term and theorem statements otherwise. Full Lean validation
-must be rerun; H6 and H8 remain unchanged.
+The current correction restores `simp` in the membership proof and removes
+`rfl` after the decomposition rewrite. The theorem documentation now
+claims existence only, not unproved uniqueness. Full Lean validation is
+required on this corrected source; H6 and H8 remain unchanged.

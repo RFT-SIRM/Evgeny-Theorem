@@ -5632,28 +5632,33 @@ required for this commit. H6 and H8 remain untouched.
 ## 2026-11-02 — Construct the marked-position decomposition for every H10 offset
 
 Added `binaryWordGapEncoding_getLast?`, proving that every nonempty
-canonical gap encoding ends in its final `true` delimiter. Using the
-pinned Mathlib list identities for `take`, `drop`, `getLast?`, and
-rotation, added `binaryWordGapEncoding_rotate_decompose`.
-
-For every admissible offset k<p, the theorem constructs
-`pre := (word.drop k).dropLast` and `post := word.take k), with
+canonical gap encoding ends in its final `true` delimiter. Added
+`binaryWordGapEncoding_rotate_decompose`: for each legal offset k<p it
+constructs `pre := (word.drop k).dropLast` and `post := word.take k`,
+and proves
 `word.rotate k = (pre ++ [true]) ++ post`,
-`post.length = k`, and `pre.length = p-k-1). It also proves that
-the marked cut `binaryWordMarkedRotate pre post` is exactly the original
-canonical encoding, so decoding that cut recovers the original gap list.
+`post.length = k), and `pre.length = p-k-1`. It also proves that the
+marked cut `binaryWordMarkedRotate pre post` is exactly the original
+canonical encoding and therefore decodes to the input gap list.
 
-The construction keeps every offset as separate data and does not identify
-periodic rotations. The new source has been committed for GitHub's complete
-Lean validation; no build success is claimed until the Lean Actions run for
-this commit completes. H6 and H8 are untouched.
+This construction retains every offset separately, including periodic
+cases. The theorem establishes existence of the displayed split; it does
+not separately claim uniqueness of arbitrary witnesses. The complete Lean
+build for the initial commit failed on a redundant `rfl` after a rewrite;
+the correction is recorded below. H6 and H8 are untouched.
 
+## 2026-11-02 — Diagnose the first H10 decomposition Lean failure
 
-## 2026-11-02 — Correct redundant tactic in the H10 offset decomposition
+The Lean run for `3a998e08f77192564ff7cae289cd0e0e95b7f49f`
+reported `No goals to be solved` at the `rfl` immediately following
+`rw [← hcut]` in the decomposition calculation. That rewrite already
+closed the equality goal; the redundant `rfl` had to be removed.
 
-The first Lean run for `3a998e08f77192564ff7cae289cd0e0e95b7f49f`
-reported one source error at the proof that the final delimiter belongs to
-the `getLast?` result: rewriting by `hdropLast` already closed the goal,
-so a following `simp` produced `No goals to be solved`. Removed only that
-redundant tactic. No theorem statement or mathematical argument changed.
-A fresh complete Lean build is required for acceptance.
+The first correction instead removed the `simp` in the separate
+`hmem) proof. This was incorrect: rewriting by `hdropLast` changes its
+goal to `true ∈ some true`, which still needs `simp`. The subsequent
+Lean run therefore reported that unsolved membership goal and the same
+redundant `rfl`. Both errors are corrected together in the current source.
+No success is claimed until the new full Lean run passes. H6 and H8 are
+untouched.
+
