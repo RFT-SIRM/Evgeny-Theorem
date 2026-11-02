@@ -6185,6 +6185,7 @@ theorem sg_trace_p10_two_N_word_stratum_diagonal
       rcases hcards with ⟨h1, h2, h3, h4, h5⟩
       norm_num [binaryWordP10GapOrbitReps2, h1, h2, h3, h4, h5,
         cyclicGapTrace, Matrix.mul_assoc]
+      ring
     _ = glueRHS10_two_N_diagonal_form m K := by
       simpa [K, N] using
         (sg_trace_p10_two_N_stratum_pair_diagonal m hm θ ax o hanti)
