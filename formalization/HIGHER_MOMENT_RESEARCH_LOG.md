@@ -5910,3 +5910,14 @@ identity. The next combinatorial obligation is to represent marked
 binary words as an unmarked length-p, r-true word together with one of
 its true positions, and prove that this representation is bijective.
 H6 and H8 remain untouched. Full Lean build required.
+
+
+## 2026-11-02 — Correct placement of the H10 gap-side decomposition
+
+The initial commit `728e85828465be7c86705c85fe78a86de448069b`
+placed the gap-vector product decomposition at an earlier namespace
+boundary, before the fixed gap-offset vector stratum and cyclic trace
+definitions it references. This was a source-order error. Moved the
+entire block after all its dependencies at the final module boundary.
+No theorem statement or proof body was changed. The initial commit is
+not a validated checkpoint; a fresh full Lean build is required.

@@ -3043,3 +3043,12 @@ distinct data.
 
 The matching r-fold decomposition on the marked-word side and the
 weighted trace identity remain outstanding. Full Lean build required.
+
+
+## 2026-11-02 — Correct H10 gap-side declaration order
+
+Moved the gap-vector stratum, product equivalence, and finite-sum
+decomposition below all referenced declarations. Commit
+`728e85828465be7c86705c85fe78a86de448069b` is not a validated
+checkpoint because of the earlier placement. The mathematics and proof
+bodies are unchanged. Full Lean build required.
