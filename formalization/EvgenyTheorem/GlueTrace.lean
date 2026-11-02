@@ -1,3 +1,4 @@
+import EvgenyTheorem.TraceExpand
 import EvgenyTheorem.GlueCorner
 
 /-!
@@ -6144,10 +6145,10 @@ theorem sg_trace_p10_eight_N_stratum_pair_diagonal
   rfl
 
 
-/-- The exact-count p=10 two-N word sum is the same five-term boundary
-stratum already reduced by the glued-corner theorem. The cyclic gap
-normalization supplies coefficients 10, 10, 10, 10, and 5, including
-the period-one gap tuple (5,5). -/
+/-- The exact-count p=10 two-N word sum is the existing one-pair
+diagonal normal form. The word-to-orbit identity supplies the exact
+coefficients, and the existing pair-diagonal theorem finishes the
+geometric reduction without repeating its proof. -/
 theorem sg_trace_p10_two_N_word_stratum_diagonal
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
@@ -6156,36 +6157,13 @@ theorem sg_trace_p10_two_N_word_stratum_diagonal
       Matrix.trace
         (binaryWordMatrix (sgK m θ ax o)
           (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
-    10 * (∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o ^ 1) x x *
-        (sgK m θ ax o ^ 9) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-    10 * (∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o ^ 2) x x *
-        (sgK m θ ax o ^ 8) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-    10 * (∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o ^ 3) x x *
-        (sgK m θ ax o ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-    10 * (∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o ^ 4) x x *
-        (sgK m θ ax o ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-     5 * (∑ x, if (sgGlue m).g x then
-      (sgK m θ ax o ^ 5) x x *
-        (sgK m θ ax o ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+    glueRHS10_two_N_diagonal_form m (sgK m θ ax o) := by
   let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
   let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
   change
     (∑ w : binaryWordFinStratum 10 2,
       Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
-    10 * (∑ x, if (sgGlue m).g x then
-      (K ^ 1) x x * (K ^ 9) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-    10 * (∑ x, if (sgGlue m).g x then
-      (K ^ 2) x x * (K ^ 8) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-    10 * (∑ x, if (sgGlue m).g x then
-      (K ^ 3) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-    10 * (∑ x, if (sgGlue m).g x then
-      (K ^ 4) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-     5 * (∑ x, if (sgGlue m).g x then
-      (K ^ 5) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0)
+      glueRHS10_two_N_diagonal_form m K
   have hcards :
       (cyclicGapOrbit [1, 9]).card = 2 ∧
       (cyclicGapOrbit [2, 8]).card = 2 ∧
@@ -6194,32 +6172,21 @@ theorem sg_trace_p10_two_N_word_stratum_diagonal
       (cyclicGapOrbit [5, 5]).card = 1 := by
     decide
   calc
-    _ = 10 * cyclicGapTrace K N [1, 9] +
-        10 * cyclicGapTrace K N [2, 8] +
-        10 * cyclicGapTrace K N [3, 7] +
-        10 * cyclicGapTrace K N [4, 6] +
-         5 * cyclicGapTrace K N [5, 5] := by
-      rw [binaryWordP10WordTraceOrbitAverage2]
-      rcases hcards with ⟨h1, h2, h3, h4, h5⟩
-      simp [binaryWordP10GapOrbitReps2, h1, h2, h3, h4, h5]
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps2,
+        ((10 : ℂ) / (2 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage2 K N
     _ = 10 * Matrix.trace (K ^ 1 * N * K ^ 9 * N * K ^ 0) +
         10 * Matrix.trace (K ^ 2 * N * K ^ 8 * N * K ^ 0) +
         10 * Matrix.trace (K ^ 3 * N * K ^ 7 * N * K ^ 0) +
         10 * Matrix.trace (K ^ 4 * N * K ^ 6 * N * K ^ 0) +
          5 * Matrix.trace (K ^ 5 * N * K ^ 5 * N * K ^ 0) := by
-      simp [cyclicGapTrace, Matrix.mul_assoc, pow_zero,
-        Matrix.one_mul, Matrix.mul_one]
-    _ = 10 * (∑ x, if (sgGlue m).g x then
-          (K ^ 1) x x * (K ^ 9) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-        10 * (∑ x, if (sgGlue m).g x then
-          (K ^ 2) x x * (K ^ 8) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-        10 * (∑ x, if (sgGlue m).g x then
-          (K ^ 3) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-        10 * (∑ x, if (sgGlue m).g x then
-          (K ^ 4) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
-         5 * (∑ x, if (sgGlue m).g x then
-          (K ^ 5) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+      rcases hcards with ⟨h1, h2, h3, h4, h5⟩
+      norm_num [binaryWordP10GapOrbitReps2, h1, h2, h3, h4, h5,
+        cyclicGapTrace, Matrix.mul_assoc]
+    _ = glueRHS10_two_N_diagonal_form m K := by
       simpa [K, N] using
-        (sg_trace_p10_two_N_stratum_boundary m hm θ ax o hanti)
+        (sg_trace_p10_two_N_stratum_pair_diagonal m hm θ ax o hanti)
 
 end EvgenyTheorem
