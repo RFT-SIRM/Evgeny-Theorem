@@ -5833,3 +5833,23 @@ The goal had the encoded expression on the right-hand side, so rewriting
 with `hround` (not `hround.symm`) closes that equality. Corrected this
 single rewrite direction; no definitions or mathematical statements were
 changed. The full Lean build must be rerun.
+
+
+## 2026-11-02 — Give the fixed H10 gap-offset stratum an explicit finite model
+
+Added a finite model `binaryWordGapOffsetVectorStratum`: an r-coordinate
+vector of gap values bounded by p-r, paired with an actual offset in
+`Fin p`. The offset is not quotiented by rotations, so periodic words
+retain all marked positions. A list-coordinate bound is proved directly
+from nonnegativity (`binaryWordGapList_get_le_sum`); `List.ofFn_congr`
+and `List.ofFn_get` establish the list/vector round trip. The exact
+encoding-length identity converts the legal natural offset to `Fin p`
+and back.
+
+The vector model is a subtype of a finite product, hence has a Fintype
+instance. Via explicit equivalences, Fintype instances now transfer to
+`binaryWordGapOffsetStratum p r` and
+`binaryWordMarkedCutStratum p r`. This completes the finite-type
+foundation needed for finite-sum reindexing, but it does not yet prove the
+weighted multiplicity identity or the H10 trace comparison. Full Lean
+build is required for this commit.

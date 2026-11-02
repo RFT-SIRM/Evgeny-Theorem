@@ -3304,6 +3304,133 @@ noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
       exact ⟨hrp, hlen, hcount⟩)
 
 
+
+/-- Every coordinate of a natural-number list is bounded by its sum. -/
+theorem binaryWordGapList_get_le_sum
+    (gaps : List ℕ) (i : Fin gaps.length) :
+    gaps.get i ≤ gaps.sum := by
+  induction gaps generalizing i with
+  | nil =>
+      exact Fin.elim0 i
+  | cons a rest ih =>
+      rcases i with ⟨i, hi⟩
+      cases i with
+      | zero =>
+          simp
+      | succ i =>
+          have hi' : i < rest.length := by omega
+          have hget := ih ⟨i, hi'⟩
+          have hsum : rest.sum ≤ a + rest.sum := by omega
+          simpa using le_trans hget hsum
+
+/-- Turn a length-r gap list of total p-r into a function with bounded
+coordinates. The upper bound p-r is forced by nonnegativity of all gaps. -/
+def binaryWordGapListToFinVector
+    (p r : ℕ) (gaps : List ℕ)
+    (hlen : gaps.length = r) (hsum : gaps.sum = p - r) :
+    Fin r → Fin (p - r + 1) :=
+  fun i =>
+    ⟨gaps.get (Fin.cast hlen.symm i), by
+      calc
+        gaps.get (Fin.cast hlen.symm i) ≤ gaps.sum :=
+          binaryWordGapList_get_le_sum gaps _
+        _ = p - r := hsum
+        _ < p - r + 1 := by omega⟩
+
+/-- Converting a fixed-length gap list to a Fin-indexed vector and back
+recovers the list, using Mathlib's ofFn/get equivalence. -/
+theorem binaryWordGapListToFinVector_ofFn
+    (p r : ℕ) (gaps : List ℕ)
+    (hlen : gaps.length = r) (hsum : gaps.sum = p - r) :
+    List.ofFn (fun i : Fin r =>
+      (binaryWordGapListToFinVector p r gaps hlen hsum i).val) = gaps := by
+  unfold binaryWordGapListToFinVector
+  calc
+    List.ofFn (fun i : Fin r =>
+        gaps.get (Fin.cast hlen.symm i)) =
+      List.ofFn (fun i : Fin gaps.length => gaps.get i) :=
+        (List.ofFn_congr hlen (fun i : Fin gaps.length => gaps.get i)).symm
+    _ = gaps := List.ofFn_get gaps
+
+/-- Finite model of fixed-(p,r) gap-offset data. A vector stores the r
+nonnegative gap sizes, and Fin p stores the actual cyclic offset. Keeping
+the offset as a Fin value (rather than taking cyclic orbits) retains all p
+marked positions, including those in periodic words. -/
+def binaryWordGapOffsetVectorStratum (p r : ℕ) : Type :=
+  {x : (Fin r → Fin (p - r + 1)) × Fin p //
+    r ≤ p ∧
+      (List.ofFn (fun i : Fin r => (x.1 i).val)).sum = p - r}
+
+/-- The vector/offset model is finite because it is a subtype of a product
+of finite function and offset types. -/
+noncomputable instance binaryWordGapOffsetVectorStratum_fintype
+    (p r : ℕ) : Fintype (binaryWordGapOffsetVectorStratum p r) := by
+  classical
+  infer_instance
+
+/-- The fixed-(p,r) list-based gap-offset stratum is equivalent to the
+finite vector/offset model. The offset bound is transported using the
+exact encoding length p = sum(gaps) + length(gaps). -/
+noncomputable def binaryWordGapOffsetVectorEquiv
+    (p r : ℕ) :
+    binaryWordGapOffsetStratum p r ≃ binaryWordGapOffsetVectorStratum p r where
+  toFun x := by
+    rcases x with ⟨⟨⟨gaps, offset⟩, hoffset⟩, hrp, hlen, hsum⟩
+    let v := binaryWordGapListToFinVector p r gaps hlen hsum
+    have hvlist :=
+      binaryWordGapListToFinVector_ofFn p r gaps hlen hsum
+    have hencoded : (binaryWordGapEncoding gaps).length = p := by
+      rw [binaryWordGapEncoding_length, hsum, hlen]
+      omega
+    have hoffset' : offset < p := by
+      rw [hencoded] at hoffset
+      exact hoffset
+    refine ⟨(v, ⟨offset, hoffset'⟩), hrp, ?_⟩
+    change (List.ofFn (fun i : Fin r => (v i).val)).sum = p - r
+    rw [hvlist]
+    exact hsum
+  invFun x := by
+    rcases x with ⟨⟨v, offset⟩, hrp, hsum⟩
+    let gaps := List.ofFn (fun i : Fin r => (v i).val)
+    have hlen : gaps.length = r := by simp [gaps]
+    have hsum' : gaps.sum = p - r := by simpa [gaps] using hsum
+    have hencoded : (binaryWordGapEncoding gaps).length = p := by
+      rw [binaryWordGapEncoding_length, hsum', hlen]
+      omega
+    refine ⟨⟨(gaps, (offset : ℕ)), ?_⟩, hrp, hlen, hsum'⟩
+    rw [hencoded]
+    exact offset.isLt
+  left_inv x := by
+    rcases x with ⟨⟨⟨gaps, offset⟩, hoffset⟩, hrp, hlen, hsum⟩
+    apply Subtype.ext
+    apply Subtype.ext
+    apply Prod.ext
+    · exact binaryWordGapListToFinVector_ofFn p r gaps hlen hsum
+    · rfl
+  right_inv x := by
+    rcases x with ⟨⟨v, offset⟩, hrp, hsum⟩
+    apply Subtype.ext
+    apply Prod.ext
+    · funext i
+      apply Fin.ext
+      simp [binaryWordGapListToFinVector, List.get_ofFn]
+    · exact Fin.ext rfl
+
+/-- The exact gap-offset stratum is a finite type, transported from the
+explicit vector/offset model above. -/
+noncomputable instance binaryWordGapOffsetStratum_fintype
+    (p r : ℕ) : Fintype (binaryWordGapOffsetStratum p r) :=
+  Fintype.ofEquiv (binaryWordGapOffsetVectorStratum p r)
+    (binaryWordGapOffsetVectorEquiv p r).symm
+
+/-- The fixed-(p,r) marked-cut stratum is finite as well, by the already
+proved restricted marked-cut/gap-offset equivalence. -/
+noncomputable instance binaryWordMarkedCutStratum_fintype
+    (p r : ℕ) : Fintype (binaryWordMarkedCutStratum p r) :=
+  Fintype.ofEquiv (binaryWordGapOffsetStratum p r)
+    (binaryWordMarkedCutGapOffsetStratumEquiv p r).symm
+
+
 /-- The trace of a binary matrix word is unchanged when a marked true letter
 is moved from the cut position to the final position. The proof is exactly
 trace cyclicity for the two grouped factors `eval(pre) * B` and

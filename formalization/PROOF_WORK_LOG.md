@@ -2976,3 +2976,25 @@ word, and the failing length equality requires rewriting the encoded
 right-hand side to the word. Changed `rw [← hround]` to `rw [hround]`.
 The build reported no other errors in `TraceExpand.lean`; rerun the full
 Lean build after this minimal repair.
+
+
+## 2026-11-02 — Finite vector/offset representation for H10 marked gaps
+
+Introduced a concrete finite representation for fixed-(p,r) gap-offset
+data. The gap list is encoded by a function
+`Fin r → Fin (p-r+1)`; the offset is a separate `Fin p`. The proof
+that every gap fits the coordinate bound follows from the elementary
+list inequality that each entry is at most the sum of all entries.
+List/vector inversion uses the pinned Mathlib lemmas
+`List.ofFn_congr` and `List.ofFn_get`, avoiding manual list indexing
+and subtype unfolding.
+
+The encoding-length formula identifies every legal gap offset with an
+element of `Fin p`. This gives an explicit equivalence with a subtype
+of a finite product and therefore Fintype instances for both the
+gap-offset stratum and, by the established restricted equivalence, the
+marked-cut stratum. The marked offset remains distinct for periodic
+words. Still outstanding: the finite weighted reindexing/count
+`r · |words| = p · |gaps|`, the corresponding trace-sum identity,
+assembly of all H10 strata, comparison of the two orientations, and the
+H10 residual recurrence. H6 and H8 remain untouched.
