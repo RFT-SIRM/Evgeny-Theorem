@@ -2681,3 +2681,19 @@ variable names, proof steps, grouped matrix factors, and use of
 Fast and Slow jobs all passed on the failed source commit
 (`41346027678`); a new full Lean build and fresh Python validation are
 required for the rename commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Canonical H10 gap decoder
+
+Added `binaryWordGapDecodeAux` and `binaryWordGapDecode` in
+`TraceExpand.lean`. The structural scan accumulates false symbols and
+emits one natural-number gap at each true delimiter. Proved
+`binaryWordGapDecodeAux_length`, hence decoded block count equals true
+letter count for arbitrary binary words, and proved
+`binaryWordGapDecode_gapEncoding`, the left-inverse law on canonical gap
+encodings.
+
+This does not yet prove reconstruction for arbitrary words ending in true
+or the marked-position/rotation-offset bijection. Therefore no \(p/r\)
+weight is claimed. Full Lean and Python 3.11/3.12 Fast/Slow CI for this
+commit remains required; H6 and H8 are unchanged.

@@ -5426,3 +5426,27 @@ variable names, proof steps, grouped matrix factors, and use of
 Fast and Slow jobs all passed on the failed source commit
 (`41346027678`); a new full Lean build and fresh Python validation are
 required for the rename commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Add a canonical H10 gap decoder
+
+The source baseline `bfc2996c235e2e25f6da71bf4d637bac158b9d9a` was
+rechecked before editing. Its complete Lean build passed in Actions run
+`41361034955`; the Python 3.11 and 3.12 Fast and Slow jobs all passed in
+run `41361034890`.
+
+Added a structural decoder `binaryWordGapDecodeAux` that counts false
+symbols until each true delimiter, emits that completed run, and resets its
+counter. Proved that the decoder output length equals the number of true
+symbols for every input word, and proved the left-inverse law
+`binaryWordGapDecode (binaryWordGapEncoding gaps) = gaps`. The helper
+`binaryWordGapDecodeAux_falseRun_block` isolates the list-level scan across
+one encoded false-run/delimiter block; the proof does not reorder matrix
+factors or rely on finite enumeration.
+
+Scope is intentionally limited: the left-inverse theorem applies to
+canonical gap encodings. Reconstruction of an arbitrary cut word ending in
+true, the marked-word/offset bijection, and the trace multiplicity factor
+\(p/r\) are still open. The new source commit requires a fresh complete
+Lean build and Python 3.11/3.12 Fast/Slow validation. H6 and H8 remain
+untouched.

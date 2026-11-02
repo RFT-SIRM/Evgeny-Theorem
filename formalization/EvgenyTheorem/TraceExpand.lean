@@ -2571,6 +2571,68 @@ theorem binaryWordGapEncoding_injective :
           have htail := List.append_inj_right h' (by rfl)
           exact congrArg (fun xs : List ℕ => a :: xs) (ih htail)
 
+/-- Decode a binary word by counting the false symbols since the previous
+true delimiter. A pending run is emitted exactly when a true symbol is read;
+an incomplete final run is deliberately ignored. -/
+def binaryWordGapDecodeAux : ℕ → List Bool → List ℕ
+  | _, [] => []
+  | run, false :: rest => binaryWordGapDecodeAux (run + 1) rest
+  | run, true :: rest => run :: binaryWordGapDecodeAux 0 rest
+
+/-- Decode the completed false-runs of a binary word, starting with no
+pending false symbols. -/
+def binaryWordGapDecode (word : List Bool) : List ℕ :=
+  binaryWordGapDecodeAux 0 word
+
+/-- The number of decoded gaps is exactly the number of true delimiters,
+even when the input has an unfinished false run at its end. -/
+theorem binaryWordGapDecodeAux_length (run : ℕ) (word : List Bool) :
+    (binaryWordGapDecodeAux run word).length =
+      (word.filter id).length := by
+  induction word generalizing run with
+  | nil => rfl
+  | cons bit rest ih =>
+      cases bit <;> simp [binaryWordGapDecodeAux, ih]
+
+/-- In particular, decoding preserves the number of true symbols. -/
+theorem binaryWordGapDecode_true_count (word : List Bool) :
+    (binaryWordGapDecode word).length = (word.filter id).length := by
+  simpa [binaryWordGapDecode] using
+    (binaryWordGapDecodeAux_length 0 word)
+
+/-- Scanning a false run followed by its true delimiter emits one gap,
+adding the run length to any false symbols already accumulated. -/
+theorem binaryWordGapDecodeAux_falseRun_block
+    (run a : ℕ) (tail : List Bool) :
+    binaryWordGapDecodeAux run
+      ((binaryFalseRun a ++ [true]) ++ tail) =
+        (run + a) :: binaryWordGapDecodeAux 0 tail := by
+  induction a generalizing run with
+  | zero =>
+      simp [binaryFalseRun, binaryWordGapDecodeAux]
+  | succ a ih =>
+      change binaryWordGapDecodeAux (run + 1)
+        ((binaryFalseRun a ++ [true]) ++ tail) =
+          (run + (a + 1)) :: binaryWordGapDecodeAux 0 tail
+      rw [ih]
+      exact congrArg
+        (fun k : ℕ => k :: binaryWordGapDecodeAux 0 tail) (by omega)
+
+/-- Decoding a canonical gap encoding recovers the original list exactly.
+This is a left-inverse statement on canonical words; reconstruction for
+arbitrary words ending in true is a separate remaining obligation. -/
+theorem binaryWordGapDecode_gapEncoding (gaps : List ℕ) :
+    binaryWordGapDecode (binaryWordGapEncoding gaps) = gaps := by
+  induction gaps with
+  | nil => rfl
+  | cons a rest ih =>
+      change binaryWordGapDecodeAux 0
+        ((binaryFalseRun a ++ [true]) ++
+          binaryWordGapEncoding rest) = a :: rest
+      rw [binaryWordGapDecodeAux_falseRun_block]
+      simpa [binaryWordGapDecode] using ih
+
+
 /-- Evaluating a binary word beginning with one symbol multiplies its
 evaluation on the left by the matrix assigned to that symbol. -/
 theorem binaryWordMatrix_cons
