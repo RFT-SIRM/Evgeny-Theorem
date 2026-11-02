@@ -5607,87 +5607,6 @@ places one K at the cyclic cut, with all ten K runs written as K^1. -/
 
 
 
-/-- The complete exact-count p=10 seven-N binary-word stratum vanishes.
-The marked-word/gap identity assigns coefficient ten to each of the
-twelve full cyclic orbits, matching the existing seven-N class theorem. -/
-theorem sg_trace_p10_seven_N_word_stratum_zero
-    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
-    (o : Point → Point → Prop) [DecidableRel o]
-    (hanti : OAnti (m + 1) o) :
-    (∑ w : binaryWordFinStratum 10 7,
-      Matrix.trace
-        (binaryWordMatrix (sgK m θ ax o)
-          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
-  classical
-  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
-  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
-  change
-    (∑ w : binaryWordFinStratum 10 7,
-      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
-  have hcards7 :
-      ([(cyclicGapOrbit [1, 1, 1, 1, 1, 1, 4]).card,
-      (cyclicGapOrbit [1, 1, 1, 1, 1, 2, 3]).card,
-      (cyclicGapOrbit [1, 1, 1, 1, 1, 3, 2]).card,
-      (cyclicGapOrbit [1, 1, 1, 1, 2, 1, 3]).card,
-      (cyclicGapOrbit [1, 1, 1, 1, 2, 2, 2]).card,
-      (cyclicGapOrbit [1, 1, 1, 1, 3, 1, 2]).card,
-      (cyclicGapOrbit [1, 1, 1, 2, 1, 1, 3]).card,
-      (cyclicGapOrbit [1, 1, 1, 2, 1, 2, 2]).card,
-      (cyclicGapOrbit [1, 1, 1, 2, 2, 1, 2]).card,
-      (cyclicGapOrbit [1, 1, 1, 3, 1, 1, 2]).card,
-      (cyclicGapOrbit [1, 1, 2, 1, 1, 2, 2]).card,
-      (cyclicGapOrbit [1, 1, 2, 1, 2, 1, 2]).card] : List ℕ) =
-        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7] := by
-    exact binaryWordP10GapOrbitRepresentativeCardinals7
-  simp only [List.cons.injEq] at hcards7
-  rcases hcards7 with ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩
-  have hcoef7 : ((10 : ℂ) / (7 : ℂ)) * 7 = 10 := by
-    norm_num
-  have htrace (e0 e1 e2 e3 e4 e5 e6 : ℕ) :
-      cyclicGapTrace K N
-        [Nat.succ e0, Nat.succ e1, Nat.succ e2, Nat.succ e3,
-          Nat.succ e4, Nat.succ e5, Nat.succ e6] =
-      Matrix.trace
-        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
-          K ^ e2 * (K * N) * K ^ e3 * (K * N) *
-          K ^ e4 * (K * N) * K ^ e5 * (K * N) *
-          K ^ e6 * (K * N)) := by
-    calc
-      _ = cyclicGapTrace K (K * N)
-          [e0, e1, e2, e3, e4, e5, e6] := by
-        symm
-        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N
-          [e0, e1, e2, e3, e4, e5, e6]
-      _ = _ := by
-        simp [cyclicGapTrace, Matrix.mul_assoc]
-  calc
-    _ = ∑ rep ∈ binaryWordP10GapOrbitReps7,
-        ((10 : ℂ) / (7 : ℂ)) *
-          ((cyclicGapOrbit rep).card : ℂ) *
-          cyclicGapTrace K N rep := by
-      exact binaryWordP10WordTraceOrbitAverage7 K N
-    _ =
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 +
-        10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 := by
-      simp [binaryWordP10GapOrbitReps7, htrace,
-        h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, hcoef7,
-        sg_trace_p10_seven_N_class_term]
-      ring
-    _ = 0 := by
-      simpa [K, N, sg_trace_p10_seven_N_class_term] using
-        (sg_trace_p10_seven_N_stratum_zero m hm θ ax o hanti)
-
-
 noncomputable def sg_trace_p10_nine_N_class_term
     (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   Matrix.trace
@@ -6698,5 +6617,87 @@ theorem sg_trace_p10_five_N_word_stratum_zero
       simpa [K, N] using
         (sg_trace_p10_five_N_stratum_zero m hm θ ax o hanti)
 
+
+
+
+/-- The complete exact-count p=10 seven-N binary-word stratum vanishes.
+The marked-word/gap identity assigns coefficient ten to each of the
+twelve full cyclic orbits, matching the existing seven-N class theorem. -/
+theorem sg_trace_p10_seven_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 7,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 7,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcards7 :
+      ([(cyclicGapOrbit [1, 1, 1, 1, 1, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 3, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 2, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 1, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 2, 1, 2]).card] : List ℕ) =
+        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7] := by
+    exact binaryWordP10GapOrbitRepresentativeCardinals7
+  simp only [List.cons.injEq] at hcards7
+  rcases hcards7 with ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩
+  have hcoef7 : ((10 : ℂ) / (7 : ℂ)) * 7 = 10 := by
+    norm_num
+  have htrace (e0 e1 e2 e3 e4 e5 e6 : ℕ) :
+      cyclicGapTrace K N
+        [Nat.succ e0, Nat.succ e1, Nat.succ e2, Nat.succ e3,
+          Nat.succ e4, Nat.succ e5, Nat.succ e6] =
+      Matrix.trace
+        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+          K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+          K ^ e4 * (K * N) * K ^ e5 * (K * N) *
+          K ^ e6 * (K * N)) := by
+    calc
+      _ = cyclicGapTrace K (K * N)
+          [e0, e1, e2, e3, e4, e5, e6] := by
+        symm
+        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N
+          [e0, e1, e2, e3, e4, e5, e6]
+      _ = _ := by
+        simp [cyclicGapTrace, Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps7,
+        ((10 : ℂ) / (7 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage7 K N
+    _ =
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 := by
+      simp [binaryWordP10GapOrbitReps7, htrace,
+        h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, hcoef7,
+        sg_trace_p10_seven_N_class_term]
+      ring
+    _ = 0 := by
+      simpa [K, N, sg_trace_p10_seven_N_class_term] using
+        (sg_trace_p10_seven_N_stratum_zero m hm θ ax o hanti)
 
 end EvgenyTheorem

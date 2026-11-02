@@ -6538,3 +6538,23 @@ for r=3, r=5, and r=7; the remaining H10 assembly, even-boundary
 aggregation, orientation comparison, and residual recurrence are still
 open. A complete Lean build on the new source SHA is required.
 
+
+
+
+## 2026-11-02 — Move the H10 r=7 word bridge out of the nine-N doc comment
+
+The build of `c4c1e2edbf6d885f32af7732cf1c2c5473f720e1`
+found a parser error at `GlueTrace.lean:5606`. Inspection of the exact
+source context showed the r=7 bridge had been inserted between the
+documentation comment and declaration for
+`sg_trace_p10_nine_N_class_term`, so it was parsed as part of that
+unclosed comment. The later `/--` then appeared where Lean expected a
+declaration body.
+
+Moved the complete r=7 bridge unchanged to the end of `GlueTrace.lean`,
+after all prerequisite declarations and immediately before
+`end EvgenyTheorem`. No theorem statement, tactic, matrix expression,
+or factor order was altered. The next full Lean build will now also test
+the r=7 bridge proof itself, which the previous parser failure prevented
+Lean from elaborating.
+
