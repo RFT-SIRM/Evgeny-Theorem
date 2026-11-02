@@ -4583,14 +4583,26 @@ theorem sg_trace_p10_three_N_word_stratum_zero
   change
     (∑ w : binaryWordFinStratum 10 3,
       Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
-  have hcard :
-      ∀ rep ∈ binaryWordP10GapOrbitReps3,
-        (cyclicGapOrbit rep).card = 3 := by
-    intro rep hrep
-    simp only [binaryWordP10GapOrbitReps3, Finset.mem_insert,
-      Finset.mem_singleton] at hrep
-    rcases hrep with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    all_goals decide
+  have hcards3 :
+      ([(cyclicGapOrbit [1, 1, 8]).card,
+        (cyclicGapOrbit [1, 2, 7]).card,
+        (cyclicGapOrbit [1, 3, 6]).card,
+        (cyclicGapOrbit [1, 4, 5]).card,
+        (cyclicGapOrbit [1, 5, 4]).card,
+        (cyclicGapOrbit [1, 6, 3]).card,
+        (cyclicGapOrbit [1, 7, 2]).card,
+        (cyclicGapOrbit [2, 2, 6]).card,
+        (cyclicGapOrbit [2, 3, 5]).card,
+        (cyclicGapOrbit [2, 4, 4]).card,
+        (cyclicGapOrbit [2, 5, 3]).card,
+        (cyclicGapOrbit [3, 3, 4]).card] : List ℕ) =
+          [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] := by
+    decide
+  simp only [List.cons.injEq] at hcards3
+  rcases hcards3 with
+    ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩
+  have hcoef3 : ((10 : ℂ) / (3 : ℂ)) * 3 = 10 := by
+    norm_num
   have htrace (e0 e1 e2 : ℕ) :
       cyclicGapTrace K N
         [Nat.succ e0, Nat.succ e1, Nat.succ e2] =
@@ -4633,7 +4645,9 @@ theorem sg_trace_p10_three_N_word_stratum_zero
           (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
         10 * Matrix.trace
           (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) := by
-      simp [binaryWordP10GapOrbitReps3, hcard, htrace]
+      simp [binaryWordP10GapOrbitReps3, htrace, h1, h2, h3, h4, h5, h6,
+        h7, h8, h9, h10, h11, h12, hcoef3]
+      ring
     _ = 0 := by
       simpa [K, N] using
         (sg_trace_p10_three_N_stratum_zero m hm θ ax o hanti)

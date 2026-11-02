@@ -6453,3 +6453,17 @@ This closes the r=3 word-level interface only. The analogous r=5 and r=7
 exact-word bridges, full ten-stratum aggregation, cross-stratum boundary
 cancellation, and the H10 recurrence remain open. A full Lean build on
 this exact source SHA is required.
+
+
+
+## 2026-11-02 — Make the H10 r=3 orbit weights rewrite explicitly
+
+The first full Lean build of the r=3 exact-word bridge reached its final
+weighted-sum normalization and exposed one proof-shape issue: a quantified
+orbit-cardinality fact did not rewrite the twelve concrete cardinalities
+inside the finite sum. Replaced it with the twelve explicit finite
+cardinality equalities, destructured as h1 through h12, and recorded the
+scalar identity (10/3)*3=10. The gap representatives, partition, trace
+conversion, order of all matrix factors, and existing twelve-class
+vanishing theorem are unchanged. This is a targeted normalization repair;
+the complete Lean build on the repaired source SHA must still pass.
