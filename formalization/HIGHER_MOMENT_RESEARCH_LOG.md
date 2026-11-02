@@ -6419,3 +6419,17 @@ left the theorem statement and by decide proof unchanged. No orbit
 representative, orbit cardinality, trace weight, or matrix identity changed.
 A fresh full Lean build is required; this records only the parser-level
 repair and does not claim the r=9 interface is validated.
+
+
+
+## 2026-11-02 — Avoid definitional matrix reduction in the H10 r=9 trace bridge
+
+The full Lean build of the r=9 exact-word interface timed out at the final
+`rfl`: Lean was normalizing a long matrix-product expression by kernel
+reduction. Keep the same mathematical identity and cyclic trace rotation,
+but replace that reduction with explicit simplification of the nine powers,
+`K ^ 1`, and matrix associativity. This changes proof normalization only;
+it does not commute factors or alter any gap representative, orbit weight,
+or trace term. The line-6308 timeout was a follow-on declaration failure
+after the line-6339 timeout, not a separate mathematical obligation.
+A fresh complete Lean build must validate this change.

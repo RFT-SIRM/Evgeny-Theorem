@@ -6336,7 +6336,8 @@ theorem sg_trace_p10_nine_N_word_stratum_zero
       _ = Matrix.trace ((K * N) ^ 9 * K) :=
         Matrix.trace_mul_comm _ _
       _ = sg_trace_p10_nine_N_class_term m K N := by
-        rfl
+        simp [sg_trace_p10_nine_N_class_term, pow_one, pow_succ,
+          Matrix.mul_assoc]
   calc
     _ = ∑ rep ∈ binaryWordP10GapOrbitReps9,
         ((10 : ℂ) / (9 : ℂ)) *
