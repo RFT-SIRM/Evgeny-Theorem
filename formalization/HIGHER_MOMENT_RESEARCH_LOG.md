@@ -6388,3 +6388,22 @@ coefficient, matrix word, or geometric theorem is changed.
 The previous full Lean run failed only in these two new GlueTrace proofs;
 the corrected source must pass a fresh complete Lean build before the
 endpoint interfaces are treated as validated.
+
+
+## 2026-11-02 — Connect the exact H10 nine-N word stratum to its zero class
+
+Added the missing r=9 cyclic-gap inventory: the positive compositions of
+10 into nine parts form one orbit, represented by [2,1,1,1,1,1,1,1,1],
+with orbit cardinality nine. Added its pairwise-disjoint orbit partition,
+exact orbit-sum identity, marked-word trace sum, and normalized word/orbit
+average. The normalization factor (10/9) times the orbit size nine gives
+the exact coefficient ten.
+
+The concrete Sierpinski theorem sg_trace_p10_nine_N_word_stratum_zero now
+transfers the complete exact-count binary-word sum to the previously
+proved nine-N cyclic class and reuses sg_trace_p10_nine_N_cyclic_class_zero.
+The cyclic trace is identified by trace cyclicity; no kernel factors are
+commuted. This closes the r=9 word-level interface only. The remaining
+r=3,5,7 finite-word interfaces and the full ten-stratum p=10 assembly
+remain separate obligations; no H10 recurrence or cancellation is claimed.
+A full Lean build on this exact source SHA is required.

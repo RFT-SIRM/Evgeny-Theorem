@@ -6305,6 +6305,50 @@ theorem sg_trace_p10_eight_N_word_stratum_diagonal
       ring
 
 
+/-- The exact-count p=10 nine-N word stratum vanishes.
+Its positive-gap tuples form one orbit of size nine, and the resulting
+cyclic trace is the already-proved nine-pairing corner-zero class. -/
+theorem sg_trace_p10_nine_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 9,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 9,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcard :
+      (cyclicGapOrbit
+        ([2, 1, 1, 1, 1, 1, 1, 1, 1] : List ℕ)).card = 9 := by
+    decide
+  have hcyclic :
+      cyclicGapTrace K N [2, 1, 1, 1, 1, 1, 1, 1, 1] =
+        sg_trace_p10_nine_N_class_term m K N := by
+    calc
+      cyclicGapTrace K N [2, 1, 1, 1, 1, 1, 1, 1, 1] =
+          Matrix.trace (K * (K * N) ^ 9) := by
+        simp [cyclicGapTrace, Matrix.mul_assoc, pow_succ, pow_one]
+      _ = Matrix.trace ((K * N) ^ 9 * K) :=
+        Matrix.trace_mul_comm _ _
+      _ = sg_trace_p10_nine_N_class_term m K N := by
+        rfl
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps9,
+        ((10 : ℂ) / (9 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage9 K N
+    _ = 10 * sg_trace_p10_nine_N_class_term m K N := by
+      simp [binaryWordP10GapOrbitReps9, hcard, hcyclic]
+    _ = 0 := by
+      simpa using
+        (sg_trace_p10_nine_N_cyclic_class_zero m hm θ ax o hanti)
+
 /-- The exact-count p=10 one-N word stratum vanishes. The marked-gap
 identity reduces its full binary-word sum to the unique positive gap [10],
 and the generic single-pairing trace lemma kills that term because K is

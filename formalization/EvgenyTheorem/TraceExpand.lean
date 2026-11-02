@@ -4197,6 +4197,11 @@ def binaryWordP10GapOrbitReps8 : Finset (List ℕ) :=
    [1, 1, 1, 1, 2, 1, 1, 2],
    [1, 1, 1, 2, 1, 1, 1, 2]}
 
+/-- The unique p=10 cyclic representative for the nine-insertion stratum.
+Its nine positive gaps consist of one 2 and eight 1s. -/
+def binaryWordP10GapOrbitReps9 : Finset (List ℕ) :=
+  {([2, 1, 1, 1, 1, 1, 1, 1, 1] : List ℕ)}
+
 /-- The unique p=10 cyclic representative for the ten-insertion stratum. -/
 def binaryWordP10GapOrbitReps10 : Finset (List ℕ) :=
   {(List.replicate 10 1 : List ℕ)}
@@ -4239,6 +4244,15 @@ cyclic gap orbits. -/
 theorem binaryWordP10GapOrbitPartition8 :
     binaryWordP10PositiveGapListFinset 8 =
       binaryWordP10GapOrbitReps8.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+/-- The nine-insertion positive compositions form one cyclic orbit:
+the unique gap of size two can occur at any of the nine positions. -/
+set_option maxRecDepth 4096 in
+theorem binaryWordP10GapOrbitPartition9 :
+    binaryWordP10PositiveGapListFinset 9 =
+      binaryWordP10GapOrbitReps9.biUnion cyclicGapOrbit := by
   classical
   decide
 
@@ -4346,6 +4360,17 @@ theorem binaryWordP10GapOrbitReps8_pairwise_disjoint :
       | exact (hab rfl).elim
       | decide
 
+/-- The p=10 r=9 cyclic representative orbit is a singleton family. -/
+theorem binaryWordP10GapOrbitReps9_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps9) cyclicGapOrbit := by
+  classical
+  apply binaryWordP10GapOrbitReps_pairwise_disjoint
+  intro a ha b hb hab
+  simp only [binaryWordP10GapOrbitReps9, Finset.mem_singleton] at ha hb
+  subst a
+  subst b
+  exact (hab rfl).elim
+
 /-- The p=10 r=10 cyclic representative orbits are pairwise disjoint. -/
 theorem binaryWordP10GapOrbitReps10_pairwise_disjoint :
     Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps10) cyclicGapOrbit := by
@@ -4405,6 +4430,18 @@ theorem binaryWordP10GapTraceOrbitSum8
   rw [binaryWordP10GapOrbitPartition8]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
     binaryWordP10GapOrbitReps8_pairwise_disjoint
+
+/-- Orbit sums for the p=10 nine-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum9
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 9,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps9,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition9]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    binaryWordP10GapOrbitReps9_pairwise_disjoint
 
 /-- Orbit sums for the p=10 ten-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum10
@@ -4633,6 +4670,33 @@ theorem binaryWordP10WordTraceOrbitSum8
       rw [binaryWordP10GapTraceOrbitSum8 K N]
 
 
+/-- Exact H10 nine-N trace sum, reindexed by its single cyclic
+gap orbit. The orbit has cardinality nine, retaining all ten marked cuts
+after normalization by the nine selected positions. -/
+theorem binaryWordP10WordTraceOrbitSum9
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (9 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 9,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps9,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 9,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 9 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 9
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 9,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 9]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps9,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum9 K N]
+
 /-- Exact H10 ten-N trace sum. Its single representative has a
 one-element orbit, so no cyclic multiplicity remains. -/
 theorem binaryWordP10WordTraceOrbitSum10
@@ -4775,6 +4839,22 @@ theorem binaryWordP10WordTraceOrbitAverage8
     binaryWordP10GapOrbitReps8
   exact binaryWordP10WordTraceOrbitSum8 K N
 
+
+/-- Normalize the exact-count p=10 nine-N word stratum by its
+nine marked positions. Its single gap orbit has size nine, hence the
+normalized coefficient remains ten. -/
+theorem binaryWordP10WordTraceOrbitAverage9
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 9,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps9,
+      ((10 : ℂ) / (9 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 9 (by norm_num)
+    binaryWordP10GapOrbitReps9
+  exact binaryWordP10WordTraceOrbitSum9 K N
 
 /-- The p=10 ten-letter-selected stratum consists of one word and one
 period-one gap orbit; its normalized coefficient is one. -/
