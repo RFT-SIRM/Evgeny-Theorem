@@ -4143,4 +4143,242 @@ theorem binaryWordFinStratum_weighted_trace_eq_positive_gap_sum
         (List.ofFn (fun i : Fin r => (gaps.val i).val))
 
 
+
+
+/-! ### The p=10 positive-gap orbit decomposition
+
+For fixed r, positive gap tuples are obtained by adding one to every
+coordinate of the finite nonnegative gap vectors. The finite sets below
+are partitioned by the cyclic orbits of the representatives already used
+in the p=10 boundary formulas. Periodic representatives have smaller
+orbit cardinality and therefore retain their reduced weights.
+-/
+
+/-- All ordered positive gap tuples in the p=10, r-insertion stratum. -/
+noncomputable def binaryWordP10PositiveGapListFinset (r : ℕ) :
+    Finset (List ℕ) :=
+  (Finset.univ : Finset (binaryWordGapVectorStratum 10 r)).image
+    (fun gaps =>
+      (List.ofFn (fun i : Fin r => (gaps.val i).val)).map Nat.succ)
+
+/-- Canonical p=10 cyclic representatives for the two-insertion stratum. -/
+def binaryWordP10GapOrbitReps2 : Finset (List ℕ) :=
+  {([1, 9] : List ℕ), [2, 8], [3, 7], [4, 6], [5, 5]}
+
+/-- Canonical p=10 cyclic representatives for the four-insertion stratum. -/
+def binaryWordP10GapOrbitReps4 : Finset (List ℕ) :=
+  {([1, 1, 1, 7] : List ℕ), [1, 1, 2, 6], [1, 1, 3, 5],
+   [1, 1, 4, 4], [1, 1, 5, 3], [1, 1, 6, 2],
+   [1, 2, 1, 6], [1, 2, 2, 5], [1, 2, 3, 4], [1, 2, 4, 3],
+   [1, 2, 5, 2], [1, 3, 1, 5], [1, 3, 2, 4], [1, 3, 3, 3],
+   [1, 3, 4, 2], [1, 4, 1, 4], [1, 4, 2, 3], [1, 4, 3, 2],
+   [1, 5, 2, 2], [2, 2, 2, 4], [2, 2, 3, 3], [2, 3, 2, 3]}
+
+/-- Canonical p=10 cyclic representatives for the six-insertion stratum. -/
+def binaryWordP10GapOrbitReps6 : Finset (List ℕ) :=
+  {([1, 1, 1, 1, 1, 5] : List ℕ), [1, 1, 1, 1, 2, 4],
+   [1, 1, 1, 1, 3, 3], [1, 1, 1, 1, 4, 2],
+   [1, 1, 1, 2, 1, 4], [1, 1, 1, 2, 2, 3],
+   [1, 1, 1, 2, 3, 2], [1, 1, 1, 3, 1, 3],
+   [1, 1, 1, 3, 2, 2], [1, 1, 1, 4, 1, 2],
+   [1, 1, 2, 1, 1, 4], [1, 1, 2, 1, 2, 3],
+   [1, 1, 2, 1, 3, 2], [1, 1, 2, 2, 1, 3],
+   [1, 1, 2, 2, 2, 2], [1, 1, 2, 3, 1, 2],
+   [1, 1, 3, 1, 1, 3], [1, 1, 3, 1, 2, 2],
+   [1, 1, 3, 2, 1, 2], [1, 2, 1, 2, 1, 3],
+   [1, 2, 1, 2, 2, 2], [1, 2, 2, 1, 2, 2]}
+
+/-- Canonical p=10 cyclic representatives for the eight-insertion stratum. -/
+def binaryWordP10GapOrbitReps8 : Finset (List ℕ) :=
+  {([1, 1, 1, 1, 1, 1, 1, 3] : List ℕ),
+   [1, 1, 1, 1, 1, 1, 2, 2],
+   [1, 1, 1, 1, 1, 2, 1, 2],
+   [1, 1, 1, 1, 2, 1, 1, 2],
+   [1, 1, 1, 2, 1, 1, 1, 2]}
+
+/-- The unique p=10 cyclic representative for the ten-insertion stratum. -/
+def binaryWordP10GapOrbitReps10 : Finset (List ℕ) :=
+  {(List.replicate 10 1 : List ℕ)}
+
+/-- The two-insertion positive compositions are partitioned by the listed
+cyclic gap orbits. -/
+theorem binaryWordP10GapOrbitPartition2 :
+    binaryWordP10PositiveGapListFinset 2 =
+      binaryWordP10GapOrbitReps2.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+/-- The four-insertion positive compositions are partitioned by the listed
+cyclic gap orbits. -/
+theorem binaryWordP10GapOrbitPartition4 :
+    binaryWordP10PositiveGapListFinset 4 =
+      binaryWordP10GapOrbitReps4.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+/-- The six-insertion positive compositions are partitioned by the listed
+cyclic gap orbits. -/
+theorem binaryWordP10GapOrbitPartition6 :
+    binaryWordP10PositiveGapListFinset 6 =
+      binaryWordP10GapOrbitReps6.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+/-- The eight-insertion positive compositions are partitioned by the listed
+cyclic gap orbits. -/
+theorem binaryWordP10GapOrbitPartition8 :
+    binaryWordP10PositiveGapListFinset 8 =
+      binaryWordP10GapOrbitReps8.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+/-- The ten-insertion positive composition is its single cyclic orbit. -/
+theorem binaryWordP10GapOrbitPartition10 :
+    binaryWordP10PositiveGapListFinset 10 =
+      binaryWordP10GapOrbitReps10.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+/-- A disjoint cyclic-orbit partition converts a sum over all tuples into
+the sum of the orbit sums. -/
+theorem cyclicGapTrace_sum_biUnion_orbits
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (reps : Finset (List ℕ))
+    (hdisj : Set.PairwiseDisjoint (↑reps) cyclicGapOrbit) :
+    (∑ gaps ∈ reps.biUnion cyclicGapOrbit, cyclicGapTrace K N gaps) =
+      ∑ rep ∈ reps,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  classical
+  rw [Finset.sum_biUnion hdisj]
+  apply Finset.sum_congr rfl
+  intro rep hrep
+  exact cyclicGapTrace_sum_orbit_eq K N rep
+
+/-- Orbit sums for the p=10 two-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum2
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 2,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps2,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition2]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    (by classical decide)
+
+/-- Orbit sums for the p=10 four-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum4
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 4,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps4,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition4]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    (by classical decide)
+
+/-- Orbit sums for the p=10 six-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum6
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 6,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps6,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition6]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    (by classical decide)
+
+/-- Orbit sums for the p=10 eight-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum8
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 8,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps8,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition8]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    (by classical decide)
+
+/-- Orbit sums for the p=10 ten-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum10
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 10,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps10,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition10]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    (by classical decide)
+
+/-- The exact distinct-orbit cardinalities of all canonical p=10 gap
+representatives. The reduced values 1, 2, 3, and 4 are precisely the
+periodic-orbit corrections behind the coefficients five in the existing
+boundary sums. -/
+theorem binaryWordP10GapOrbitRepresentativeCardinals :
+    ([(cyclicGapOrbit [1, 9]).card,
+      (cyclicGapOrbit [2, 8]).card,
+      (cyclicGapOrbit [3, 7]).card,
+      (cyclicGapOrbit [4, 6]).card,
+      (cyclicGapOrbit [5, 5]).card] : List ℕ) = [2, 2, 2, 2, 1] ∧
+    ([(cyclicGapOrbit [1, 1, 1, 7]).card,
+      (cyclicGapOrbit [1, 1, 2, 6]).card,
+      (cyclicGapOrbit [1, 1, 3, 5]).card,
+      (cyclicGapOrbit [1, 1, 4, 4]).card,
+      (cyclicGapOrbit [1, 1, 5, 3]).card,
+      (cyclicGapOrbit [1, 1, 6, 2]).card,
+      (cyclicGapOrbit [1, 2, 1, 6]).card,
+      (cyclicGapOrbit [1, 2, 2, 5]).card,
+      (cyclicGapOrbit [1, 2, 3, 4]).card,
+      (cyclicGapOrbit [1, 2, 4, 3]).card,
+      (cyclicGapOrbit [1, 2, 5, 2]).card,
+      (cyclicGapOrbit [1, 3, 1, 5]).card,
+      (cyclicGapOrbit [1, 3, 2, 4]).card,
+      (cyclicGapOrbit [1, 3, 3, 3]).card,
+      (cyclicGapOrbit [1, 3, 4, 2]).card,
+      (cyclicGapOrbit [1, 4, 1, 4]).card,
+      (cyclicGapOrbit [1, 4, 2, 3]).card,
+      (cyclicGapOrbit [1, 4, 3, 2]).card,
+      (cyclicGapOrbit [1, 5, 2, 2]).card,
+      (cyclicGapOrbit [2, 2, 2, 4]).card,
+      (cyclicGapOrbit [2, 2, 3, 3]).card,
+      (cyclicGapOrbit [2, 3, 2, 3]).card] : List ℕ) =
+        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+         4, 4, 4, 4, 2, 4, 4, 4, 4, 4, 2] ∧
+    ([(cyclicGapOrbit [1, 1, 1, 1, 1, 5]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 3, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 4, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 4, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 2, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 2, 2, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 3, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 3, 1, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 3, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 3, 2, 1, 2]).card,
+      (cyclicGapOrbit [1, 2, 1, 2, 1, 3]).card,
+      (cyclicGapOrbit [1, 2, 1, 2, 2, 2]).card,
+      (cyclicGapOrbit [1, 2, 2, 1, 2, 2]).card] : List ℕ) =
+        [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+         6, 6, 6, 6, 6, 3, 6, 6, 6, 6, 3] ∧
+    ([(cyclicGapOrbit [1, 1, 1, 1, 1, 1, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 2, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 1, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 1, 1, 2]).card] : List ℕ) =
+        [8, 8, 8, 8, 4] ∧
+    ([(cyclicGapOrbit (List.replicate 10 1)).card] : List ℕ) = [1] := by
+  decide
+
 end EvgenyTheorem

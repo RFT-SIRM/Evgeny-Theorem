@@ -6088,3 +6088,26 @@ The proof now first rewrites `List.map_map`, then applies
 exponent equality `a + 1 = Nat.succ a` with `omega`. No theorem statement or
 mathematical content changes. Full Lean build is required. H6 and H8 remain
 untouched.
+
+
+## 2026-11-02 — Partition the positive p=10 gap sums into exact cyclic orbits
+
+Starting from the Lean-green positive-gap identity at `6848a24`,
+added the finite p=10 positive-gap tuple sets for r = 2, 4, 6, 8, 10.
+For each stratum, the tuple set is proved equal to the disjoint union of
+the canonical cyclic orbits already used in `GlueTrace.lean`. These
+five finite partition equalities are decidable checks on the explicit
+bounded compositions; they assert that no tuple is omitted or counted in
+two different representative orbits.
+
+A common theorem now converts the sum over a disjoint union of cyclic
+orbits into the sum of orbit sums, and each orbit sum is evaluated using
+the already-proved `cyclicGapTrace_sum_orbit_eq`. The exact orbit
+cardinalities are recorded for every representative: full orbits have
+sizes r, while the periodic classes have sizes 1 (r=2), 2 (r=4),
+3 (r=6), and 4 (r=8). Thus the reduced half-weight classes are derived
+from true orbit sizes, not guessed or obtained by quotienting marked
+offsets. This is the direct bridge from the positive finite gap-vector
+sum to the explicit p=10 cyclic representatives. Full Lean validation
+is required before using the bridge in the final H10 trace split.
+H6 and H8 remain untouched.
