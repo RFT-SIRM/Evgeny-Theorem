@@ -2421,14 +2421,14 @@ theorem binaryWordExpansionByCount_mem_iff
                   simpa [List.concat_eq_append, List.filter_append] using hcount
                 exact Or.inl (List.mem_map.mpr
                   ⟨pre, (ih (r + 1) pre).2 ⟨hpreLen, hpreCount⟩,
-                    (List.concat_eq_append pre false).symm⟩)
+                    (List.concat_eq_append (l := pre) (a := false)).symm⟩)
             | true =>
                 have hcount' := hcount
                 simp [List.concat_eq_append, List.filter_append] at hcount'
                 have hpreCount : (pre.filter id).length = r := by omega
                 exact Or.inr (List.mem_map.mpr
                   ⟨pre, (ih r pre).2 ⟨hpreLen, hpreCount⟩,
-                    (List.concat_eq_append pre true).symm⟩)
+                    (List.concat_eq_append (l := pre) (a := true)).symm⟩)
 
 /-- The recursive exact-count word list contains no repetitions. -/
 theorem binaryWordExpansionByCount_nodup (p r : ℕ) :

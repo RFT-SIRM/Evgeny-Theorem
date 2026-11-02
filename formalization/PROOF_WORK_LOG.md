@@ -3174,3 +3174,19 @@ No mathematical definitions or theorem statements were changed. The
 K/(K*N) gap blocks remain `K^(a+1)*N`, and the p distinct offsets remain
 separate. This is a source-level correction only; the next full Lean build
 is the validation gate.
+
+
+## 2026-11-02 — Fix the two remaining List.concat theorem applications
+
+The Lean run for `53392a7` reported exactly two errors, both at the
+explicit application of `List.concat_eq_append` in the false/true converse
+branches of `binaryWordExpansionByCount_mem_iff`. In the pinned Lean
+version the list and final element arguments are implicit, so positional
+application was parsed as applying a proof term as a function. Replaced
+those two applications with the named implicit arguments
+`(l := pre) (a := false)` and `(l := pre) (a := true)`, retaining the
+symmetric equality required by the `List.mem_map` witnesses.
+
+No other proof term or theorem statement changed. The two earlier messages
+were the only source errors in that Lean run; the next full Lean build
+checks whether the declaration now closes. H6 and H8 remain untouched.
