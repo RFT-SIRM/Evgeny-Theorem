@@ -6129,3 +6129,25 @@ checked to contain no two distinct cyclic rotations. The rotation relation
 is rewritten using `List.isRotated_iff_mod`, making its witness finite
 and decidable. No orbit representatives or mathematical multiplicities
 were changed. Full Lean build required.
+
+
+## 2026-11-02 — Make the H10 orbit checks genuinely finite and bound their evaluation
+
+The `f67b276` build exposed that `List.isRotated_iff_mod` leaves a bounded
+existential over `Nat`; after simplification Lean still cannot synthesize
+a decidable instance for the universally quantified representative theorem.
+The representative proof now splits both finite representative memberships
+first and uses `List.isRotated_iff_mem_map_range`, whose rotation witness is
+a member of an explicit finite list. It then decides only concrete list
+comparisons.
+
+The disjointness proof target is a set-level `Function.onFun Disjoint`;
+it now changes explicitly to disjointness of the coerced orbit sets and
+uses `Set.disjoint_left`. This avoids rewriting a Finset relation into a
+set-level target.
+
+The r=4 finite composition partition exceeded the default heartbeat limit;
+the r=6 partition exceeded the local recursion-depth limit. Those two finite
+decisions now have narrowly scoped higher limits. The representative lists,
+orbit weights, and theorem statements are unchanged. Full Lean build is
+required.
