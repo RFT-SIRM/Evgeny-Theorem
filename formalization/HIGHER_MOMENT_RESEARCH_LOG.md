@@ -6260,3 +6260,16 @@ formalization files, this research log, and its own path-filter update.
 Such commits still trigger the dedicated full Lean build. Python numerical
 regression and N10 reference tests are not part of this formalization
 validation step. The exact-SHA Lean build remains the acceptance gate.
+
+## 2026-11-02 — Normalize the scalar sum in the H10 two-N composition
+
+The build after the TraceExpand namespace correction now resolves all
+word-stratum and cyclic-gap declarations from GlueTrace. The only
+remaining Lean goal is the final equality in
+sg_trace_p10_two_N_word_stratum_diagonal: both sides contain the same
+five ordered matrix traces and coefficients, but Lean leaves the nested
+parenthesization of complex scalar addition different. Added `ring`
+after the finite orbit-cardinality and cyclic-gap reductions. This
+normalizes only scalar addition; it does not commute, rotate, or
+reassociate any matrix factors. The full Lean build on the updated SHA
+is the acceptance check.
