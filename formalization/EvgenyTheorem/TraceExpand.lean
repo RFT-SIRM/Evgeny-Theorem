@@ -3757,9 +3757,7 @@ theorem binaryWordFin_true_positions_card (p r : ℕ)
     _ = List.countP (fun i : Fin p => w.val i = true) (List.finRange p) := by
           simpa only [List.toFinset_finRange] using hcard
     _ = List.countP (fun i : Fin p => w.val i) (List.finRange p) := by
-          congr 1
-          funext i
-          cases w.val i <;> rfl
+          rfl
     _ = List.countP id (List.ofFn w.val) := by
           rw [List.ofFn_eq_map, List.countP_map]
     _ = ((List.ofFn w.val).filter id).length := by
@@ -3918,14 +3916,27 @@ noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
     have hprelen : pre.length = i := by
       dsimp [pre, word]
       simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hiword)]
+    have hrepr :
+        List.ofFn (fun j : Fin p =>
+          ((pre ++ [true]) ++ post).get (Fin.cast hcutlen.symm j)) =
+          ((pre ++ [true]) ++ post) := by
+      calc
+        _ = List.ofFn (((pre ++ [true]) ++ post).get) :=
+          (List.ofFn_congr hcutlen ((pre ++ [true]) ++ post).get).symm
+        _ = (pre ++ [true]) ++ post := List.ofFn_get _
+    have hfun :
+        (fun j : Fin p =>
+          ((pre ++ [true]) ++ post).get (Fin.cast hcutlen.symm j)) = w := by
+      apply List.ofFn_injective
+      calc
+        List.ofFn (fun j : Fin p =>
+            ((pre ++ [true]) ++ post).get (Fin.cast hcutlen.symm j)) =
+            ((pre ++ [true]) ++ post) := hrepr
+        _ = word := hdecomp
+        _ = List.ofFn w := rfl
     apply Sigma.ext
     · apply Subtype.ext
-      funext j
-      change
-        ((pre ++ [true]) ++ post).get
-          (Fin.cast hcutlen.symm j) = w j
-      rw [hdecomp]
-      simp [word, List.get_ofFn]
+      exact hfun
     · apply heq_of_eq
       apply Subtype.ext
       apply Fin.ext

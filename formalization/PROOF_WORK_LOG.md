@@ -3099,3 +3099,12 @@ made the Sigma summation type explicit, separated the marked-index
 reconstruction, and stated the reconstructed-word lemma independently.
 The revised commit must pass the full Lean build before the r-fold result
 is counted as established. H6 and H8 are untouched.
+
+
+## 2026-11-02 — Second correction to H10 marked-word proof
+
+After commit 906e03b, the compiler reported only the Bool countP
+coercion equality and a dependent cast rewrite in the right inverse.
+Replaced the coercion proof with reflexivity and replaced the cast rewrite
+with an equality of List.ofFn encodings, then recovered equality of the
+indexed words by injectivity. No new mathematical statements were added.

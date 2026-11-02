@@ -5983,3 +5983,14 @@ A corrective proof revision now makes the Bool predicate/count conversion
 explicit, expands the dependent sum after exposing its Sigma type, and
 uses explicit list reconstruction identities for the inverse maps. This
 revision is pending a complete Lean build; no H10 closure is claimed.
+
+
+## 2026-11-02 — Second Lean correction for the H10 marked-word equivalence
+
+The subsequent build isolated two remaining proof-state errors:
+the countP Bool coercion equality was not closed, and the right-inverse
+proof attempted to rewrite a dependent Fin.cast through a list equality.
+The count equality is now closed by definitional equality. The right
+inverse now proves equality of the two indexed words by List.ofFn_injective
+and the reconstructed-list identity, avoiding an invalid dependent rewrite.
+The new run is the validation gate; the r-fold claim remains provisional.
