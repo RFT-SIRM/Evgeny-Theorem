@@ -2351,14 +2351,14 @@ theorem sg_trace_p10_eight_N_stratum_boundary
       K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
     5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
-      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 1 3 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 2 2 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 2 1 2 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 2 1 1 2 +
-    5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 2 1 1 1 1 2 := by
+    5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 2 1 1 1 2 := by
   dsimp
   apply trace_p10_eight_N_stratum_boundary (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
@@ -5958,7 +5958,7 @@ private noncomputable def glueRHS10_eight_N_diagonal_form
   10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 1 2 2 +
   10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 2 1 2 +
   10 * glueRHS10_four_pair_sum m K 1 1 1 1 2 1 1 2 +
-   5 * glueRHS10_four_pair_sum m K 1 1 2 1 1 1 1 2
+   5 * glueRHS10_four_pair_sum m K 1 1 1 2 1 1 1 2
 
 /-- Collapse one p=10 eight-N boundary term to four ordered diagonal pairs.
 The two internal diagonal sandwiches are collapsed successively using
@@ -6127,7 +6127,7 @@ theorem sg_trace_p10_eight_N_stratum_pair_diagonal
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 2 2 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 2 1 2 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 2 1 1 2 +
-     5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 2 1 1 1 1 2 =
+     5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 2 1 1 1 2 =
       glueRHS10_eight_N_diagonal_form m K := by
   dsimp
   rw [
@@ -6140,7 +6140,7 @@ theorem sg_trace_p10_eight_N_stratum_pair_diagonal
     sg_trace_p10_eight_N_boundary_term_pair_diagonal
       m hm θ ax o hanti 1 1 1 1 2 1 1 2 (by omega) (by omega) (by omega),
     sg_trace_p10_eight_N_boundary_term_pair_diagonal
-      m hm θ ax o hanti 1 1 2 1 1 1 1 2 (by omega) (by omega) (by omega)
+      m hm θ ax o hanti 1 1 1 2 1 1 1 2 (by omega) (by omega) (by omega)
   ]
   rfl
 
@@ -6302,6 +6302,6 @@ theorem sg_trace_p10_eight_N_word_stratum_diagonal
       rw [← hdiag, ← hboundary]
       simp [binaryWordP10GapOrbitReps8, cyclicGapTrace, Matrix.mul_assoc,
         h1, h2, h3, h4, h5, hcoef10, hcoef5]
-      ring_nf
+      ring
 
 end EvgenyTheorem

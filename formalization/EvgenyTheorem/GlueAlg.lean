@@ -1515,7 +1515,7 @@ theorem trace_p10_eight_N_stratum_boundary {cp : W → ι}
     10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 2 * G.N * K ^ 0) +
     10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
     10 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) +
-    5 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+    5 * Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
     10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 1 3 +
     10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 2 2 +
     10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 2 1 2 +
@@ -1558,12 +1558,12 @@ theorem trace_p10_eight_N_stratum_boundary {cp : W → ι}
         (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   have h11121112 :
-    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
-      trace_p10_eight_N_boundary_term G K 1 1 2 1 1 1 1 2 := by
+    Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 2 * G.N * K ^ 0) =
+      trace_p10_eight_N_boundary_term G K 1 1 1 2 1 1 1 2 := by
     simpa [trace_p10_eight_N_boundary_term, pow_zero] using
-      (trace_eight_N_powers_boundary G K hK 1 1 2 1 1 1 1 2 0
+      (trace_eight_N_powers_boundary G K hK 1 1 1 2 1 1 1 2 0
         (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
-        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
         (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
         (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
   rw [h11111113, h11111122, h11111212, h11112112, h11121112]

@@ -6317,3 +6317,25 @@ support proof, representative, or matrix-factor order is redefined.
 This connects only the exact r=8 word stratum to its existing diagonal
 form; it does not assert cross-stratum cancellation or the H10 recurrence.
 Full Lean build on the source SHA is required.
+
+## 2026-11-02 — Correct the H10 eight-N periodic boundary representative
+
+The failed eight-N word-to-diagonal bridge exposed a genuine mismatch in
+the pre-existing generic boundary theorem, not a scalar-normalization or
+matrix-associativity problem. The canonical r=8 orbit list in
+TraceExpand.lean is correct: its fifth representative is
+(1,1,1,2,1,1,1,2), with orbit size four. The generic boundary formula
+instead used (1,1,2,1,1,1,1,2), which is a rotation of the fourth
+representative (1,1,1,1,2,1,1,2), so the fifth term duplicated that orbit
+and omitted the period-four class.
+
+Corrected the fifth ordered matrix word in GlueAlg.lean and its hkg
+hypotheses (the second diagonalized middle power is now degree two), then
+propagated the same representative to the Sierpinski specialization and
+the ordered four-pair diagonal normal form in GlueTrace.lean. The orbit
+weights remain (10,10,10,10,5); the word order and all existing geometric
+boundary reductions are retained. The eight-N word bridge is now aligned
+with the actual five disjoint cyclic orbits. This is still only an
+individual-stratum identity: no cross-stratum cancellation or H10
+recurrence is claimed. A full Lean build on the corrected source SHA is
+required.
