@@ -2826,28 +2826,32 @@ required on this commit; H6 and H8 remain unchanged.
 
 ## 2026-11-02 — H10 explicit split at the offset-dependent marked delimiter
 
-Added a last-delimiter lemma for nonempty canonical gap encodings and the
-constructive decomposition theorem
-`binaryWordGapEncoding_rotate_decompose`. For each legal offset k, it
-gives an exact split of the rotated canonical word as
-`pre ++ [true] ++ post`, proves `post.length = k` and
-`pre.length = p-k-1`, and proves that moving the marked delimiter to the
-end yields the original canonical word and therefore decodes to the input
-gap list. This retains distinct offsets even when the word is periodic.
-The theorem proves existence of the split, not uniqueness of arbitrary
-witnesses. The initial Lean run failed because an extra `rfl) followed a
-rewrite that had already closed the decomposition goal.
+Added a last-delimiter lemma and the constructive decomposition theorem
+binaryWordGapEncoding_rotate_decompose. For each legal offset k, it
+produces a split pre ++ [true] ++ post, with post.length = k and
+pre.length = p-k-1, and proves that moving the marked delimiter to the
+end recovers the original canonical word and decoded gap list.
 
-## 2026-11-02 — Audit both failed Lean runs for the H10 decomposition
+The first Lean run failed because an extra rfl followed a rewrite that
+had already closed the decomposition goal. The attempted correction then
+removed a necessary simp from the membership goal true ∈ some true.
+Both errors were diagnosed from the exact workflow logs and corrected in
+commit 9a11b40d39d0610e3c15fe5deed07b6ba0e5206e, whose full Lean build
+passed (Actions run 41392191543).
 
-The first Lean run failed at `rfl) after `rw [← hcut]`: the rewrite
-already closed the decomposition equality, so the extra `rfl) was invalid.
-The attempted follow-up removed `simp) from the membership subproof, but
-that was a mistaken diagnosis. After rewriting `hdropLast), the remaining
-goal is `true ∈ some true`, which requires `simp); the follow-up run
-therefore exposed this unsolved goal and still had the redundant `rfl).
+## 2026-11-02 — H10 two-sided inverse at the marked-cut level
 
-The current correction restores `simp` in the membership proof and removes
-`rfl` after the decomposition rewrite. The theorem documentation now
-claims existence only, not unproved uniqueness. Full Lean validation is
-required on this corrected source; H6 and H8 remain unchanged.
+Added binaryWordGapEncoding_rotate_decompose_unique, proving that a
+fixed rotated word and fixed suffix length determine the prefix and suffix
+uniquely. Added binaryWordMarkedRotate_decode_decompose_inverse, which
+starts with arbitrary pre ++ [true] ++ post, decodes its marked cut, uses
+post.length as the offset, and reconstructs exactly the same pre and post.
+The offset bound follows from binaryWordMarkedRotate_gap_stats and the
+exact encoding-length formula.
+
+These results, together with the forward decomposition theorem, provide
+the two inverse laws for the combinatorial correspondence. The next
+unproved obligation is to package the correspondence into the finite
+marked-occurrence sum and derive the exact trace multiplicity
+r * S_words = p * S_gaps. This commit requires a fresh full Lean build.
+H6 and H8 remain untouched.

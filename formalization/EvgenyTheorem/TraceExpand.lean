@@ -2978,6 +2978,35 @@ exactly the original number of true letters, and its total gap size is the
 original number of false letters. The offset is represented by post.length
 in binaryWordMarkedRotate; this theorem establishes the two composition
 constraints needed for the marked-word/offset correspondence. -/
+/-- A decomposition at a fixed rotation offset is unique once the
+trailing suffix length is fixed. This remains true when the underlying
+binary word has a nontrivial rotational period. -/
+theorem binaryWordGapEncoding_rotate_decompose_unique
+    (gaps : List ℕ) (offset : ℕ)
+    (pre₁ post₁ pre₂ post₂ : List Bool)
+    (h₁ :
+      (binaryWordGapEncoding gaps).rotate offset =
+        ((pre₁ ++ [true]) ++ post₁))
+    (h₂ :
+      (binaryWordGapEncoding gaps).rotate offset =
+        ((pre₂ ++ [true]) ++ post₂))
+    (hpost₁ : post₁.length = offset)
+    (hpost₂ : post₂.length = offset) :
+    pre₁ = pre₂ ∧ post₁ = post₂ := by
+  have hsplit :
+      ((pre₁ ++ [true]) ++ post₁) =
+        ((pre₂ ++ [true]) ++ post₂) :=
+    h₁.symm.trans h₂
+  have hparts := List.append_inj' hsplit (by
+    rw [hpost₁, hpost₂])
+  have hpreLength : pre₁.length = pre₂.length := by
+    have h := congrArg List.length hparts.1
+    simp only [List.length_append, List.length_cons, List.length_nil] at h
+    omega
+  have hpre := List.append_inj_left hparts.1 hpreLength
+  exact ⟨hpre, hparts.2⟩
+
+
 theorem binaryWordMarkedRotate_gap_stats
     (pre post : List Bool) :
     (binaryWordGapDecode (binaryWordMarkedRotate pre post)).length =
@@ -3034,6 +3063,48 @@ theorem binaryWordMarkedRotate_gap_stats
 is moved from the cut position to the final position. The proof is exactly
 trace cyclicity for the two grouped factors `eval(pre) * B` and
 `eval(post)`; no factors within either word are commuted. -/
+/-- The two constructions are inverse on marked cuts: decode the word
+obtained by moving the marked true delimiter to the end, use the suffix
+length as the offset, and split the corresponding rotated canonical gap
+encoding. The unique split is exactly the original (pre, post). -/
+theorem binaryWordMarkedRotate_decode_decompose_inverse
+    (pre post : List Bool) :
+    ∃ pre' post',
+      (binaryWordGapEncoding
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post))).rotate
+          post.length =
+        ((pre' ++ [true]) ++ post') ∧
+      post'.length = post.length ∧
+      pre' = pre ∧ post' = post := by
+  let gaps := binaryWordGapDecode (binaryWordMarkedRotate pre post)
+  have hstats :
+      gaps.length = (((pre ++ [true]) ++ post).filter id).length ∧
+      gaps.sum =
+        ((pre ++ [true]) ++ post).length -
+          (((pre ++ [true]) ++ post).filter id).length := by
+    simpa [gaps] using binaryWordMarkedRotate_gap_stats pre post
+  have hencodeLength :
+      (binaryWordGapEncoding gaps).length =
+        ((pre ++ [true]) ++ post).length := by
+    rw [binaryWordGapEncoding_length, hstats.2, hstats.1]
+    omega
+  have hoffset :
+      post.length < (binaryWordGapEncoding gaps).length := by
+    rw [hencodeLength]
+    exact binaryWordMarkedRotate_post_length_lt pre post
+  obtain ⟨pre', post', hdecomp, hpost, _hpreLength, _hdecode⟩ :=
+    binaryWordGapEncoding_rotate_decompose gaps post.length hoffset
+  have hreconstruct :
+      (binaryWordGapEncoding gaps).rotate post.length =
+        ((pre ++ [true]) ++ post) := by
+    simpa [gaps] using
+      binaryWordMarkedRotate_decode_reconstruct pre post
+  have hunique :=
+    binaryWordGapEncoding_rotate_decompose_unique
+      gaps post.length pre' post' pre post hdecomp hreconstruct hpost rfl
+  exact ⟨pre', post', hdecomp, hpost, hunique.1, hunique.2⟩
+
+
 theorem binaryWordMatrix_trace_marked_rotate
     {n : Type*} [Fintype n] [DecidableEq n]
     (A B : Matrix n n ℂ) (pre post : List Bool) :

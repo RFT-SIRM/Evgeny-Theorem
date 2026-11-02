@@ -5631,34 +5631,38 @@ required for this commit. H6 and H8 remain untouched.
 
 ## 2026-11-02 — Construct the marked-position decomposition for every H10 offset
 
-Added `binaryWordGapEncoding_getLast?`, proving that every nonempty
-canonical gap encoding ends in its final `true` delimiter. Added
-`binaryWordGapEncoding_rotate_decompose`: for each legal offset k<p it
-constructs `pre := (word.drop k).dropLast` and `post := word.take k`,
-and proves
-`word.rotate k = (pre ++ [true]) ++ post`,
-`post.length = k), and `pre.length = p-k-1`. It also proves that the
-marked cut `binaryWordMarkedRotate pre post` is exactly the original
-canonical encoding and therefore decodes to the input gap list.
+Added binaryWordGapEncoding_getLast? and
+binaryWordGapEncoding_rotate_decompose. For each legal offset k<p,
+the latter constructs pre := (word.drop k).dropLast and
+post := word.take k, and proves word.rotate k = (pre ++ [true]) ++ post,
+post.length = k, and pre.length = p-k-1. It also proves that moving the
+marked delimiter to the end recovers the original canonical encoding and
+hence the original gap list.
 
-This construction retains every offset separately, including periodic
-cases. The theorem establishes existence of the displayed split; it does
-not separately claim uniqueness of arbitrary witnesses. The complete Lean
-build for the initial commit failed on a redundant `rfl` after a rewrite;
-the correction is recorded below. H6 and H8 are untouched.
+The initial Lean build exposed two tactic errors. The first attempted
+correction removed the simp needed to solve true ∈ some true, so the
+second build still failed. The corrected commit
+9a11b40d39d0610e3c15fe5deed07b6ba0e5206e restores that simp and removes
+the redundant rfl. Its full Lean build passed (Actions run 41392191543).
 
-## 2026-11-02 — Diagnose the first H10 decomposition Lean failure
+## 2026-11-02 — Prove uniqueness and the converse inverse for H10 marked cuts
 
-The Lean run for `3a998e08f77192564ff7cae289cd0e0e95b7f49f`
-reported `No goals to be solved` at the `rfl` immediately following
-`rw [← hcut]` in the decomposition calculation. That rewrite already
-closed the equality goal; the redundant `rfl` had to be removed.
+Added binaryWordGapEncoding_rotate_decompose_unique: two splits of the
+same rotated canonical gap word with the same suffix length have identical
+prefix and suffix. The proof uses the exact list append-injectivity theorem
+from the pinned Lean core, so it does not assume the word has no rotational
+period.
 
-The first correction instead removed the `simp` in the separate
-`hmem) proof. This was incorrect: rewriting by `hdropLast` changes its
-goal to `true ∈ some true`, which still needs `simp`. The subsequent
-Lean run therefore reported that unsolved membership goal and the same
-redundant `rfl`. Both errors are corrected together in the current source.
-No success is claimed until the new full Lean run passes. H6 and H8 are
-untouched.
+Added binaryWordMarkedRotate_decode_decompose_inverse: starting from an
+arbitrary marked cut pre ++ [true] ++ post, decoding the cut and using
+post.length as the offset, the canonical encoding decomposes back into
+exactly the same pre and post. This uses the existing gap statistics to
+establish that the offset is admissible, the reconstruction identity to
+compare the two decompositions, and the uniqueness theorem.
 
+Together with binaryWordGapEncoding_rotate_decompose, this establishes
+both inverse directions at the marked-cut/list-offset level. It is the
+combinatorial bijection step, not yet the summed trace multiplicity identity.
+The exact weighted identity r * S_words = p * S_gaps and its trace
+consequence remain next. The full Lean build on this commit is the
+acceptance check. H6 and H8 remain untouched.
