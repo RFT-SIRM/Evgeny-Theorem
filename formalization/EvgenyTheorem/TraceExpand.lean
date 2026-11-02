@@ -4656,4 +4656,136 @@ theorem binaryWordP10WordTraceOrbitSum10
         ∑ rep ∈ binaryWordP10GapOrbitReps10,
           (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
       rw [binaryWordP10GapTraceOrbitSum10 K N]
+
+
+/-- Normalize the marked-word/cyclic-gap identity by the number r of
+selected letters. The coefficient of each cyclic representative is
+(10/r) times its actual orbit cardinality; this is the form needed to
+compare with the explicit p=10 boundary-stratum coefficients. -/
+private theorem binaryWordP10_normalize_weighted_orbit_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (r : ℕ) (hr : r ≠ 0)
+    (reps : Finset (List ℕ)) (W : ℂ)
+    (h :
+      (r : ℂ) * W =
+        (10 : ℂ) *
+          ∑ rep ∈ reps,
+            (cyclicGapOrbit rep).card • cyclicGapTrace K N rep) :
+    W =
+      ∑ rep ∈ reps,
+        ((10 : ℂ) / (r : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+  have hrC : (r : ℂ) ≠ 0 := by
+    exact_mod_cast hr
+  have hdiv :
+      W = ((10 : ℂ) / (r : ℂ)) *
+        (∑ rep ∈ reps,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep) := by
+    calc
+      W = ((r : ℂ) * W) / (r : ℂ) := by
+        field_simp [hrC]
+      _ = ((10 : ℂ) *
+          ∑ rep ∈ reps,
+            (cyclicGapOrbit rep).card • cyclicGapTrace K N rep) /
+          (r : ℂ) := by rw [h]
+      _ = ((10 : ℂ) / (r : ℂ)) *
+          (∑ rep ∈ reps,
+            (cyclicGapOrbit rep).card • cyclicGapTrace K N rep) := by
+        ring
+  calc
+    W = ((10 : ℂ) / (r : ℂ)) *
+        (∑ rep ∈ reps,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep) := hdiv
+    _ = ∑ rep ∈ reps,
+        ((10 : ℂ) / (r : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro rep hrep
+      simp only [nsmul_eq_mul]
+      ring
+
+
+/-- The p=10 two-letter word stratum with two selected K*N letters,
+normalized to the exact cyclic-orbit coefficients. The four aperiodic
+orbits have coefficient ten and the period-two orbit coefficient five. -/
+theorem binaryWordP10WordTraceOrbitAverage2
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 2,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps2,
+      ((10 : ℂ) / (2 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 2 (by norm_num)
+    binaryWordP10GapOrbitReps2
+  exact binaryWordP10WordTraceOrbitSum2 K N
+
+
+/-- The p=10 four-letter-selected word stratum, normalized by its
+four marked positions. Periodic gap classes receive their exact
+orbit-size correction through the factor ten over four. -/
+theorem binaryWordP10WordTraceOrbitAverage4
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 4,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps4,
+      ((10 : ℂ) / (4 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 4 (by norm_num)
+    binaryWordP10GapOrbitReps4
+  exact binaryWordP10WordTraceOrbitSum4 K N
+
+
+/-- The p=10 six-letter-selected word stratum, normalized by its
+six marked positions. Its two period-three gap classes retain weight five. -/
+theorem binaryWordP10WordTraceOrbitAverage6
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 6,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps6,
+      ((10 : ℂ) / (6 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 6 (by norm_num)
+    binaryWordP10GapOrbitReps6
+  exact binaryWordP10WordTraceOrbitSum6 K N
+
+
+/-- The p=10 eight-letter-selected word stratum, normalized by its
+eight marked positions. Its period-four gap class has coefficient five. -/
+theorem binaryWordP10WordTraceOrbitAverage8
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 8,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps8,
+      ((10 : ℂ) / (8 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 8 (by norm_num)
+    binaryWordP10GapOrbitReps8
+  exact binaryWordP10WordTraceOrbitSum8 K N
+
+
+/-- The p=10 ten-letter-selected stratum consists of one word and one
+period-one gap orbit; its normalized coefficient is one. -/
+theorem binaryWordP10WordTraceOrbitAverage10
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps10,
+      ((10 : ℂ) / (10 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 10 (by norm_num)
+    binaryWordP10GapOrbitReps10
+  exact binaryWordP10WordTraceOrbitSum10 K N
 end EvgenyTheorem
