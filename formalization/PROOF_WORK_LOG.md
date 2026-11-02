@@ -2697,3 +2697,20 @@ This does not yet prove reconstruction for arbitrary words ending in true
 or the marked-position/rotation-offset bijection. Therefore no \(p/r\)
 weight is claimed. Full Lean and Python 3.11/3.12 Fast/Slow CI for this
 commit remains required; H6 and H8 are unchanged.
+
+
+## 2026-11-02 — H10 marked-cut word reconstruction
+
+Added a pending-run counter and the theorem
+`binaryWordGapDecodeAux_reconstruct`, stating that encoding the emitted
+gaps and appending the unconsumed false suffix reconstructs the initial
+false run followed by the scanned word. Derived
+`binaryWordGapPendingAux_append_true` and the round-trip theorem
+`binaryWordGapDecode_roundTrip_append_true`: every list ending in true is
+reconstructed exactly by gap decoding followed by canonical encoding.
+The previous left-inverse theorem and encoding injectivity then give
+uniqueness of the gap list for such a cut word.
+
+The original marked-position/rotation-offset bijection and the trace
+multiplicity factor \(p/r\) are not yet proved. Full Lean validation for
+this new commit remains required; H6 and H8 are unchanged.

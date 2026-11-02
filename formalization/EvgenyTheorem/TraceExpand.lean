@@ -2633,6 +2633,86 @@ theorem binaryWordGapDecode_gapEncoding (gaps : List ℕ) :
       simpa [binaryWordGapDecode] using ih
 
 
+/-- The false symbols already accumulated when the scan reaches the end
+of a word. This is the unfinished final run, which is not emitted as a gap. -/
+def binaryWordGapPendingAux : ℕ → List Bool → ℕ
+  | run, [] => run
+  | run, false :: rest => binaryWordGapPendingAux (run + 1) rest
+  | _, true :: rest => binaryWordGapPendingAux 0 rest
+
+/-- Appending one false symbol to a false run increases its length by one. -/
+theorem binaryFalseRun_append_false (a : ℕ) :
+    binaryFalseRun a ++ [false] = binaryFalseRun (a + 1) := by
+  induction a with
+  | zero => rfl
+  | succ a ih =>
+      change (false :: binaryFalseRun a) ++ [false] =
+        false :: binaryFalseRun (a + 1)
+      simp only [List.cons_append]
+      rw [ih]
+
+/-- Exact reconstruction invariant for the gap scanner: the emitted
+canonical blocks followed by the pending false run reconstruct the initial
+false run together with the input word. -/
+theorem binaryWordGapDecodeAux_reconstruct
+    (run : ℕ) (word : List Bool) :
+    binaryWordGapEncoding (binaryWordGapDecodeAux run word) ++
+      binaryFalseRun (binaryWordGapPendingAux run word) =
+    binaryFalseRun run ++ word := by
+  induction word generalizing run with
+  | nil =>
+      simp [binaryWordGapDecodeAux, binaryWordGapPendingAux,
+        binaryWordGapEncoding]
+  | cons bit rest ih =>
+      cases bit with
+      | false =>
+          change
+            binaryWordGapEncoding (binaryWordGapDecodeAux (run + 1) rest) ++
+              binaryFalseRun (binaryWordGapPendingAux (run + 1) rest) =
+            binaryFalseRun run ++ (false :: rest)
+          calc
+            _ = binaryFalseRun (run + 1) ++ rest := ih (run + 1)
+            _ = (binaryFalseRun run ++ [false]) ++ rest := by
+              rw [← binaryFalseRun_append_false run]
+            _ = binaryFalseRun run ++ (false :: rest) := by
+              simp [List.append_assoc]
+      | true =>
+          change
+            ((binaryFalseRun run ++ [true]) ++
+              binaryWordGapEncoding (binaryWordGapDecodeAux 0 rest)) ++
+              binaryFalseRun (binaryWordGapPendingAux 0 rest) =
+            binaryFalseRun run ++ (true :: rest)
+          calc
+            _ = (binaryFalseRun run ++ [true]) ++
+                (binaryWordGapEncoding (binaryWordGapDecodeAux 0 rest) ++
+                  binaryFalseRun (binaryWordGapPendingAux 0 rest)) := by
+              rw [List.append_assoc]
+            _ = (binaryFalseRun run ++ [true]) ++
+                (binaryFalseRun 0 ++ rest) := by
+              rw [ih 0]
+            _ = binaryFalseRun run ++ (true :: rest) := by
+              simp [binaryFalseRun, List.append_assoc]
+
+/-- Once a true delimiter has been read, the pending false run is empty.
+In particular every word ending in true has no unfinished suffix. -/
+theorem binaryWordGapPendingAux_append_true
+    (run : ℕ) (pre : List Bool) :
+    binaryWordGapPendingAux run (pre ++ [true]) = 0 := by
+  induction pre generalizing run with
+  | nil => rfl
+  | cons bit rest ih =>
+      cases bit <;> simp [binaryWordGapPendingAux, ih]
+
+/-- Every binary word ending in true is exactly reconstructed by decoding
+its completed false runs and encoding the resulting gap list. -/
+theorem binaryWordGapDecode_roundTrip_append_true (pre : List Bool) :
+    binaryWordGapEncoding (binaryWordGapDecode (pre ++ [true])) =
+      pre ++ [true] := by
+  have h := binaryWordGapDecodeAux_reconstruct 0 (pre ++ [true])
+  rw [binaryWordGapPendingAux_append_true 0 pre] at h
+  simpa [binaryWordGapDecode, binaryFalseRun] using h
+
+
 /-- Evaluating a binary word beginning with one symbol multiplies its
 evaluation on the left by the matrix assigned to that symbol. -/
 theorem binaryWordMatrix_cons

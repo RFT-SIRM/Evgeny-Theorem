@@ -5450,3 +5450,28 @@ true, the marked-word/offset bijection, and the trace multiplicity factor
 \(p/r\) are still open. The new source commit requires a fresh complete
 Lean build and Python 3.11/3.12 Fast/Slow validation. H6 and H8 remain
 untouched.
+
+
+## 2026-11-02 — Prove reconstruction for H10 marked-cut words
+
+The preceding decoder commit `d5d1e2013944b0a4c2692c08ec3333555403c57e`
+passed the complete Lean formalization build (Actions run
+`41373363044`). Python 3.11 Fast tests also passed in run
+`41373363082`; its Slow job and Python 3.12 validation were still running
+when this next mathematical step was started.
+
+Added `binaryWordGapPendingAux`, which tracks the unfinished false run at
+the end of a scan, and proved the exact reconstruction invariant
+`binaryWordGapDecodeAux_reconstruct`: emitted canonical gap blocks plus
+the pending false suffix equal the initial false run followed by the input
+word. Proved that appending a final true delimiter forces the pending run
+to zero, and hence established
+`binaryWordGapDecode_roundTrip_append_true` for every word of the form
+`pre ++ [true]`. Together with the previously proved left-inverse law and
+canonical encoding injectivity, this gives unique gap decoding for every
+marked-cut word ending in true.
+
+This is not yet the bijection with marked positions/rotation offsets in the
+original cyclic word, and it does not yet prove the multiplicity identity
+or factor \(p/r\). Those remain explicit H10 obligations. The new source
+commit requires a fresh complete Lean build. H6 and H8 remain untouched.
