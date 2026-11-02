@@ -2922,3 +2922,23 @@ inverse goals to the underlying unrestricted map equalities before
 using the established inverse laws. No new mathematical assertions or
 new declarations were added. This correction requires a fresh complete
 Lean build. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Return H10 source to the last Lean-green checkpoint
+
+The fixed-stratum addition failed in three consecutive Lean runs:
+41399405288, 41400048495, and 41400808868. The failures were not merely
+comment-placement problems. They exposed genuine mismatches between the
+subtype-valued restriction maps and the unrestricted equivalence inverse
+laws. A series of `change` attempts did not resolve those mismatches.
+
+Restored `TraceExpand.lean` byte-for-byte to the version at verified
+commit `088b75e0f35f8c5362eae5f6f7246b7dd027ae9d`, whose full Lean build
+passed in run 41396480095. This deliberately removes the failing
+fixed-(p,r) subtype declarations while preserving the working unrestricted
+marked-cut/gap-offset equivalence.
+
+The next design starts from this green checkpoint. Finite-sum
+reindexing must use explicit finite types and explicit inverse maps;
+no proof should rely on unverified definitional equality of subtype maps.
+No H6 or H8 source was changed.

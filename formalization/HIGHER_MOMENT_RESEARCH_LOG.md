@@ -5769,3 +5769,27 @@ The actual diagnostics were:
 No new mathematical statement is introduced. The fixed-stratum
 equivalence remains unverified until the next complete Lean build
 passes. H6 and H8 are untouched.
+
+
+## 2026-11-02 — Roll back the unverified fixed-stratum encoding
+
+The fixed-(p,r) subtype layer introduced after the verified unrestricted
+equivalence did not compile. Lean failures in runs 41399405288,
+41400048495, and 41400808868 showed that the restriction maps and inverse
+laws were not definitionally the same as the unrestricted maps. In
+particular, the final attempted `change` steps did not expose the
+underlying functions, and the inverse specification required explicit
+transport through the subtype constructors.
+
+Rather than stack further tactic patches onto an inadequately checked
+construction, restored `TraceExpand.lean` exactly to the verified source
+blob from commit `088b75e0f35f8c5362eae5f6f7246b7dd027ae9d`.
+That commit's complete Lean workflow (run 41396480095) succeeded.
+This rollback removes only the unverified fixed-stratum declarations;
+the previously verified unrestricted marked-cut/gap-offset equivalence
+and its trace statement are retained.
+
+Next work must restart from the unrestricted equivalence and design the
+finite-sum reindexing directly, with explicit definitions of the finite
+index types and maps. It must not assume that subtype restriction laws
+are definitional. H6 and H8 remain untouched.
