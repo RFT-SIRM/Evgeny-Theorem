@@ -2729,6 +2729,41 @@ theorem binaryWordGapDecode_stats_append_true (pre : List Bool) :
     have hcount := binaryWordGapDecode_true_count (pre ++ [true])
     omega
 
+/-- Evaluating a binary word beginning with one symbol multiplies its
+evaluation on the left by the matrix assigned to that symbol. -/
+theorem binaryWordMatrix_cons
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (bit : Bool) (w : List Bool) :
+    binaryWordMatrix A B (bit :: w) =
+      (if bit then B else A) * binaryWordMatrix A B w := by
+  simp [binaryWordMatrix]
+
+/-- Evaluation of a concatenation is the ordered product of the two
+evaluations. This preserves the order of all noncommuting factors. -/
+theorem binaryWordMatrix_append_words
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (u v : List Bool) :
+    binaryWordMatrix A B (u ++ v) =
+      binaryWordMatrix A B u * binaryWordMatrix A B v := by
+  simp [binaryWordMatrix, List.map_append, List.prod_append]
+
+
+
+/-- Move a distinguished true symbol to the end of a binary word.
+If the original word is `pre ++ [true] ++ post`, this is the
+cyclic cut `post ++ pre ++ [true]` at the marked position. -/
+def binaryWordMarkedRotate (pre post : List Bool) : List Bool :=
+  (post ++ pre) ++ [true]
+
+/-- Cutting a binary word immediately after a marked true symbol preserves
+its length. This is the list-level invariant needed for the gap composition. -/
+theorem binaryWordMarkedRotate_length
+    (pre post : List Bool) :
+    (binaryWordMarkedRotate pre post).length =
+      ((pre ++ [true]) ++ post).length := by
+  simp [binaryWordMarkedRotate]
+  omega
+
 /-- The gap list obtained after cutting a word at a marked true letter has
 exactly the original number of true letters, and its total gap size is the
 original number of false letters. The offset is represented by post.length
@@ -2777,41 +2812,6 @@ theorem binaryWordMarkedRotate_gap_stats
   · exact hgapCount
   · omega
 
-
-/-- Evaluating a binary word beginning with one symbol multiplies its
-evaluation on the left by the matrix assigned to that symbol. -/
-theorem binaryWordMatrix_cons
-    {n : Type*} [Fintype n] [DecidableEq n]
-    (A B : Matrix n n ℂ) (bit : Bool) (w : List Bool) :
-    binaryWordMatrix A B (bit :: w) =
-      (if bit then B else A) * binaryWordMatrix A B w := by
-  simp [binaryWordMatrix]
-
-/-- Evaluation of a concatenation is the ordered product of the two
-evaluations. This preserves the order of all noncommuting factors. -/
-theorem binaryWordMatrix_append_words
-    {n : Type*} [Fintype n] [DecidableEq n]
-    (A B : Matrix n n ℂ) (u v : List Bool) :
-    binaryWordMatrix A B (u ++ v) =
-      binaryWordMatrix A B u * binaryWordMatrix A B v := by
-  simp [binaryWordMatrix, List.map_append, List.prod_append]
-
-
-
-/-- Move a distinguished true symbol to the end of a binary word.
-If the original word is `pre ++ [true] ++ post`, this is the
-cyclic cut `post ++ pre ++ [true]` at the marked position. -/
-def binaryWordMarkedRotate (pre post : List Bool) : List Bool :=
-  (post ++ pre) ++ [true]
-
-/-- Cutting a binary word immediately after a marked true symbol preserves
-its length. This is the list-level invariant needed for the gap composition. -/
-theorem binaryWordMarkedRotate_length
-    (pre post : List Bool) :
-    (binaryWordMarkedRotate pre post).length =
-      ((pre ++ [true]) ++ post).length := by
-  simp [binaryWordMarkedRotate]
-  omega
 
 /-- The trace of a binary matrix word is unchanged when a marked true letter
 is moved from the cut position to the final position. The proof is exactly

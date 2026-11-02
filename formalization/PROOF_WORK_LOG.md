@@ -2732,3 +2732,13 @@ The offset is still represented only by `post.length`; the inverse map and
 the exact marked-word/offset bijection remain open, as does the \(p/r\)
 trace multiplicity identity. Full Lean and Python 3.12 validation for this
 new commit remains required. H6 and H8 are unchanged.
+
+
+## 2026-11-02 — Correct H10 marked-cut theorem declaration order
+
+Moved `binaryWordMarkedRotate_gap_stats` below the declarations of
+`binaryWordMarkedRotate` and `binaryWordMarkedRotate_length`, which it
+references. Its proposition and proof body are unchanged. The standalone
+gap-decoder statistics lemma remains before the matrix-word lemmas because
+it has no dependency on the marked-rotation definition. A new full Lean
+build is required to validate the reordered source.

@@ -5498,3 +5498,18 @@ word-occurrences and (gap list, offset) pairs is still open. Consequently
 the exact marked-sum multiplicity and the factor \(p/r\) are not yet
 established. A fresh full Lean build and Python 3.12 validation are required
 for this source commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Place H10 marked-cut statistics after their dependencies
+
+During a source-order review of commit `33324c8cc71903b876dc6ec0c613003d23d60e4f`,
+found that `binaryWordMarkedRotate_gap_stats` had been inserted before the
+definition `binaryWordMarkedRotate` and its length theorem. This was a
+declaration-order issue: the theorem's proof depends on both declarations,
+so it must appear after them in Lean. Moved only that theorem below
+`binaryWordMarkedRotate_length`; its statement and proof are unchanged.
+The generic `binaryWordGapDecode_stats_append_true` remains where it is,
+since it depends only on earlier decoder results. The branch was checked
+against the expected parent before this focused reorder. Fresh full Lean
+build is required; no CI result is claimed for the reordered source yet.
+H6 and H8 remain untouched.
