@@ -2998,3 +2998,20 @@ words. Still outstanding: the finite weighted reindexing/count
 `r · |words| = p · |gaps|`, the corresponding trace-sum identity,
 assembly of all H10 strata, comparison of the two orientations, and the
 H10 residual recurrence. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Correct the finite gap-vector construction
+
+Lean run `41406261696` identified three issues in the new finite
+representation. The dependent list induction had an unnecessary
+`generalizing i` modifier; the successor-index inequality needed the
+list-cons length equation exposed before `omega`; and the subtype
+finiteness proof needed an explicit finite carrier because the pinned
+Mathlib version does not infer `Fintype` for a general subtype.
+
+Applied only these corrections: removed the redundant modifier,
+simplified `List.length_cons` in the index-bound subgoal, and built the
+subtype enumeration from `Finset.univ.filter` via
+`Fintype.subtype`. The mathematical representation and the list/vector
+inverse proofs were otherwise preserved. Full Lean validation remains
+mandatory.

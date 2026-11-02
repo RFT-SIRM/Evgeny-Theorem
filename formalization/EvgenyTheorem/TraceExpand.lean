@@ -3309,7 +3309,7 @@ noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
 theorem binaryWordGapList_get_le_sum
     (gaps : List ℕ) (i : Fin gaps.length) :
     gaps.get i ≤ gaps.sum := by
-  induction gaps generalizing i with
+  induction gaps with
   | nil =>
       exact Fin.elim0 i
   | cons a rest ih =>
@@ -3318,7 +3318,9 @@ theorem binaryWordGapList_get_le_sum
       | zero =>
           simp
       | succ i =>
-          have hi' : i < rest.length := by omega
+          have hi' : i < rest.length := by
+            simp only [List.length_cons] at hi
+            omega
           have hget := ih ⟨i, hi'⟩
           have hsum : rest.sum ≤ a + rest.sum := by omega
           simpa using le_trans hget hsum
@@ -3366,7 +3368,14 @@ of finite function and offset types. -/
 noncomputable instance binaryWordGapOffsetVectorStratum_fintype
     (p r : ℕ) : Fintype (binaryWordGapOffsetVectorStratum p r) := by
   classical
-  infer_instance
+  unfold binaryWordGapOffsetVectorStratum
+  refine Fintype.subtype
+    (Finset.univ.filter fun x :
+      (Fin r → Fin (p - r + 1)) × Fin p =>
+        r ≤ p ∧
+          (List.ofFn (fun i : Fin r => (x.1 i).val)).sum = p - r) ?_
+  intro x
+  simp
 
 /-- The fixed-(p,r) list-based gap-offset stratum is equivalent to the
 finite vector/offset model. The offset bound is transported using the

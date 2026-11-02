@@ -5853,3 +5853,23 @@ instance. Via explicit equivalences, Fintype instances now transfer to
 foundation needed for finite-sum reindexing, but it does not yet prove the
 weighted multiplicity identity or the H10 trace comparison. Full Lean
 build is required for this commit.
+
+
+## 2026-11-02 — Repair finite gap-vector model Lean errors
+
+The first build of `ef1a0fd` found exactly three errors in the new
+finite-model block:
+1. The induction tactic already generalized the dependent `Fin gaps.length`
+   index, so explicitly writing `generalizing i` was rejected as redundant.
+   Removed that modifier.
+2. In the successor-index case, `omega` did not know the definitional
+   list-length equation for `a :: rest`. Added
+   `simp only [List.length_cons] at hi` before using `omega`.
+3. Mathlib does not synthesize a `Fintype` instance for an arbitrary
+   subtype from `infer_instance` alone. Replaced that with the explicit
+   finite carrier `Finset.univ.filter predicate` and
+   `Fintype.subtype`, whose membership equivalence is discharged by
+   `simp`.
+
+The list/vector equivalence and all other definitions are unchanged.
+A complete Lean rebuild is required to validate the corrections.
