@@ -2942,3 +2942,26 @@ The next design starts from this green checkpoint. Finite-sum
 reindexing must use explicit finite types and explicit inverse maps;
 no proof should rely on unverified definitional equality of subtype maps.
 No H6 or H8 source was changed.
+
+
+## 2026-11-02 — Fixed-(p,r) restriction via Mathlib's subtype equivalence
+
+Reintroduced the fixed-(p,r) strata only after restoring the last green
+source. Unlike the failed attempt, the new equivalence is obtained from
+the existing unrestricted
+`binaryWordMarkedCutGapOffsetEquiv` by
+`Equiv.subtypeEquiv`. The sole new proof obligation is the equivalence
+of the two stratum predicates.
+
+The predicate proof uses `binaryWordMarkedRotate_gap_stats` for the
+true count and false count, plus `binaryWordGapEncoding_length` and
+the existing round-trip encoding theorem to recover the original word
+length. This makes the restricted inverse laws consequences of the
+unrestricted equivalence itself, instead of manually trying to prove
+definitional equality of subtype wrappers.
+
+The result remains an invariant-restricted equivalence over list-based
+types, not yet a Fintype equivalence. The finite representation by
+`Fin r → Fin (p-r+1)` weak compositions remains the next required step
+before applying finite-sum reindexing and deriving the p/r weight.
+No H6 or H8 declarations are modified. Full Lean validation required.

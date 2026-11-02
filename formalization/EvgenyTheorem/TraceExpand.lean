@@ -3236,6 +3236,74 @@ noncomputable def binaryWordMarkedCutGapOffsetEquiv :
         cut.2.length) = (gaps, offset)
     exact Prod.ext hspec.2.2 hspec.2.1
 
+
+/-- The fixed-(p,r) gap-offset stratum: exactly r decoded gaps with
+total size p-r, together with the legal offset already carried by the
+unrestricted gap-offset data. -/
+def binaryWordGapOffsetStratum (p r : ℕ) : Type :=
+  {data : binaryWordGapOffsetData //
+    r ≤ p ∧ data.val.1.length = r ∧ data.val.1.sum = p - r}
+
+/-- The fixed-(p,r) marked-cut stratum: the reconstructed word has
+length p and exactly r true letters, one of which is distinguished by
+the cut between pre and post. -/
+def binaryWordMarkedCutStratum (p r : ℕ) : Type :=
+  {cut : List Bool × List Bool //
+    r ≤ p ∧
+    ((cut.1 ++ [true]) ++ cut.2).length = p ∧
+    (((cut.1 ++ [true]) ++ cut.2).filter id).length = r}
+
+/-- Restrict the unrestricted marked-cut/gap-offset equivalence to the
+exact length and letter-count conditions. The restriction is transported
+by Mathlib's subtypeEquiv, so both inverse laws come from the established
+equivalence itself rather than manually unfolding subtype maps. -/
+noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
+    (p r : ℕ) :
+    binaryWordMarkedCutStratum p r ≃ binaryWordGapOffsetStratum p r :=
+  binaryWordMarkedCutGapOffsetEquiv.subtypeEquiv (fun cut => by
+    rcases cut with ⟨pre, post⟩
+    change
+      (r ≤ p ∧
+        ((pre ++ [true]) ++ post).length = p ∧
+        (((pre ++ [true]) ++ post).filter id).length = r) ↔
+      (r ≤ p ∧
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post)).length = r ∧
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post)).sum = p - r)
+    have hstats := binaryWordMarkedRotate_gap_stats pre post
+    constructor
+    · rintro ⟨hrp, hlen, hcount⟩
+      refine ⟨hrp, hstats.1.trans hcount, ?_⟩
+      rw [hstats.2, hlen, hcount]
+    · rintro ⟨hrp, hgaplen, hgapsum⟩
+      have hround :
+          binaryWordGapEncoding
+            (binaryWordGapDecode (binaryWordMarkedRotate pre post)) =
+              binaryWordMarkedRotate pre post := by
+        simpa [binaryWordMarkedRotate] using
+          (binaryWordGapDecode_roundTrip_append_true (post ++ pre))
+      have hlen :
+          ((pre ++ [true]) ++ post).length = p := by
+        calc
+          ((pre ++ [true]) ++ post).length =
+              (binaryWordMarkedRotate pre post).length :=
+            (binaryWordMarkedRotate_length pre post).symm
+          _ = (binaryWordGapEncoding
+                (binaryWordGapDecode (binaryWordMarkedRotate pre post))).length := by
+            rw [← hround]
+          _ = (binaryWordGapDecode
+                (binaryWordMarkedRotate pre post)).sum +
+              (binaryWordGapDecode
+                (binaryWordMarkedRotate pre post)).length :=
+            binaryWordGapEncoding_length _
+          _ = p := by
+            rw [hgapsum, hgaplen]
+            omega
+      have hcount :
+          (((pre ++ [true]) ++ post).filter id).length = r :=
+        hstats.1.symm.trans hgaplen
+      exact ⟨hrp, hlen, hcount⟩)
+
+
 /-- The trace of a binary matrix word is unchanged when a marked true letter
 is moved from the cut position to the final position. The proof is exactly
 trace cyclicity for the two grouped factors `eval(pre) * B` and

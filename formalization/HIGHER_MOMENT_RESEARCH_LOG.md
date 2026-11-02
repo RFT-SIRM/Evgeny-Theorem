@@ -5793,3 +5793,31 @@ Next work must restart from the unrestricted equivalence and design the
 finite-sum reindexing directly, with explicit definitions of the finite
 index types and maps. It must not assume that subtype restriction laws
 are definitional. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Restrict the marked-cut equivalence with subtypeEquiv
+
+Starting from the restored Lean-green unrestricted equivalence at
+`030d6ea3f435aeb0a45593ffc22629c60280fe97`, added the fixed-(p,r)
+types `binaryWordMarkedCutStratum` and `binaryWordGapOffsetStratum`.
+The restriction equivalence is now defined by Mathlib's
+`Equiv.subtypeEquiv`, not by hand-written forward/inverse subtype maps.
+
+The predicate equivalence is proved directly from
+`binaryWordMarkedRotate_gap_stats` and
+`binaryWordGapEncoding_length`. In the forward direction, decoded gap
+count is the true-letter count and decoded gap sum is word length minus
+that count. In the reverse direction, the already-proved decode/encode
+round trip identifies the marked cut with the canonical gap encoding;
+the exact encoding-length formula reconstructs p, and the gap-count
+identity reconstructs r. The inverse laws are inherited by construction
+from the unrestricted equivalence; this avoids the failed manual
+`change`/Subtype.ext approach.
+
+Important boundary: these are fixed-invariant subtypes of the existing
+unrestricted data types. This declaration does not yet give the subtypes
+`Fintype` instances, so it is not yet the finite-sum multiplicity
+theorem. The next step is to replace bounded weak gap lists by finite
+vectors indexed by `Fin r`, with entries in `Fin (p-r+1)`, and prove
+that representation equivalent while retaining the exact sum condition.
+H6 and H8 are untouched. A full Lean build is required for this step.
