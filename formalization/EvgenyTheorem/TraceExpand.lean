@@ -3711,4 +3711,259 @@ theorem binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum
               (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
       rw [Finset.mul_sum]
 
+
+
+
+/-- Finite exact-weight binary words of length p. -/
+def binaryWordFinStratum (p r : ℕ) : Type :=
+  {w : Fin p → Bool //
+    r ≤ p ∧ ((List.ofFn w).filter id).length = r}
+
+/-- The exact-weight binary-word stratum is finite. -/
+noncomputable instance binaryWordFinStratum_fintype (p r : ℕ) :
+    Fintype (binaryWordFinStratum p r) := by
+  classical
+  unfold binaryWordFinStratum
+  refine Fintype.subtype
+    (Finset.univ.filter fun w : Fin p → Bool =>
+      r ≤ p ∧ ((List.ofFn w).filter id).length = r) ?_
+  intro w
+  simp
+
+/-- The r true positions of an exact-weight word form a finite type. -/
+noncomputable instance binaryWordFinTruePositions_fintype
+    (p r : ℕ) (w : binaryWordFinStratum p r) :
+    Fintype {i : Fin p // w.val i = true} := by
+  classical
+  refine Fintype.subtype
+    (Finset.univ.filter fun i : Fin p => w.val i = true) ?_
+  intro i
+  simp
+
+/-- A fixed binary word has exactly as many true positions as its true-letter
+count. This identifies the finite subtype of true indices with the filtered
+list of true letters, without identifying equal values at different indices. -/
+theorem binaryWordFin_true_positions_card (p r : ℕ)
+    (w : binaryWordFinStratum p r) :
+    Fintype.card {i : Fin p // w.val i = true} = r := by
+  classical
+  have hcard := List.Nodup.card_eq_countP
+    (l := List.finRange p) (P := fun i : Fin p => w.val i = true)
+    (List.nodup_finRange p)
+  calc
+    Fintype.card {i : Fin p // w.val i = true} =
+        (Finset.univ.filter fun i : Fin p => w.val i = true).card := by
+          rw [Fintype.card_subtype]
+    _ = List.countP (fun i : Fin p => w.val i = true) (List.finRange p) := by
+          simpa only [List.toFinset_finRange] using hcard
+    _ = List.countP id (List.ofFn w.val) := by
+          rw [List.ofFn_eq_map, List.countP_map]
+    _ = ((List.ofFn w.val).filter id).length := by
+          rw [List.countP_eq_length_filter]
+    _ = r := w.property.2
+
+/-- A binary word together with a chosen true position. -/
+def binaryWordFinMarkedStratum (p r : ℕ) : Type :=
+  Σ w : binaryWordFinStratum p r, {i : Fin p // w.val i = true}
+
+/-- The marked-word type is finite. -/
+noncomputable instance binaryWordFinMarkedStratum_fintype (p r : ℕ) :
+    Fintype (binaryWordFinMarkedStratum p r) := by
+  classical
+  unfold binaryWordFinMarkedStratum
+  infer_instance
+
+/-- Summing a constant over the r true positions of a fixed exact-weight
+word multiplies it by r. -/
+theorem binaryWordFinMarkedStratum_sum_eq_r_mul
+    (p r : ℕ) (f : binaryWordFinStratum p r → ℂ) :
+    (∑ marked : binaryWordFinMarkedStratum p r, f marked.1) =
+      (r : ℂ) * ∑ w : binaryWordFinStratum p r, f w := by
+  classical
+  rw [Fintype.sum_sigma]
+  calc
+    _ = ∑ w : binaryWordFinStratum p r, (r : ℂ) * f w := by
+      apply Finset.sum_congr rfl
+      intro w hw
+      have hcard : Fintype.card {i : Fin p // w.val i = true} = r :=
+        binaryWordFin_true_positions_card p r w
+      simp [Finset.sum_const, hcard, nsmul_eq_mul]
+    _ = (r : ℂ) * ∑ w : binaryWordFinStratum p r, f w := by
+      rw [Finset.mul_sum]
+
+/-- The marked cuts of a fixed-(p,r) word are equivalent to a word together
+with one of its true positions. The chosen position is the length of the
+prefix before the distinguished true symbol. -/
+noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
+    binaryWordMarkedCutStratum p r ≃ binaryWordFinMarkedStratum p r where
+  toFun cut := by
+    rcases cut with ⟨⟨pre, post⟩, hcut⟩
+    let word : List Bool := (pre ++ [true]) ++ post
+    have hlen : word.length = p := hcut.2.1
+    let w : Fin p → Bool :=
+      fun i => word.get (Fin.cast hlen.symm i)
+    have hrepr : List.ofFn w = word := by
+      dsimp [w]
+      calc
+        List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
+            List.ofFn word.get := (List.ofFn_congr hlen word.get).symm
+        _ = word := List.ofFn_get word
+    have hprelt : pre.length < word.length := by
+      simp [word, List.length_append]
+      omega
+    have hi : pre.length < p := by
+      rw [← hlen]
+      exact hprelt
+    let i : Fin p := ⟨pre.length, hi⟩
+    have hcast : (Fin.cast hlen.symm i : Fin word.length).val = pre.length := by
+      simp [i]
+    have htrue : w i = true := by
+      dsimp [w]
+      change word[(Fin.cast hlen.symm i : Fin word.length).val] = true
+      rw [hcast]
+      simp [word, List.getElem_append_left, List.getElem_append_right]
+    refine ⟨⟨w, hcut.1, ?_⟩, ⟨i, htrue⟩⟩
+    rw [hrepr]
+    exact hcut.2.2
+  invFun x := by
+    rcases x with ⟨⟨w, hw⟩, ⟨i, hi⟩⟩
+    let word : List Bool := List.ofFn w
+    let pre : List Bool := word.take i
+    let post : List Bool := word.drop (i + 1)
+    have hlen : word.length = p := by simp [word]
+    have hiword : i < word.length := by simpa [word] using i.isLt
+    have hdrop : word.drop i = true :: word.drop (i + 1) := by
+      rw [List.drop_eq_getElem_cons hiword]
+      simp [word, hi]
+    have hstep : [true] ++ word.drop (i + 1) = word.drop i := by
+      simpa using hdrop.symm
+    have hdecomp : (pre ++ [true]) ++ post = word := by
+      dsimp [pre, post]
+      calc
+        (word.take i ++ [true]) ++ word.drop (i + 1) =
+            word.take i ++ ([true] ++ word.drop (i + 1)) := by
+              simp [List.append_assoc]
+        _ = word.take i ++ word.drop i := by rw [hstep]
+        _ = word := List.take_append_drop i word
+    have hcutlen : ((pre ++ [true]) ++ post).length = p := by
+      rw [hdecomp, hlen]
+    have hcutcount :
+        (((pre ++ [true]) ++ post).filter id).length = r := by
+      rw [hdecomp]
+      exact hw.2
+    exact ⟨(pre, post), hw.1, hcutlen, hcutcount⟩
+  left_inv cut := by
+    rcases cut with ⟨⟨pre, post⟩, hcut⟩
+    let word : List Bool := (pre ++ [true]) ++ post
+    have hlen : word.length = p := hcut.2.1
+    let w : Fin p → Bool :=
+      fun i => word.get (Fin.cast hlen.symm i)
+    have hrepr : List.ofFn w = word := by
+      dsimp [w]
+      calc
+        List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
+            List.ofFn word.get := (List.ofFn_congr hlen word.get).symm
+        _ = word := List.ofFn_get word
+    have hpre : word.take pre.length = pre := by
+      simpa [word, List.append_assoc] using
+        (List.take_left (l₁ := pre) (l₂ := [true] ++ post))
+    have hpost : word.drop (pre.length + 1) = post := by
+      simpa [word, List.append_assoc] using
+        (List.drop_left (l₁ := pre ++ [true]) (l₂ := post))
+    have hpre' : (List.ofFn w).take pre.length = pre := by
+      rw [hrepr]
+      exact hpre
+    have hpost' : (List.ofFn w).drop (pre.length + 1) = post := by
+      rw [hrepr]
+      exact hpost
+    apply Subtype.ext
+    change
+      ((List.ofFn w).take pre.length, (List.ofFn w).drop (pre.length + 1)) =
+        (pre, post)
+    exact Prod.ext hpre' hpost'
+  right_inv x := by
+    rcases x with ⟨⟨w, hw⟩, ⟨i, hi⟩⟩
+    let word : List Bool := List.ofFn w
+    let pre : List Bool := word.take i
+    let post : List Bool := word.drop (i + 1)
+    have hiword : i < word.length := by simpa [word] using i.isLt
+    have hdrop : word.drop i = true :: word.drop (i + 1) := by
+      rw [List.drop_eq_getElem_cons hiword]
+      simp [word, hi]
+    have hdecomp : (pre ++ [true]) ++ post = word := by
+      dsimp [pre, post]
+      calc
+        (word.take i ++ [true]) ++ word.drop (i + 1) =
+            word.take i ++ ([true] ++ word.drop (i + 1)) := by
+              simp [List.append_assoc]
+        _ = word.take i ++ word.drop i := by
+              simpa using hdrop.symm
+        _ = word := List.take_append_drop i word
+    have hprelen : pre.length = i := by
+      dsimp [pre, word]
+      simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hiword)]
+    apply Sigma.ext
+    · apply Subtype.ext
+      funext j
+      simp [binaryWordMarkedCutFinEquiv, word, pre, post, hdecomp]
+    · apply heq_of_eq
+      apply Subtype.ext
+      apply Fin.ext
+      simpa [binaryWordMarkedCutFinEquiv, word, pre, post, hprelen]
+
+/-- Each exact-weight binary word contributes exactly r copies to the sum
+over marked cuts. The summand may be any function of the unmarked word. -/
+theorem binaryWordMarkedCutStratum_sum_eq_r_mul_word_sum
+    (p r : ℕ) (f : binaryWordFinStratum p r → ℂ) :
+    (∑ cut : binaryWordMarkedCutStratum p r,
+      f (binaryWordMarkedCutFinEquiv p r cut).1) =
+      (r : ℂ) * ∑ w : binaryWordFinStratum p r, f w := by
+  classical
+  rw [← binaryWordFinMarkedStratum_sum_eq_r_mul p r f]
+  exact Fintype.sum_equiv (binaryWordMarkedCutFinEquiv p r)
+    (fun cut => f (binaryWordMarkedCutFinEquiv p r cut).1)
+    (fun marked => f marked.1)
+    (by intro cut; rfl)
+
+/-- The marked-cut trace sum equals r times the unmarked exact-count
+binary-word trace sum. This is the word-side multiplicity identity. -/
+theorem binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ cut : binaryWordMarkedCutStratum p r,
+      Matrix.trace
+        (binaryWordMatrix K N ((cut.val.1 ++ [true]) ++ cut.val.2))) =
+      (r : ℂ) *
+        ∑ w : binaryWordFinStratum p r,
+          Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)) := by
+  classical
+  calc
+    _ = ∑ cut : binaryWordMarkedCutStratum p r,
+          Matrix.trace
+            (binaryWordMatrix K N
+              (List.ofFn (binaryWordMarkedCutFinEquiv p r cut).1.val)) := by
+      apply Finset.sum_congr rfl
+      intro cut hcut
+      have hword :
+          List.ofFn (binaryWordMarkedCutFinEquiv p r cut).1.val =
+            ((cut.val.1 ++ [true]) ++ cut.val.2) := by
+        rcases cut with ⟨⟨pre, post⟩, hcut⟩
+        dsimp [binaryWordMarkedCutFinEquiv]
+        let word : List Bool := (pre ++ [true]) ++ post
+        have hlen : word.length = p := hcut.2.1
+        have hrepr :
+            List.ofFn
+              (fun i : Fin p => word.get (Fin.cast hlen.symm i)) = word := by
+          calc
+            List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
+                List.ofFn word.get := (List.ofFn_congr hlen word.get).symm
+            _ = word := List.ofFn_get word
+        simpa [word] using hrepr
+      rw [hword]
+    _ = (r : ℂ) *
+          ∑ w : binaryWordFinStratum p r,
+            Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)) := by
+      exact binaryWordMarkedCutStratum_sum_eq_r_mul_word_sum p r
+        (fun w => Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)))
+
 end EvgenyTheorem

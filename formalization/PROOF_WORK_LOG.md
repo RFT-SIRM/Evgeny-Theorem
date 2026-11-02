@@ -3071,3 +3071,20 @@ iterated-sum dependencies in the final namespace section. The previous
 commit `86d8438a0353fb8d549ed579b3edb614c816dc1b` placed it before
 those declarations because the module contains multiple namespace
 sections. The proof text was not changed. Full Lean build required.
+
+
+## 2026-11-02 — H10 marked-word r-fold decomposition
+
+Formalized the fixed-length, fixed-true-count binary-word type and its
+finite subtype of true positions. Proved that each true-position fiber
+has exactly r elements. The marked-cut stratum is explicitly equivalent
+to the sigma type of an unmarked word and one of its true positions:
+the marked index is the prefix length, and the inverse cut is obtained
+with List.take and List.drop.
+
+Reindexed any summand depending only on the unmarked word and derived
+the exact factor r; the matrix-trace specialization is
+binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum.
+This establishes the missing word-side multiplicity, complementary to
+the gap-side factor p. A full Lean build is required before counting
+the result as validated. H6 and H8 remain untouched.

@@ -5946,3 +5946,25 @@ the gap-vector product equivalence and iterated-sum theorem. No theorem
 statement or proof was changed. The prior SHA
 `86d8438a0353fb8d549ed579b3edb614c816dc1b` is not a Lean-validated
 checkpoint; full build required.
+
+
+## 2026-11-02 — Prove the H10 marked-word r-fold multiplicity
+
+Added a finite type of length-p binary words with exactly r true letters,
+and a dependent finite type of such words paired with one true position.
+The true-position fiber has cardinality r, proved by identifying the
+filtered List.ofFn count with the subtype of true coordinates in Fin p.
+
+Added the explicit equivalence from fixed-(p,r) marked cuts to these
+word/position pairs. The forward map records the prefix length as the
+marked position; the inverse splits List.ofFn w using take and drop at
+that position. The marked symbol is recovered from the position
+predicate, and reconstruction uses take_append_drop.
+
+From this equivalence, proved the general finite-sum identity that a
+summand depending only on the unmarked word is counted exactly r times.
+Specialized it to matrix traces, obtaining
+binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum.
+This supplies the word-side r-fold multiplicity needed to combine with
+the p-fold gap-side result. Full Lean build required; H6 and H8 are
+unchanged.
