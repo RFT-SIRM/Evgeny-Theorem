@@ -6044,3 +6044,26 @@ was missing the closing parenthesis for the `Matrix.trace` argument.
 Added that single delimiter. No theorem statement or proof argument was
 changed. The next full Lean build is required to check the newly exposed
 proof terms; this parser correction alone does not validate the theorem.
+
+
+## 2026-11-02 — Connect the H10 weighted identity to the recursive ordered expansion
+
+Starting from the Lean-green exact weighted identity, added a bridge from
+the recursive exact-count list `binaryWordExpansionByCount p r` to the
+finite type `binaryWordFinStratum p r`. The bridge proves (i) the exact
+membership characterization by length and true-count, (ii) absence of
+repeated list entries, (iii) the list/Fin-word equivalence, and (iv) equality
+of the two trace sums. It therefore preserves each ordered word occurrence
+and does not identify words merely because their matrix evaluations agree.
+
+Using the existing
+`orderedWordExpansionByCount_eq_map_binaryWordExpansionByCount`, the new
+theorems
+`trace_orderedWordExpansionByCount_eq_binaryWordFinStratum_sum` and
+`trace_orderedWordExpansionByCount_weighted_gap_identity` connect the
+already-proved weighted gap identity directly to the actual exact-count
+strata in the expansion of `(K + K*N)^p`. This is the interface needed
+for the p=10 stratum assembly. It does not establish cancellation between
+different even strata, adjacent-level boundary stabilization, or the
+all-angle H10 recurrence. The new declarations require a complete Lean
+build before they are considered validated. H6 and H8 remain untouched.
