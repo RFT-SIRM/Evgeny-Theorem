@@ -1520,7 +1520,7 @@ theorem trace_p10_eight_N_stratum_boundary {cp : W → ι}
     10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 2 2 +
     10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 1 2 1 2 +
     10 * trace_p10_eight_N_boundary_term G K 1 1 1 1 2 1 1 2 +
-    5 * trace_p10_eight_N_boundary_term G K 1 1 2 1 1 1 1 2 := by
+    5 * trace_p10_eight_N_boundary_term G K 1 1 1 2 1 1 1 2 := by
   have h11111113 :
     Matrix.trace (K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 1 * G.N * K ^ 3 * G.N * K ^ 0) =
       trace_p10_eight_N_boundary_term G K 1 1 1 1 1 1 1 3 := by

@@ -6339,3 +6339,11 @@ with the actual five disjoint cyclic orbits. This is still only an
 individual-stratum identity: no cross-stratum cancellation or H10
 recurrence is claimed. A full Lean build on the corrected source SHA is
 required.
+
+
+The follow-up full Lean build then identified one remaining stale occurrence
+in the *target* of the generic theorem: its fifth right-hand boundary-term
+argument still named the old tuple even though the fifth trace and local
+proof had been corrected. That target argument is now updated to the same
+period-four representative. The failure was localized to this statement
+mismatch; the generic geometric reduction itself remained unchanged.
