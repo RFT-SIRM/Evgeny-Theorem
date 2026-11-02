@@ -3190,3 +3190,15 @@ symmetric equality required by the `List.mem_map` witnesses.
 No other proof term or theorem statement changed. The two earlier messages
 were the only source errors in that Lean run; the next full Lean build
 checks whether the declaration now closes. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Correct the parameter name of List.concat_eq_append (verified)
+
+Correction to the immediately preceding entry: the claim that the list
+argument was named `l` was wrong. The exact Lean 4.33.1 declaration is
+`@[simp] theorem concat_eq_append {as : List α} {a : α}`. Therefore the
+two witnesses in `binaryWordExpansionByCount_mem_iff` must use
+`(as := pre) (a := false)` and `(as := pre) (a := true)`.
+Updated both calls to match the pinned declaration. This entry supersedes
+the incorrect parameter-name statement above; only a successful Lean build
+can validate the result.
