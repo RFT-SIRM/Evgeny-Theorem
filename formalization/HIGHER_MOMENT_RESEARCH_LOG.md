@@ -6467,3 +6467,28 @@ scalar identity (10/3)*3=10. The gap representatives, partition, trace
 conversion, order of all matrix factors, and existing twelve-class
 vanishing theorem are unchanged. This is a targeted normalization repair;
 the complete Lean build on the repaired source SHA must still pass.
+
+
+
+## 2026-11-02 — Connect the exact H10 five-N word stratum to its cyclic zero classes
+
+The exact r=3 word-to-orbit interface now passes the full Lean build on
+commit `0017f7125ff94a0a6dd5504697df4f01341346cf`
+(Actions run `41499367122`, attempt 2).
+
+On that verified base, added the 26 canonical positive-gap representatives
+for r=5, the finite partition of all 126 positive compositions into their
+cyclic orbits, pairwise disjointness of those orbits, and the exact orbit
+cardinalities. Twenty-five orbits have size five; the all-twos tuple has
+orbit size one. Combining the already-proved marked-word multiplicity
+identity with this partition gives the normalized exact-word trace formula
+with coefficients ten on the 25 full orbits and two on the periodic orbit.
+
+The new `sg_trace_p10_five_N_word_stratum_zero` then matches those
+coefficients and ordered gap traces to the existing
+`sg_trace_p10_five_N_stratum_zero`. It introduces no cyclic matrix-factor
+rotation and reuses the rotation-free gap normal-form lemma. This closes
+the exact-word interface for r=5 only; r=7, the complete H10 even-boundary
+aggregation, the boundary-orientation comparison, and the H10 residual
+recurrence remain open. The new source SHA requires a complete Lean build.
+

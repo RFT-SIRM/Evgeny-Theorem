@@ -6530,4 +6530,89 @@ theorem sg_trace_p10_ten_N_word_stratum_diagonal
       simpa [K] using
         (sg_trace_p10_top_stratum_diagonal_fifth m hm θ ax o hanti)
 
+
+
+
+/-- The complete exact-count p=10 five-N binary-word stratum vanishes.
+The word-to-orbit identity gives coefficient ten on the 25 full orbits
+and coefficient two on the period-one orbit; these are exactly the
+weights in the already-proved five-N glued-corner zero theorem. -/
+theorem sg_trace_p10_five_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 5,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 5,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcards5 :
+      ([(cyclicGapOrbit [1, 1, 1, 1, 6]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 5]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 4, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 5, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 5]).card,
+      (cyclicGapOrbit [1, 1, 2, 2, 4]).card,
+      (cyclicGapOrbit [1, 1, 2, 3, 3]).card,
+      (cyclicGapOrbit [1, 1, 2, 4, 2]).card,
+      (cyclicGapOrbit [1, 1, 3, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 3, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 3, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 4, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 4, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 5, 1, 2]).card,
+      (cyclicGapOrbit [1, 2, 1, 2, 4]).card,
+      (cyclicGapOrbit [1, 2, 1, 3, 3]).card,
+      (cyclicGapOrbit [1, 2, 1, 4, 2]).card,
+      (cyclicGapOrbit [1, 2, 2, 1, 4]).card,
+      (cyclicGapOrbit [1, 2, 2, 2, 3]).card,
+      (cyclicGapOrbit [1, 2, 2, 3, 2]).card,
+      (cyclicGapOrbit [1, 2, 3, 1, 3]).card,
+      (cyclicGapOrbit [1, 2, 3, 2, 2]).card,
+      (cyclicGapOrbit [1, 3, 1, 3, 2]).card,
+      (cyclicGapOrbit [1, 3, 2, 2, 2]).card,
+      (cyclicGapOrbit [2, 2, 2, 2, 2]).card] : List ℕ) =
+        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1] := by
+    exact binaryWordP10GapOrbitRepresentativeCardinals5
+  simp only [List.cons.injEq] at hcards5
+  rcases hcards5 with ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26⟩
+  have hcoef5 : ((10 : ℂ) / (5 : ℂ)) * 5 = 10 := by
+    norm_num
+  have htrace (e0 e1 e2 e3 e4 : ℕ) :
+      cyclicGapTrace K N
+        [Nat.succ e0, Nat.succ e1, Nat.succ e2,
+          Nat.succ e3, Nat.succ e4] =
+      Matrix.trace
+        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+          K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+          K ^ e4 * (K * N)) := by
+    calc
+      _ = cyclicGapTrace K (K * N) [e0, e1, e2, e3, e4] := by
+        symm
+        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N
+          [e0, e1, e2, e3, e4]
+      _ = _ := by
+        simp [cyclicGapTrace, Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps5,
+        ((10 : ℂ) / (5 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage5 K N
+    _ = sg_trace_p10_five_N_stratum_sum m K N := by
+      simp [binaryWordP10GapOrbitReps5, htrace, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26,
+        hcoef5, sg_trace_p10_five_N_stratum_sum,
+        sg_trace_p10_five_N_class_term]
+      ring
+    _ = 0 := by
+      simpa [K, N] using
+        (sg_trace_p10_five_N_stratum_zero m hm θ ax o hanti)
+
+
 end EvgenyTheorem
