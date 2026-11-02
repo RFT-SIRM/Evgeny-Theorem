@@ -6076,3 +6076,15 @@ its pointwise definitional equality (`Nat.succ a = a + 1`). This changes
 only the proof of the already-stated coordinate identity; the weighted
 multiplicity theorem and positive-gap statement are unchanged. The full
 Lean build is the validation gate. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Complete the positive-gap map congruence
+
+The first correction in `b394b12` still failed because
+`List.map_congr_left` was applied before rewriting the nested map on
+the right. Lean reported the exact goal as a map over `List.map Nat.succ gaps`.
+The proof now first rewrites `List.map_map`, then applies
+`List.map_congr_left` to a common source list, and closes the pointwise
+exponent equality `a + 1 = Nat.succ a` with `omega`. No theorem statement or
+mathematical content changes. Full Lean build is required. H6 and H8 remain
+untouched.
