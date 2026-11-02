@@ -6433,3 +6433,23 @@ it does not commute factors or alter any gap representative, orbit weight,
 or trace term. The line-6308 timeout was a follow-on declaration failure
 after the line-6339 timeout, not a separate mathematical obligation.
 A fresh complete Lean build must validate this change.
+
+
+
+## 2026-11-02 — Connect the exact H10 three-N word stratum to its zero classes
+
+Added the twelve canonical cyclic representatives for the positive
+compositions of 10 into three parts. Direct finite checks establish that
+the 36 positive compositions split into twelve pairwise-disjoint orbits,
+each of cardinality three. The corresponding marked-word trace sum and
+normalized orbit-average identities preserve the factor 10/3 times orbit
+size three.
+
+The new theorem sg_trace_p10_three_N_word_stratum_zero now transfers the
+complete exact-count binary-word trace sum to the twelve already-proved
+three-N cyclic zero classes. The conversion uses the exact gap-shift
+identity and retains the ordered K and N factors; no factors are commuted.
+This closes the r=3 word-level interface only. The analogous r=5 and r=7
+exact-word bridges, full ten-stratum aggregation, cross-stratum boundary
+cancellation, and the H10 recurrence remain open. A full Lean build on
+this exact source SHA is required.

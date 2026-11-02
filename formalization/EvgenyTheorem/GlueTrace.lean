@@ -4566,6 +4566,78 @@ theorem sg_trace_p10_three_N_stratum_zero
     10 * hzero_r3_4 + 10 * hzero_r3_5 + 10 * hzero_r3_6 +
     10 * hzero_r3_7 + 10 * hzero_r3_8 + 10 * hzero_r3_9 +
     10 * hzero_r3_10 + 10 * hzero_r3_11 + 10 * hzero_r3_12
+/-- Connect the complete exact-count p=10 three-N binary-word
+stratum to its twelve cyclic zero classes. The orbit normalization is
+(10/3) times orbit size three, so each existing class has coefficient ten. -/
+theorem sg_trace_p10_three_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 3,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 3,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcard :
+      ∀ rep ∈ binaryWordP10GapOrbitReps3,
+        (cyclicGapOrbit rep).card = 3 := by
+    intro rep hrep
+    simp only [binaryWordP10GapOrbitReps3, Finset.mem_insert,
+      Finset.mem_singleton] at hrep
+    rcases hrep with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals decide
+  have htrace (e0 e1 e2 : ℕ) :
+      cyclicGapTrace K N
+        [Nat.succ e0, Nat.succ e1, Nat.succ e2] =
+      Matrix.trace
+        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+          K ^ e2 * (K * N)) := by
+    calc
+      _ = cyclicGapTrace K (K * N) [e0, e1, e2] := by
+        symm
+        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N [e0, e1, e2]
+      _ = _ := by
+        simp [cyclicGapTrace, Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps3,
+        ((10 : ℂ) / (3 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage3 K N
+    _ = 10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) := by
+      simp [binaryWordP10GapOrbitReps3, hcard, htrace]
+    _ = 0 := by
+      simpa [K, N] using
+        (sg_trace_p10_three_N_stratum_zero m hm θ ax o hanti)
+
 
 
 /-- The unique r=1 cyclic class in the p=8 ordered-word expansion
