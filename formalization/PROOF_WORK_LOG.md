@@ -3127,3 +3127,29 @@ Replaced an attempted dependent elimination with Mathlib's
 Sigma.subtype_ext, applying the existing function equality for the word
 and the existing prefix-length equality for the marked index. This
 directly matches the dependent subtype structure. Full Lean build pending.
+
+
+## 2026-11-02 — Correct the H10 ordered-expansion bridge
+
+The failed full Lean build for `3c2f37b` had five source errors. The
+marked-word inverse branches tried to rewrite a `List.concat` expression
+inside an unresolved equality metavariable; these are now constructed with
+`List.mem_map_of_mem`. The exact-count finite-word equivalence now obtains
+`r ≤ p` from `List.length_filter_le`. The trace-sum reindexing supplies
+its summand explicitly to `List.sum_toFinset`, removes the redundant
+post-rewrite tactic, and transports equality through the matrix trace using
+`congrArg`.
+
+The same failed theorem also exposed a mathematical mismatch: the old
+weighted identity is for the K/N alphabet, but the actual ordered expansion
+uses K/(K*N). A true letter in the latter contributes K*N, so the
+corresponding gap block is K^(a+1)*N. Added the separate
+`cyclicGapTraceKN` definition and matching marked-cut trace reindexing,
+r-fold marked-word identity, gap-vector/offset reindexing, and p-fold
+offset identity. The actual ordered-expansion weighted theorem now uses
+this corrected K/(K*N) identity. The old K/N theorem remains unchanged.
+
+The helper for the vector/offset product sum was added in commit
+`0b4f682`. The full Lean run for that commit is pending; this entry records
+the mathematical correction but does not mark it validated. H6 and H8
+were not changed.
