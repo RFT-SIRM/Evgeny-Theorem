@@ -2826,6 +2826,39 @@ theorem binaryWordMarkedRotate_decode_reconstruct
   exact binaryWordMarkedRotate_rotate_back pre post
 
 
+/-- Rotating a canonical gap word and then rotating back by the complementary
+offset recovers the canonical word. The offset is required to be below the
+word length, so the two rotation amounts add to exactly one full turn. -/
+theorem binaryWordGapEncoding_rotate_back
+    (gaps : List ℕ) (offset : ℕ)
+    (hoffset : offset < (binaryWordGapEncoding gaps).length) :
+    ((binaryWordGapEncoding gaps).rotate offset).rotate
+        ((binaryWordGapEncoding gaps).length - offset) =
+      binaryWordGapEncoding gaps := by
+  calc
+    _ = (binaryWordGapEncoding gaps).rotate
+          (offset + ((binaryWordGapEncoding gaps).length - offset)) := by
+      rw [List.rotate_rotate]
+    _ = (binaryWordGapEncoding gaps).rotate
+          (binaryWordGapEncoding gaps).length := by
+      rw [Nat.add_sub_of_le hoffset.le]
+    _ = binaryWordGapEncoding gaps :=
+      List.rotate_length _
+
+/-- Conversely, every legal rotation offset of a canonical gap word can be
+cut back to the canonical end-marked form, and decoding recovers precisely
+the original gap list. This is the reverse decoding direction for the
+gap-list/offset correspondence. -/
+theorem binaryWordGapEncoding_rotate_decode
+    (gaps : List ℕ) (offset : ℕ)
+    (hoffset : offset < (binaryWordGapEncoding gaps).length) :
+    binaryWordGapDecode
+      (((binaryWordGapEncoding gaps).rotate offset).rotate
+        ((binaryWordGapEncoding gaps).length - offset)) = gaps := by
+  rw [binaryWordGapEncoding_rotate_back gaps offset hoffset]
+  exact binaryWordGapDecode_gapEncoding gaps
+
+
 /-- The gap list obtained after cutting a word at a marked true letter has
 exactly the original number of true letters, and its total gap size is the
 original number of false letters. The offset is represented by post.length

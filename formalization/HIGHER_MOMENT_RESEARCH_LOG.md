@@ -5603,3 +5603,27 @@ yet establish surjectivity/uniqueness of that correspondence or the global
 multiplicity identity giving the factor \\(p/r\\). The complete Lean
 build is the acceptance check for this source step. H6 and H8 remain
 untouched.
+
+
+## 2026-11-02 — Prove reverse decoding for every admissible gap-list offset
+
+The inverse reconstruction and trace transport commit
+`999daaf14d7b6bbe8fb7f2d0b82ce255af986612` passed the complete Lean
+build (Actions run `41378939870`). On that verified base, added
+`binaryWordGapEncoding_rotate_back`: for every offset strictly below the
+encoded word length, rotating the canonical gap word by that offset and
+then by its complementary offset returns the canonical word. The proof
+uses the pinned Mathlib theorem `List.rotate_rotate`, the natural-number
+identity `offset + (length - offset) = length`, and
+`List.rotate_length`.
+
+Derived `binaryWordGapEncoding_rotate_decode`: after this inverse cut,
+the existing decoder recovers exactly the input gap list. Thus both sides
+of the reconstruction relation are now explicit: marked words decode to
+their gap data and offset, and canonical gap data with a legal offset
+rotates back to a word whose inverse cut decodes to the original gaps.
+
+This remains a structural inverse statement, not yet the full finite
+bijection or the trace multiplicity identity (r S_{m words}=p
+S_{m gaps}). Those are the next obligations. Full Lean validation is
+required for this commit. H6 and H8 remain untouched.

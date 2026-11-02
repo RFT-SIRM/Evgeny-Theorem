@@ -2806,3 +2806,19 @@ The converse construction for every admissible gap list and offset, its
 uniqueness proof, and the resulting exact \\(p/r\\) multiplicity identity
 remain open. Full Lean validation is required for this commit; H6 and H8
 are unchanged.
+
+
+## 2026-11-02 — H10 reverse decoding from gap lists and rotation offsets
+
+Added `binaryWordGapEncoding_rotate_back`, proving that any canonical
+gap encoding rotated by a legal offset is restored by the complementary
+rotation. Then proved `binaryWordGapEncoding_rotate_decode`: applying the
+gap decoder after that inverse cut yields the original gap list exactly.
+This supplies the reverse decoding law complementary to
+`binaryWordMarkedRotate_decode_reconstruct`.
+
+The proof uses only the exact list-rotation composition laws and the
+already validated canonical decoder left-inverse; no matrix factors are
+reordered. The complete finite marked-word/gap-offset bijection and the
+weighted trace multiplicity identity remain open. Full Lean build is
+required on this commit; H6 and H8 remain unchanged.
