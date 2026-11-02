@@ -3754,9 +3754,14 @@ theorem binaryWordFin_true_positions_card (p r : ℕ)
     Fintype.card {i : Fin p // w.val i = true} =
         (Finset.univ.filter fun i : Fin p => w.val i = true).card := by
           rw [Fintype.card_subtype]
-    _ = List.countP (fun i : Fin p => w.val i = true) (List.finRange p) := by
+    _ = List.countP (fun i : Fin p => decide (w.val i = true))
+          (List.finRange p) := by
           simpa only [List.toFinset_finRange] using hcard
     _ = List.countP (fun i : Fin p => w.val i) (List.finRange p) := by
+          congr 1
+          funext i
+          cases h : w.val i <;> simp [h]
+    _ = List.countP (id ∘ w.val) (List.finRange p) := by
           rfl
     _ = List.countP id (List.ofFn w.val) := by
           rw [List.ofFn_eq_map, List.countP_map]
@@ -3934,9 +3939,16 @@ noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
             ((pre ++ [true]) ++ post) := hrepr
         _ = word := hdecomp
         _ = List.ofFn w := rfl
-    apply Sigma.ext
-    · apply Subtype.ext
+    have hfirst :
+        (⟨(fun j : Fin p =>
+            ((pre ++ [true]) ++ post).get (Fin.cast hcutlen.symm j)),
+          by simpa only [hfun] using hw⟩ : binaryWordFinStratum p r) =
+          ⟨w, hw⟩ := by
+      apply Subtype.ext
       exact hfun
+    cases hfirst
+    apply Sigma.ext
+    · rfl
     · apply heq_of_eq
       apply Subtype.ext
       apply Fin.ext

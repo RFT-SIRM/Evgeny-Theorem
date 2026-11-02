@@ -3108,3 +3108,13 @@ coercion equality and a dependent cast rewrite in the right inverse.
 Replaced the coercion proof with reflexivity and replaced the cast rewrite
 with an equality of List.ofFn encodings, then recovered equality of the
 indexed words by injectivity. No new mathematical statements were added.
+
+
+## 2026-11-02 — H10 marked-word proof refinement
+
+After cbe01ca, refined the final two dependent proof obligations. In the
+cardinality lemma, reduce the Bool indicator pointwise. In the right
+inverse, construct the subtype equality using the reconstructed List.ofFn
+function equality, explicitly transport the exact-weight proof, and then
+prove the dependent marked-position equality. This is a narrow correction
+to the same proof, not a new mathematical step. Pending full Lean build.

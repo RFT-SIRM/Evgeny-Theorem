@@ -5994,3 +5994,13 @@ The count equality is now closed by definitional equality. The right
 inverse now proves equality of the two indexed words by List.ofFn_injective
 and the reconstructed-list identity, avoiding an invalid dependent rewrite.
 The new run is the validation gate; the r-fold claim remains provisional.
+
+
+## 2026-11-02 — H10 marked-word proof: dependent inverse refinement
+
+The cbe01ca Lean build isolated the remaining errors to the Bool indicator
+conversion in the true-position count and the dependent second component
+of the Sigma right-inverse law. The count conversion now splits Bool
+explicitly. The right-inverse proof establishes equality of the
+underlying exact-weight word subtypes first, then transports the marked
+position across that equality. Full Lean build is required; H10 remains open.
