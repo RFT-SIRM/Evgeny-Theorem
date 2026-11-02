@@ -3118,3 +3118,12 @@ inverse, construct the subtype equality using the reconstructed List.ofFn
 function equality, explicitly transport the exact-weight proof, and then
 prove the dependent marked-position equality. This is a narrow correction
 to the same proof, not a new mathematical step. Pending full Lean build.
+
+
+## 2026-11-02 — H10 marked-word dependent pair inverse
+
+Build 23863b7 left one error in the dependent Sigma right-inverse proof.
+Replaced an attempted dependent elimination with Mathlib's
+Sigma.subtype_ext, applying the existing function equality for the word
+and the existing prefix-length equality for the marked index. This
+directly matches the dependent subtype structure. Full Lean build pending.

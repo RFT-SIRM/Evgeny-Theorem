@@ -3939,20 +3939,9 @@ noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
             ((pre ++ [true]) ++ post) := hrepr
         _ = word := hdecomp
         _ = List.ofFn w := rfl
-    have hfirst :
-        (⟨(fun j : Fin p =>
-            ((pre ++ [true]) ++ post).get (Fin.cast hcutlen.symm j)),
-          by simpa only [hfun] using hw⟩ : binaryWordFinStratum p r) =
-          ⟨w, hw⟩ := by
-      apply Subtype.ext
-      exact hfun
-    cases hfirst
-    apply Sigma.ext
-    · rfl
-    · apply heq_of_eq
-      apply Subtype.ext
-      apply Fin.ext
-      exact hprelen
+    apply Sigma.subtype_ext
+    · exact Subtype.ext hfun
+    · exact Fin.ext hprelen
 
 /-- The word reconstructed from a marked cut is exactly its concatenated
 binary word, with all p positions retained. -/

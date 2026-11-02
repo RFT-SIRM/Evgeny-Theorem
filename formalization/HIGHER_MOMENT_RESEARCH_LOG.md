@@ -6004,3 +6004,15 @@ of the Sigma right-inverse law. The count conversion now splits Bool
 explicitly. The right-inverse proof establishes equality of the
 underlying exact-weight word subtypes first, then transports the marked
 position across that equality. Full Lean build is required; H10 remains open.
+
+
+## 2026-11-02 — H10 marked-word inverse: use the Sigma subtype extensionality lemma
+
+The build for 23863b7 accepted the Bool counting argument and all
+cut/list reconstruction steps. Its sole remaining error was the
+dependent-pair right inverse: eliminating equality of the first subtype
+was not accepted by Lean. Replaced that elimination with the library's
+Sigma.subtype_ext, which is designed for a sigma whose second component
+is itself a subtype. It takes exactly the already-proved equality of
+the word subtype and equality of the underlying marked Fin index.
+No new encoding or mathematical statement is introduced.
