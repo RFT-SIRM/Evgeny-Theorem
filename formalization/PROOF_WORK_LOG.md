@@ -3052,3 +3052,13 @@ decomposition below all referenced declarations. Commit
 `728e85828465be7c86705c85fe78a86de448069b` is not a validated
 checkpoint because of the earlier placement. The mathematics and proof
 bodies are unchanged. Full Lean build required.
+
+
+## 2026-11-02 — H10 gap-side p-fold multiplicity
+
+Converted the iterated gap-vector/offset trace sum into an explicit
+multiplication by p. The proof uses the fact that the summand is
+independent of the offset and sums over `Fin p`, preserving all p
+offsets even in periodic cases. This completes only the gap-side
+multiplicity. The word-side r-fold count remains to be formalized.
+Full Lean build required.

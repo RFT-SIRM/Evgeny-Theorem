@@ -5921,3 +5921,16 @@ definitions it references. This was a source-order error. Moved the
 entire block after all its dependencies at the final module boundary.
 No theorem statement or proof body was changed. The initial commit is
 not a validated checkpoint; a fresh full Lean build is required.
+
+
+## 2026-11-02 — Extract the exact p-fold H10 gap multiplicity
+
+Added `binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum`.
+Combining the product decomposition with the constant-sum identity on
+`Fin p` converts the iterated sum into p times the trace sum over
+unmarked gap vectors. The p offsets remain separate elements; this is
+valid for periodic gap vectors without dividing by orbit size.
+
+This completes the explicit p-fold count on the gap side. The matching
+r-fold marked-word decomposition and the weighted identity remain
+outstanding. Full Lean build required.
