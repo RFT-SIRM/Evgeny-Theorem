@@ -6225,3 +6225,17 @@ precise normalization needed to compare the combinatorial orbit sums
 with the existing H10 boundary-stratum lists. No H10 cross-stratum
 cancellation or all-level recurrence is claimed yet. Full Lean build
 required for this source revision.
+
+
+## 2026-11-02 — Connect the normalized H10 two-N word stratum to the glued boundary reduction
+
+Added `sg_trace_p10_two_N_word_stratum_diagonal` in `GlueTrace.lean`.
+It starts with the finite sum over all exact-weight p=10 binary words
+having two selected K*N letters, applies the normalized word-to-orbit
+identity, evaluates the five exact orbit sizes, and rewrites the five
+cyclic gap traces as the corresponding ordered matrix traces. It then
+uses the existing glued-corner theorem to obtain the five diagonal
+corner sums, with coefficients (10, 10, 10, 10, 5). This composes the
+new combinatorial identity with the pre-existing geometric boundary
+reduction; it does not assume termwise cancellation between orientations
+or strata. Validation requires a full Lean build on the new source SHA.
