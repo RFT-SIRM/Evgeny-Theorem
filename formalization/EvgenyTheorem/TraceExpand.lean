@@ -4230,6 +4230,9 @@ theorem binaryWordP10GapOrbitPartition6 :
   classical
   decide
 
+-- The explicit r=8 orbit partition exceeds Lean's default recursion bound.
+set_option maxRecDepth 16384 in
+set_option maxHeartbeats 8000000 in
 /-- The eight-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
 theorem binaryWordP10GapOrbitPartition8 :

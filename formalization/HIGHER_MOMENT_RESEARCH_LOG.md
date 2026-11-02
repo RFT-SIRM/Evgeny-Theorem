@@ -6182,3 +6182,12 @@ followed by the documentation and theorem. Increased the r=6 finite
 checks' local recursion/heartbeat budget based on the prior build's
 recursion-depth failure. No definitions, representatives, statements,
 or multiplicity weights were changed. Full Lean build required.
+
+
+## 2026-11-02 — Bound the H10 r=8 finite orbit-partition computation
+
+The 02e0afd full Lean build passed the repaired declaration parsing and
+the r=4/r=6 finite proofs, but the r=8 partition's `decide` hit the
+default maximum recursion depth at TraceExpand.lean:4239. Scoped the
+same finite-computation resource adjustment to this one r=8 theorem.
+No mathematical statement, representative, or orbit weight changed.
