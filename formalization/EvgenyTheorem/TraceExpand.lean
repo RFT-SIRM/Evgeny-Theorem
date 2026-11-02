@@ -4206,7 +4206,7 @@ theorem binaryWordP10GapOrbitPartition2 :
     binaryWordP10PositiveGapListFinset 2 =
       binaryWordP10GapOrbitReps2.biUnion cyclicGapOrbit := by
   classical
-  decide
+  set_option maxRecDepth 4096 in decide
 
 /-- The four-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
@@ -4214,7 +4214,7 @@ theorem binaryWordP10GapOrbitPartition4 :
     binaryWordP10PositiveGapListFinset 4 =
       binaryWordP10GapOrbitReps4.biUnion cyclicGapOrbit := by
   classical
-  decide
+  set_option maxRecDepth 4096 in decide
 
 /-- The six-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
@@ -4222,7 +4222,7 @@ theorem binaryWordP10GapOrbitPartition6 :
     binaryWordP10PositiveGapListFinset 6 =
       binaryWordP10GapOrbitReps6.biUnion cyclicGapOrbit := by
   classical
-  decide
+  set_option maxRecDepth 4096 in decide
 
 /-- The eight-insertion positive compositions are partitioned by the listed
 cyclic gap orbits. -/
@@ -4254,6 +4254,131 @@ theorem cyclicGapTrace_sum_biUnion_orbits
   intro rep hrep
   exact cyclicGapTrace_sum_orbit_eq K N rep
 
+
+/-- Distinct canonical representatives in the p=10 r=2 stratum are
+not cyclic rotations of one another. The rotation witness is bounded by
+the common list length, so the check is genuinely finite. -/
+theorem binaryWordP10GapOrbitReps2_pairwise_not_rotated :
+    ∀ a ∈ binaryWordP10GapOrbitReps2,
+      ∀ b ∈ binaryWordP10GapOrbitReps2, a ≠ b → ¬ a ~r b := by
+  simp only [binaryWordP10GapOrbitReps2, Finset.mem_insert,
+    Finset.mem_singleton, List.isRotated_iff_mod]
+  decide
+
+/-- The p=10 r=2 cyclic representative orbits are pairwise disjoint.
+An intersection would make the two representatives cyclic rotations;
+the preceding finite check excludes that. -/
+theorem binaryWordP10GapOrbitReps2_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps2) cyclicGapOrbit := by
+  intro a ha b hb hab
+  rw [Finset.disjoint_left]
+  intro g hga hgb
+  have hga' : g ~r a := by simpa [cyclicGapOrbit] using hga
+  have hgb' : g ~r b := by simpa [cyclicGapOrbit] using hgb
+  exact
+    (binaryWordP10GapOrbitReps2_pairwise_not_rotated a ha b hb hab)
+      (hga'.symm.trans hgb')
+
+
+/-- Distinct canonical representatives in the p=10 r=4 stratum are
+not cyclic rotations of one another. The rotation witness is bounded by
+the common list length, so the check is genuinely finite. -/
+theorem binaryWordP10GapOrbitReps4_pairwise_not_rotated :
+    ∀ a ∈ binaryWordP10GapOrbitReps4,
+      ∀ b ∈ binaryWordP10GapOrbitReps4, a ≠ b → ¬ a ~r b := by
+  simp only [binaryWordP10GapOrbitReps4, Finset.mem_insert,
+    Finset.mem_singleton, List.isRotated_iff_mod]
+  decide
+
+/-- The p=10 r=4 cyclic representative orbits are pairwise disjoint.
+An intersection would make the two representatives cyclic rotations;
+the preceding finite check excludes that. -/
+theorem binaryWordP10GapOrbitReps4_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps4) cyclicGapOrbit := by
+  intro a ha b hb hab
+  rw [Finset.disjoint_left]
+  intro g hga hgb
+  have hga' : g ~r a := by simpa [cyclicGapOrbit] using hga
+  have hgb' : g ~r b := by simpa [cyclicGapOrbit] using hgb
+  exact
+    (binaryWordP10GapOrbitReps4_pairwise_not_rotated a ha b hb hab)
+      (hga'.symm.trans hgb')
+
+
+/-- Distinct canonical representatives in the p=10 r=6 stratum are
+not cyclic rotations of one another. The rotation witness is bounded by
+the common list length, so the check is genuinely finite. -/
+theorem binaryWordP10GapOrbitReps6_pairwise_not_rotated :
+    ∀ a ∈ binaryWordP10GapOrbitReps6,
+      ∀ b ∈ binaryWordP10GapOrbitReps6, a ≠ b → ¬ a ~r b := by
+  simp only [binaryWordP10GapOrbitReps6, Finset.mem_insert,
+    Finset.mem_singleton, List.isRotated_iff_mod]
+  decide
+
+/-- The p=10 r=6 cyclic representative orbits are pairwise disjoint.
+An intersection would make the two representatives cyclic rotations;
+the preceding finite check excludes that. -/
+theorem binaryWordP10GapOrbitReps6_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps6) cyclicGapOrbit := by
+  intro a ha b hb hab
+  rw [Finset.disjoint_left]
+  intro g hga hgb
+  have hga' : g ~r a := by simpa [cyclicGapOrbit] using hga
+  have hgb' : g ~r b := by simpa [cyclicGapOrbit] using hgb
+  exact
+    (binaryWordP10GapOrbitReps6_pairwise_not_rotated a ha b hb hab)
+      (hga'.symm.trans hgb')
+
+
+/-- Distinct canonical representatives in the p=10 r=8 stratum are
+not cyclic rotations of one another. The rotation witness is bounded by
+the common list length, so the check is genuinely finite. -/
+theorem binaryWordP10GapOrbitReps8_pairwise_not_rotated :
+    ∀ a ∈ binaryWordP10GapOrbitReps8,
+      ∀ b ∈ binaryWordP10GapOrbitReps8, a ≠ b → ¬ a ~r b := by
+  simp only [binaryWordP10GapOrbitReps8, Finset.mem_insert,
+    Finset.mem_singleton, List.isRotated_iff_mod]
+  decide
+
+/-- The p=10 r=8 cyclic representative orbits are pairwise disjoint.
+An intersection would make the two representatives cyclic rotations;
+the preceding finite check excludes that. -/
+theorem binaryWordP10GapOrbitReps8_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps8) cyclicGapOrbit := by
+  intro a ha b hb hab
+  rw [Finset.disjoint_left]
+  intro g hga hgb
+  have hga' : g ~r a := by simpa [cyclicGapOrbit] using hga
+  have hgb' : g ~r b := by simpa [cyclicGapOrbit] using hgb
+  exact
+    (binaryWordP10GapOrbitReps8_pairwise_not_rotated a ha b hb hab)
+      (hga'.symm.trans hgb')
+
+
+/-- Distinct canonical representatives in the p=10 r=10 stratum are
+not cyclic rotations of one another. The rotation witness is bounded by
+the common list length, so the check is genuinely finite. -/
+theorem binaryWordP10GapOrbitReps10_pairwise_not_rotated :
+    ∀ a ∈ binaryWordP10GapOrbitReps10,
+      ∀ b ∈ binaryWordP10GapOrbitReps10, a ≠ b → ¬ a ~r b := by
+  simp only [binaryWordP10GapOrbitReps10, Finset.mem_insert,
+    Finset.mem_singleton, List.isRotated_iff_mod]
+  decide
+
+/-- The p=10 r=10 cyclic representative orbits are pairwise disjoint.
+An intersection would make the two representatives cyclic rotations;
+the preceding finite check excludes that. -/
+theorem binaryWordP10GapOrbitReps10_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps10) cyclicGapOrbit := by
+  intro a ha b hb hab
+  rw [Finset.disjoint_left]
+  intro g hga hgb
+  have hga' : g ~r a := by simpa [cyclicGapOrbit] using hga
+  have hgb' : g ~r b := by simpa [cyclicGapOrbit] using hgb
+  exact
+    (binaryWordP10GapOrbitReps10_pairwise_not_rotated a ha b hb hab)
+      (hga'.symm.trans hgb')
+
 /-- Orbit sums for the p=10 two-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum2
     {n : Type*} [Fintype n] [DecidableEq n]
@@ -4264,7 +4389,7 @@ theorem binaryWordP10GapTraceOrbitSum2
         (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
   rw [binaryWordP10GapOrbitPartition2]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
-    (by classical decide)
+    binaryWordP10GapOrbitReps2_pairwise_disjoint
 
 /-- Orbit sums for the p=10 four-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum4
@@ -4276,7 +4401,7 @@ theorem binaryWordP10GapTraceOrbitSum4
         (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
   rw [binaryWordP10GapOrbitPartition4]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
-    (by classical decide)
+    binaryWordP10GapOrbitReps4_pairwise_disjoint
 
 /-- Orbit sums for the p=10 six-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum6
@@ -4288,7 +4413,7 @@ theorem binaryWordP10GapTraceOrbitSum6
         (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
   rw [binaryWordP10GapOrbitPartition6]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
-    (by classical decide)
+    binaryWordP10GapOrbitReps6_pairwise_disjoint
 
 /-- Orbit sums for the p=10 eight-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum8
@@ -4300,7 +4425,7 @@ theorem binaryWordP10GapTraceOrbitSum8
         (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
   rw [binaryWordP10GapOrbitPartition8]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
-    (by classical decide)
+    binaryWordP10GapOrbitReps8_pairwise_disjoint
 
 /-- Orbit sums for the p=10 ten-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum10
@@ -4312,7 +4437,7 @@ theorem binaryWordP10GapTraceOrbitSum10
         (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
   rw [binaryWordP10GapOrbitPartition10]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
-    (by classical decide)
+    binaryWordP10GapOrbitReps10_pairwise_disjoint
 
 /-- The exact distinct-orbit cardinalities of all canonical p=10 gap
 representatives. The reduced values 1, 2, 3, and 4 are precisely the

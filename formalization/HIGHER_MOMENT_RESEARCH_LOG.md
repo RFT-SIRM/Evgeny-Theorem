@@ -6111,3 +6111,21 @@ offsets. This is the direct bridge from the positive finite gap-vector
 sum to the explicit p=10 cyclic representatives. Full Lean validation
 is required before using the bridge in the final H10 trace split.
 H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair the finite H10 cyclic-orbit partition proofs
+
+The first orbit-partition attempt `6957cd2` failed for two distinct
+proof-engineering reasons. The r=2,4,6 finite-set equalities reached Lean's
+default recursion-depth limit while reducing the bounded finite
+enumerations. Their proofs now raise `maxRecDepth` locally only around
+those explicit finite decisions.
+
+The five orbit-sum proofs also incorrectly tried to decide the classical
+proposition `Set.PairwiseDisjoint` directly. Replaced that with an
+explicit proof: an intersection of two cyclic orbits gives a cyclic-rotation
+relation between their representatives, while each representative set is
+checked to contain no two distinct cyclic rotations. The rotation relation
+is rewritten using `List.isRotated_iff_mod`, making its witness finite
+and decidable. No orbit representatives or mathematical multiplicities
+were changed. Full Lean build required.
