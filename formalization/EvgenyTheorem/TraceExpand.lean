@@ -3289,7 +3289,7 @@ noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
             (binaryWordMarkedRotate_length pre post).symm
           _ = (binaryWordGapEncoding
                 (binaryWordGapDecode (binaryWordMarkedRotate pre post))).length := by
-            rw [← hround]
+            rw [hround]
           _ = (binaryWordGapDecode
                 (binaryWordMarkedRotate pre post)).sum +
               (binaryWordGapDecode

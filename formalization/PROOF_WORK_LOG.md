@@ -2965,3 +2965,14 @@ types, not yet a Fintype equivalence. The finite representation by
 `Fin r → Fin (p-r+1)` weak compositions remains the next required step
 before applying finite-sum reindexing and deriving the p/r weight.
 No H6 or H8 declarations are modified. Full Lean validation required.
+
+
+## 2026-11-02 — Fix the sole Lean error in the fixed-stratum restriction
+
+Lean run `41403632424` failed at `TraceExpand.lean:3291`: the proof
+rewrote the decode/encode round-trip in the wrong direction. The
+hypothesis states that encoding the decoded marked word equals the marked
+word, and the failing length equality requires rewriting the encoded
+right-hand side to the word. Changed `rw [← hround]` to `rw [hround]`.
+The build reported no other errors in `TraceExpand.lean`; rerun the full
+Lean build after this minimal repair.

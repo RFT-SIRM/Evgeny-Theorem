@@ -5821,3 +5821,15 @@ theorem. The next step is to replace bounded weak gap lists by finite
 vectors indexed by `Fin r`, with entries in `Fin (p-r+1)`, and prove
 that representation equivalent while retaining the exact sum condition.
 H6 and H8 are untouched. A full Lean build is required for this step.
+
+
+## 2026-11-02 — Correct the encoding round-trip rewrite direction
+
+The first Lean run for `bb40cc0` isolated one error in the reverse
+stratum-predicate proof at `TraceExpand.lean:3291`. The established
+round-trip fact is
+`binaryWordGapEncoding (binaryWordGapDecode word) = word`.
+The goal had the encoded expression on the right-hand side, so rewriting
+with `hround` (not `hround.symm`) closes that equality. Corrected this
+single rewrite direction; no definitions or mathematical statements were
+changed. The full Lean build must be rerun.
