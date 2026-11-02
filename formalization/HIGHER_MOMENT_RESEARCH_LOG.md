@@ -5513,3 +5513,27 @@ since it depends only on earlier decoder results. The branch was checked
 against the expected parent before this focused reorder. Fresh full Lean
 build is required; no CI result is claimed for the reordered source yet.
 H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair marked-cut gap statistics after Lean diagnostics
+
+The complete Lean build for `324931607ff1aecf3b11b91111ae6dab531cea9f`
+failed only in `binaryWordMarkedRotate_gap_stats`. The first two errors
+were arithmetic normalization goals left by `simp` in the true-filter
+counts: the two sides differed only by association of natural-number sums.
+The third error showed that the proof did not provide Lean with a usable
+identity identifying the number of false symbols in the cut word with the
+number in the original word; attempting to derive the requested subtraction
+from lengths alone left the arithmetic underconstrained.
+
+Reworked the proof using explicit true-filter and false-filter counts.
+The true-count simplifications are now followed by `omega` only for the
+remaining associativity/commutativity arithmetic. The round-trip equation
+is mapped through the false-filter length, and the existing theorem
+`binaryWordGapEncoding_false_count` identifies this with `gaps.sum`.
+False-filter counts are then compared across the two cuts, and a generic
+Boolean-list partition identity (true count + false count = word length)
+closes the subtraction statement. The theorem statement and all preceding
+mathematical definitions are unchanged. This repair commit needs a fresh
+full Lean build and Python 3.11/3.12 Fast/Slow checks. H6 and H8 remain
+untouched.

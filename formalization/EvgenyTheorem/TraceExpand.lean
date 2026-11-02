@@ -2784,11 +2784,11 @@ theorem binaryWordMarkedRotate_gap_stats
   have hcutCount :
       ((binaryWordMarkedRotate pre post).filter id).length =
         (post.filter id).length + (pre.filter id).length + 1 := by
-    simp [binaryWordMarkedRotate, List.filter_append]
+    simp [binaryWordMarkedRotate, List.filter_append] <;> omega
   have hwordCount :
       (((pre ++ [true]) ++ post).filter id).length =
         (pre.filter id).length + 1 + (post.filter id).length := by
-    simp [List.filter_append]
+    simp [List.filter_append] <;> omega
   have hcount :
       ((binaryWordMarkedRotate pre post).filter id).length =
         (((pre ++ [true]) ++ post).filter id).length := by
@@ -2805,9 +2805,44 @@ theorem binaryWordMarkedRotate_gap_stats
         simpa [gaps] using
           (binaryWordGapDecode_true_count (binaryWordMarkedRotate pre post))
       _ = (((pre ++ [true]) ++ post).filter id).length := hcount
-  have hgapLength := binaryWordGapEncoding_length gaps
-  rw [hround] at hgapLength
-  have hwordLength := binaryWordMarkedRotate_length pre post
+  have hgapFalse :
+      gaps.sum =
+        ((binaryWordMarkedRotate pre post).filter (fun bit => !bit)).length := by
+    have h := congrArg
+      (fun word : List Bool => (word.filter (fun bit => !bit)).length) hround
+    rw [binaryWordGapEncoding_false_count] at h
+    exact h
+  have hcutFalse :
+      ((binaryWordMarkedRotate pre post).filter (fun bit => !bit)).length =
+        (post.filter (fun bit => !bit)).length +
+          (pre.filter (fun bit => !bit)).length := by
+    simp [binaryWordMarkedRotate, List.filter_append]
+  have hwordFalse :
+      (((pre ++ [true]) ++ post).filter (fun bit => !bit)).length =
+        (pre.filter (fun bit => !bit)).length +
+          (post.filter (fun bit => !bit)).length := by
+    simp [List.filter_append]
+  have hfalse :
+      ((binaryWordMarkedRotate pre post).filter (fun bit => !bit)).length =
+        (((pre ++ [true]) ++ post).filter (fun bit => !bit)).length := by
+    calc
+      _ = (post.filter (fun bit => !bit)).length +
+            (pre.filter (fun bit => !bit)).length := hcutFalse
+      _ = (pre.filter (fun bit => !bit)).length +
+            (post.filter (fun bit => !bit)).length := by omega
+      _ = _ := hwordFalse.symm
+  have hgapFalseOriginal :
+      gaps.sum =
+        (((pre ++ [true]) ++ post).filter (fun bit => !bit)).length :=
+    hgapFalse.trans hfalse
+  have hpartition (word : List Bool) :
+      (word.filter id).length +
+        (word.filter (fun bit => !bit)).length = word.length := by
+    induction word with
+    | nil => simp
+    | cons bit rest ih =>
+        cases bit <;> simp_all <;> omega
+  have hpartitionWord := hpartition ((pre ++ [true]) ++ post)
   constructor
   · exact hgapCount
   · omega

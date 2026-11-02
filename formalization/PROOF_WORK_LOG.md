@@ -2742,3 +2742,17 @@ references. Its proposition and proof body are unchanged. The standalone
 gap-decoder statistics lemma remains before the matrix-word lemmas because
 it has no dependency on the marked-rotation definition. A new full Lean
 build is required to validate the reordered source.
+
+
+## 2026-11-02 — Correct the H10 marked-cut gap-statistics proof
+
+Fixed the three unsolved Lean goals in `binaryWordMarkedRotate_gap_stats`.
+The original proof left two true-count equalities differing by natural
+addition association and then asked `omega` to infer a false-letter count
+without an explicit false-filter invariant. The repair adds `omega` after
+simp for the two filter-count normalizations, transfers the false-filter
+count through the proved gap-encoding round trip, compares false counts on
+the rotated and original words, and proves the generic Bool filter-length
+partition needed for the final subtraction. No theorem statement changed.
+A new full Lean build and Python 3.11/3.12 Fast/Slow validation are required.
+H6 and H8 remain unchanged.
