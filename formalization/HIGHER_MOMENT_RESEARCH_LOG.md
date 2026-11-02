@@ -6287,3 +6287,18 @@ No boundary term, representative, orbit weight, or matrix-factor order
 is redefined. This is a word-to-existing-boundary interface theorem;
 it does not prove cancellation between insertion strata or H10 recurrence.
 Full Lean build on the source SHA is required.
+
+## 2026-11-02 — Connect the exact H10 six-N word stratum to its existing diagonal form
+
+Added sg_trace_p10_six_N_word_stratum_diagonal. The exact-weight six-N
+binary-word sum is first rewritten by the already validated
+binaryWordP10WordTraceOrbitAverage6. The shared representative-cardinality
+certificate supplies the 22 orbit sizes: twenty are six and two are three,
+so the normalized coefficients are ten and five. The cyclic traces are
+then identified with the existing ordered trace list from
+sg_trace_p10_six_N_stratum_boundary, and the existing
+sg_trace_p10_six_N_stratum_pair_diagonal reduces that boundary list to
+glueRHS10_six_N_diagonal_form. No geometric support argument, boundary
+term, or matrix-factor order is duplicated or changed. This is an
+exact-word interface for r=6 only; it does not claim cross-stratum
+cancellation or an H10 recurrence. A full Lean build is required.
