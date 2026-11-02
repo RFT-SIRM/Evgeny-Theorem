@@ -5968,3 +5968,18 @@ binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum.
 This supplies the word-side r-fold multiplicity needed to combine with
 the p-fold gap-side result. Full Lean build required; H6 and H8 are
 unchanged.
+
+
+## 2026-11-02 — Correct the first H10 marked-word Lean attempt
+
+The first implementation of the marked-word multiplicity (commit
+6d3846b) did not pass Lean. The compiler identified issues in the
+true-position count rewrite, the sigma-sum expansion, and the two inverse
+laws of the cut/word-position equivalence. The mathematical target remains
+the r-fold count of marked true positions; the failed source must not be
+treated as a completed proof.
+
+A corrective proof revision now makes the Bool predicate/count conversion
+explicit, expands the dependent sum after exposing its Sigma type, and
+uses explicit list reconstruction identities for the inverse maps. This
+revision is pending a complete Lean build; no H10 closure is claimed.

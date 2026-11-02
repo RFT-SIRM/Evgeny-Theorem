@@ -3088,3 +3088,14 @@ binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum.
 This establishes the missing word-side multiplicity, complementary to
 the gap-side factor p. A full Lean build is required before counting
 the result as validated. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Corrective revision after failed H10 marked-word build
+
+The Lean run for commit 6d3846b failed in TraceExpand.lean; the failure
+was in the new proof rather than an infrastructure/cache problem. Corrected
+the predicate conversion in the true-position cardinality argument,
+made the Sigma summation type explicit, separated the marked-index
+reconstruction, and stated the reconstructed-word lemma independently.
+The revised commit must pass the full Lean build before the r-fold result
+is counted as established. H6 and H8 are untouched.

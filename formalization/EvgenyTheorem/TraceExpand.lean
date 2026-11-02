@@ -3756,6 +3756,10 @@ theorem binaryWordFin_true_positions_card (p r : ℕ)
           rw [Fintype.card_subtype]
     _ = List.countP (fun i : Fin p => w.val i = true) (List.finRange p) := by
           simpa only [List.toFinset_finRange] using hcard
+    _ = List.countP (fun i : Fin p => w.val i) (List.finRange p) := by
+          congr 1
+          funext i
+          cases w.val i <;> rfl
     _ = List.countP id (List.ofFn w.val) := by
           rw [List.ofFn_eq_map, List.countP_map]
     _ = ((List.ofFn w.val).filter id).length := by
@@ -3780,6 +3784,10 @@ theorem binaryWordFinMarkedStratum_sum_eq_r_mul
     (∑ marked : binaryWordFinMarkedStratum p r, f marked.1) =
       (r : ℂ) * ∑ w : binaryWordFinStratum p r, f w := by
   classical
+  change
+    (∑ marked : (Σ w : binaryWordFinStratum p r,
+      {i : Fin p // w.val i = true}), f marked.1) =
+      (r : ℂ) * ∑ w : binaryWordFinStratum p r, f w
   rw [Fintype.sum_sigma]
   calc
     _ = ∑ w : binaryWordFinStratum p r, (r : ℂ) * f w := by
@@ -3810,43 +3818,46 @@ noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
         _ = word := List.ofFn_get word
     have hprelt : pre.length < word.length := by
       simp [word, List.length_append]
-      omega
     have hi : pre.length < p := by
       rw [← hlen]
       exact hprelt
     let i : Fin p := ⟨pre.length, hi⟩
     have hcast : (Fin.cast hlen.symm i : Fin word.length).val = pre.length := by
       simp [i]
+    have hidx :
+        Fin.cast hlen.symm i = ⟨pre.length, hprelt⟩ := Fin.ext hcast
+    have hwordAt : word.get ⟨pre.length, hprelt⟩ = true := by
+      simp [word, List.get_eq_getElem]
     have htrue : w i = true := by
-      dsimp [w]
-      change word[(Fin.cast hlen.symm i : Fin word.length).val] = true
-      rw [hcast]
-      simp [word, List.getElem_append_left, List.getElem_append_right]
+      change word.get (Fin.cast hlen.symm i) = true
+      rw [hidx]
+      exact hwordAt
     refine ⟨⟨w, hcut.1, ?_⟩, ⟨i, htrue⟩⟩
     rw [hrepr]
     exact hcut.2.2
   invFun x := by
     rcases x with ⟨⟨w, hw⟩, ⟨i, hi⟩⟩
+    change w i = true at hi
     let word : List Bool := List.ofFn w
     let pre : List Bool := word.take i
     let post : List Bool := word.drop (i + 1)
-    have hlen : word.length = p := by simp [word]
     have hiword : i < word.length := by simpa [word] using i.isLt
     have hdrop : word.drop i = true :: word.drop (i + 1) := by
       rw [List.drop_eq_getElem_cons hiword]
       simp [word, hi]
-    have hstep : [true] ++ word.drop (i + 1) = word.drop i := by
-      simpa using hdrop.symm
     have hdecomp : (pre ++ [true]) ++ post = word := by
       dsimp [pre, post]
       calc
         (word.take i ++ [true]) ++ word.drop (i + 1) =
             word.take i ++ ([true] ++ word.drop (i + 1)) := by
               simp [List.append_assoc]
-        _ = word.take i ++ word.drop i := by rw [hstep]
+        _ = word.take i ++ word.drop i := by
+              rw [show [true] ++ word.drop (i + 1) = word.drop i by
+                simpa using hdrop.symm]
         _ = word := List.take_append_drop i word
     have hcutlen : ((pre ++ [true]) ++ post).length = p := by
-      rw [hdecomp, hlen]
+      rw [hdecomp]
+      simp [word]
     have hcutcount :
         (((pre ++ [true]) ++ post).filter id).length = r := by
       rw [hdecomp]
@@ -3883,6 +3894,7 @@ noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
     exact Prod.ext hpre' hpost'
   right_inv x := by
     rcases x with ⟨⟨w, hw⟩, ⟨i, hi⟩⟩
+    change w i = true at hi
     let word : List Bool := List.ofFn w
     let pre : List Bool := word.take i
     let post : List Bool := word.drop (i + 1)
@@ -3897,19 +3909,47 @@ noncomputable def binaryWordMarkedCutFinEquiv (p r : ℕ) :
             word.take i ++ ([true] ++ word.drop (i + 1)) := by
               simp [List.append_assoc]
         _ = word.take i ++ word.drop i := by
-              simpa using hdrop.symm
+              rw [show [true] ++ word.drop (i + 1) = word.drop i by
+                simpa using hdrop.symm]
         _ = word := List.take_append_drop i word
+    have hcutlen : ((pre ++ [true]) ++ post).length = p := by
+      rw [hdecomp]
+      simp [word]
     have hprelen : pre.length = i := by
       dsimp [pre, word]
       simp [List.length_take, Nat.min_eq_left (Nat.le_of_lt hiword)]
     apply Sigma.ext
     · apply Subtype.ext
       funext j
-      simp [binaryWordMarkedCutFinEquiv, word, pre, post, hdecomp]
+      change
+        ((pre ++ [true]) ++ post).get
+          (Fin.cast hcutlen.symm j) = w j
+      rw [hdecomp]
+      simp [word, List.get_ofFn]
     · apply heq_of_eq
       apply Subtype.ext
       apply Fin.ext
-      simpa [binaryWordMarkedCutFinEquiv, word, pre, post, hprelen]
+      exact hprelen
+
+/-- The word reconstructed from a marked cut is exactly its concatenated
+binary word, with all p positions retained. -/
+theorem binaryWordMarkedCutFinEquiv_word (p r : ℕ)
+    (cut : binaryWordMarkedCutStratum p r) :
+    List.ofFn (binaryWordMarkedCutFinEquiv p r cut).1.val =
+      ((cut.val.1 ++ [true]) ++ cut.val.2) := by
+  rcases cut with ⟨⟨pre, post⟩, hcut⟩
+  let word : List Bool := (pre ++ [true]) ++ post
+  have hlen : word.length = p := hcut.2.1
+  let w : Fin p → Bool :=
+    fun i => word.get (Fin.cast hlen.symm i)
+  have hrepr : List.ofFn w = word := by
+    dsimp [w]
+    calc
+      List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
+          List.ofFn word.get := (List.ofFn_congr hlen word.get).symm
+      _ = word := List.ofFn_get word
+  change List.ofFn w = word
+  exact hrepr
 
 /-- Each exact-weight binary word contributes exactly r copies to the sum
 over marked cuts. The summand may be any function of the unmarked word. -/
@@ -3943,23 +3983,8 @@ theorem binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum
             (binaryWordMatrix K N
               (List.ofFn (binaryWordMarkedCutFinEquiv p r cut).1.val)) := by
       apply Finset.sum_congr rfl
-      intro cut hcut
-      have hword :
-          List.ofFn (binaryWordMarkedCutFinEquiv p r cut).1.val =
-            ((cut.val.1 ++ [true]) ++ cut.val.2) := by
-        rcases cut with ⟨⟨pre, post⟩, hcut⟩
-        dsimp [binaryWordMarkedCutFinEquiv]
-        let word : List Bool := (pre ++ [true]) ++ post
-        have hlen : word.length = p := hcut.2.1
-        have hrepr :
-            List.ofFn
-              (fun i : Fin p => word.get (Fin.cast hlen.symm i)) = word := by
-          calc
-            List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
-                List.ofFn word.get := (List.ofFn_congr hlen word.get).symm
-            _ = word := List.ofFn_get word
-        simpa [word] using hrepr
-      rw [hword]
+      intro cut _
+      rw [← binaryWordMarkedCutFinEquiv_word p r cut]
     _ = (r : ℂ) *
           ∑ w : binaryWordFinStratum p r,
             Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)) := by
