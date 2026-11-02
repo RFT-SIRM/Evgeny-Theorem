@@ -6268,4 +6268,40 @@ theorem sg_trace_p10_six_N_word_stratum_diagonal
         hcoef10, hcoef5]
       ring
 
+/-- The exact-count p=10 eight-N word sum is the existing four-pair
+diagonal normal form. Its four full cyclic orbits have coefficient ten;
+the period-four orbit has the corrected coefficient five. -/
+theorem sg_trace_p10_eight_N_word_stratum_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 8,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    glueRHS10_eight_N_diagonal_form m (sgK m θ ax o) := by
+  have hcards8 := binaryWordP10GapOrbitRepresentativeCardinals.2.2.2.1
+  simp only [List.cons.injEq] at hcards8
+  rcases hcards8 with ⟨h1, h2, h3, h4, h5⟩
+  have hcoef10 : ((10 : ℂ) / (8 : ℂ)) * 8 = 10 := by norm_num
+  have hcoef5 : ((10 : ℂ) / (8 : ℂ)) * 4 = 5 := by norm_num
+  have hboundary :=
+    sg_trace_p10_eight_N_stratum_boundary m hm θ ax o hanti
+  dsimp at hboundary
+  have hdiag :=
+    sg_trace_p10_eight_N_stratum_pair_diagonal m hm θ ax o hanti
+  dsimp at hdiag
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps8,
+        ((10 : ℂ) / (8 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace (sgK m θ ax o) ((sgGlue m).N) rep := by
+      exact binaryWordP10WordTraceOrbitAverage8
+        (sgK m θ ax o) ((sgGlue m).N)
+    _ = glueRHS10_eight_N_diagonal_form m (sgK m θ ax o) := by
+      rw [← hdiag, ← hboundary]
+      simp [binaryWordP10GapOrbitReps8, cyclicGapTrace, Matrix.mul_assoc,
+        h1, h2, h3, h4, h5, hcoef10, hcoef5]
+      ring
+
 end EvgenyTheorem
