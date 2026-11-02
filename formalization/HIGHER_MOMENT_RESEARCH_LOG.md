@@ -6016,3 +6016,19 @@ Sigma.subtype_ext, which is designed for a sigma whose second component
 is itself a subtype. It takes exactly the already-proved equality of
 the word subtype and equality of the underlying marked Fin index.
 No new encoding or mathematical statement is introduced.
+
+
+## 2026-11-02 — Combine the exact H10 multiplicities into the weighted identity
+
+On the Lean-green marked-word checkpoint `c65bb83687943bbef0e155faecd7ad4a70a2aa40`,
+added the final finite-sum bridge from the list-based gap-offset stratum
+to its finite vector/offset model, preserving ordered coordinates and
+each of the p offsets. Then combined the already-proved r-fold marked-word
+identity, the marked-cut/gap-offset trace reindexing, and the p-fold
+gap-vector identity into
+`binaryWordFinStratum_weighted_trace_eq_gap_vector_sum`:
+r times the exact-weight binary-word trace sum equals p times the
+unmarked gap-vector cyclic-trace sum. The proof uses the common marked-cut
+sum and does not quotient periodic words. H6 and H8 are untouched.
+This is the combinatorial weighted H10 identity; the new declaration
+requires a complete Lean build before it is considered validated.

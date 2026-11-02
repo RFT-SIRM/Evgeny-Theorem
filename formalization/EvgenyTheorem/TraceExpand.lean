@@ -4003,4 +4003,67 @@ theorem binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum
       exact binaryWordMarkedCutStratum_sum_eq_r_mul_word_sum p r
         (fun w => Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)))
 
+
+/-- Reindexing the fixed gap-offset stratum through the finite vector model
+preserves its complete cyclic-gap trace sum. The vector conversion keeps
+the ordered r coordinates and the actual offset. -/
+theorem binaryWordGapOffsetStratum_sum_trace_eq_vector_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ data : binaryWordGapOffsetStratum p r,
+      cyclicGapTrace K N data.val.val.1) =
+    ∑ data : binaryWordGapOffsetVectorStratum p r,
+      cyclicGapTrace K N
+        (List.ofFn (fun i : Fin r => (data.val.1 i).val)) := by
+  classical
+  exact Fintype.sum_equiv (binaryWordGapOffsetVectorEquiv p r)
+    (fun data => cyclicGapTrace K N data.val.val.1)
+    (fun data => cyclicGapTrace K N
+      (List.ofFn (fun i : Fin r => (data.val.1 i).val)))
+    (by
+      intro data
+      rcases data with ⟨⟨⟨gaps, offset⟩, hoffset⟩, hrp, hlen, hsum⟩
+      simp [binaryWordGapOffsetVectorEquiv,
+        binaryWordGapListToFinVector_ofFn])
+
+/-- The two exact multiplicities combine into the weighted H10 trace
+identity. Every marked cut is counted once on the common middle sum;
+grouping it by its underlying binary word gives r, while grouping it by
+its gap vector gives p. No periodic orbit is quotiented. -/
+theorem binaryWordFinStratum_weighted_trace_eq_gap_vector_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (r : ℂ) *
+      ∑ w : binaryWordFinStratum p r,
+        Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)) =
+    (p : ℂ) *
+      ∑ gaps : binaryWordGapVectorStratum p r,
+        cyclicGapTrace K N
+          (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+  calc
+    (r : ℂ) *
+        ∑ w : binaryWordFinStratum p r,
+          Matrix.trace (binaryWordMatrix K N (List.ofFn w.val)) =
+      ∑ cut : binaryWordMarkedCutStratum p r,
+        Matrix.trace
+          (binaryWordMatrix K N ((cut.val.1 ++ [true]) ++ cut.val.2) :=
+      (binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum
+        K N p r).symm
+    _ = ∑ data : binaryWordGapOffsetStratum p r,
+          cyclicGapTrace K N data.val.val.1 :=
+      binaryWordMarkedCutStratum_sum_trace_eq_gapOffsetStratum_sum
+        K N p r
+    _ = ∑ data : binaryWordGapOffsetVectorStratum p r,
+          cyclicGapTrace K N
+            (List.ofFn (fun i : Fin r => (data.val.1 i).val)) :=
+      binaryWordGapOffsetStratum_sum_trace_eq_vector_sum
+        K N p r
+    _ = (p : ℂ) *
+          ∑ gaps : binaryWordGapVectorStratum p r,
+            cyclicGapTrace K N
+              (List.ofFn (fun i : Fin r => (gaps.val i).val)) :=
+      binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum
+        K N p r
+
+
 end EvgenyTheorem
