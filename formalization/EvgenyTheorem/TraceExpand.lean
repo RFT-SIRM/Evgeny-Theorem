@@ -3108,6 +3108,148 @@ theorem binaryWordMarkedRotate_decode_decompose_inverse
   exact ⟨pre', post', hdecomp, hpost, hunique.1, hunique.2⟩
 
 
+/-- Gap data paired with a legal cyclic offset. -/
+def binaryWordGapOffsetData : Type :=
+  {x : List ℕ × ℕ // x.2 < (binaryWordGapEncoding x.1).length}
+
+/-- The offset recovered from a marked cut is always legal for the
+canonical encoding of its decoded gap list. The encoding has the same
+length as the original marked word, by the exact true/false gap statistics. -/
+theorem binaryWordMarkedCut_gapOffset_bound
+    (pre post : List Bool) :
+    post.length <
+      (binaryWordGapEncoding
+        (binaryWordGapDecode (binaryWordMarkedRotate pre post))).length := by
+  let gaps := binaryWordGapDecode (binaryWordMarkedRotate pre post)
+  have hstats := binaryWordMarkedRotate_gap_stats pre post
+  have hcount_le :
+      (((pre ++ [true]) ++ post).filter id).length ≤
+        ((pre ++ [true]) ++ post).length := by
+    have hpartition :=
+      List.length_eq_length_filter_add
+        (l := ((pre ++ [true]) ++ post)) id
+    omega
+  have hsum :
+      gaps.sum =
+        ((pre ++ [true]) ++ post).length -
+          (((pre ++ [true]) ++ post).filter id).length := by
+    simpa [gaps] using hstats.2
+  have hcount :
+      gaps.length = (((pre ++ [true]) ++ post).filter id).length := by
+    simpa [gaps] using hstats.1
+  have hlength :
+      (binaryWordGapEncoding gaps).length =
+        ((pre ++ [true]) ++ post).length := by
+    rw [binaryWordGapEncoding_length, hsum, hcount]
+    exact Nat.sub_add_cancel hcount_le
+  rw [hlength]
+  exact binaryWordMarkedRotate_post_length_lt pre post
+
+/-- Send a marked cut (pre, post) to the decoded gap list and the suffix
+length. The suffix length is retained as an actual offset, not quotiented
+by cyclic periodicity. -/
+def binaryWordMarkedCutToGapOffset
+    (cut : List Bool × List Bool) : binaryWordGapOffsetData :=
+  ⟨(binaryWordGapDecode
+      (binaryWordMarkedRotate cut.1 cut.2), cut.2.length),
+    binaryWordMarkedCut_gapOffset_bound cut.1 cut.2⟩
+
+@[simp] theorem binaryWordMarkedCutToGapOffset_val
+    (pre post : List Bool) :
+    (binaryWordMarkedCutToGapOffset (pre, post)).val =
+      (binaryWordGapDecode (binaryWordMarkedRotate pre post), post.length) :=
+  rfl
+
+/-- Construct a marked cut from a gap list and a legal offset by taking
+the explicit split of the rotated canonical encoding. -/
+noncomputable def binaryWordGapOffsetToMarkedCut
+    (data : binaryWordGapOffsetData) : List Bool × List Bool :=
+  let gaps := data.val.1
+  let offset := data.val.2
+  let hdecomp :=
+    binaryWordGapEncoding_rotate_decompose gaps offset data.property
+  (Classical.choose hdecomp,
+    Classical.choose (Classical.choose_spec hdecomp))
+
+/-- The chosen inverse cut satisfies the decomposition, offset, and
+decoding laws supplied by the forward split theorem. -/
+theorem binaryWordGapOffsetToMarkedCut_spec
+    (gaps : List ℕ) (offset : ℕ)
+    (hoffset : offset < (binaryWordGapEncoding gaps).length) :
+    let cut :=
+      binaryWordGapOffsetToMarkedCut ⟨(gaps, offset), hoffset⟩
+    (binaryWordGapEncoding gaps).rotate offset =
+        ((cut.1 ++ [true]) ++ cut.2) ∧
+      cut.2.length = offset ∧
+      binaryWordGapDecode (binaryWordMarkedRotate cut.1 cut.2) = gaps := by
+  dsimp [binaryWordGapOffsetToMarkedCut]
+  have hdecomp :=
+    binaryWordGapEncoding_rotate_decompose gaps offset hoffset
+  have hpre := Classical.choose_spec hdecomp
+  have hpost := Classical.choose_spec hpre
+  exact ⟨hpost.1, hpost.2.1, hpost.2.2.2⟩
+
+/-- The marked-cut data and legal gap-list/offset data are equivalent.
+The inverse laws use the fixed-offset split uniqueness theorem, so
+periodic words still keep all offsets as distinct data. -/
+noncomputable def binaryWordMarkedCutGapOffsetEquiv :
+    (List Bool × List Bool) ≃ binaryWordGapOffsetData where
+  toFun := binaryWordMarkedCutToGapOffset
+  invFun := binaryWordGapOffsetToMarkedCut
+  left_inv := by
+    intro cut
+    rcases cut with ⟨pre, post⟩
+    let gaps := binaryWordGapDecode (binaryWordMarkedRotate pre post)
+    have hoffset := binaryWordMarkedCut_gapOffset_bound pre post
+    let data : binaryWordGapOffsetData :=
+      ⟨(gaps, post.length), hoffset⟩
+    have hdata :
+        binaryWordMarkedCutToGapOffset (pre, post) = data := by
+      apply Subtype.ext
+      rfl
+    let chosen := binaryWordGapOffsetToMarkedCut data
+    have hspec :=
+      binaryWordGapOffsetToMarkedCut_spec gaps post.length hoffset
+    dsimp at hspec
+    have hback :
+        (binaryWordGapEncoding gaps).rotate post.length =
+          ((pre ++ [true]) ++ post) := by
+      simpa [gaps] using
+        binaryWordMarkedRotate_decode_reconstruct pre post
+    have hunique :=
+      binaryWordGapEncoding_rotate_decompose_unique
+        gaps post.length chosen.1 chosen.2 pre post
+        hspec.1 hback hspec.2.1 rfl
+    rw [← hdata]
+    change chosen = (pre, post)
+    exact Prod.ext hunique.1 hunique.2
+  right_inv := by
+    intro data
+    rcases data with ⟨⟨gaps, offset⟩, hoffset⟩
+    let cut := binaryWordGapOffsetToMarkedCut ⟨(gaps, offset), hoffset⟩
+    have hspec :=
+      binaryWordGapOffsetToMarkedCut_spec gaps offset hoffset
+    dsimp [cut] at hspec
+    apply Subtype.ext
+    change
+      (binaryWordGapDecode (binaryWordMarkedRotate cut.1 cut.2),
+        cut.2.length) = (gaps, offset)
+    exact Prod.ext hspec.2.2 hspec.2.1
+
+/-- The equivalence preserves the marked-word trace as the cyclic gap
+trace of the corresponding decoded gap list. -/
+theorem binaryWordMarkedCut_trace_eq_cyclicGapTrace
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (pre post : List Bool) :
+    Matrix.trace
+      (binaryWordMatrix K N ((pre ++ [true]) ++ post)) =
+      cyclicGapTrace K N
+        (binaryWordMarkedCutToGapOffset (pre, post)).val.1 := by
+  simpa using
+    (binaryWordMatrix_trace_marked_eq_cyclicGapTrace K N pre post)
+
+
+
 /-- The trace of a binary matrix word is unchanged when a marked true letter
 is moved from the cut position to the final position. The proof is exactly
 trace cyclicity for the two grouped factors `eval(pre) * B` and

@@ -2851,3 +2851,18 @@ docstrings, proves the bound using
 with `Nat.sub_add_cancel`. The previous commit is not Lean-verified; this
 repair must pass a fresh full build before the two inverse statements are
 counted as proved. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Define the H10 marked-cut/gap-offset equivalence
+
+Added binaryWordGapOffsetData, forward and inverse conversion functions,
+and binaryWordMarkedCutGapOffsetEquiv. The forward map decodes a marked
+cut and retains the suffix length as its legal rotation offset. The inverse
+map uses the already proved existence decomposition. The equivalence's
+left inverse is discharged by the fixed-offset uniqueness theorem; its
+right inverse uses the decomposition's gap-decoding equality. Added a
+trace-preservation theorem connecting the marked word to cyclicGapTrace.
+
+This is the unrestricted data-level equivalence. Finite fixed-(p,r)
+restrictions, the weighted trace multiplicity identity, and the final H10
+application remain open. Full Lean build required; H6 and H8 are unchanged.

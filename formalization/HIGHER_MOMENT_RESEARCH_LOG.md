@@ -5667,3 +5667,24 @@ It derives the missing bound from the pinned Mathlib identity
 structure without changing the theorem statements or weakening their
 claims. The full Lean build for the repair commit is the acceptance check.
 H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Package the marked-cut/gap-offset correspondence as an equivalence
+
+On the Lean-green base 02001611f332c5e117e700914d9b3138771ef48e,
+added the type binaryWordGapOffsetData of gap lists paired with legal
+offsets, the two conversion functions, and
+binaryWordMarkedCutGapOffsetEquiv. The forward map decodes
+binaryWordMarkedRotate pre post and records post.length; its offset
+bound follows from the exact gap statistics and encoding-length formula.
+The inverse map chooses the explicit decomposition of the rotated canonical
+encoding. The left inverse uses the fixed-offset uniqueness theorem; the
+right inverse uses the decomposition's exact decoding law.
+
+Also added binaryWordMarkedCut_trace_eq_cyclicGapTrace, making the
+trace-preservation property explicit at the conversion interface. This
+equivalence is between unrestricted marked cuts and legal gap-offset data;
+the next step is to restrict it to fixed length p and true-count r, then
+reindex finite sums and derive the exact factor p/r. The weighted identity
+and final H10 trace formula are not yet proved. Full Lean validation is
+required for this commit. H6 and H8 remain untouched.
