@@ -5627,3 +5627,23 @@ This remains a structural inverse statement, not yet the full finite
 bijection or the trace multiplicity identity (r S_{m words}=p
 S_{m gaps}). Those are the next obligations. Full Lean validation is
 required for this commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Construct the marked-position decomposition for every H10 offset
+
+Added `binaryWordGapEncoding_getLast?`, proving that every nonempty
+canonical gap encoding ends in its final `true` delimiter. Using the
+pinned Mathlib list identities for `take`, `drop`, `getLast?`, and
+rotation, added `binaryWordGapEncoding_rotate_decompose`.
+
+For every admissible offset k<p, the theorem constructs
+`pre := (word.drop k).dropLast` and `post := word.take k), with
+`word.rotate k = (pre ++ [true]) ++ post`,
+`post.length = k`, and `pre.length = p-k-1). It also proves that
+the marked cut `binaryWordMarkedRotate pre post` is exactly the original
+canonical encoding, so decoding that cut recovers the original gap list.
+
+The construction keeps every offset as separate data and does not identify
+periodic rotations. The new source has been committed for GitHub's complete
+Lean validation; no build success is claimed until the Lean Actions run for
+this commit completes. H6 and H8 are untouched.

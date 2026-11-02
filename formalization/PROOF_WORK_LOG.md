@@ -2822,3 +2822,20 @@ already validated canonical decoder left-inverse; no matrix factors are
 reordered. The complete finite marked-word/gap-offset bijection and the
 weighted trace multiplicity identity remain open. Full Lean build is
 required on this commit; H6 and H8 remain unchanged.
+
+
+## 2026-11-02 — H10 explicit split at the offset-dependent marked delimiter
+
+Added a last-delimiter lemma for nonempty canonical gap encodings and the
+constructive decomposition theorem
+`binaryWordGapEncoding_rotate_decompose`. For each legal offset k, it
+gives an exact split of the rotated canonical word as
+`pre ++ [true] ++ post`, proves `post.length = k) and
+`pre.length = p-k-1), and proves that moving the marked delimiter to the
+end yields the original canonical word and therefore decodes to the input
+gap list. This retains distinct offsets even when the word is periodic.
+
+The branch base was rechecked at
+`0f6ddfb0992d481d95bad791f5ab53d0150dc4df`. The complete Lean GitHub
+Actions run for the new source is the acceptance gate; validation remains
+pending until that run reports success. H6 and H8 are unchanged.

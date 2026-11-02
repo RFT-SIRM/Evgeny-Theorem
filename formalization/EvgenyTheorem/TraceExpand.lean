@@ -2859,6 +2859,122 @@ theorem binaryWordGapEncoding_rotate_decode
   exact binaryWordGapDecode_gapEncoding gaps
 
 
+/-- Every nonempty canonical gap encoding ends with its final true
+delimiter. -/
+theorem binaryWordGapEncoding_getLast?
+    (gaps : List ℕ) (hne : gaps ≠ []) :
+    (binaryWordGapEncoding gaps).getLast? = some true := by
+  induction gaps with
+  | nil =>
+      cases hne rfl
+  | cons a rest ih =>
+      cases rest with
+      | nil =>
+          simp [binaryWordGapEncoding]
+      | cons b rest =>
+          have htail : binaryWordGapEncoding (b :: rest) ≠ [] := by
+            intro hnil
+            have hcount := binaryWordGapEncoding_true_count (b :: rest)
+            rw [hnil] at hcount
+            simp at hcount
+          change
+            ((binaryFalseRun a ++ [true]) ++
+              binaryWordGapEncoding (b :: rest)).getLast? = some true
+          rw [List.getLast?_append_of_ne_nil _ htail]
+          exact ih (by simp)
+
+/-- For every legal offset k, rotating a canonical gap word splits it
+uniquely at the delimiter that has moved to position p-k-1. The suffix
+has length k, and moving that delimiter to the end recovers the original
+canonical word, so decoding the marked cut returns the original gap list.
+No quotient by cyclic periodicity is taken: each legal offset remains
+separate data. -/
+theorem binaryWordGapEncoding_rotate_decompose
+    (gaps : List ℕ) (offset : ℕ)
+    (hoffset : offset < (binaryWordGapEncoding gaps).length) :
+    ∃ pre post,
+      (binaryWordGapEncoding gaps).rotate offset =
+        ((pre ++ [true]) ++ post) ∧
+      post.length = offset ∧
+      pre.length = (binaryWordGapEncoding gaps).length - offset - 1 ∧
+      binaryWordGapDecode (binaryWordMarkedRotate pre post) = gaps := by
+  let word := binaryWordGapEncoding gaps
+  have hoffset' : offset < word.length := by
+    simpa [word] using hoffset
+  have hgaps : gaps ≠ [] := by
+    intro hnil
+    subst gaps
+    simp [word, binaryWordGapEncoding] at hoffset'
+  have hwordLast : word.getLast? = some true := by
+    exact binaryWordGapEncoding_getLast? gaps hgaps
+  have hdropLength : (word.drop offset).length = word.length - offset := by
+    simp
+  have hdropNe : word.drop offset ≠ [] := by
+    intro hnil
+    have hlen := hdropLength
+    rw [hnil] at hlen
+    simp at hlen
+    omega
+  have htakeDrop : word.take offset ++ word.drop offset = word :=
+    List.take_append_drop offset word
+  have hdropLast : (word.drop offset).getLast? = some true := by
+    rw [← htakeDrop, List.getLast?_append_of_ne_nil _ hdropNe] at hwordLast
+    exact hwordLast
+  let pre := (word.drop offset).dropLast
+  let post := word.take offset
+  have hcut : pre ++ [true] = word.drop offset := by
+    dsimp [pre]
+    have hmem : true ∈ (word.drop offset).getLast? := by
+      rw [hdropLast]
+      simp
+    exact List.dropLast_append_getLast? true hmem
+  have hdecomp :
+      word.rotate offset = ((pre ++ [true]) ++ post) := by
+    calc
+      word.rotate offset = word.drop offset ++ word.take offset :=
+        List.rotate_eq_drop_append_take hoffset'.le
+      _ = (pre ++ [true]) ++ post := by
+        rw [← hcut]
+        rfl
+  have hpostLength : post.length = offset := by
+    simp [post, Nat.min_eq_left hoffset'.le]
+  have hpreLength :
+      pre.length = word.length - offset - 1 := by
+    have hlen : pre.length + 1 = (word.drop offset).length := by
+      have h := congrArg List.length hcut
+      simpa using h
+    rw [hdropLength] at hlen
+    omega
+  have hsplitLength :
+      ((pre ++ [true]) ++ post).length = word.length := by
+    calc
+      ((pre ++ [true]) ++ post).length =
+          (word.rotate offset).length :=
+        (congrArg List.length hdecomp).symm
+      _ = word.length := by simp
+  have hshift :
+      ((pre ++ [true]) ++ post).length - post.length =
+        word.length - offset := by
+    rw [hsplitLength, hpostLength]
+  have hback :
+      (word.rotate offset).rotate (word.length - offset) = word := by
+    simpa [word] using
+      binaryWordGapEncoding_rotate_back gaps offset hoffset
+  have hmarked : binaryWordMarkedRotate pre post = word := by
+    calc
+      binaryWordMarkedRotate pre post =
+          ((pre ++ [true]) ++ post).rotate
+            (((pre ++ [true]) ++ post).length - post.length) :=
+        (binaryWordMarkedRotate_eq_rotate pre post).symm
+      _ = (word.rotate offset).rotate (word.length - offset) := by
+        rw [hshift, ← hdecomp]
+      _ = word := hback
+  have hdecode :
+      binaryWordGapDecode (binaryWordMarkedRotate pre post) = gaps := by
+    rw [hmarked]
+    simpa [word] using binaryWordGapDecode_gapEncoding gaps
+  exact ⟨pre, post, hdecomp, hpostLength, hpreLength, hdecode⟩
+
 /-- The gap list obtained after cutting a word at a marked true letter has
 exactly the original number of true letters, and its total gap size is the
 original number of false letters. The offset is represented by post.length
