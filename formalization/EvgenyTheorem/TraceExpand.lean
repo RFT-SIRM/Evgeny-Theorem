@@ -4335,6 +4335,41 @@ theorem binaryWordGapOffsetStratum_sum_trace_eq_vector_sum_KN
       simp [binaryWordGapOffsetVectorEquiv,
         binaryWordGapListToFinVector_ofFn])
 
+
+/-- The vector/offset product equivalence retains all p offsets for the
+K/(K*N) cyclic gap trace, including repeated offsets of periodic words. -/
+theorem binaryWordGapOffsetVectorStratum_sum_trace_eq_gap_sum_offsets_KN
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (p r : ℕ) :
+    (∑ data : binaryWordGapOffsetVectorStratum p r,
+      cyclicGapTraceKN K N
+        (List.ofFn (fun i : Fin r => (data.val.1 i).val))) =
+    ∑ gaps : binaryWordGapVectorStratum p r,
+      ∑ offset : Fin p,
+        cyclicGapTraceKN K N
+          (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+  classical
+  let e := binaryWordGapOffsetVectorProdEquiv p r
+  calc
+    _ = ∑ pair : binaryWordGapVectorStratum p r × Fin p,
+          cyclicGapTraceKN K N
+            (List.ofFn (fun i : Fin r => (pair.1.val i).val)) := by
+      exact Fintype.sum_equiv e
+        (fun data =>
+          cyclicGapTraceKN K N
+            (List.ofFn (fun i : Fin r => (data.val.1 i).val)))
+        (fun pair =>
+          cyclicGapTraceKN K N
+            (List.ofFn (fun i : Fin r => (pair.1.val i).val)))
+        (by
+          intro data
+          rfl)
+    _ = ∑ gaps : binaryWordGapVectorStratum p r,
+          ∑ offset : Fin p,
+            cyclicGapTraceKN K N
+              (List.ofFn (fun i : Fin r => (gaps.val i).val)) := by
+      rw [Fintype.sum_prod_type]
+
 /-- Separating the offset from the gap vector gives exactly p copies of
 each K/(K*N) gap trace, without quotienting periodic tuples. -/
 theorem binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum_KN

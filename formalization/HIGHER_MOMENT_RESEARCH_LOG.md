@@ -6119,3 +6119,14 @@ separate, so periodic words keep their exact multiplicity.
 This is a proof correction to the planned final H10 interface, not yet an
 H10 closure. A full Lean build of the new block is required before any
 further p=10 stratum assembly.
+
+
+## 2026-11-02 — Complete the K/(K*N) offset-factorization helper
+
+Added the explicitly missing product-sum lemma
+`binaryWordGapOffsetVectorStratum_sum_trace_eq_gap_sum_offsets_KN`.
+It reindexes the vector/offset subtype by
+`binaryWordGapVectorStratum p r × Fin p`, then expands the product sum.
+This is the exact dependency used by the p-fold offset-count theorem for
+`cyclicGapTraceKN`; it preserves all p offsets and makes no periodic-orbit
+identification. Full Lean CI remains the validation gate.
