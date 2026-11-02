@@ -6239,3 +6239,24 @@ corner sums, with coefficients (10, 10, 10, 10, 5). This composes the
 new combinatorial identity with the pre-existing geometric boundary
 reduction; it does not assume termwise cancellation between orientations
 or strata. Validation requires a full Lean build on the new source SHA.
+
+## 2026-11-02 — Correct the TraceExpand namespace boundary and isolate Lean CI
+
+The failed fff16c8 Lean build did not expose a mathematical problem in
+the H10 two-N composition. It reported Unknown identifier for
+binaryWordFinStratum, binaryWordMatrix, cyclicGapOrbit, and cyclicGapTrace
+from GlueTrace.lean.
+
+Source inspection found that the second namespace EvgenyTheorem in
+TraceExpand.lean was opened before the first namespace had been closed.
+Consequently the new word/gap declarations were compiled under the
+nested name EvgenyTheorem.EvgenyTheorem, so an import could not expose
+them under the API expected by GlueTrace.lean. Closed the preceding
+namespace before opening the next section. No theorem statement, proof,
+gap representative, or coefficient is changed by this scope correction.
+
+The Tests workflow now ignores commits consisting only of Lean
+formalization files, this research log, and its own path-filter update.
+Such commits still trigger the dedicated full Lean build. Python numerical
+regression and N10 reference tests are not part of this formalization
+validation step. The exact-SHA Lean build remains the acceptance gate.

@@ -2094,6 +2094,8 @@ theorem trace_kernel_diagonal_kernel_diagonal_collapse
   · simp [hgx, hd x hgx]
 
 
+end EvgenyTheorem
+
 namespace EvgenyTheorem
 
 /-- The p-fold ordered expansion restricted to words with exactly `r`
