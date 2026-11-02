@@ -5726,3 +5726,19 @@ This is the required fixed-stratum correspondence before finite-sum
 reindexing. It does not yet prove the weighted trace identity or the
 factor p/r. Full Lean validation is required on this commit. H6 and H8
 remain untouched.
+
+
+## 2026-11-02 — Repair the fixed-stratum docstring placement
+
+The full Lean workflow for `35529bab21d607ca9168fca8d4e5382c3f5d4d52`
+failed in the build step. Source inspection found a declaration-layout
+error: the documentation comment for
+`binaryWordMatrix_trace_marked_rotate` was immediately followed by the
+new documentation comment for `binaryWordGapOffsetStratum`. Lean
+documentation comments must attach to a declaration; the second comment
+interrupted the first. Moved the trace theorem's comment to immediately
+precede its theorem declaration, leaving all definitions, theorem
+statements, and proofs unchanged. No mathematical claim is added or
+weakened. This is a parser/source-order correction only; a new complete
+Lean build is required before this fixed-stratum equivalence is treated
+as validated. H6 and H8 remain untouched.

@@ -3236,10 +3236,6 @@ noncomputable def binaryWordMarkedCutGapOffsetEquiv :
         cut.2.length) = (gaps, offset)
     exact Prod.ext hspec.2.2 hspec.2.1
 
-/-- The trace of a binary matrix word is unchanged when a marked true letter
-is moved from the cut position to the final position. The proof is exactly
-trace cyclicity for the two grouped factors `eval(pre) * B` and
-`eval(post)`; no factors within either word are commuted. -/
 /-- The fixed-(p,r) gap-offset stratum: exactly r gaps, total gap
 length p-r, and a legal offset in the canonical encoding. -/
 def binaryWordGapOffsetStratum (p r : ℕ) : Type :=
@@ -3331,6 +3327,10 @@ noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
     exact binaryWordMarkedCutGapOffsetEquiv.right_inv data.val
 
 
+/-- The trace of a binary matrix word is unchanged when a marked true letter
+is moved from the cut position to the final position. The proof is exactly
+trace cyclicity for the two grouped factors `eval(pre) * B` and
+`eval(post)`; no factors within either word are commuted. -/
 theorem binaryWordMatrix_trace_marked_rotate
     {n : Type*} [Fintype n] [DecidableEq n]
     (A B : Matrix n n ℂ) (pre post : List Bool) :

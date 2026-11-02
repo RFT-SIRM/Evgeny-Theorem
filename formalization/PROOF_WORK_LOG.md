@@ -2893,3 +2893,15 @@ length, and the inverse laws reuse the unrestricted equivalence.
 This prepares the finite weighted-sum identity. The factor p/r and final
 H10 trace identity are not yet proved. Full Lean validation required;
 H6 and H8 remain unchanged.
+
+
+## 2026-11-02 — Repair the H10 fixed-stratum docstring placement
+
+Lean Actions run `41399405288` failed during the formalization build
+for commit `35529bab21d607ca9168fca8d4e5382c3f5d4d52`. Inspection of
+the exact source at that SHA found the trace theorem's docstring
+separated from `binaryWordMatrix_trace_marked_rotate` by the two new
+fixed-stratum declarations and their docstrings. Moved that comment to
+the theorem itself. No proof term, definition, or mathematical statement
+was changed. The fixed-(p,r) equivalence remains unverified until a fresh
+full Lean build passes; H6 and H8 are untouched.
