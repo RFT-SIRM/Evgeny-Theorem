@@ -6511,3 +6511,30 @@ disjoint, cover the full set, and have sizes twenty-five times five plus
 one. No mathematical statement or matrix product order was changed.
 A complete Lean build on this repaired source SHA is required.
 
+
+
+
+## 2026-11-02 — Connect the exact H10 seven-N word stratum
+
+The previous H10 r=5 exact-word bridge passed the full Lean build on
+commit `b5a7c81547c58a9035083b9a83a8bcf4722c3e3b`
+(Actions run `41506130220`).
+
+For r=7, the twelve representatives are exactly the positive versions
+of the twelve seven-gap exponent tuples in the existing
+`sg_trace_p10_seven_N_stratum_zero`. A finite check over all
+`C(9,6)=84` positive seven-part compositions confirms that these twelve
+cyclic orbits are pairwise disjoint, each has size seven, and together
+cover all 84 tuples.
+
+Added the representative finset, its orbit partition and disjointness,
+the exact orbit-cardinality list, and the marked-word exact trace sum.
+The new `sg_trace_p10_seven_N_word_stratum_zero` matches the normalized
+word sum to the existing twelve-class vanishing theorem. The bridge does
+not add matrix-factor rotations: the finite word/gap equivalence supplies
+the exact cyclic representatives, and the existing class theorem retains
+its already-verified corner arguments. This closes exact-word interfaces
+for r=3, r=5, and r=7; the remaining H10 assembly, even-boundary
+aggregation, orientation comparison, and residual recurrence are still
+open. A complete Lean build on the new source SHA is required.
+

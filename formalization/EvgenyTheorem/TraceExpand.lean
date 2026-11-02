@@ -4201,6 +4201,11 @@ def binaryWordP10GapOrbitReps6 : Finset (List ℕ) :=
    [1, 1, 3, 2, 1, 2], [1, 2, 1, 2, 1, 3],
    [1, 2, 1, 2, 2, 2], [1, 2, 2, 1, 2, 2]}
 
+/-- Canonical p=10 cyclic representatives for the seven-insertion stratum.
+The twelve positive-gap orbits all have length seven. -/
+def binaryWordP10GapOrbitReps7 : Finset (List ℕ) :=
+  {([1, 1, 1, 1, 1, 1, 4] : List ℕ), [1, 1, 1, 1, 1, 2, 3], [1, 1, 1, 1, 1, 3, 2], [1, 1, 1, 1, 2, 1, 3], [1, 1, 1, 1, 2, 2, 2], [1, 1, 1, 1, 3, 1, 2], [1, 1, 1, 2, 1, 1, 3], [1, 1, 1, 2, 1, 2, 2], [1, 1, 1, 2, 2, 1, 2], [1, 1, 1, 3, 1, 1, 2], [1, 1, 2, 1, 1, 2, 2], [1, 1, 2, 1, 2, 1, 2]}
+
 /-- Canonical p=10 cyclic representatives for the eight-insertion stratum. -/
 def binaryWordP10GapOrbitReps8 : Finset (List ℕ) :=
   {([1, 1, 1, 1, 1, 1, 1, 3] : List ℕ),
@@ -4266,6 +4271,17 @@ cyclic gap orbits. -/
 theorem binaryWordP10GapOrbitPartition6 :
     binaryWordP10PositiveGapListFinset 6 =
       binaryWordP10GapOrbitReps6.biUnion cyclicGapOrbit := by
+  classical
+  decide
+
+-- The 84 positive seven-part compositions split into twelve cyclic orbits.
+set_option maxRecDepth 16384 in
+set_option maxHeartbeats 12000000 in
+/-- The seven-insertion positive compositions are partitioned by the twelve
+listed cyclic gap orbits. Each orbit has cardinality seven. -/
+theorem binaryWordP10GapOrbitPartition7 :
+    binaryWordP10PositiveGapListFinset 7 =
+      binaryWordP10GapOrbitReps7.biUnion cyclicGapOrbit := by
   classical
   decide
 
@@ -4417,6 +4433,25 @@ theorem binaryWordP10GapOrbitReps6_pairwise_disjoint :
       | exact (hab rfl).elim
       | decide
 
+-- The twelve length-seven orbits have pairwise distinct cyclic rotations.
+set_option maxRecDepth 8192 in
+set_option maxHeartbeats 4000000 in
+/-- The p=10 r=7 cyclic representative orbits are pairwise disjoint. -/
+theorem binaryWordP10GapOrbitReps7_pairwise_disjoint :
+    Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps7) cyclicGapOrbit := by
+  classical
+  apply binaryWordP10GapOrbitReps_pairwise_disjoint
+  intro a ha b hb hab
+  simp only [binaryWordP10GapOrbitReps7, Finset.mem_insert,
+    Finset.mem_singleton] at ha hb
+  rcases ha with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals
+    rcases hb with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals
+      first
+      | exact (hab rfl).elim
+      | decide
+
 /-- The p=10 r=8 cyclic representative orbits are pairwise disjoint. -/
 theorem binaryWordP10GapOrbitReps8_pairwise_disjoint :
     Set.PairwiseDisjoint (↑binaryWordP10GapOrbitReps8) cyclicGapOrbit := by
@@ -4515,6 +4550,18 @@ theorem binaryWordP10GapTraceOrbitSum6
   rw [binaryWordP10GapOrbitPartition6]
   exact cyclicGapTrace_sum_biUnion_orbits K N _
     binaryWordP10GapOrbitReps6_pairwise_disjoint
+
+/-- Orbit sums for the p=10 seven-insertion stratum. -/
+theorem binaryWordP10GapTraceOrbitSum7
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset 7,
+      cyclicGapTrace K N gaps) =
+      ∑ rep ∈ binaryWordP10GapOrbitReps7,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  rw [binaryWordP10GapOrbitPartition7]
+  exact cyclicGapTrace_sum_biUnion_orbits K N _
+    binaryWordP10GapOrbitReps7_pairwise_disjoint
 
 /-- Orbit sums for the p=10 eight-insertion stratum. -/
 theorem binaryWordP10GapTraceOrbitSum8
@@ -4649,6 +4696,24 @@ theorem binaryWordP10GapOrbitRepresentativeCardinals5 :
       (cyclicGapOrbit [1, 3, 1, 3, 2]).card,
       (cyclicGapOrbit [1, 3, 2, 2, 2]).card,
       (cyclicGapOrbit [2, 2, 2, 2, 2]).card] : List ℕ) = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1] := by
+  decide
+
+
+/-- The twelve p=10 seven-insertion gap representatives all have
+full cyclic orbit cardinality seven. -/
+theorem binaryWordP10GapOrbitRepresentativeCardinals7 :
+    ([(cyclicGapOrbit [1, 1, 1, 1, 1, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 3, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 2, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 1, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 2, 1, 2]).card] : List ℕ) = [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7] := by
   decide
 
 
@@ -4823,6 +4888,33 @@ theorem binaryWordP10WordTraceOrbitSum6
         ∑ rep ∈ binaryWordP10GapOrbitReps6,
           (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
       rw [binaryWordP10GapTraceOrbitSum6 K N]
+
+
+/-- Exact H10 seven-N trace sum, reindexed by the twelve canonical
+cyclic gap representatives. Every orbit has size seven. -/
+theorem binaryWordP10WordTraceOrbitSum7
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (7 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 7,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps7,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 7,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 7 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 7
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 7,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 7]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps7,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum7 K N]
 
 
 /-- Exact H10 eight-N trace sum, reindexed by the canonical cyclic
@@ -5036,6 +5128,23 @@ theorem binaryWordP10WordTraceOrbitAverage6
   apply binaryWordP10_normalize_weighted_orbit_sum K N 6 (by norm_num)
     binaryWordP10GapOrbitReps6
   exact binaryWordP10WordTraceOrbitSum6 K N
+
+
+/-- Normalize the exact-count p=10 seven-N word stratum by its seven
+marked positions. All twelve orbits have size seven, so every normalized
+cyclic class has coefficient ten. -/
+theorem binaryWordP10WordTraceOrbitAverage7
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (∑ w : binaryWordFinStratum 10 7,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ rep ∈ binaryWordP10GapOrbitReps7,
+      ((10 : ℂ) / (7 : ℂ)) *
+        ((cyclicGapOrbit rep).card : ℂ) *
+        cyclicGapTrace K N rep := by
+  apply binaryWordP10_normalize_weighted_orbit_sum K N 7 (by norm_num)
+    binaryWordP10GapOrbitReps7
+  exact binaryWordP10WordTraceOrbitSum7 K N
 
 
 /-- The p=10 eight-letter-selected word stratum, normalized by its
