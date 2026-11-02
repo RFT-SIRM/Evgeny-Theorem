@@ -6368,3 +6368,23 @@ r=2,4,6,8 diagonal bridges, this closes the endpoint word/diagonal
 interfaces needed before the full H10 stratum aggregation. It does not
 yet assert cancellation among the even strata or an H10 recurrence.
 A full Lean build on this exact source SHA is required.
+
+
+## 2026-11-02 — Repair the endpoint word-stratum proof elaboration
+
+The full Lean build of cbddd73 isolated three diagnostics in the two newly
+added endpoint interfaces. In r=1, the first calc step used an anonymous
+right-hand placeholder, so Lean elaborated a metavariable instead of the
+word sum required by the marked-gap multiplicity theorem. Replaced it with
+the explicit word sum and used simpa on the already-proved weighted
+identity; the gap-by-gap zero argument is unchanged.
+
+In r=10, the orbit-cardinality fact was stated using List.replicate 10 1,
+while simplification of the canonical representative exposed the explicit
+ten-entry list. Restated the same finite cardinality fact on that exact
+list, so it rewrites the coefficient appearing in the goal. No orbit,
+coefficient, matrix word, or geometric theorem is changed.
+
+The previous full Lean run failed only in these two new GlueTrace proofs;
+the corrected source must pass a fresh complete Lean build before the
+endpoint interfaces are treated as validated.

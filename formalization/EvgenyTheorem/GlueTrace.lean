@@ -6339,12 +6339,13 @@ theorem sg_trace_p10_one_N_word_stratum_zero
       (trace_pow_mul_N_zero (sgGlue m) K
         (blockK_BD (Hc m θ ax o)) 10)
   calc
-    _ = (1 : ℂ) * _ := by simp
-    _ = (10 : ℂ) *
-        ∑ gaps : binaryWordGapVectorStratum 10 1,
-          cyclicGapTrace K N
-            ((List.ofFn (fun i : Fin 1 => (gaps.val i).val)).map Nat.succ) :=
-      hweighted
+    (∑ w : binaryWordFinStratum 10 1,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+        (10 : ℂ) *
+          ∑ gaps : binaryWordGapVectorStratum 10 1,
+            cyclicGapTrace K N
+              ((List.ofFn (fun i : Fin 1 => (gaps.val i).val)).map Nat.succ) := by
+      simpa using hweighted
     _ = (10 : ℂ) *
         ∑ gaps : binaryWordGapVectorStratum 10 1, (0 : ℂ) := by
       congr 1
@@ -6378,7 +6379,8 @@ theorem sg_trace_p10_ten_N_word_stratum_diagonal
     ∑ x, if (sgGlue m).g x then
       (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0
   have hcard :
-      (cyclicGapOrbit (List.replicate 10 1)).card = 1 := by
+      (cyclicGapOrbit
+        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1] : List ℕ)).card = 1 := by
     decide
   calc
     _ = ∑ rep ∈ binaryWordP10GapOrbitReps10,
