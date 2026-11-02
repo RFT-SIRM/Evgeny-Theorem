@@ -2048,6 +2048,182 @@ theorem trace_orderedWordExpansion_eight_cyclic
 
 
 
+
+
+/-- Summing over the image of the positive-gap encoding is the same as
+summing over the original gap-vector subtype. The encoding is injective:
+subtracting one from each coordinate recovers the vector. -/
+theorem binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (r : ℕ) :
+    (∑ gaps ∈ binaryWordP10PositiveGapListFinset r,
+      cyclicGapTrace K N gaps) =
+    ∑ gaps : binaryWordGapVectorStratum 10 r,
+      cyclicGapTrace K N
+        ((List.ofFn (fun i : Fin r => (gaps.val i).val)).map Nat.succ) := by
+  classical
+  let positiveList : binaryWordGapVectorStratum 10 r → List ℕ :=
+    fun gaps =>
+      (List.ofFn (fun i : Fin r => (gaps.val i).val)).map Nat.succ
+  have hpositiveList_injective : Function.Injective positiveList := by
+    intro a b hab
+    apply Subtype.ext
+    funext i
+    apply Fin.ext
+    have hlist :
+        List.ofFn (fun i : Fin r => (a.val i).val) =
+          List.ofFn (fun i : Fin r => (b.val i).val) :=
+      (List.map_inj_right (fun x y hxy => Nat.succ.inj hxy)).mp hab
+    have hfun :
+        (fun i : Fin r => (a.val i).val) =
+          (fun i : Fin r => (b.val i).val) :=
+      List.ofFn_injective hlist
+    exact congrFun hfun i
+  change
+    (∑ gaps ∈
+      (Finset.univ : Finset (binaryWordGapVectorStratum 10 r)).image positiveList,
+      cyclicGapTrace K N gaps) =
+    ∑ gaps : binaryWordGapVectorStratum 10 r,
+      cyclicGapTrace K N (positiveList gaps)
+  rw [Finset.sum_image (fun a _ b _ h => hpositiveList_injective h)]
+
+
+/-- Exact H10 two-N trace sum, reindexed by the five canonical cyclic
+gap representatives. The factor two counts marked true positions;
+the orbit cardinalities retain the periodic class correctly. -/
+theorem binaryWordP10WordTraceOrbitSum2
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (2 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 2,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps2,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 2,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 2 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 2
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 2,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 2]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps2,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum2 K N]
+
+
+/-- Exact H10 four-N trace sum, reindexed by the canonical cyclic
+gap representatives, with all distinct-orbit multiplicities retained. -/
+theorem binaryWordP10WordTraceOrbitSum4
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (4 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 4,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps4,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 4,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 4 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 4
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 4,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 4]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps4,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum4 K N]
+
+
+/-- Exact H10 six-N trace sum, reindexed by the canonical cyclic
+gap representatives, with all distinct-orbit multiplicities retained. -/
+theorem binaryWordP10WordTraceOrbitSum6
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (6 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 6,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps6,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 6,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 6 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 6
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 6,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 6]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps6,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum6 K N]
+
+
+/-- Exact H10 eight-N trace sum, reindexed by the canonical cyclic
+gap representatives, including its period-four orbit of size four. -/
+theorem binaryWordP10WordTraceOrbitSum8
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (8 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 8,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps8,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 8,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 8 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 8
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 8,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 8]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps8,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum8 K N]
+
+
+/-- Exact H10 ten-N trace sum. Its single representative has a
+one-element orbit, so no cyclic multiplicity remains. -/
+theorem binaryWordP10WordTraceOrbitSum10
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) :
+    (10 : ℂ) *
+      ∑ w : binaryWordFinStratum 10 10,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val)) =
+    (10 : ℂ) *
+      ∑ rep ∈ binaryWordP10GapOrbitReps10,
+        (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+  calc
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 10,
+          cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 10 => (gaps.val i).val)).map Nat.succ) :=
+      binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 10
+    _ = (10 : ℂ) *
+        ∑ gaps ∈ binaryWordP10PositiveGapListFinset 10,
+          cyclicGapTrace K N gaps := by
+      rw [binaryWordP10PositiveGapListFinset_sum_eq_gapVector_sum K N 10]
+    _ = (10 : ℂ) *
+        ∑ rep ∈ binaryWordP10GapOrbitReps10,
+          (cyclicGapOrbit rep).card • cyclicGapTrace K N rep := by
+      rw [binaryWordP10GapTraceOrbitSum10 K N]
+
+
 end EvgenyTheorem
 
 

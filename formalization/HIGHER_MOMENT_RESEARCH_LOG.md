@@ -6191,3 +6191,20 @@ the r=4/r=6 finite proofs, but the r=8 partition's `decide` hit the
 default maximum recursion depth at TraceExpand.lean:4239. Scoped the
 same finite-computation resource adjustment to this one r=8 theorem.
 No mathematical statement, representative, or orbit weight changed.
+
+
+## 2026-11-02 — Bridge exact H10 word sums to cyclic representative sums
+
+Added an injectivity proof for the positive-gap list encoding, then
+reindexed the subtype sum of positive gap vectors as the finite image
+used by the p=10 orbit partition. Composed this with the verified
+marked-cut multiplicity identity and the five disjoint cyclic-orbit
+partition theorems. For r = 2, 4, 6, 8, 10, the result now states
+the exact equation r times the original binary-word trace sum equals
+10 times the sum over canonical cyclic representatives weighted by
+the true distinct orbit cardinality. This is the exact point where
+periodic classes retain reduced orbit weights; no division by r or
+cyclic quotient of the original words has been introduced.
+
+Full Lean build required before using these bridge theorems to rewrite
+the coefficients in the Sierpinski boundary formulas.
