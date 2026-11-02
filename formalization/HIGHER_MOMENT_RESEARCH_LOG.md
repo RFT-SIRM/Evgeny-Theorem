@@ -5704,3 +5704,25 @@ placed before binaryWordMatrix_trace_marked_eq_cyclicGapTrace, which it
 uses. Moved the corollary to after that dependency. No definitions or
 mathematical claims were changed. A fresh complete Lean build is required
 for this correction. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Restrict the marked-cut equivalence to fixed H10 strata
+
+The unrestricted marked-cut/gap-offset equivalence passed the complete
+Lean build in commit 088b75e0f35f8c5362eae5f6f7246b7dd027ae9d
+(Actions run 41396480095). On that verified base, added the fixed-(p,r)
+subtypes binaryWordMarkedCutStratum and binaryWordGapOffsetStratum, and
+the restricted equivalence binaryWordMarkedCutGapOffsetStratumEquiv.
+
+The marked-cut side fixes the word length at p and its number of true
+letters at r. The gap-offset side fixes r gaps, total gap size p-r,
+and a legal offset in the canonical encoding. The two restriction maps
+are proved using binaryWordMarkedRotate_gap_stats and
+binaryWordGapEncoding_length; the inverse laws are inherited from the
+already compiled unrestricted equivalence. The restriction explicitly
+retains each offset and does not quotient periodic words.
+
+This is the required fixed-stratum correspondence before finite-sum
+reindexing. It does not yet prove the weighted trace identity or the
+factor p/r. Full Lean validation is required on this commit. H6 and H8
+remain untouched.

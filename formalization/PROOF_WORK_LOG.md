@@ -2878,3 +2878,18 @@ binaryWordMatrix_trace_marked_eq_cyclicGapTrace. The equivalence data,
 its inverse maps, and the trace statement remain unchanged. Full Lean
 validation is required on the correction commit; H6 and H8 remain
 untouched.
+
+
+## 2026-11-02 — Fixed-(p,r) marked-cut/gap-offset equivalence
+
+Added the exact strata binaryWordMarkedCutStratum p r and
+binaryWordGapOffsetStratum p r, together with the restricted equivalence
+binaryWordMarkedCutGapOffsetStratumEquiv. On the marked side the original
+word has length p and exactly r true letters; on the gap side there are
+r gaps summing to p-r and a legal offset. The forward and inverse
+restriction proofs use the already checked gap statistics and encoding
+length, and the inverse laws reuse the unrestricted equivalence.
+
+This prepares the finite weighted-sum identity. The factor p/r and final
+H10 trace identity are not yet proved. Full Lean validation required;
+H6 and H8 remain unchanged.

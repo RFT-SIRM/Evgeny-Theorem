@@ -3240,6 +3240,97 @@ noncomputable def binaryWordMarkedCutGapOffsetEquiv :
 is moved from the cut position to the final position. The proof is exactly
 trace cyclicity for the two grouped factors `eval(pre) * B` and
 `eval(post)`; no factors within either word are commuted. -/
+/-- The fixed-(p,r) gap-offset stratum: exactly r gaps, total gap
+length p-r, and a legal offset in the canonical encoding. -/
+def binaryWordGapOffsetStratum (p r : ℕ) : Type :=
+  {data : binaryWordGapOffsetData //
+    r ≤ p ∧ data.val.1.length = r ∧ data.val.1.sum = p - r}
+
+/-- The fixed-(p,r) marked-cut stratum: the original word has length p
+and exactly r true letters; one of those true letters is distinguished
+by the cut between pre and post. -/
+def binaryWordMarkedCutStratum (p r : ℕ) : Type :=
+  {cut : List Bool × List Bool //
+    r ≤ p ∧
+    ((cut.1 ++ [true]) ++ cut.2).length = p ∧
+    (((cut.1 ++ [true]) ++ cut.2).filter id).length = r}
+
+/-- Restrict the unrestricted marked-cut/gap-offset map to a fixed
+length and true-count stratum. The gap statistics give the exact
+composition constraints. -/
+noncomputable def binaryWordMarkedCutToGapOffsetStratum
+    {p r : ℕ} (cut : binaryWordMarkedCutStratum p r) :
+    binaryWordGapOffsetStratum p r := by
+  rcases cut.property with ⟨hrp, hlen, hcount⟩
+  let stats := binaryWordMarkedRotate_gap_stats cut.val.1 cut.val.2
+  refine ⟨binaryWordMarkedCutToGapOffset cut.val, hrp, ?_, ?_⟩
+  · change
+      (binaryWordGapDecode (binaryWordMarkedRotate cut.val.1 cut.val.2)).length = r
+    calc
+      _ = (((cut.val.1 ++ [true]) ++ cut.val.2).filter id).length :=
+        stats.1
+      _ = r := hcount
+  · change
+      (binaryWordGapDecode (binaryWordMarkedRotate cut.val.1 cut.val.2)).sum =
+        p - r
+    calc
+      _ = ((cut.val.1 ++ [true]) ++ cut.val.2).length -
+            (((cut.val.1 ++ [true]) ++ cut.val.2).filter id).length :=
+        stats.2
+      _ = p - r := by rw [hlen, hcount]
+
+/-- Restrict the inverse gap-offset map to fixed (p,r). The exact
+encoding-length formula reconstructs p; the marked-cut statistics
+reconstruct the number r of true symbols. -/
+noncomputable def binaryWordGapOffsetToMarkedCutStratum
+    {p r : ℕ} (data : binaryWordGapOffsetStratum p r) :
+    binaryWordMarkedCutStratum p r := by
+  let gaps := data.val.val.1
+  let offset := data.val.val.2
+  have hdata := data.property
+  let cut := binaryWordGapOffsetToMarkedCut data.val
+  have hspec :=
+    binaryWordGapOffsetToMarkedCut_spec gaps offset data.val.property
+  dsimp [cut] at hspec
+  have hlen :
+      ((cut.1 ++ [true]) ++ cut.2).length = p := by
+    calc
+      ((cut.1 ++ [true]) ++ cut.2).length =
+          (binaryWordGapEncoding gaps).rotate offset |>.length := by
+            rw [← hspec.1]
+      _ = (binaryWordGapEncoding gaps).length := by simp
+      _ = gaps.sum + gaps.length := binaryWordGapEncoding_length gaps
+      _ = (p - r) + r := by rw [hdata.2.2, hdata.2.1]
+      _ = p := Nat.sub_add_cancel hdata.1
+  have hcount :
+      (((cut.1 ++ [true]) ++ cut.2).filter id).length = r := by
+    have hstats := binaryWordMarkedRotate_gap_stats cut.1 cut.2
+    calc
+      _ = (binaryWordGapDecode (binaryWordMarkedRotate cut.1 cut.2)).length :=
+        hstats.1.symm
+      _ = gaps.length := by rw [hspec.2.2]
+      _ = r := hdata.2.1
+  exact ⟨cut, hdata.1, hlen, hcount⟩
+
+/-- The unrestricted marked-cut/gap-offset equivalence restricts to
+every exact length/count stratum (p,r). This is the finite combinatorial
+layer needed before reindexing the marked trace sum. Periodic rotations
+remain distinct because offsets are not quotiented. -/
+noncomputable def binaryWordMarkedCutGapOffsetStratumEquiv
+    (p r : ℕ) :
+    binaryWordMarkedCutStratum p r ≃ binaryWordGapOffsetStratum p r where
+  toFun := binaryWordMarkedCutToGapOffsetStratum
+  invFun := binaryWordGapOffsetToMarkedCutStratum
+  left_inv := by
+    intro cut
+    apply Subtype.ext
+    exact binaryWordMarkedCutGapOffsetEquiv.left_inv cut.val
+  right_inv := by
+    intro data
+    apply Subtype.ext
+    exact binaryWordMarkedCutGapOffsetEquiv.right_inv data.val
+
+
 theorem binaryWordMatrix_trace_marked_rotate
     {n : Type*} [Fintype n] [DecidableEq n]
     (A B : Matrix n n ℂ) (pre post : List Bool) :
