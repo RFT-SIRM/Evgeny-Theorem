@@ -6623,3 +6623,24 @@ Also removed the three empty lines inside the existing r=7 tactic command
 identified by the style linter. No theorem statement, matrix factor order,
 or mathematical assumption changed. The full Lean build must be rerun on
 this source SHA.
+
+
+## 2026-11-03 — Finish the H10 r=0 singleton reduction
+
+The second build of `97a0f6b1b1b95d05365b02421083e3d14f7557e4`
+confirmed that the replicate-product induction now succeeds, but exposed
+two remaining elaboration issues in `hmatrix` and the final finite sum.
+
+The Boolean branch after `List.map_replicate` is
+`if false = true then K*N else K`; `if_false` is not the applicable
+rewrite. Replaced it by `if_neg` with the explicit decidable proof of
+`¬ (false = true)`. The unique-word proof now also installs the local
+`Unique (binaryWordFinStratum 10 0)` instance with default `w0`;
+the final sum is evaluated by `Fintype.sum_unique`, avoiding the
+previous recursion-heavy generic `simp`.
+
+The `DecidableEq X` messages at the beginning of `GlueTrace` were
+compared with the successful full build of `efe59c8` and are identical
+pre-existing linter warnings, not the cause of this failure. No change
+was made to those unrelated declarations. Full Lean validation is still
+required for this revision.

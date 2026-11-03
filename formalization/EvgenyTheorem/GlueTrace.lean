@@ -6793,6 +6793,8 @@ theorem sg_trace_p10_zero_N_word_stratum
           Fintype.card_pos_iff.mpr ⟨⟨i, h⟩⟩
         rw [hcard] at hpos
         omega
+  letI : Unique (binaryWordFinStratum 10 0) :=
+    ⟨w0, fun w => hunique w⟩
   have hword0 :
       List.ofFn (fun _ : Fin 10 => false) = List.replicate 10 false := by
     simp
@@ -6811,7 +6813,9 @@ theorem sg_trace_p10_zero_N_word_stratum
     calc
       binaryWordMatrix K (K * N) (List.replicate 10 false) =
           (List.replicate 10 K).prod := by
-        simp only [binaryWordMatrix, List.map_replicate, if_false]
+        unfold binaryWordMatrix
+        rw [List.map_replicate]
+        rw [if_neg (by decide : ¬ (false = true))]
       _ = K ^ 10 := hprod 10
   calc
     _ = ∑ w : binaryWordFinStratum 10 0,
@@ -6822,7 +6826,7 @@ theorem sg_trace_p10_zero_N_word_stratum
       rw [hunique w]
     _ = Matrix.trace
           (binaryWordMatrix K (K * N) (List.ofFn w0.val)) := by
-      simp
+      rw [Fintype.sum_unique]
     _ = Matrix.trace (K ^ 10) := by
       rw [hmatrix]
 
