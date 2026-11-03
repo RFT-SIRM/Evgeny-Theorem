@@ -5233,7 +5233,7 @@ occurs in the recursive list. The final coordinate is split off using
 List.ofFn_succ', so the word order is unchanged. -/
 theorem binaryWordExpansionByCount_mem_complete
     (p r : ℕ) (w : Fin p → Bool)
-    (hw : (List.ofFn w).filter id |>.length = r) :
+    (hw : ((List.ofFn w).filter id).length = r) :
     List.ofFn w ∈ binaryWordExpansionByCount p r := by
   induction p generalizing r with
   | zero =>
@@ -5318,7 +5318,7 @@ theorem binaryWordExpansionByCount_nodup
               (List.append_left_injective [false])
           · exact (ih r).map
               (List.append_left_injective [true])
-          · rw [disjoint_iff_ne]
+          · rw [List.disjoint_iff_ne]
             intro x hx y hy hxy
             simp only [List.mem_map] at hx hy
             rcases hx with ⟨a, ha, hax⟩
@@ -5335,7 +5335,8 @@ private def binaryWordListToFin
 private theorem binaryWordListToFin_reconstruct
     (p : ℕ) (word : List Bool) (hlen : word.length = p) :
     List.ofFn (binaryWordListToFin p word hlen) = word := by
-  dsimp [binaryWordListToFin]
+  change
+    List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) = word
   calc
     List.ofFn
         (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
@@ -5353,10 +5354,10 @@ private noncomputable def binaryWordFinStratumOfList
   let f := binaryWordListToFin p word hlen
   have hrepr := binaryWordListToFin_reconstruct p word hlen
   have hrp : r ≤ p := by
-    have hlenCount := List.length_eq_length_filter_add word id
+    have hlenCount := List.length_eq_length_filter_add (l := word) id
     rw [hcount, hlen] at hlenCount
     omega
-  exact ⟨f, hrp, by rw [← hrepr]; exact hcount⟩
+  exact ⟨f, hrp, by rw [hrepr]; exact hcount⟩
 
 /-- The recursive list and the finite subtype of exact-weight words are
 equivalent. Both directions use List.ofFn without reversing the word. -/
@@ -5378,8 +5379,14 @@ private noncomputable def binaryWordFinStratumListEquiv
       right_inv := ?_ }
   · intro w
     apply Subtype.ext
-    funext i
-    simp [binaryWordFinStratumOfList, binaryWordListToFin]
+    apply List.ofFn_injective
+    change
+      List.ofFn
+        (binaryWordListToFin p (List.ofFn w.val)
+          (binaryWordExpansionByCount_mem_sound p r
+            (binaryWordExpansionByCount_mem_complete p r w.val w.property.2)).1) =
+        List.ofFn w.val
+    exact binaryWordListToFin_reconstruct p (List.ofFn w.val) _
   · intro w
     apply Subtype.ext
     exact binaryWordListToFin_reconstruct p w.val
