@@ -5193,9 +5193,9 @@ theorem binaryWordP10WordTraceOrbitAverage10
   apply binaryWordP10_normalize_weighted_orbit_sum K N 10 (by norm_num)
     binaryWordP10GapOrbitReps10
   exact binaryWordP10WordTraceOrbitSum10 K N
-/-! ### Exact finite-word stratum bridge -/
 
-namespace EvgenyTheorem
+
+/-! ### Exact finite-word stratum bridge -/
 
 /-- Every word in the recursive exact-count list has the prescribed
 length and number of true letters. -/
@@ -5414,7 +5414,5 @@ theorem trace_orderedWordExpansionByCount_eq_binaryWordFinStratum
         (fun w => f (List.ofFn w.val))
         (fun word => f word.val)
         (by intro w; rfl)
-
-end EvgenyTheorem
 
 end EvgenyTheorem
