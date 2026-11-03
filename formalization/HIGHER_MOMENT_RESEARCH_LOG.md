@@ -6581,3 +6581,25 @@ stratum vanishing in the full expansion, assembly into the actual
 `glueRHS10` across orientations remain to be proved. A full Lean build
 on the new source SHA is required.
 
+
+
+
+## 2026-11-03 — Identify the H10 zero-insertion word stratum
+
+The positive-even H10 aggregation in `glueRHS10` passed the full Lean
+build on commit `fb5b2d9b34428cf3f9ddea1f54ee956bbefd234e`
+(Actions run `41570076457`).
+
+Added `sg_trace_p10_zero_N_word_stratum`: the subtype
+`binaryWordFinStratum 10 0` is a singleton, since its true-position
+subtype has cardinality zero. Its unique word is the all-false word, whose
+ordered matrix product is exactly `K^10`. The proof uses the existing
+`binaryWordFin_true_positions_card` theorem and preserves the original
+left-to-right matrix product.
+
+This supplies the missing r=0 base term for the full H10 trace expansion.
+The next required bridge is to identify the recursive list expansion
+`orderedWordExpansionByCount` with the finite exact-word strata, assemble
+the odd zero terms and the positive-even `glueRHS10`, and then lift the
+result to `pOpO`. A full Lean build on this source SHA is required.
+

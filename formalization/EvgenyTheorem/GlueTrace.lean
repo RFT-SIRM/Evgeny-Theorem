@@ -6758,4 +6758,76 @@ theorem sg_trace_p10_even_N_word_strata_diagonal
   ]
   rfl
 
+
+
+
+/-- The zero-insertion p=10 word stratum contains only the all-K word,
+so its exact finite-word trace is Tr(K^10). -/
+theorem sg_trace_p10_zero_N_word_stratum
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    (∑ w : binaryWordFinStratum 10 0,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+      Matrix.trace (sgK m θ ax o ^ 10) := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 0,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+      Matrix.trace (K ^ 10)
+  let w0 : binaryWordFinStratum 10 0 :=
+    ⟨fun _ => false, by
+      constructor
+      · omega
+      · simp⟩
+  have hunique : ∀ w : binaryWordFinStratum 10 0, w = w0 := by
+    intro w
+    apply Subtype.ext
+    funext i
+    cases h : w.val i with
+    | false => rfl
+    | true =>
+        have hcard := binaryWordFin_true_positions_card 10 0 w
+        have hpos :
+            0 < Fintype.card {j : Fin 10 // w.val j = true} :=
+          Fintype.card_pos_iff.mpr ⟨⟨i, h⟩⟩
+        rw [hcard] at hpos
+        omega
+  have hword0 :
+      List.ofFn (fun _ : Fin 10 => false) = List.replicate 10 false := by
+    simp
+  have hprod (n : ℕ) :
+      (List.replicate n K).prod = K ^ n := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+        simp [List.replicate_succ, ih, pow_succ]
+  have hmatrix :
+      binaryWordMatrix K (K * N) (List.ofFn w0.val) = K ^ 10 := by
+    change
+      binaryWordMatrix K (K * N)
+        (List.ofFn (fun _ : Fin 10 => false)) = K ^ 10
+    rw [hword0]
+    calc
+      binaryWordMatrix K (K * N) (List.replicate 10 false) =
+          (List.replicate 10 K).prod := by
+        simp [binaryWordMatrix]
+      _ = K ^ 10 := hprod 10
+  calc
+    _ = ∑ w : binaryWordFinStratum 10 0,
+          Matrix.trace
+            (binaryWordMatrix K (K * N) (List.ofFn w0.val)) := by
+      apply Finset.sum_congr rfl
+      intro w hw
+      rw [hunique w]
+    _ = Matrix.trace
+          (binaryWordMatrix K (K * N) (List.ofFn w0.val)) := by
+      simp
+    _ = Matrix.trace (K ^ 10) := by
+      rw [hmatrix]
+
+
 end EvgenyTheorem
