@@ -5193,4 +5193,242 @@ theorem binaryWordP10WordTraceOrbitAverage10
   apply binaryWordP10_normalize_weighted_orbit_sum K N 10 (by norm_num)
     binaryWordP10GapOrbitReps10
   exact binaryWordP10WordTraceOrbitSum10 K N
+/-! ### Reindex exact-count word lists by finite binary-word strata -/
+
+/-- A word in the recursive exact-count enumeration has its declared
+length and true-letter count. -/
+theorem binaryWordExpansionByCount_mem_sound
+    (p r : ℕ) {word : List Bool}
+    (hword : word ∈ binaryWordExpansionByCount p r) :
+    word.length = p ∧ (word.filter id).length = r := by
+  induction p generalizing r word with
+  | zero =>
+      cases r with
+      | zero =>
+          simp only [binaryWordExpansionByCount, List.mem_singleton] at hword
+          subst word
+          simp
+      | succ r =>
+          simp [binaryWordExpansionByCount] at hword
+  | succ p ih =>
+      cases r with
+      | zero =>
+          simp only [binaryWordExpansionByCount, List.mem_map] at hword
+          rcases hword with ⟨word, hmem, rfl⟩
+          rcases ih 0 hmem with ⟨hlen, hcount⟩
+          simp [hlen, hcount]
+      | succ r =>
+          simp only [binaryWordExpansionByCount, List.mem_append,
+            List.mem_map] at hword
+          rcases hword with ⟨word, hmem, rfl⟩ | ⟨word, hmem, rfl⟩
+          · rcases ih (r + 1) hmem with ⟨hlen, hcount⟩
+            simp [hlen, hcount]
+          · rcases ih r hmem with ⟨hlen, hcount⟩
+            simp [hlen, hcount]
+
+/-- Every finite binary word of weight r occurs in the recursive list.
+The decomposition uses List.ofFn_succ', which removes the final
+coordinate and therefore agrees with the list's append-at-the-end
+recurrence. -/
+theorem binaryWordExpansionByCount_mem_complete
+    (p r : ℕ) (word : Fin p → Bool)
+    (hcount : ((List.ofFn word).filter id).length = r) :
+    List.ofFn word ∈ binaryWordExpansionByCount p r := by
+  induction p generalizing r with
+  | zero =>
+      cases r with
+      | zero =>
+          simpa [binaryWordExpansionByCount]
+      | succ r =>
+          simp at hcount
+  | succ p ih =>
+      let prefix : Fin p → Bool := fun i => word i.castSucc
+      have hdecomp :
+          List.ofFn word = List.ofFn prefix ++ [word (Fin.last p)] := by
+        rw [List.ofFn_succ']
+        simp [prefix, List.concat_eq_append]
+      have hsplit :
+          ((List.ofFn prefix).filter id).length +
+            (if word (Fin.last p) then 1 else 0) = r := by
+        rw [hdecomp, List.filter_append] at hcount
+        simpa using hcount
+      cases hbit : word (Fin.last p) with
+      | false =>
+          have hprefix :
+              ((List.ofFn prefix).filter id).length = r := by
+            simpa [hbit] using hsplit
+          have hmem := ih r prefix hprefix
+          have hword :
+              List.ofFn word = List.ofFn prefix ++ [false] := by
+            rw [hdecomp, hbit]
+          rw [hword]
+          cases r with
+          | zero =>
+              simp only [binaryWordExpansionByCount, List.mem_map]
+              exact ⟨List.ofFn prefix, hmem, by simp⟩
+          | succ r =>
+              simp only [binaryWordExpansionByCount, List.mem_append,
+                List.mem_map]
+              exact Or.inl ⟨List.ofFn prefix, hmem, by simp⟩
+      | true =>
+          cases r with
+          | zero =>
+              have hfalse : ((List.ofFn prefix).filter id).length + 1 = 0 := by
+                simpa [hbit] using hsplit
+              omega
+          | succ r =>
+              have hprefix :
+                  ((List.ofFn prefix).filter id).length = r := by
+                have h := hsplit
+                simp [hbit] at h
+                omega
+              have hmem := ih r prefix hprefix
+              have hword :
+                  List.ofFn word = List.ofFn prefix ++ [true] := by
+                rw [hdecomp, hbit]
+              rw [hword]
+              simp only [binaryWordExpansionByCount, List.mem_append,
+                List.mem_map]
+              exact Or.inr ⟨List.ofFn prefix, hmem, by simp⟩
+
+/-- The recursive exact-count list has no repeated words. The two
+recurrence branches are disjoint because their last letters differ. -/
+theorem binaryWordExpansionByCount_nodup
+    (p r : ℕ) : (binaryWordExpansionByCount p r).Nodup := by
+  induction p generalizing r with
+  | zero =>
+      cases r <;> simp [binaryWordExpansionByCount]
+  | succ p ih =>
+      cases r with
+      | zero =>
+          simpa [binaryWordExpansionByCount] using
+            (ih 0).map (List.append_left_injective [false])
+      | succ r =>
+          change List.Nodup
+            (((binaryWordExpansionByCount p (r + 1)).map
+                (fun word => word ++ [false])) ++
+              ((binaryWordExpansionByCount p r).map
+                (fun word => word ++ [true])))
+          apply List.Nodup.append
+          · exact (ih (r + 1)).map
+              (List.append_left_injective [false])
+          · exact (ih r).map
+              (List.append_left_injective [true])
+          · rw [List.disjoint_iff_ne]
+            intro x hx y hy hxy
+            simp only [List.mem_map] at hx hy
+            rcases hx with ⟨a, ha, hax⟩
+            rcases hy with ⟨b, hb, hby⟩
+            rw [← hax, ← hby] at hxy
+            have hlast := congrArg List.getLast? hxy
+            simp at hlast
+
+private def binaryWordListToFin
+    (p : ℕ) (word : List Bool) (hlen : word.length = p) :
+    Fin p → Bool :=
+  fun i => word.get (Fin.cast hlen.symm i)
+
+private theorem binaryWordListToFin_reconstruct
+    (p : ℕ) (word : List Bool) (hlen : word.length = p) :
+    List.ofFn (binaryWordListToFin p word hlen) = word := by
+  change
+    List.ofFn (fun i : Fin p => word.get (Fin.cast hlen.symm i)) = word
+  calc
+    List.ofFn
+        (fun i : Fin p => word.get (Fin.cast hlen.symm i)) =
+        List.ofFn word.get :=
+      (List.ofFn_congr hlen word.get).symm
+    _ = word := List.ofFn_get word
+
+/-- Convert a recursive list word into its finite exact-weight word.
+Length and weight are explicit arguments so the inverse laws below
+do not depend on reducing a proof-producing pattern match. -/
+private noncomputable def binaryWordFinStratumOfList
+    (p r : ℕ) (word : List Bool)
+    (hlen : word.length = p) (hcount : (word.filter id).length = r) :
+    binaryWordFinStratum p r := by
+  let f := binaryWordListToFin p word hlen
+  have hrepr := binaryWordListToFin_reconstruct p word hlen
+  have hrp : r ≤ p := by
+    have hlenCount := List.length_eq_length_filter_add (l := word) id
+    rw [hcount, hlen] at hlenCount
+    omega
+  exact ⟨f, hrp, by rw [hrepr]; exact hcount⟩
+
+private theorem binaryWordFinStratumOfList_reconstruct
+    (p r : ℕ) (word : List Bool)
+    (hlen : word.length = p) (hcount : (word.filter id).length = r) :
+    List.ofFn (binaryWordFinStratumOfList p r word hlen hcount).val = word := by
+  change List.ofFn (binaryWordListToFin p word hlen) = word
+  exact binaryWordListToFin_reconstruct p word hlen
+
+/-- The finite exact-weight subtype is equivalent to the recursively
+enumerated list viewed as a subtype of its toFinset. -/
+private noncomputable def binaryWordFinStratumListEquiv
+    (p r : ℕ) :
+    binaryWordFinStratum p r ≃
+      {word : List Bool // word ∈
+        (binaryWordExpansionByCount p r).toFinset} :=
+  Equiv.ofBijective
+    (fun w : binaryWordFinStratum p r =>
+      ⟨List.ofFn w.val,
+        List.mem_toFinset.mpr
+          (binaryWordExpansionByCount_mem_complete p r w.val w.property.2)⟩)
+    (by
+      constructor
+      · intro a b hab
+        apply Subtype.ext
+        apply List.ofFn_injective
+        exact congrArg Subtype.val hab
+      · intro word
+        rcases binaryWordExpansionByCount_mem_sound p r
+          (List.mem_toFinset.mp word.property) with ⟨hlen, hcount⟩
+        refine ⟨binaryWordFinStratumOfList p r word.val hlen hcount, ?_⟩
+        apply Subtype.ext
+        exact binaryWordFinStratumOfList_reconstruct p r word.val hlen hcount)
+
+/-- The trace sum over the recursive matrix-word list is the same as
+the finite sum over binaryWordFinStratum. This reindexing preserves
+each ordered word exactly and introduces no cyclic identification. -/
+theorem trace_orderedWordExpansionByCount_eq_binaryWordFinStratum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p r : ℕ) :
+    ((orderedWordExpansionByCount A B p r).map Matrix.trace).sum =
+      ∑ word : binaryWordFinStratum p r,
+        Matrix.trace (binaryWordMatrix A B (List.ofFn word.val)) := by
+  classical
+  rw [trace_orderedWordExpansionByCount_eq_binaryWordExpansionByCount]
+  let f := fun word : List Bool =>
+    Matrix.trace (binaryWordMatrix A B word)
+  calc
+    ((binaryWordExpansionByCount p r).map f).sum =
+        ∑ word ∈ (binaryWordExpansionByCount p r).toFinset, f word :=
+      (List.sum_toFinset _ (binaryWordExpansionByCount_nodup p r)).symm
+    _ = ∑ word :
+          {word : List Bool // word ∈
+            (binaryWordExpansionByCount p r).toFinset}, f word.val := by
+      rw [← Finset.sum_coe_sort]
+    _ = ∑ word : binaryWordFinStratum p r, f (List.ofFn word.val) := by
+      symm
+      exact Fintype.sum_equiv (binaryWordFinStratumListEquiv p r)
+        (fun word => f (List.ofFn word.val))
+        (fun word => f word.val)
+        (by intro word; rfl)
+
+/-- Full finite-stratum reconstruction of the noncommutative trace power.
+This is the existing exact-count list expansion reindexed by the finite
+binary-word types; no new coefficients or matrix identities are added. -/
+theorem trace_orderedWordExpansionByCount_sum_eq_binaryWordFinStratum
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (A B : Matrix n n ℂ) (p : ℕ) :
+    Matrix.trace ((A + B) ^ p) =
+      ∑ r ∈ Finset.range (p + 1),
+        ∑ word : binaryWordFinStratum p r,
+          Matrix.trace (binaryWordMatrix A B (List.ofFn word.val)) := by
+  rw [trace_orderedWordExpansionByCount_sum_eq]
+  apply Finset.sum_congr rfl
+  intro r hr
+  exact trace_orderedWordExpansionByCount_eq_binaryWordFinStratum A B p r
+
+
 end EvgenyTheorem
