@@ -5250,8 +5250,10 @@ theorem binaryWordExpansionByCount_mem_complete
       have hsplit :
           ((List.ofFn preWord).filter id).length +
             (if word (Fin.last p) then 1 else 0) = r := by
-        rw [hdecomp, List.filter_append] at hcount
-        simpa using hcount
+        rw [hdecomp, List.filter_append, List.length_append] at hcount
+        cases hb : word (Fin.last p) with
+        | false => simpa [hb] using hcount
+        | true => simpa [hb] using hcount
       cases hbit : word (Fin.last p) with
       | false =>
           have hprefix :
