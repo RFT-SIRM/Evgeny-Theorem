@@ -2,7 +2,11 @@ name: Tests
 
 on:
   push:
-    branches: [ main, moment-6-8-10 ]
+    branches: [ main, moment-6-8-10, work/h8-h10-exact-recurrence-certificates ]
+    paths-ignore:
+      - 'formalization/**/*.lean'
+      - 'formalization/HIGHER_MOMENT_RESEARCH_LOG.md'
+      - '.github/workflows/tests.yml'
   pull_request:
     branches: [ main ]
   workflow_dispatch:

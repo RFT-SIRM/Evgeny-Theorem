@@ -657,3 +657,74 @@ def test_outer_corner_power_blocks_stabilize_exactly_between_levels_three_and_fo
                         commuting, flip_corner, corner, power,
                         level3[corner][power], level4[corner][power]
                     )
+
+
+@pytest.mark.slow
+def test_exact_h8_base_transition_and_coefficient_polynomial():
+    """Exact sparse-polynomial certificate of the H8 level-2-to-3 transition."""
+    from computational.higher_moment_pi_certificate import raw_trace_at_pi
+    from computational.p8_base_certificate import (
+        evaluate_polynomial,
+        exact_base_transition_certificate,
+    )
+
+    certificate = exact_base_transition_certificate()
+    expected_d2 = {
+        (0, 2): (-1193024, 0), (0, 3): (-36224, 0),
+        (0, 4): (-139264, 0), (0, 5): (-3840, 0),
+        (0, 6): (-1344, 0), (1, 2): (235136, 0),
+        (1, 3): (64, 0), (1, 4): (9216, 0),
+        (2, 2): (-141184, 0), (2, 3): (-3840, 0),
+        (2, 4): (-2688, 0), (3, 2): (9216, 0),
+        (4, 2): (-1344, 0),
+    }
+    expected_d3 = {
+        (0, 2): (-3396224, 0), (0, 3): (-29056, 0),
+        (0, 4): (-406912, 0), (0, 5): (-7424, 0),
+        (0, 6): (-3968, 0), (1, 2): (778112, 0),
+        (1, 3): (-320, 0), (1, 4): (30720, 0),
+        (2, 2): (-412864, 0), (2, 3): (-7424, 0),
+        (2, 4): (-7936, 0), (3, 2): (30720, 0),
+        (4, 2): (-3968, 0),
+    }
+    expected_c8 = {
+        (0, 2): (182848, 0), (0, 3): (79616, 0),
+        (0, 4): (10880, 0), (0, 5): (4096, 0),
+        (0, 6): (64, 0), (1, 2): (72704, 0),
+        (1, 3): (-512, 0), (1, 4): (3072, 0),
+        (2, 2): (10688, 0), (2, 3): (4096, 0),
+        (2, 4): (128, 0), (3, 2): (3072, 0),
+        (4, 2): (64, 0),
+    }
+    expected_d2_reduced = {
+        (0, 2): (-1335552, 0), (0, 3): (-40064, 0),
+        (0, 4): (1920, 0), (1, 2): (244352, 0),
+        (1, 3): (64, 0),
+    }
+    expected_d3_reduced = {
+        (0, 2): (-3813056, 0), (0, 3): (-36480, 0),
+        (0, 4): (5952, 0), (1, 2): (808832, 0),
+        (1, 3): (-320, 0),
+    }
+    expected_c8_reduced = {
+        (0, 2): (193600, 0), (0, 3): (83712, 0),
+        (0, 4): (192, 0), (1, 2): (75776, 0),
+        (1, 3): (-512, 0),
+    }
+
+    assert certificate["D2"] == expected_d2
+    assert certificate["D3"] == expected_d3
+    assert certificate["C8"] == expected_c8
+    assert certificate["R2"] == certificate["R3"]
+    assert certificate["D2_reduced"] == expected_d2_reduced
+    assert certificate["D3_reduced"] == expected_d3_reduced
+    assert certificate["C8_reduced"] == expected_c8_reduced
+
+    # Independent exact Gaussian-integer traces at theta=pi.
+    for level, key in ((2, "D2"), (3, "D3"), (4, "D4")):
+        exact_pi = raw_trace_at_pi(level, 8, False) - raw_trace_at_pi(level, 8, True)
+        assert evaluate_polynomial(certificate[key], c=0, s=1) == exact_pi
+
+    assert evaluate_polynomial(certificate["D2"], c=0, s=1) == -1373696
+    assert evaluate_polynomial(certificate["D3"], c=0, s=1) == -3843584
+    assert evaluate_polynomial(certificate["C8"], c=0, s=1) == 277504

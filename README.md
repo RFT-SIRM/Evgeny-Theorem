@@ -189,10 +189,36 @@ angle grid is used to establish it. The full Lean recurrence and the finite
 symbolic bridge are complementary proof components; only the recurrence for
 `m ≥ 3` is currently inside Lean's kernel.
 
-### H8 and H10: still an open all-angle program
+### H8: all-angle affine law from level two
 
-The existing numerical data support affine growth for H8 and H10, but no
-general all-angle Lean recurrence or closed form is claimed for those moments.
+Write \(D_m(\theta)=\operatorname{defectO8}(m,\theta,\mathrm{faceAxis},2,\mathrm{oNum})\),
+\(c=\cos(\theta/2)\), and \(s=\sin(\theta/2)\). The Lean development proves
+\(D_{m+1}=3D_m+C_8(\theta)\) for every \(m\ge3\). An exact sparse-polynomial
+certificate verifies the exceptional transition \(D_3-3D_2=D_4-3D_3\),
+with
+\[
+\begin{aligned}
+D_2(\theta)={}&-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4,\\
+C_8(\theta)={}&193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
+\end{aligned}
+\]
+Consequently, for every \(m\ge2\),
+\[
+D_m(\theta)=3^{m-2}D_2(\theta)
++\frac{3^{m-2}-1}{2}C_8(\theta).
+\]
+At \(\theta=\pi\), the exact coefficient is \(C_8(\pi)=277504\).
+
+**Proof boundary:** the structural recurrence and its level-two arithmetic
+extension are Lean-formalized; the exceptional finite level-\(2\)-to-\(3\)
+identity is discharged by exact Gaussian-integer polynomial arithmetic in
+computational/p8_base_certificate.py and checked against the independent
+\(\theta=\pi\) certificate. This finite bridge is not yet a Lean-kernel theorem.
+
+### H10: still open
+
+H10 has finite-level and stratum reductions, but no complete all-angle
+boundary stabilization or closed form is claimed.
 
 ### Numerical reference values at theta = pi/2
 

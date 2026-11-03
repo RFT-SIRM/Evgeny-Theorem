@@ -3339,3 +3339,3308 @@ The source/test checkpoint `772b521afd6befcb80af0d590f6742e488a6ea76` passed all
 - Python pull request `40926930923` — success for Python 3.11 and 3.12.
 
 The exact test also pins the raw level-two polynomial and its reduction by (c^2+s^2=1). The result is a closed H6 recurrence and explicit formula for all (m\ge2) by combining the Lean-proved (m\ge3) recurrence with an exact symbolic finite base identity. The finite identity is not represented as Lean-kernel checked.
+
+
+## 2026-10-30 — H8 r=3 class audit and exact proof-state correction
+
+For the p=8 ordered expansion, the cyclic inventory has 36 classes in total.
+The r=3 stratum consists of seven cyclic classes, each with orbit weight 8;
+their total contribution accounts for 56 of the 256 ordered factor words.
+The seven representatives in `sg_trace_p8_three_N_stratum_zero` are
+rotated only by `trace_cyclic_list`, which applies cyclic invariance of the
+matrix trace and does not permute the relative order of factors.
+
+The seven resulting applications of
+`trace_three_N_word_zero_of_OAnti` use exponent tuples (a,b,c,d)
+`(1,1,1,5)`, `(1,1,5,1)`, `(1,1,2,4)`, `(1,1,4,2)`,
+`(1,2,2,3)`, `(1,1,3,3)`, and `(1,2,3,2)`.
+The helper requires the glued-corner hypothesis only for the selected middle
+power (K^b); here (bin\{1,2\}). Since (m\ge3), we have
+(2<2^m), so each concrete helper call meets its strict degree bound.
+The helper derives the corner condition from `OAnti (m + 1) o`, block
+diagonality of (K), and the geometric support estimate. No reversal,
+complex-conjugation, or arbitrary factor reordering is used.
+
+The final failure on the audited source SHA was not a failed corner lemma.
+The theorem body performed `dsimp` on the goal before introducing fresh local
+names `K` and `N`; this exposed the lets in the target, so the closing
+`simp [hzero_r3_1, …, hzero_r3_7]` no longer saw the exact local expressions.
+The correction leaves the goal definitionally equal but explicitly changes
+it back to the seven-term expression in the local `K` and `N`. This does
+not change any representative or mathematical hypothesis. Its acceptance
+still depends on the fresh full Lean build.
+
+The p=8 reduction ledger continues to distinguish all strata:
+- r=0: one separate `trace(K^8)` term;
+- r=1: one cyclic class (weight 8), covered by
+  `sg_trace_p8_one_N_stratum_zero`;
+- r=2: 4 cyclic classes, total weight 28, reduced to a two-N boundary sum;
+- r=3: 7 cyclic classes, total weight 56, represented by the theorem above;
+- r=4: 10 cyclic classes, total weight 70, reduced to a four-N boundary sum;
+- r=5: 7 cyclic classes, total weight 56, not yet assembled into a concrete
+  H8 theorem; the existing five-N OAnti helper requires two selected
+  middle-power corner bounds, which must be checked class by class;
+- r=6: 4 cyclic classes, total weight 28, reduced to a six-N boundary sum;
+- r=7: 1 cyclic class, total weight 8, not yet assembled into a concrete
+  H8 theorem; the seven-N OAnti helper requires three selected
+  middle-power corner bounds;
+- r=8: one top class, weight 1, retained as a boundary/diagonal contribution.
+
+The positive even-stratum assembly is not a full trace split and is not a
+cancellation theorem. The next H8 work is to formalize and verify r=5 and r=7,
+then assemble the complete ordered split with the separate r=0 term and all
+exact orbit weights. Only after that can the joint comparison of
+(B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}) be attempted. In particular, do not
+assert that each boundary stratum vanishes: the top r=8 term may be nonzero
+and may cancel only under matching support and degree hypotheses for the two
+operators. No H8 level recurrence or closed formula has yet been proved.
+H10 remains deferred until the H8 chain is complete.
+
+
+## 2026-10-30 — Exact H8 r=5 five-pairing reduction
+
+The p=8 inventory has seven cyclic classes in the r=5 stratum. Their
+canonical cyclic gap tuples and weights are:
+\[
+(0,0,0,0,3),\ (0,0,0,2,1),\ (0,0,2,0,1),\
+(0,0,1,0,2),\ (0,0,0,1,2),\ (0,0,1,1,1),\
+(0,1,0,1,1),
+\]
+with weight eight for each. Thus the exact ordered-word weight is
+\(7\cdot8=56=\binom{8}{5}\). The corresponding positive K-gap exponents
+are the gap entries plus one.
+
+For a five-N trace, the existing concrete theorem
+`trace_five_N_powers_zero_of_OAnti` has the ordered form
+\[
+\\operatorname{tr}(K^a N K^b N K^c N K^d N K^e N K^f)=0,
+\]
+under the two explicit corner bounds \(b<2^m\) and \(d<2^m\), together
+with \(m,\theta,ax,o\) and \(OAnti(m+1,o)\). It is not an all-power
+assumption: the bound is used only at those two selected middle powers.
+
+For each canonical gap tuple \((g_1,\ldots,g_5)\), the proof chooses
+\((a,b,c,d,e,f)=(g_5+1,g_1+1,g_2+1,g_3+1,g_4+1,0)\).
+The seven Lean calls therefore use:
+- gaps \((0,0,0,0,3)\): exponents \((4,1,1,1,1,0)\);
+- gaps \((0,0,0,2,1)\): exponents \((2,1,1,1,3,0)\);
+- gaps \((0,0,2,0,1)\): exponents \((2,1,1,3,1,0)\);
+- gaps \((0,0,1,0,2)\): exponents \((3,1,1,2,1,0)\);
+- gaps \((0,0,0,1,2)\): exponents \((3,1,1,1,2,0)\);
+- gaps \((0,0,1,1,1)\): exponents \((2,1,1,2,2,0)\);
+- gaps \((0,1,0,1,1)\): exponents \((2,1,2,1,2,0)\).
+
+In every case \(b=1\) and \(d\le3\), so \(b,d<2^m\) follows for
+\(m\ge3\). Each displayed transformation in Lean is a cyclic rotation
+implemented by `trace_cyclic_list`; no adjacent factors are exchanged,
+no reversal is inferred, and no complex-conjugation symmetry is invoked.
+The exact class expressions are the binary-word representatives with
+`K` denoting the unselected factor and `K*N` the selected factor.
+
+The newly added `sg_trace_p8_five_N_stratum_zero` is intended to combine
+the seven classwise vanishing results with their orbit weights. The
+mathematical deduction is complete for this r=5 stratum if (and only if)
+the fresh complete Lean build accepts the theorem body.
+
+The status ledger at this point is:
+- r=0: separate `trace(K^8)`;
+- r=1: proved zero by the single-N theorem;
+- r=2: proved boundary reduction, four classes, total weight 28;
+- r=3: proved zero, seven classes, total weight 56;
+- r=4: proved boundary reduction, ten classes, total weight 70;
+- r=5: seven classwise zero reductions now added, total weight 56; fresh
+  Lean verification pending;
+- r=6: proved boundary reduction, four classes, total weight 28;
+- r=7: one class, total weight 8; next step is the seven-N OAnti helper;
+- r=8: top boundary/diagonal contribution, weight 1.
+
+Even after r=5 and r=7 vanish, the H8 identity is not closed: the positive
+even boundary sums \(B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}\) must still be
+compared jointly for the two intended operator configurations. No claim
+that these strata vanish separately is justified, and the H8 level
+recurrence remains open.
+
+
+## 2026-10-30 — H8 r=5 verification and exact r=7 reduction
+
+The r=5 proof source at SHA `8e3d22da1c65eb04212161f2e21dc57869ceed06` passed the project-wide Lean
+command `lake build EvgenyTheorem` (run 41108416124; the log reports
+3,060 successful build jobs). The Python workflow for that SHA was
+still running at the time of this next mathematical step.
+
+For r=7 the binary/cyclic inventory has exactly one class:
+`K, K*N, K*N, K*N, K*N, K*N, K*N, K*N`, with cyclic gap tuple
+((0,0,0,0,0,0,1)), orbit weight eight. Expanding (K(KN)^7) gives
+(K K N K N K N K N K N K N K N). Cyclically moving the initial two
+(K) factors to the end yields
+[
+N K N K N K N K N K N K N K^2,
+]
+which is the exact ordered word represented by the exponent tuple
+((a,b,c,d,e,f,g,h)=(0,1,1,1,1,1,1,2)) in
+`trace_seven_N_powers_zero_of_OAnti`. This uses only cyclic invariance
+of trace, not commutation, reversal, or conjugation of the word.
+
+The helper's selected middle-power conditions are (b<2^m),
+(d<2^m), and (f<2^m). Each selected exponent equals one, so the
+required strict inequalities follow from (m\ge3). The concrete helper
+derives those three glued-corner off-diagonal conditions from
+`OAnti (m+1) o`, the block-diagonal property of (K), and its geometric
+support argument; no additional corner assumption is introduced.
+
+The new theorem `sg_trace_p8_seven_N_stratum_zero` combines this classwise
+vanishing with the exact orbit weight eight. Its fresh full Lean build is
+still required before calling the r=7 stratum verified.
+
+The odd H8 strata now have the following state:
+- r=1: one class, weight 8, Lean proof already present;
+- r=3: seven classes, total weight 56, Lean proof on the green
+  `ff9e9a4...` checkpoint;
+- r=5: seven classes, total weight 56, verified at `8e3d22da1c65eb04212161f2e21dc57869ceed06`;
+- r=7: one class, weight 8, theorem just added, verification pending.
+
+The remaining H8 identity still requires the full ordered expansion to
+be assembled with all even boundary terms. In particular, the joint
+weighted expression (B_{8,2}+B_{8,4}+B_{8,6}+B_{8,8}) must be compared
+for the intended operator configurations with matching support and degree
+hypotheses. The current r=7 result does not imply cancellation of any
+even stratum and does not yet establish an H8 recurrence.
+
+
+## 2026-10-30 — Complete cyclic-class accounting for H8
+
+The exact ordered-word expansion for (p=8) contains 256 binary choice
+words. The checked cyclic regrouping theorem produces 36 necklace classes.
+The source inventory gives the following exact class counts and orbit-weight
+sums by insertion count (r):
+
+| r | Cyclic classes | Sum of orbit weights |
+|---:|---:|---:|
+| 0 | 1 | 1 |
+| 1 | 1 | 8 |
+| 2 | 4 | 28 |
+| 3 | 7 | 56 |
+| 4 | 10 | 70 |
+| 5 | 7 | 56 |
+| 6 | 4 | 28 |
+| 7 | 1 | 8 |
+| 8 | 1 | 1 |
+
+The weights sum to (256). No class is discarded, duplicated, or assigned
+a generic orbit length: the periodic r=2, r=4, and r=6 classes retain their
+shorter weights 4, 2, and 4, respectively.
+
+The imported Lean source now defines the positive even cyclic contribution
+`sg_trace_p8_cyclic_even` in the same term order as
+`trace_orderedWordExpansion_eight_cyclic`. Each of its 19 classes is
+matched to one of the 19 terms in `glueLHS8` by one explicit cyclic rotation
+using `trace_cyclic_list`. This is only cyclic invariance of trace; no
+commutation, reversal, or complex-conjugation identity is used.
+
+The odd classes are covered by the concrete Lean theorems:
+- r=1: one class, orbit weight 8, via the generic single-pairing result;
+- r=3: seven classes, total weight 56, via the three-N corner theorem;
+- r=5: seven classes, total weight 56, via the five-N corner theorem;
+- r=7: one class, orbit weight 8, via the seven-N corner theorem.
+
+The new theorem `sg_trace_p8_ordered_expansion_boundary` combines those
+four vanishing results with the complete 36-class cyclic expansion and the
+even-boundary theorem. Its exact level-local conclusion is
+[
+\operatorname{Tr}((K+KN)^8)=\operatorname{Tr}(K^8)+\mathrm{glueRHS8}(m,K),
+]
+for (m\ge3) under the stated (OAnti(m+1,o)) hypothesis. The kernel
+`glueRHS8` still contains all 19 positive even classes, reduced to their
+actual corner sums/diagonal products. In particular, the r=8 top contribution
+is retained; it has not been set to zero.
+
+**Remaining H8 mathematical target:** compare the full weighted boundary
+expression `glueRHS8(m,K)` for the two operator configurations used by the
+moment defect, with their exact support and degree hypotheses. The earlier
+research audit notes that the pair of configurations must be traced to the
+actual defect definition and cannot be silently replaced by an unrestricted
+cycling-axis/common-axis comparison. Only after that comparison is proved
+may one derive the level transition and solve the recurrence. This trace
+split is not itself an H8 recurrence, and H10 remains open.
+
+
+## 2026-10-30 — Proof-state correction in H8 full trace split
+
+The failed build on `c74dd4dfe93a302242ee0082db7d82b601f86aaf` exposed two proof-state issues, not a
+combinatorial mismatch:
+1. The odd-stratum hypotheses are written using powers (K^a) and local
+   `let K,N` aliases, while the cyclic expansion is represented by
+   explicitly ordered factors (K) and (K N). The proof now zeta-reduces
+   these local aliases and expands natural powers before taking the linear
+   combination. This does not permute any matrix factor.
+2. The even-class equality is already exactly
+   `sg_trace_p8_cyclic_even_eq_glueLHS8`. The previous `congrArg`
+   unnecessarily re-added the common base trace even though simplification
+   cancels that common summand in the equality goal. The direct identity is
+   now used.
+
+The mathematical decomposition remains: one r=0 base term; odd classes
+r=1,3,5,7 vanish under their existing hypotheses; all 19 positive even
+classes rotate to `glueLHS8), and the established boundary theorem
+reduces that sum to `glueRHS8). Fresh Lean compilation is still required
+before claiming the aggregate theorem verified.
+
+
+## 2026-10-31 — H8 odd-stratum assembly: exact normalization defect
+
+The full build on `75a9802791ee54dc6d9d04400cceb36e3e6838a7` has one remaining Lean error in the
+new ordered-split proof. Inspecting the complete target state shows that
+the four odd-stratum identities have the right words and weights, but
+three theorem conclusions still contain syntactic zero-power factors after
+the proof's `simp only [pow_succ]` step. Specifically, `pow_succ`
+recursively expands each positive natural power but does not reduce the
+terminal `K ^ 0` factor to the identity. The expanded ordered-word target
+has no such explicit identity factors, so the noncommutative polynomial
+normalizer does not identify the products.
+
+A separate source-level word audit confirms:
+- r=1: one expansion class (A^7B), weight 8; the single-N theorem
+  represents (K^7(KN));
+- r=3: the seven statement words are exactly
+  `AAAAABBB`, `AAAABABB`, `AAAABBAB`, `AAABAABB`,
+  `AAABABAB`, `AAABBAAB`, and `AABAABAB`, each weight 8;
+- r=5: the seven statement words are exactly
+  `AAABBBBB`, `AABABBBB`, `AABBABBB`, `AABBBABB`,
+  `AABBBBAB`, `ABABABBB`, and `ABABBABB`, each weight 8;
+- r=7: one expansion class (AB^7), weight 8; the seven-N statement
+  is (K(KN)^7).
+
+Thus the class-to-expansion matching is not the obstruction. The line
+now reduces `pow_succ` together with the base case `pow_zero` and both
+matrix identity multiplications. This is a proof normalization repair,
+not a new mathematical result; it remains unverified until the fresh
+project-wide Lean build passes.
+
+
+## 2026-10-31 — H8 assembly follow-up: preserve factor order while normalizing parentheses
+
+The run on `4053b622ca7c1f605b1c091856d106e2b1391f8c` showed that the attempted zero-power correction did
+not suffice. The simplifier log explicitly marked `Matrix.mul_one` unused,
+while the `linear_combination` failure persisted. Comparing the proof with
+the green H6 assembly identified the missing normalization rule:
+`Matrix.mul_assoc`. The H6 proof uses associativity to put all matrix words
+into the same parenthesization before combining their trace equalities.
+
+The H8 normalization is therefore changed to include
+`Matrix.mul_assoc` and removes the unused `Matrix.mul_one`. This is
+strictly reassociation of products; it does not exchange adjacent factors,
+reverse words, invoke conjugation, or alter any orbit coefficient.
+The new full Lean build remains the required test of this correction.
+
+
+## 2026-10-31 — H8 local trace split composed with the actual operator lift
+
+At the verified parent `16c78a8fb79e49ab60c7c7b99dc447be765ec37e`, the level-local identity
+[
+\operatorname{Tr}((K+KN)^8)
+=\operatorname{Tr}(K^8)+\mathrm{glueRHS8}(m,K)
+]
+has a full Lean proof for (m\ge3) under (OAnti(m+1,o)). The actual
+level-lift lemma `pOpO_succ_trace_ordered_words` and the block-diagonal
+trace identity `trace_blockK_pow` are both available at arbitrary positive
+degree. The new theorem `pOpO_trace8_glue_final` composes these facts at
+degree eight and yields
+[
+\operatorname{Tr}(pOpO(m+1,\theta,ax,o)^8)
+=\sum_{c\in GCopy}\operatorname{Tr}(Hc(m,\theta,ax,o,c)^8)
++\mathrm{glueRHS8}(m,sgK(m,\theta,ax,o)).
+]
+
+This theorem preserves the entire positive-even boundary correction,
+including the top (r=8) contribution. It does not assume that
+`glueRHS8` vanishes, is axis-independent, or is the same for the two
+operators in the defect. The next theorem should mirror the existing
+`defectO6_succ`: subtract the two axis instances and identify the three
+copy defects plus the explicit difference of `glueRHS8`. The subsequent
+stabilization question is a separate mathematical obligation.
+
+
+## 2026-10-31 — Exact eighth-moment defect recursion
+
+For arbitrary axis functions (ax,ax'), define
+[
+D_8(m,\theta,ax,ax',o)
+=\operatorname{Tr}(pOpO(m,\theta,ax,o)^8)
+-\operatorname{Tr}(pOpO(m,\theta,ax',o)^8).
+]
+The new theorem `defectO8_succ` proves, for (m\ge3), `OAnti(m+1,o)`,
+and the stated level-periodicity assumptions on both axis functions,
+[
+\begin{aligned}
+D_8(m+1,o)={}&D_8(m,o)+D_8(m,oBo(m,o))\\
+&+D_8(m,oCo(m,o))\\
+&+\bigl(\mathrm{glueRHS8}(m,sgK(ax,o))
+-\mathrm{glueRHS8}(m,sgK(ax',o))\bigr).
+\end{aligned}
+]
+The identity is obtained only by subtracting the two independently proved
+`pOpO_trace8_glue_final` identities, using the exact three-copy
+decomposition. Every boundary contribution is retained inside the named
+`glueRHS8) expression. There is no hypothesis or conclusion that this
+difference is zero, constant in (m), or independent of the axis function.
+
+This is an exact copy-split recurrence for the general orientation defect,
+not yet the scalar recurrence for the particular `faceAxis` versus fixed-Z
+defect. The remaining mathematical work is to analyze the boundary
+difference for that actual pair, with support and degree conditions proved
+at the appropriate level; only then can one infer an all-level growth law.
+The current theorem is not a closed-form H8 result.
+
+
+## 2026-10-31 — Standard-orientation transport for the H8 defect
+
+The exact general recurrence defectO8_succ on the verified parent
+8023cc210b8ecb3c20ad101d168e8a45d5847522 is now specialized to the actual standard orientation. The
+degree-eight flux-edge congruence theorem defectO8_congr and its
+face-transfer wrapper orient_transfer8 are added in direct analogy
+with defectO6_congr and orient_transfer6.
+
+For oNum(m+1), the copy transports are:
+- A: oNum(m+1) -> oNum(m), by the face endpoint index identity;
+- B: oBo(m,oNum(m+1)) -> oNum(m), by the flipped-B face inequality;
+- C: oCo(m,oNum(m+1)) -> oTil(m), retaining the exceptional corner
+  edge in the oTil clause.
+
+Consequently defectO8_succ_num proves
+[
+D^{num}_8(m+1)=2D^{num}_8(m)+D^{til}_8(m)
++\mathrm{glueRHS8}(m,sgK(faceAxis,oNum(m+1)))
+-\mathrm{glueRHS8}(m,sgK(fixedZ,oNum(m+1))).
+]
+This conclusion uses the same m >= 3 and OAnti(m+1,oNum(m+1))
+and periodicity assumptions already proved for faceAxis and fixed Z.
+No boundary cancellation is assumed. The next step is the analogous
+oTil recurrence, followed by subtraction of the two exact recurrences
+to isolate the boundary-residual difference.
+
+
+## 2026-10-31 — H8 recurrence for the flipped-corner orientation
+
+Let D8_num(m) be the trace defect for faceAxis versus fixed Z with
+orientation oNum(m), and let D8_til(m) be the same defect with orientation
+oTil(m).
+
+The H8 copy-split theorem defectO8_succ applies to o = oTil (m+1)
+because oTil_anti (m+1) supplies the required OAnti hypothesis. The
+axis-periodicity assumptions are the existing faceAxis_pow1 and
+faceAxis_pow2; they hold for fixed Z by reflexivity.
+
+The three restrictions of the flipped-corner orientation are not identical,
+and the proof keeps their geometry separate:
+
+1. Copy A: cp1_not_A proves that neither direction of the exceptional
+   edge occurs among level-m A-copy face edges. Therefore oTil agrees
+   with oNum there; faceA transports the numbering orientation down a
+   level. The A contribution is D8_num(m).
+2. Copy B: cp1_shiftB identifies both directions of the exceptional
+   level-(m+1) edge after the B shift with the corresponding level-m
+   cp1 edge. Together with faceB, oTil_transport gives the exact
+   B-copy orientation oTil(m). Its contribution is D8_til(m).
+3. Copy C: cp1_shiftC rules out both directions of the exceptional
+   edge on every C-shifted face edge. Hence oTil reduces to oNum
+   on those high-level edges, and faceC transports this to oTil(m).
+   Its contribution is another D8_til(m).
+
+The resulting Lean theorem defectO8_succ_til is the exact identity
+\[
+D^{til}_8(m+1)=D^{num}_8(m)+2D^{til}_8(m)+\Delta B^{til}_8(m),
+\]
+where
+\[
+\begin{aligned}
+\Delta B^{til}_8(m)={}&
+\mathrm{glueRHS8}(m,\mathrm{sgK}(m,\theta,\mathrm{faceAxis},oTil(m+1)))\\
+&-\mathrm{glueRHS8}(m,\mathrm{sgK}(m,\theta,\mathrm{fixedZ},oTil(m+1))).
+\end{aligned}
+\]
+The complete weighted even-boundary sum, including its top stratum, remains
+inside glueRHS8; this recurrence does not claim that the boundary difference
+vanishes or is independent of m.
+
+The next algebraic step is to subtract the already established
+defectO8_succ_til recurrence from defectO8_succ_num (with the order chosen
+consistently) to isolate
+\(\Delta B^{num}_8(m)-\Delta B^{til}_8(m)\).
+That difference still requires a separate H8-specific diagonal-power and
+support/degree audit. No H6 residual lemma is being assumed for degree eight.
+H8 and H10 remain open at this checkpoint.
+
+
+## 2026-10-31 — Orientation-gap recurrence and the remaining H8 obstruction
+
+Define D8_num(m) as the faceAxis-versus-fixed-Z trace defect with
+orientation oNum(m), D8_til(m) as the same defect with orientation
+oTil(m), and G8(m)=D8_num(m)-D8_til(m).
+
+The exact already-established recurrences are
+D8_num(m+1)=2 D8_num(m)+D8_til(m)+R8_num(m)
+and
+D8_til(m+1)=D8_num(m)+2 D8_til(m)+R8_til(m),
+where R8_num and R8_til are the corresponding differences of the full
+glueRHS8 corrections for faceAxis and fixed Z.
+
+Subtracting the second identity from the first gives the exact relation
+G8(m+1)=G8(m)+R8_num(m)-R8_til(m).
+This algebraic subtraction is formalized by
+defectO8_orientation_difference_succ. Its Lean proof invokes the two
+independent H8 recurrence theorems and ring normalization; it does not
+use any claim about boundary cancellation or level stabilization.
+
+Thus the next question is sharply isolated: prove or reduce the difference
+R8_num(m)-R8_til(m). Since glueRHS8 contains boundary products with total
+degree eight, the audit must track every diagonal power appearing in those
+products, including the top stratum, and establish the exact support and
+degree hypotheses for both orientations. The degree-six argument controlling
+only its power-five endpoint residual cannot be promoted to degree eight
+by analogy. Until this H8-specific comparison is proved, neither constancy
+of G8 nor a scalar closed recurrence for D8_num follows.
+
+
+## 2026-10-31 — H8 flipped-edge distance threshold for boundary powers
+
+The definition of glueRHS8 is an exact sum of all positive even boundary
+strata. Its first four r=2 terms contain corner diagonal powers
+(1,7), (2,6), (3,5), and (4,4). The r=4 boundary terms are ten weighted
+four-N boundary sums with exponent tuples
+(1,1,1,5), (1,1,4,2), (1,2,1,4), (1,1,2,4), (1,1,3,3),
+(1,3,2,2), (1,2,3,2), (1,3,1,3), (1,2,2,3), and (2,2,2,2).
+The r=6 part consists of four diagonal-insertion traces with powers
+(1,1,1,3), (1,1,2,2), (1,2,1,2), and (1,2,1,2) in their diagonal
+factors. The r=8 top term is the fourth power of the product of the two
+first-power corner diagonals. Thus the maximal power needed to compare
+individual glued-corner diagonals in the full boundary correction is seven.
+
+The exceptional edge distinguishing oNum(m+1) and oTil(m+1) lies in
+copy B at local bottom-edge coordinates 2^m-1 and 2^m. Every glued
+B-copy state is at local point (0,0) or (0,2^m), so its first coordinate
+is zero. The generic coordinate-propagation lemma for sgK^n therefore
+makes a row entry to either flipped endpoint vanish whenever the first
+coordinate gap is greater than n.
+
+For degree six the old argument uses m>=3 and powers through five. For
+degree eight, the power-seven endpoint is not covered uniformly at m=3:
+the exceptional endpoint (2^3-1,0) has first-coordinate gap exactly
+seven. For m>=4, however, 2^m-1 >= 15, so every power n<=6 is strictly
+shorter than the gap. This is the exact threshold used in the new Lean
+lemma sgK_pow_zero_from_glue_to_flip_up_to_six.
+
+By induction on n, that zero-entry lemma and the already proved row
+equality away from the flipped endpoint yield
+sgK_pow_row_eq_num_til_on_glue_up_to_seven; its diagonal specialization
+is sgK_pow_diag_eq_num_til_on_glue_up_to_seven. These are local operator
+comparison facts only. They do not yet imply glueRHS8 invariance until
+the complete r=2, r=4, r=6, and r=8 expressions have each been rewritten
+using the relevant boundary diagonal or row equalities. In particular,
+do not omit the four ordered r=6 trace terms or the top r=8 fourth-power
+term.
+
+
+## 2026-10-31 — H8: complete boundary-orientation comparison and exact level-four gap
+
+The degree-seven row comparison has now been applied to the entire boundary
+functional, not just to its r=2 diagonal terms. The proof obligations are
+organized by the actual definition of glueRHS8:
+
+1. For r=2, each of the four weighted gap sums uses the degree-a row at a
+   glued point x and the degree-b row at σ(x). The exponents run through
+   (1,7), (2,6), (3,5), and (4,4).
+2. For r=4, each of the ten ordered nested sums compares the rows at x and y
+   and the diagonal rows at σ(y) and σ(x). The exact ordered exponent
+   quadruples and weights in glueRHS8 are retained.
+3. For r=6, each of the four traces has the form
+   trace(K^a D_b K^c D_d K^e D_f). A new generic three-supported-diagonal
+   trace reduction proves its exact diagonal sum using separate support
+   hypotheses for the three kernel powers. Here a,c,e are at most two,
+   while the diagonal exponents b,d,f are the displayed values 1,2,3.
+   The required glued off-diagonal vanishing is established for each
+   orientation independently; no symmetry or commutation of K is used.
+4. For r=8, the pointwise fourth-power endpoint is compared at x and σ(x)
+   using the degree-one row equality.
+
+The support fact g(σ(x)) is supplied by the existing involutive glue
+property. Thus the degree-seven row hypothesis applies to every endpoint
+used above. The result is the exact equality of the two full boundary
+functionals for the numbering and flipped orientations, for m >= 4. Combined
+with the already-proved adjacent-level difference recurrence, the H8
+orientation gap reduces to its finite value at level four. That value is not
+claimed to vanish. The common boundary residual still needs a level
+transport/stability proof before the full H8 recurrence is closed; H10
+remains deferred.
+
+
+## 2026-10-31 — H8: repair audit after failed compile
+
+The failed run 41162087152 exposed a mismatch in the generic trace interface:
+the existing theorem trace_kernel_diagonal_kernel_diagonal_collapse has the
+same matrix K on both sides of its two diagonal weights. The three-insertion
+r=6 stratum needs independent matrices A, B, C (instantiated by K^a, K^c,
+K^e), so passing separate off-diagonal hypotheses into the old theorem was
+invalid. The repair introduces an asymmetric two-kernel collapse from its
+explicit two-index trace expansion, after the middle diagonal sandwich has
+been shown diagonal.
+
+The r=6 diagonal weights are supported on the glued set; the remaining
+kernel powers need off-diagonal vanishing on that set only through degree
+five. Comparison of the values on the diagonal still uses the degree-seven
+row equality. The error on the <= 5 / <= 7 argument was a missing monotonic
+bound, not a gap in the geometric support estimate. The nested r=4 proof
+also needed the local predicate abbreviation g unfolded when simplifying
+the outer conditional.
+
+Nothing in this repair changes a trace word, cyclic weight, orientation
+hypothesis, or moment statement. The complete H8 boundary comparison is
+still pending a clean full build; H8/H10 remain open.
+
+
+## 2026-10-31 — H8: second Lean repair checked against existing library patterns
+
+Run 41163149778 did not establish the new asymmetric trace reduction.
+The helper's Finset.sum_eq_single goals were ordered differently from the
+existing working implementation: the off-diagonal-index implication is the
+first branch, and the excluded-index case is the second. The repair makes
+that structure identical to TraceExpand.lean's compiling supported trace
+collapse proof. It also removes a simp argument reported unused by Lean.
+
+The r=4 outer sum has a separate elaboration issue: its conditional is
+introduced by unfolding the private boundary-sum definition, while the
+proof's local g is a let abbreviation. The outer positive and negative
+branches now explicitly unfold that abbreviation. The next full build is
+needed to distinguish any remaining independent failures from earlier
+cascades.
+
+
+## 2026-10-31 — H8: structural correction of the r=6 orientation comparison
+
+The r=6 cyclic stratum already has the exact ordered diagonal-boundary
+representation in sg_trace_p8_six_N_stratum_boundary, based on the generic
+trace_six_N_powers_boundary. A further collapse to pointwise diagonal
+products is not required and made the proof needlessly fragile.
+
+For a word trace(K^a D_b K^c D_d K^e D_f), cyclicity gives
+trace((D_b K^c)(D_d K^e)(D_f K^a)). Each D is diagonal and supported on
+the glue set. Thus D_b K^c only reads rows of K^c whose indices are in the
+glue set; the same is true of the other two blocks. The degree-seven row
+congruence gives equality of each block, including the diagonal weights
+at partner points because g(σ(x)) is already proved. This preserves the
+full trace and its order. It requires neither a diagonal collapse of the
+trace nor off-diagonal vanishing of the three factors.
+
+The new proof replaces both experimental trace-collapse helper lemmas and
+removes the unsupported hkg side conditions from the comparison step. The
+only mathematical inputs are the existing exact six-N boundary identity,
+the degree-seven row congruence, support of the three diagonal boundary
+factors, and cyclicity of trace. H8/H10 remain open.
+
+
+## 2026-10-31 — H8 declaration-order audit
+
+The 0f2fc5c full Lean build compiled GlueTrace and stopped only in FinalTilde at a forward reference to sgK_pow_row_eq_num_til_on_glue_up_to_seven. The theorem existed later in that file; Lean does not permit forward references. The H8 boundary comparison and its two dependent orientation-gap corollaries have been moved after the degree-seven row theorem without changing statements or proof terms. Await the next full build.
+
+
+## 2026-10-31 — Checkpoint audit and syntax-boundary repair
+
+The verified baseline for this branch's current H8 work is commit
+132e84074e08009e4d3f54d923e873b3ce6b06a4, with both full Lean and Python
+workflows successful. The subsequent experimental r=6 trace-collapse
+attempts were the source of the early Lean failures; these were replaced
+at 0f2fc5c by direct comparison of the three existing supported diagonal
+blocks, using the already-proved six-N boundary identity.
+
+The next failure chain was not mathematical: 0f2fc5c put the degree-seven
+row-congruence use before its declaration; 175bdfa moved the dependent
+theorem block after the row lemma but accidentally removed the opening
+documentation-comment line before the p=6 residual theorem. The compiler
+reported only this parser error in that run. The full comment is restored
+without changing the proof. There is no local Lean/Lake toolchain in the
+execution image, so the next full Actions build is the authoritative compile
+check.
+
+
+## 2026-10-31 — H8: degree-seven corner transport target
+
+For a diagonal entry (K^n)xx, every intermediate vertex in a
+length-n closed walk from x is within graph distance min(j,n-j) after j
+steps. Thus degrees at most seven require only the radius-three
+neighborhood of each glued corner. The H6 transport already proves
+degrees four and five using radius-two supports; the missing H8 case is
+degrees six and seven.
+
+A new generic finite-neighborhood lemma in FinalTilde.lean,
+matrix_pow_six_seven_diag_eq_of_local_equiv, isolates the algebraic part.
+It proves degree-six and degree-seven diagonal equality from matched local
+entries and root row/column support through degree three, using the ordered
+factorizations K^6=K^3K^3 and K^7=K^3K^4. The concrete Sierpinski
+radius-three support equivalences and their copy/orientation entry bridges
+remain to be established. This lemma does not by itself show that any
+H8 boundary residual is level-independent.
+
+Clarification of the preceding orientation-comparison audit: the current
+glueRHS8_congr_of_glued_row_pow compares the four r=6 traces by cyclically
+rotating each original ordered trace and equating the three supported
+diagonal-times-kernel blocks. It does not collapse those traces to
+pointwise diagonal sums or invoke a new asymmetric trace-collapse theorem.
+The earlier experimental r=6 collapse attempts are historical failure
+records only; they are not part of the current proof.
+
+
+## 2026-10-31 — Audit of the degree-six/seven Lean failure
+
+The first CI run of the generic local transport lemma exposed no
+mathematical counterexample and no failure of the K^6=K^3K^3 or
+K^7=K^3K^4 decompositions. It found two missing/redundant rewrites of the
+matched root value in the finite-sum transport proof. The column degree-two
+case now explicitly rewrites e(root) to the target root after applying the
+local-entry hypothesis; the row degree-three case no longer tries to rewrite
+a root expression after it has already been normalized to the target root.
+This repairs the proof script only. The concrete radius-three Sierpinski
+support equivalences and H8 residual-level stability remain unproved.
+
+## 2026-10-31 — H8 degree-six/seven rewrite audit, corrected
+
+For hrootVal : (e xr).1 = x', there are two distinct uses in the
+degree-two transport:
+
+- hpow2Row must rewrite the first factor (e xr).1 before the sum
+  reindexing from S to T.
+- hpow2Col must rewrite the last factor (e xr).1 after hEntry z xr.
+
+By contrast, in hpow3Row, hpow2Row already provides (L^2) x' ...;
+the resulting sum contains no root image and must be reindexed directly.
+The previous correction moved the root rewrite into hpow2Col but
+accidentally removed the required rewrite from hpow2Row, while leaving
+the redundant hpow3Row rewrite. The corrected proof now places the
+identity in both degree-two directions and nowhere in degree-three row
+reindexing.
+
+This is a proof-script correction only. It does not yet instantiate the
+generic lemma on the six concrete radius-three corner supports and does
+not prove level stability of the full H8 boundary expression.
+
+## 2026-10-31 — Correction to the H8 root-rewrite audit after CI
+
+CI on SHA 3b17a66 showed that placing `hrootVal` in the same `rw` bundle
+as the two `hEntry` rewrites did not establish the sum's required
+left-hand normal form. The error was not in `Equiv.sum_comp`; its expected
+source summand already uses `L x'`, whereas the actual source sum still
+contained `L (e xr).1`.
+
+The corrected hpow2Row proof separates these obligations at summand level:
+local matrix-entry transport first, then a dedicated equality rewriting
+the root value, then finite-sum reindexing. This supersedes the claim in
+the preceding audit that the bundled rewrite had normalized the row sum.
+No geometric support or H8 residual theorem is changed by this correction.
+## 2026-10-31 — H8 hpow2Row: keep finite-sum index types separate
+
+A root-value rewrite and a finite-equivalence reindexing are logically
+distinct. First preserve the S-subtype as the index type and prove the
+pointwise root-normalization equality there. Only after that equality
+does the sum have the exact summand expected by `Equiv.sum_comp e`.
+Attempting `Finset.sum_congr rfl` across S and T subtypes is ill-typed
+because the finite index types differ. The proof now exposes these two
+steps as separate calc links; no `sum_congr` is used across the equivalence.
+## 2026-10-31 — H8 radius-three geometry checkpoint
+
+The missing geometric radius for powers six and seven is now addressed
+at the coordinate level, conditionally for m >= 4:
+
+- O: vertices with x <= 3 and y <= 3 belong to old copy A and are
+  distinct from (2^m,0) and (0,2^m).
+- X: vertices satisfying 2^(m+1) <= x+3 and y <= 3 are in copy B;
+  their inverse B-shift belongs to vertexOrder m, satisfies
+  2^m <= x_parent+3 and y_parent <= 3, and avoids (0,0),(0,2^m).
+- Y: the symmetric C statement has x <= 3 and
+  2^(m+1) <= y+3; its inverse C-shift avoids (0,0),(2^m,0).
+
+The X/Y box iff theorems give exact finite-neighborhood reindexing maps.
+These are coordinate-set facts only. They do not yet prove that the
+corresponding WSG finite supports are equivalent, that spin-resolved
+sgK entries agree under the maps, or that powers one through three have
+the required row/column support. The six concrete corner transports and
+the H8 residual recurrence remain open.
+
+## 2026-10-31 — H8 radius-three coordinate proof repair
+
+The first full build on 6ded225 found two missing coordinate normalizations in the B/C copy branches. The B branch now normalizes y <= 3 before excluding (0, 2^m), and the C branch normalizes x <= 3 before excluding (2^m, 0). The theorem statements and threshold m >= 4 are unchanged. This does not prove WSG radius-three support equivalences, spin-entry transports, or H8 residual stability. A fresh full Lean build and both Python suites must pass on the corrected SHA before proceeding.
+
+
+## 2026-10-31 — H8 radius-three WSG support: O-corner reindexing
+
+- The exact parent commit 90ba45a was rechecked: the full Lean formalization build and both Python 3.11/3.12 suites, including the slow tests, completed successfully (Actions runs 41174250278 and 41174250275).
+- Added the concrete finite-state radius-three support around O in FinalTilde.lean. The support equivalence retains the copy index, coordinate, and spin, and uses corner_O_radius_three_transport at the geometric layer.
+- The result is only a finite-set equivalence. It does not yet prove equality of high/low operator entries on the support, row/column support for powers one through three, any of the six corner transports, or H8 boundary-residual stability. The next step is to prove the corresponding O-corner spin-resolved entry bridge on the radius-three support and then derive row/column support for degrees 1–3.
+- Full Lean and Python CI on the new exact SHA are required before treating the addition as verified.
+
+## 2026-10-31 — H8 radius-three O-corner entry bridge
+
+For the O-neighborhood [0,3] x [0,3] at m >= 4, the geometric transport
+places both endpoints in the old A-copy domain and excludes the two
+non-root glued vertices. This gives the spin-resolved pHeO entry equality
+with oNum across one level, plus the adjacent orientation-index version
+with oNum (m+2) on the upper level.
+
+The other copy representatives require separate orientation arguments:
+- B: the radius-three first-coordinate bound, after the B shift, lies
+  strictly below the exceptional cp1 endpoint at level n+1. Thus both
+  edge directions are excluded and oBo of oTil reduces to the relevant
+  numbering orientation on the restricted box.
+- C: cp1_shiftC and Hc_C_num_eq_parent_til perform the C-copy conversion;
+  the O-box radius-three exclusion then identifies the local oTil entries
+  with their numbering entries.
+
+The B/O and C/O theorems preserve the two C2 spin indices and compare the
+actual sgK matrix entries at levels m+1 and m. These bridges complete only
+the local entry-matching obligation for the O-corner finite support.
+The row/column support conditions for powers 1--3, the instantiation of
+the generic degree-six/seven diagonal transport, and the H8 boundary
+residual comparison remain open. No boundary cancellation or level
+stability is inferred.
+
+
+## 2026-10-31 — H8 radius-three support: symmetric column control
+
+The O radius-three entry bridge is now supported by a complete finite
+support statement in the following precise sense: the existing power
+locality theorem gives row vanishing outside the radius-three set for
+all powers n <= 3; the new symmetry lemma swaps the two endpoint states;
+and a derived column-vanishing lemma applies the row theorem in the
+reversed order. The symmetry uses the exact five conjuncts defining the
+support (copy plus the four coordinate inequalities), swapping each
+distance inequality pair.
+
+This does not identify the six/seven diagonal entries yet. The generic
+local diagonal transport still needs to be instantiated with the O
+support equivalence, exact spin-resolved entry equality on the entire
+support, and row/column vanishing for both levels. The remaining five
+corner transports and the H8 boundary residual comparison remain open.
+Full Lean and Python CI on the new SHA are required.
+
+## 2026-10-31 — O radius-three local entry bridge across copies
+
+The A-copy O entry bridge is now paired with the previously proved B- and
+C-copy radius-three bridges. A private dispatcher splits on GCopy and
+retains both spin indices, giving the same parent-level O entry for each
+copy. This closes only the local-entry component of the O finite-support
+transport. The sixth/seventh diagonal instantiation and the H8 boundary
+residual recurrence remain open.
+
+## 2026-10-31 — Lean failure diagnosis: namespace boundary
+
+The first integration of the A-copy O radius-three entry bridge and
+A/B/C dispatcher placed them after the file's closing `end EvgenyTheorem`.
+Lean therefore reported the project identifiers as unknown at the appended
+declarations. This is a source-placement error, not evidence for or
+against the underlying entry identity. The declarations have been moved
+inside the established namespace. A fresh Lean build must now typecheck
+their proof bodies; no degree-six/seven diagonal conclusion is claimed
+from this failed run.
+
+## 2026-10-31 — O-corner radius-three diagonal transport (degrees 6 and 7)
+
+The O-corner finite-state transport is now instantiated at the diagonal
+level. For an arbitrary glued-state copy label and O point, the proof uses
+the radius-three equivalence retaining copy, point, and spin, with the
+common spin-resolved A/B/C entry bridge on every pair of states in the
+support. Symmetry of the radius-three support supplies column vanishing;
+the established locality result supplies row vanishing for powers 1--3
+on both levels. These hypotheses are fed into the existing finite-matrix
+identity based on K^6 = K^3 K^3 and K^7 = K^3 K^4.
+
+The resulting equality is local to the O corner and compares only the
+sixth- and seventh-power diagonal entries between adjacent levels. It does
+not establish the other five corner transports or the complete H8
+boundary-residual recurrence. H8 and H10 remain open.
+
+## 2026-10-31 — O support inclusion proof correction
+
+A first Lean build of the new O degree-six/seven diagonal theorem exposed a
+single mismatch in the copy component of the low-level support inclusion:
+the row-support fact gives z.copy = root.copy, while the parent support is
+indexed by the original state copy. Since root is defined by
+sgK_root_pullback and that map preserves the copy coordinate by construction,
+the corrected proof composes z.copy = root.copy with root.copy = w.copy
+(definitional reflexivity). The radius bounds and all matrix-power arguments
+are unchanged. The corrected theorem is not yet certified; the fresh full
+Lean build must pass before the O degree-six/seven transport is counted as
+proved.
+
+## 2026-10-31 — H8 radius-three X/Y support reindexing
+
+The O-corner radius-three support reindexing is now accompanied by the
+corresponding X and Y finite-state support descriptions. At X, the
+coordinate box is pulled back by the B shift; at Y, it is pulled back by
+the C shift. The proof uses the existing geometric radius-three box
+equivalences in CornerLocality and the sum bound for points in
+vertexOrder to recover the opposite coordinate inequality required by
+the symmetric radius-three support.
+
+The resulting equivalences preserve the copy label and spin exactly and
+identify the high-level finite support with a parent-level finite support.
+They do not compare sgK entries on these sets, and do not yet provide the
+row/column support conditions for the shifted matrices. Thus no
+sixth/seventh diagonal transport for X or Y follows yet. The O transport
+remains the only corner diagonal transport completed so far; H8 and H10
+remain open. The next proof obligation is the spin-resolved local
+matrix-entry bridge on the X and Y radius-three boxes, followed by the
+degree-1--3 row/column support transfer and the generic degree-six/seven
+diagonal identity.
+
+## 2026-10-31 — X radius-three local entry transport
+
+The X finite-state radius-three support equivalence now has a matching
+spin-resolved local entry bridge for the two copy labels that occur at the
+glued X partner roots: A and C. The point-level bridge pulls high-level
+coordinates back through the B shift, uses the geometric exclusion of the
+two glued endpoints, and then proves equality of the actual tilde-oriented
+point-operator entries. The A state theorem packages that bridge directly;
+the C state theorem performs the additional C-orientation conversion with
+Hc_C_num_eq_parent_til on both levels.
+
+This is still only a pointwise local matrix-entry statement. It does not
+yet show the full finite-state diagonal transport for powers six/seven,
+and it has no Y counterpart. The next step is to build the X sixth/seventh
+diagonal transport using the radius-three support equivalence, with row
+and column vanishing in degrees one through three on both levels. H8 and
+H10 remain open.
+
+## 2026-10-31 — C-block orientation correction at X radius three
+
+The first radius-three X entry commit failed at the C state bridge because
+it incorrectly reused the A-block point theorem, whose endpoint tilde
+indices are one level higher. The C-block conversion is instead aligned
+with Hc_C_num_eq_parent_til: the high entry must be oTil (m+1) and the
+parent entry oTil m. Added a separate point-level radius-three transport
+following the established radius-two proof pattern, keeping the B-shift
+local entry and faceB orientation equivalence explicit. The C state bridge
+now consumes this correctly indexed theorem; the A bridge remains
+unchanged. This does not yet provide X sixth/seventh diagonal transport.
+H8/H10 remain open.
+
+## 2026-10-31 — Final C-state intermediate orientation index
+
+The second Lean build confirmed the new parent-tilde radius-three point
+lemma itself typechecks. The remaining two errors were one incorrect
+intermediate calc target in the C state wrapper: after hentry, the actual
+parent orientation is oTil m, not oTil (m+1). Corrected that target only;
+hLowC.symm and the final C-shift orientation congruence then line up in
+the intended order. The corrected state wrapper remains unverified until
+the next full Lean build.
+
+
+## 2026-10-31 — X radius-three diagonal transport (A/C copies)
+
+The X radius-three finite-state equivalence is now assembled with the
+spin-resolved A- and C-copy entry bridges into sixth/seventh diagonal
+transport. The proof is centered at the pulled-back X root (2^m, 0). Its
+parent X support is characterized by the lower x-bound and upper y-bound;
+the containment required for the low-level power truncations is derived
+from the radius-three support inequalities relative to that nonzero root.
+For both levels, row and column entries outside the chosen support vanish
+for powers one through three. The generic finite-matrix identity then
+transfers the sixth and seventh diagonal entries.
+
+This is restricted to X with copy A or C and the stated axis-periodicity
+hypothesis. It does not cover Y, the remaining partner copy, the global H8
+boundary residual, or H10. Full Lean and Python CI on the new SHA is still
+required before counting the result as formally established.
+
+
+## 2026-10-31 — X diagonal theorem declaration ordering correction
+
+A source review caught that the first insertion placed the X diagonal theorem
+before the matrix identity and entry-bridge declarations it depends on.
+Moved the theorem block after all of those declarations, at the end of
+FinalTilde.lean, and made the local bridge's membership proofs explicit in
+its binder types. This is a source-ordering correction, not a change to the
+mathematical statement. The prior SHA is not considered validated; full CI
+must run against this corrected SHA.
+
+
+## 2026-10-31 — Make the parent X-copy inclusion explicit
+
+A second source-level audit of the X diagonal proof identified that the
+low-level support inclusion must also transport the copy coordinate from
+the pulled-back root to the fixed parent copy c. The proof now derives
+x'.1 = c directly from sgK_root_pullback and the theorem premise
+hwCopy, then composes it with the support's copy equality. This closes
+that inclusion obligation explicitly; the corrected SHA still requires a
+full Lean build and both Python suites.
+
+
+## 2026-10-31 — Correct X diagonal support center and column arguments
+
+The failed Lean run on the initial X diagonal commit identified three
+concrete errors. The parent support must be indexed by w.1, because that is
+the codomain of the X support equivalence; its root copy coordinate is
+definitionally w.1. The low-support inclusion now composes the copy
+equality with this exact coordinate identity. In addition, the radius-three
+column-vanishing helper already performs support symmetry internally, so
+its center/outside arguments must be passed in row order (root, outside),
+not reversed. Corrected these argument orders for powers one through three
+at both levels. The timeout/unknown-constant diagnostics are being checked
+again after these primary type errors are removed; no success is claimed
+until the fresh full Lean build passes.
+
+
+## 2026-10-31 — Y radius-three spin-resolved entry bridges
+
+- Added a radius-three Y/C point-level entry bridge at the numbering
+  orientation, using the established Y radius-three geometric pullback
+  and the C-local entry theorem. The hypotheses explicitly exclude the
+  two exceptional C-shift endpoints for m >= 4.
+- Added the exact parent-tilde version by converting the C orientation
+  with Hc_C_num_eq_parent_til and using the radius-three exceptional-edge
+  exclusion on the parent box.
+- Packaged the point transport as state-level bridges for copies A and B.
+  The B wrapper separately removes the B orientation flip using
+  cp1_not_B_shift_radius_three at both levels and cp1_not_O_radius_three
+  on the high level.
+- These are entry-level results only. They do not yet prove Y diagonal
+  transport for degrees 6/7 or H8 boundary stabilization. The previous
+  SHA's Python 3.11 slow job was still in progress when this commit was
+  made; this fact is recorded separately from the new SHA's CI status.
+
+ 
+## 2026-10-31 — Assemble Y radius-three diagonal transport
+ 
+- Fixed the two Y bridge argument mismatches by deriving 3 ≤ m from
+  the existing 4 ≤ m hypothesis.
+- Extended the existing finite-support matrix identity to return the
+  diagonal comparisons for powers 1, 2, and 3 together with powers 6 and 7.
+  The support equivalence and row/column locality hypotheses are unchanged.
+- Adapted the existing X support-local diagonal assembly to the Y/C shift,
+  using the already-proved Y support equivalence and A/B entry bridges.
+- Added the six-case glued-partner assembly for diagonal powers 1, 2, 3, 6,
+  and 7. Powers 4 and 5 remain supplied by the existing radius-two
+  dispatcher used in the sixth-moment boundary argument.
+- This assembles local diagonal-transport infrastructure only; it does not
+  claim H8/H10 closure.
+
+ 
+## 2026-10-31 — Repair Y support transport and assemble diagonal powers one–seven
+ 
+- Corrected the two Y entry-bridge natural-number arguments by deriving
+  3 ≤ m from the existing 4 ≤ m hypothesis.
+- Corrected the Y diagonal transport specialization to use the C-shift
+  periodicity 2 * 3^m, parent root (0, 2^m), Y parent support, Y support
+  equivalence, and Y box equivalence for both endpoints.
+- Corrected the high-level B/Y orientation for powers 3, 6, and 7 to
+  oTil (m+2).
+- Combined the existing O/X/Y transports for powers 1, 2, 3, 6, and 7 with
+  the established fourth/fifth-power six-case dispatcher into one
+  glued-partner theorem returning powers 1–7.
+- This is an intermediate transport/assembly result; no H8/H10 closure
+  is claimed.
+
+ 
+## 2026-10-31 — H8 boundary correction in diagonal normal form
+ 
+- Added a three-kernel supported-diagonal trace identity. It keeps distinct
+  middle powers and the original ordered factors; no matrix factors are
+  commuted.
+- Added glued-state off-diagonal vanishing for powers through degree five,
+  combining same-copy geometric vanishing with block-diagonal copy separation.
+- Reduced all ten four-N H8 boundary terms and all four six-N H8 traces to
+  products of diagonal powers at a glued state and its partner. The r=2 and
+  r=8 strata retain their exact diagonal formulas.
+- Proved the exact identity glueRHS8 = glueRHS8_diagonal_form, preserving
+  every even stratum and its cyclic multiplicity. No cancellation, omitted
+  term, or level-stability assumption is introduced in this reduction.
+
+
+## 2026-10-31 — Recovery audit: restore the last fully verified H8/H10 checkpoint
+
+The H8/H10 work branch was restored to commit
+`575597d5d66dd5c5de9044a9c15f284a23669388`, the last checkpoint for which
+both repository workflows are confirmed successful on the exact same SHA:
+
+- Lean formalization run `41227907808`: success (full build).
+- Python tests run `41227907792`: success on Python 3.11 and 3.12, including
+  both fast and slow suites.
+
+The branch was moved back from `8f969cdf` with an expected-head
+(force-with-lease) check. The merged H6 base on `main`, PR #9, and all
+main-branch history were left unchanged. No new branch or PR was created.
+
+### Exact proof state at the restored SHA
+
+**H8 results already present and compiled:**
+
+- The complete ordered p=8 trace expansion is split into the r=0 term,
+  vanishing odd strata r=1,3,5,7, and all 19 positive-even cyclic classes.
+- The complete even boundary functional `glueRHS8` preserves all four
+  even strata r=2,4,6,8 and their exact cyclic coefficients.
+- `glueRHS8_eq_diagonal_form` rewrites the complete boundary functional
+  into the exact supported diagonal pair-product form. It does not delete
+  the r=8 top term or assume cross-stratum cancellation.
+- `defectO8_succ` and `defectO8_succ_til` give the exact defect recurrences
+  with the complete boundary difference still explicit.
+- The glued-row comparison through degree seven proves
+  `glueRHS8_num_eq_til`; hence
+  `defectO8_orientation_difference_eq_level4` reduces the numbering-versus-
+  flipped-orientation gap to its exact level-four value.
+
+**The H8 obstruction still open at this checkpoint:**
+
+The common flipped-orientation boundary residual comparing
+`glueRHS8 m (sgK m θ faceAxis (oTil (m+1)))` with
+`glueRHS8 m (sgK m θ (fun _ => 2) (oTil (m+1)))`
+has not been shown stable between adjacent levels. The local radius-three
+O/X/Y transport and the glued-partner diagonal transport through degrees
+one to seven are infrastructure for this comparison, not the comparison
+itself. Consequently there is no proved fixed H8 residual constant, no
+H8 scalar affine recurrence with a fixed constant, and no H8 closed form
+at this SHA.
+
+**H10 proof state at this checkpoint:**
+
+The file contains several conditional/concrete boundary reductions for
+the p=10 r=2, r=4, r=6, r=8, and r=10 strata. They preserve the ordered
+trace factors and cyclic weights. The top r=10 contribution is retained
+as a fifth-power diagonal trace. There is not yet a complete p=10 ordered
+trace split assembled into one total weighted even-boundary functional,
+nor a theorem comparing the complete weighted sum between the two target
+operator configurations, nor an H10 level residual recurrence. H10 is not
+closed.
+
+### Failed continuation audit
+
+The subsequent experimental commits
+`acf6e6a`, `167d15a`, `019c510`, `ba837d4`, and `8f969cd`
+were not a verified continuation: their Lean workflow runs failed. In
+particular, the final attempt's build reached the H8 closed-form induction
+and failed at `linear_combination hgap` in
+`defectO8_succ_num_level4_constant_boundary`; the algebraic target still
+contained twice the orientation gap, so the attempted closed form was not
+established. The intervening subtype-sum transport attempt also had earlier
+file-visibility and binder errors. These declarations were removed by
+restoring the verified parent, not patched further.
+
+### Next permitted mathematical step
+
+Resume from `575597d5` by proving exactly one missing statement:
+adjacent-level stability of the common H8 flipped-orientation boundary
+difference for the two axes. First state and prove the required
+degree-seven diagonal/row transport for the six glued-partner cases under
+the already-present O/X/Y local-entry and radius-three support hypotheses;
+then instantiate the complete 19-term `glueRHS8` comparison. Do not
+introduce a residual constant or closed form until this exact comparison
+compiles. H10 remains deferred until the H8 residual transport is proved
+and the complete H8 recurrence is genuinely closed.
+
+
+## 2026-10-31 — H8 level-two transition and explicit all-angle coefficient
+
+The H8 recurrence and its level-four boundary residual are already present
+in Lean for every adjacent transition starting at m=3. The remaining finite
+bridge is now covered by the exact sparse-polynomial certificate
+computational/p8_base_certificate.py.
+
+With c=cos(theta/2), s=sin(theta/2), the exact level-two and level-three
+trace defects are
+\[
+\begin{aligned}
+D_2={}&-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4,\\
+D_3={}&-3813056s^2+808832cs^2-36480s^3-320cs^3+5952s^4.
+\end{aligned}
+\]
+The exact level-four computation independently returns
+\[
+D_4={}-11245568s^2+2502272cs^2-25728s^3-1472cs^3+18048s^4.
+\]
+Before reducing by c^2+s^2=1, the full raw coefficient dictionaries
+satisfy
+\[
+D_3-3D_2=D_4-3D_3.
+\]
+After reduction this common polynomial is
+\[
+C_8(theta)=193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
+\]
+In particular C_8(pi)=277504. The level-2, 3, and 4 evaluations at
+theta=pi are checked against the independent Gaussian-integer
+certificate higher_moment_pi_certificate.py.
+
+Combined with the Lean theorem defectO8_succ_num_level4_constant_boundary
+at m=3, the exact level-four residual equals the Lean-defined residual
+constant. Thus the finite certificate establishes the missing
+D_3=3D_2+C_8 transition. The general Lean recurrence then gives, for all
+m>=2,
+\[
+D_m=3^{m-2}D_2+\frac{3^{m-2}-1}{2}C_8.
+\]
+
+Formal boundary: the structural recurrence and the arithmetic extension
+are Lean-checked; the finite level-2-to-3 polynomial identity is certified
+outside the Lean kernel by exact integer arithmetic. It is not a
+floating-point angle-grid argument. H8 is now closed in the same combined
+Lean-plus-exact-certificate sense as the established H6 result. H10 remains
+open and is not started in this step.
+
+
+## 2026-10-31 — H10 four-N cyclic representatives: all nine specialized
+
+The generic p=10 four-N boundary reductions in GlueAlg.lean have nine
+cyclic representatives. The Sierpinski-specific GlueTrace.lean now
+specializes the four previously missing representatives:
+(1,1,3,5), (1,1,4,4), (1,2,2,5), and the period-two (1,4,1,4).
+
+Their exact word multiplicities are respectively 10, 10, 10, and 5.
+Each theorem retains the generic nested corner-sum order and invokes the
+existing degree-nine support theorem sgK_pow_hkg_up_to_nine_of_OAnti.
+This is a complete class-representative specialization inventory for
+the r=4 stratum. It is not yet the aggregate weighted r=4 boundary identity:
+the next step is to assemble the nine class wrappers with their exact
+multiplicities and compare that aggregate with the other H10 strata.
+H10 remains open.
+
+
+## 2026-10-31 — H10 four-N stratum: complete 22-class boundary reduction
+
+The previous nine concrete class wrappers were only a subset of all
+four-N cyclic compositions. A complete orbit enumeration of positive
+four-tuples summing to ten gives 22 cyclic classes:
+20 with orbit size four and two with orbit size two. The exceptional
+period-two classes are (1,4,1,4) and (2,3,2,3); there is no period-one class.
+
+Added the parametric sg_trace_p10_four_N_powers_boundary_sum lemma and
+the aggregate theorem sg_trace_p10_four_N_stratum_boundary. The aggregate
+contains every cyclic representative, with coefficient 10 for each
+orbit-size-four class and coefficient 5 for each period-two class. The
+weights sum to 210, exactly the number of choices of four N positions
+among ten factors.
+
+The theorem reduces the complete r=4 contribution to the corresponding
+ordered nested sums over glued corners. This is still only one stratum:
+it does not prove cancellation against the r=2, r=6, r=8 or r=10 strata,
+and it does not yet give the H10 recurrence. H10 remains open.
+
+
+## 2026-10-31 — H10 four-N support-bound correction
+
+Lean CI on the first 22-class aggregate exposed that the generic glued-state
+support theorem through degree nine requires m >= 4. The parameterized
+four-N boundary helper now uses that same bound. The aggregate theorem was
+already correctly restricted to m >= 4, so this is a dependency-alignment
+correction, not a weakening of the final statement.
+
+
+## 2026-10-31 — H10 six-N stratum: complete 22-class boundary reduction
+
+A complete cyclic enumeration of positive six-tuples summing to ten gives
+22 classes. There are 20 classes with orbit size six, and two classes with
+period three: (1,1,3,1,1,3) and (1,2,2,1,2,2). Burnside's count is
+(126 + 6) / 6 = 22.
+
+Added sg_trace_p10_six_N_boundary_term,
+sg_trace_p10_six_N_powers_boundary_sum, and
+sg_trace_p10_six_N_stratum_boundary. The generic six-pairing boundary
+theorem converts each selected N-K^n-N block to a diagonal corner factor;
+the intervening K powers remain in their original order. The aggregate
+contains all 22 canonical representatives with weights 10 (orbit size six)
+or 5 (orbit size three). The total weight is 210 = choose(10,6).
+
+This is the complete boundary reduction of the six-N stratum, not the full
+H10 result. H10 still requires assembling all even strata and proving the
+resulting boundary residual stabilizes by level.
+
+
+## 2026-10-31 — H10 six-N aggregate: elaboration resource correction
+
+The initial full build reached sg_trace_p10_six_N_stratum_boundary but
+timed out during WHNF reduction of its 22-term matrix-trace statement at
+the default 200000 heartbeats. This is an elaboration-resource failure,
+not a reported mismatch in the cyclic-class weights or the diagonal
+boundary formula. The command now has a local 1000000-heartbeat allowance;
+all other commands retain their existing limits. CI must confirm that the
+larger statement and its proof compile.
+
+
+
+## 2026-10-31 — H10 three-N cyclic stratum vanishing
+
+- Added the Sierpinski specialization `sg_trace_p10_three_N_stratum_zero`.
+- The complete r=3 stratum has 12 cyclic representatives of positive
+  three-part compositions of 10. Each class has weight 10; the total
+  coefficient is 120 = choose(10,3).
+- Each ordered trace is rotated without changing factor order to a
+  three-pairing normal form. The selected middle exponent is at most 3,
+  so `trace_three_N_word_zero_of_OAnti` applies for m >= 3.
+- This closes only the p=10 r=3 odd stratum. It does not assemble the
+  complete p=10 expansion or prove cancellation/stabilization of the
+  remaining even boundary strata. H10 remains open.
+
+
+## 2026-10-31 — H10 r=3 proof parser correction
+
+The Lean parser rejected the line-broken multi-location list after
+`simp ... at`. The proof now simplifies each of the twelve zero-trace
+identities explicitly, then normalizes the target before combining them.
+This is a tactic syntax correction only; the orbit inventory, coefficients,
+and vanishing statements are unchanged.
+
+
+## 2026-11-01 — H10 r=3 coefficient correction
+
+The previous Lean failure was an exact coefficient mismatch: the target
+contains weight 10 for each of the 12 cyclic classes, but the final
+linear combination subtracted each zero-trace identity only once.
+The remaining target therefore had coefficient 9 on every class.
+The final combination now weights all twelve established identities by
+10, matching the orbit multiplicity. The full Lean build must confirm this
+correction before the r=3 stratum is treated as closed.
+
+## 2026-11-01 — H10 r=5 attempt withdrawn after Lean failures
+
+The proposed five-N vanishing theorem is not part of the verified
+formalization. Its explicit 26-class proof exceeded Lean's WHNF budget;
+increasing the local budget to one million heartbeats still failed.
+The subsequent refactor through a generic cyclic-rotation lemma also failed:
+the latest full build reports deterministic 200000-heartbeat WHNF timeouts
+at GlueTrace.lean:4464:50 (inside the Matrix.trace_mul_comm rotation step),
+4534:10, and 4513:0 (dependent aggregate elaboration).
+
+The experimental r=5 declarations have therefore been removed by restoring
+GlueTrace.lean to the last fully green checkpoint
+ca9580afd4b42b40935f96bab15746b33ff6900d. The existing verified H10 strata
+at that checkpoint are preserved. The complete r=5 stratum remains open;
+the 26 cyclic representatives and weights are only an enumeration, not
+a Lean-proved vanishing result. Do not revive the failed large-expression
+rotation proof by merely increasing heartbeat limits. Any new attempt must
+first establish a smaller, independently compiling rotation identity.
+
+## 2026-11-01 — Correct the H10 r=9 cyclic-class representative
+
+The first attempted r=9 wrapper was incorrect: it set the intervening
+K powers to zero. This omits the K factor that belongs to each selected
+K*N letter, so it is not a word from the p=10 ordered expansion. Its Lean
+run failed with WHNF timeouts while elaborating the large expression.
+
+The corrected representative has nine N factors and ten K factors,
+written cyclically as K^1*N*K^1*N*...*K^1. The compact definition
+`sg_trace_p10_nine_N_class_term` keeps that product out of the public
+theorem type. The class-level vanishing proof uses the existing
+`trace_nine_N_powers_zero_of_OAnti` with all ten exponents equal to one.
+For m >= 3 the four selected middle exponents satisfy the required strict
+bounds. This does not close the other odd strata, even-boundary
+cancellation, or the all-level H10 recurrence. Full Lean validation is
+pending.
+
+## 2026-11-01 — Correct the H10 r=9 helper's matrix-index assumptions
+
+Lean CI identified a missing typeclass assumption in the first compact
+helper: arbitrary matrix indices require [DecidableEq n] in addition to
+[Fintype n] for matrix multiplication and power instances. Rather than
+expose a generic assumption unrelated to the theorem, the helper is now
+specialized to Matrix (WSG m) (WSG m) ℂ. This uses the established WSG
+instances in the project. The mathematical representative and its ten K,
+nine N factor counts are unchanged; no heartbeat limit is increased.
+A fresh full Lean build is required.
+
+## 2026-11-01 — H10 r=9 validated; r=7 cyclic stratum added
+
+The full Lean build succeeded on 00d79d8cf2e281d9ce0f09629afe1974b9097e68.
+The corrected r=9 representative now compiles and is discharged by
+trace_nine_N_powers_zero_of_OAnti. This validates only that one cyclic
+class contribution, not the complete H10 identity.
+
+The next step adds a uniform r=7 class proof and the aggregate over its
+twelve cyclic gap representatives. Each representative has seven
+nonnegative extra-K gaps summing to three; adding the K factor already
+contained in each selected K*N letter gives seven positive gaps summing
+to ten. The helper rotates the final K*N pair to the front and calls
+trace_seven_N_powers_zero_of_OAnti. For the selected middle exponents
+e0+1, e2+1, e4+1, the sum constraint yields each at most four, so m >= 3
+supplies the strict corner bounds. The Lean build of this new r=7 layer
+is pending. This does not resolve the even-stratum boundary cancellations
+or prove the full all-level H10 recurrence.
+
+## 2026-11-01 — Pre-build syntax correction in H10 r=7 helper
+
+A final source review of 5ecd458b59f9ad0007e30a252b7b0f2094ab15ac
+found a missing closing parenthesis around the `trace_cyclic_list`
+application in the shared r=7 rotation helper. The call is closed in this
+follow-up commit. This was caught by source inspection while the CI job was
+still setting up the Lean toolchain; the r=7 theorem remains unvalidated
+until a full Lean build succeeds.
+
+## 2026-11-01 — Rework the H10 r=7 rotation after Lean timeout
+
+The generic symbolic-exponent rotation was rejected by Lean CI at
+GlueTrace.lean:5112:4 (isDefEq timeout) and 5082:0 (WHNF timeout).
+This is the same general-normalization failure mode that must not be
+addressed by raising heartbeat limits. The generic helper is withdrawn.
+
+The revised proof follows the concrete pattern already validated in
+sg_trace_p10_three_N_stratum_zero: twelve explicit trace_cyclic_list
+rotations with numeric exponents, then twelve applications of
+trace_seven_N_powers_zero_of_OAnti. This avoids normalizing arbitrary
+K^e expressions. Every selected exponent is <= 4 and hence is below
+2^m for m >= 3. The new r=7 theorem awaits a fresh full Lean build.
+
+## 2026-11-01 — Add the uniform numerical corner bound to explicit r=7 cases
+
+Review of the generated concrete cases found that their three strict
+middle-exponent bounds need the shared fact 4 < 2^m, derived from m >= 3.
+This fact is now established once at the start of the r=7 theorem; the
+individual `omega` proofs then use the concrete exponents (each at most
+four). This is a source-level correction made before relying on the new
+CI result; full Lean validation remains pending.
+
+## 2026-11-01 — Remove stale r=7 helper doc-comment
+
+The 2b47d1a Lean failure was a parser error at GlueTrace.lean:5086:
+an orphaned documentation comment from the removed generic helper
+preceded a second theorem doc-comment. Removed the orphan. This was a
+source/parser issue, not a mathematical failure of the twelve class terms.
+The Python workflow on 2b47d1a had not yet completed at the status check;
+it is not recorded as failed. Revalidate the corrected commit with full
+Lean and Python workflows.
+
+## 2026-11-01 — H10 r=5 stratum formalization
+
+The p=10 r=5 stratum has 252 ordered words and 26 cyclic classes.
+Representing a class by five extra-K gaps e0,...,e4 with sum five,
+the cyclic quotient has 25 orbits of size five plus the periodic
+(1,1,1,1,1) orbit of size one. Converting gap-orbit sizes to binary
+word orbit weights gives 25 weights of ten and one weight of two,
+summing to 252.
+
+Added a compact trace representative and 26 explicit cyclic rotations.
+After rotating the final K*N pair to the front, the word matches
+trace_five_N_powers_zero_of_OAnti with middle powers e0+1 and e2+1.
+Both are bounded by six, which is strictly below 2^m for m >= 3.
+No symbolic-power rotation helper or heartbeat increase is used.
+The new full r=5 stratum awaits Lean and Python validation.
+
+
+## 2026-11-01 — Withdraw the unvalidated H10 r=5 cyclic proof
+
+The attempted explicit 26-class r=5 proof on 4f9b0a18c2875c0149d31846eb16bc3c5cd9025c did not compile. Lean hit deterministic WHNF timeouts at GlueTrace.lean:5413 during the first concrete trace rotation and at 5365 during declaration elaboration. The compact class-term wrapper therefore did not solve the same matrix trace normalization bottleneck encountered in prior r=5 attempts. The code has been withdrawn and GlueTrace.lean restored exactly to the last green commit 542006e0dae9910d6738d2386eaefa17d32e0081. H10 r=5 remains open; r=9 and r=7 are retained. A future attempt must start with an independently compiling minimal rotation identity or use a different decomposition, not merely split/relabel the same large expression or increase heartbeat limits.
+
+## 2026-11-01 — Rotation-free H10 r=5 proof route
+
+The failed r=5 attempts all spent substantial elaboration effort proving a
+cyclic rotation that is not needed for the chosen representative. The
+five-N corner theorem accepts six K exponents (a,b,c,d,e,f) and requires
+only b,d < 2^m. For the gap representative
+K^e0*(K*N)*K^e1*(K*N)*...*K^e4*(K*N), associativity and
+pow_succ put the word directly into that form with exponents
+(e0+1,e1+1,e2+1,e3+1,e4+1,0). Under e0+...+e4=5, the constrained
+middle exponents e1+1 and e3+1 are at most six; m >= 3 gives
+6 < 2^m.
+
+Only the generic representative lemma is added at this checkpoint. It is
+deliberately separate from the 26-class weighted sum so Lean can validate
+the algebraic conversion in isolation. Do not reintroduce
+trace_cyclic_list or Matrix.trace_mul_comm rotations for this route.
+
+## 2026-11-01 — Assemble H10 r=5 from direct gap normal form
+
+The generic rotation-free theorem `sg_trace_p10_five_N_gap_word_zero`
+has passed the full Lean formalization workflow. It applies to every
+five-gap composition with sum five. The complete cyclic class inventory
+was independently regenerated: the 126 weak compositions of five into
+five slots yield 26 necklaces under cyclic rotation. The 25 non-periodic
+necklaces have orbit size five (binary-word weight 10); the fixed
+(1,1,1,1,1) necklace has binary-word weight 2. The weights sum to 252.
+
+Added a compact weighted-sum definition and a proof for each canonical
+representative, using only the generic gap lemma. Crucially, the class
+proofs do not invoke trace_cyclic_list, Matrix.trace_mul_comm, or any
+rotation-normalization helper. This is the complete r=5 cyclic stratum
+at the level of the enumerated weighted expansion, subject to full Lean
+validation of this aggregate commit. It does not by itself prove the
+even-stratum boundary cancellation or the full all-level H10 recurrence.
+
+## 2026-11-01 — p=10 cyclic trace grouping: first CI failure and focused correction
+
+The first CI build of the added degree-ten cyclic grouping theorem failed in
+TraceExpand.lean:3204. The diagnostic is a deterministic 200000-heartbeat
+timeout inside unrestricted `simpa [Matrix.mul_assoc]` in a generated
+rotation equality, with a consequent tactic timeout at line 3212. The word
+rotation itself is justified by `trace_cyclic_list`; the problem is proof
+normalization after a large local context of previously established
+rotation equalities had accumulated. The correction replaces unrestricted
+simp with an explicit simp set consisting only of list-product recursion,
+identity multiplication, and matrix associativity; the expansion flattening
+is similarly restricted to the defining ordered-word/list lemmas. No
+heartbeat increase, axiom, or weakened hypothesis is introduced. The
+corrected proof remains unvalidated pending the next full Lean workflow.
+
+## 2026-11-01 — Structural response to the second cyclic-expansion timeout
+
+The first restriction of the generated simp sets was insufficient: the next
+full build failed at TraceExpand.lean:3480 with deterministic `isDefEq`
+timeout at the unchanged 200000-heartbeat limit. The failure arose while
+elaborating the roughly 200th rotation fact in one declaration, after the
+local context had accumulated many prior facts. The repair does not add more
+simp restrictions or increase heartbeats. Instead the 1024 words are
+partitioned by their final four letters into 16 disjoint ordered blocks of
+64 words. Each block proves its own weighted cyclic-representative identity
+with a fresh local context. The auxiliary append-sum lemma preserves the
+original prefix/suffix multiplication order, and the main theorem recombines
+the 16 identities. The expected cyclic inventory remains
+(1,1,5,12,22,26,22,12,5,1,1) across insertion counts 0 through 10. All of
+this remains pending full Lean validation on the resulting SHA.
+
+## 2026-11-01 — Correct the final p=10 block-assembly tactic layout
+
+The 16-block proof reached the final cyclic theorem, but Lean reported an
+unsolved goal at TraceExpand.lean:8832 and then parsed the following tactic
+line as a new command. Inspection of the exact source showed the generator
+had emitted the first `rw` on the same physical line as `:= by`, while
+subsequent tactics were indented as a nested tactic block. Lean closed the
+proof layout after that first line; the block theorems themselves were not
+reported as failing. The correction puts `:= by` on its own line and places
+all assembly tactics uniformly inside the proof block. No mathematical
+statement or proof term in the sixteen suffix lemmas is changed. The new
+layout is pending full Lean validation.
+
+## 2026-11-01 — Correct final H10 assembly list normalization
+
+The exact failure at the p=10 final theorem was a rewrite-pattern mismatch,
+not a failed cyclic identity. After the append-expansion lemma and recursive
+unfolding, the target retained nested maps and sums over the singleton list
+`[1]`; the suffix-block theorem states the same content as an explicit sum
+of 64 traces. The assembly simp set had map-append/sum-append but not
+map-cons/sum-cons/map-nil/sum-nil, nor the initial `1 * A = A` reduction.
+The correction adds those list constructors and `Matrix.one_mul` to the
+assembly-only simp set before rewriting the 16 block theorems. This preserves
+order and multiplicity and leaves all 108 cyclic representative weights
+untouched. Validation is pending the next full Lean CI.
+
+## 2026-11-01 — Remove the trailing zero summands in the p=10 block assembly
+
+A follow-up read of the actual target emitted by CI shows precisely why the
+previous list-normalization patch did not suffice: after expanding the
+singleton prefix list, every explicit trace term is followed by a trailing
+`+ 0`. The 64-term suffix theorem has the same words in the same order but,
+correctly, no explicit trailing zeros, so Lean cannot match its left-hand
+side as a rewrite pattern. The assembly-only simp set is therefore extended
+with the additive identity rules `add_zero` and `zero_add`. This is the
+specific remaining syntactic normalization; no mathematical equality or
+coefficient is altered. Validation is pending a new full Lean build.
+
+## 2026-11-01 — Roll back the failed global p=10 cyclic-expansion experiment
+
+The generated `trace_orderedWordExpansion_ten_cyclic` construction was
+repeatedly unable to compile at its final rewrite stage (Lean runs
+`41277267963` and `41277758963`). The failures were not resolved by
+normalizing singleton lists or additive zero terms. The underlying issue is
+that a hand-flattened cyclic representative sum was being matched against
+nested ordered list sums with a different traversal/association structure.
+Continuing to patch this generated 1024-word theorem would be brittle and
+would not advance the mathematical H10 boundary assembly.
+
+The entire experimental append/cyclic block has therefore been removed from
+`TraceExpand.lean`, restoring that file exactly to the known green
+`af0249620e8582907e80756d1ee876941b130981` checkpoint. This rollback does
+not change the already-established H10 r=5 weighted aggregate or the
+existing p=10 stratum lemmas elsewhere. The next H10 step must be designed
+around the existing even-stratum boundary identities and ordered expansion
+lemmas, with a small proof that preserves list structure; no global 1024-word
+cyclic sum should be reintroduced without a materially different derivation.
+A fresh full Lean build and Python CI are required after this rollback.
+
+## 2026-11-01 — H10 four-N boundary sum: diagonal-pair collapse
+
+After the rollback, Lean full build passed on
+`dd0ec30c0efb8149b9de4fa75cee0d7d4309c73b`; Python tests were still
+running at the time of the source review. The next local H10 obligation is
+the four-N boundary kernel. Its existing theorem
+`sg_trace_p10_four_N_powers_boundary_sum` reduces each word to a nested
+sum over glued states x,y, but leaves the inner y-sum uncollapsed.
+
+Added the private parametric lemma
+`sg_trace_p10_four_N_boundary_sum_pair_diagonal`. For a ≤ 5, the already
+proved glued-support off-diagonal theorem forces the inner index y to equal
+x; the resulting expression is exactly the product of the two ordered
+corner/partner diagonal pairs represented by
+`glueRHS8_pair_sum [(a,b),(c,d)]`. No trace cyclicity, commutation of K
+powers, or new support hypothesis is used. The lemma preserves the order
+of the two pairs and applies to the H10 four-N boundary definition only.
+A new full Lean build and Python validation are required before relying on
+this addition.
+
+
+## 2026-11-01 — p=10 r=4 diagonal-pair aggregate
+
+The previous SHA `c0d9a5264f5b98c3e945016ccb6ad20d39b65a25` has a successful
+Lean formalization workflow. Both Python fast-test jobs passed; both slow
+convergence jobs were still executing when this step began. The next
+mathematical statement composes the exact 22-class r=4 trace boundary with
+the established off-diagonal support argument, replacing each nested
+(x,y)-sum by the corresponding ordered pair product `glueRHS8_pair_sum`.
+The 22 coefficients remain unchanged (20 terms of weight 10, two of weight
+5; total 210). No matrix factors are commuted, no cyclicity is newly used,
+and no cancellation against other insertion strata is claimed. This new
+aggregate remains pending complete CI.
+
+
+## 2026-11-01 — Reorder H10 r=4 aggregate after its prerequisites
+
+The first build of the r=4 aggregate did not reach the proof: Lean reported
+`Unknown identifier glueRHS8_pair_sum` at the aggregate statement, followed
+by the expected cascade for the pair-diagonal helper used in its proof.
+Inspection confirmed both declarations occur later in `GlueTrace.lean`.
+This is a declaration-order failure, not evidence against the diagonal
+collapse. The aggregate is moved, unchanged, to after the private pair-sum
+definitions and the H10 four-N diagonal-pair lemma. Revalidate with full
+Lean CI; do not add aliases or duplicate declarations to work around this.
+
+
+## 2026-11-01 — H10 r=6 three-pair diagonal aggregate
+
+After the r=4 aggregate passed full Lean compilation, the next level-local
+step reduces each r=6 boundary term to three ordered diagonal pairs. The
+proof specializes the existing three-kernel supported-diagonal lemma:
+the first and middle K powers satisfy the already-proved glued-support
+off-diagonal bound through degree five, and the final kernel remains as a
+diagonal entry. The stratum aggregate keeps all 22 cyclic representatives
+and their exact weights (20 of weight ten, two of weight five; total 210).
+This is a boundary normal form only, not an ordered-word-expansion bridge or
+an H10 recurrence. Validation is pending the new full CI run.
+
+
+## 2026-11-01 — r=6 proof normalization and aggregate packaging
+
+Lean's diagnostic on the first r=6 aggregate showed a scalar-expression
+mismatch in the helper proof: unfolding all three support-gated diagonal
+coefficient functions at once duplicated the same support conditional in
+each factor. The helper is restructured to keep these coefficients opaque
+through the three-kernel diagonal theorem and to discharge pair-product
+normalization separately by a pointwise support case split. The aggregate
+statement also exceeded the ordinary elaboration heartbeat budget because
+22 explicit triple-pair sums were placed directly in its type. They are now
+encapsulated in `glueRHS10_six_N_diagonal_form`, with a small named wrapper
+for each three-pair sum. This is a type-size/elaboration refactor only; all
+22 representatives, exact weights, and ordered pair data remain unchanged.
+No heartbeat limit is increased. Validate on the next full Lean build.
+
+
+## 2026-11-01 — Verify the r=6 aggregate type is genuinely packaged
+
+The previous packaging attempt had a code-generation splice error: it cut at
+the last repeated coefficient line and left most of the explicit triple-pair
+sum in the theorem type. The corrected declaration is rebuilt from the
+original r=6 stratum signature and cut at the first RHS boundary-term line.
+Before committing, the generated signature is checked to contain no
+`sg_trace_p10_six_N_boundary_term` and no `glueRHS8_pair_sum`, and exactly
+one reference to the named packed diagonal form. This is strictly a type
+elaboration correction. All 22 tuples and weights are retained in the packed
+definition and in the rewrite proof.
+
+
+## 2026-11-01 — Package both sides of the H10 r=6 aggregate and repair doc-comment syntax
+
+The Lean build on `a33e4e18814dcffc4c93d8a91df1848ed417e96b` identified an
+orphaned documentation comment before the r=6 packing declarations and a
+heartbeat timeout elaborating the large aggregate trace expression. The
+comment is now attached to the local three-kernel helper theorem. The
+unmodified 22-term trace LHS is packed as
+`sg_trace_p10_six_N_stratum_trace_sum`; the RHS remains
+`glueRHS10_six_N_diagonal_form`. The public theorem compares the packed
+forms, while its proof unfolds the LHS and reuses the established boundary
+identity and all 22 existing termwise reductions. This does not establish
+cross-stratum cancellation or close H10. Ordinary heartbeat settings and all
+mathematical data remain unchanged. Validation is pending.
+
+
+## 2026-11-01 — H10 r=6 aggregate recast at the boundary-term level
+
+The attempt to duplicate the existing 22-term trace expression in a private
+definition timed out under the normal heartbeat budget; its displaced doc
+comment also caused a parser error. Both are removed. The r=6 aggregate now
+starts directly from the 22-term weighted boundary-term RHS of the already
+proved `sg_trace_p10_six_N_stratum_boundary` theorem and reduces it to the
+packed ordered diagonal-pair form. This cleanly separates the established
+trace-expansion bridge from the new boundary-to-diagonal reduction and avoids
+re-elaborating the large trace expressions. All 22 classes and their exact
+weights (20 of weight ten, two of weight five) remain unchanged. This is
+still only the r=6 stratum normal form, not the full H10 assembly. Validation
+is pending.
+
+
+## 2026-11-01 — Restore H8 verbatim and isolate H10 r=6 work
+
+CI on `b57209e97c69a775799ba153577fdc5e99b7e939` failed because a previous
+source splice replaced the existing H8 six-N pair-diagonal section and its
+supporting normal-form declarations. The unknown identifiers reported in
+`glueRHS8_eq_diagonal_form` were a consequence of that accidental deletion,
+not a mathematical issue in H8. The file is reconstructed from the last
+fully green Lean baseline `954e8d168467b1f42c4a74ec64589612f9c32cc1` with
+the four H10 r=6 declarations appended at the end. The restored H8 region is
+checked byte-for-byte against the green baseline. All 22 H10 r=6 terms and
+weights are retained; the aggregate remains a boundary-term normal form,
+not an H10 end-to-end closure. Validation is pending.
+
+
+## 2026-11-01 — Correct namespace placement of H10 r=6 declarations
+
+The latest Lean failure showed the isolated H10 additions after the file's
+final `end EvgenyTheorem`, outside the namespace that defines `WSG`, `Axis`,
+`sgK`, and the pair-sum support. They are now moved unchanged to immediately
+before that namespace close. The original green baseline source and all H8
+proofs are retained byte-for-byte. This fixes only declaration scope; no
+mathematical statement, representative, coefficient, or proof term changes.
+Validation remains pending.
+
+
+## 2026-11-01 — H10 r=2 singleton-pair diagonal form
+
+The existing p=10 two-N boundary theorem already reduces the five classes
+`(1,9)`, `(2,8)`, `(3,7)`, `(4,6)`, and `(5,5)` to explicit glued-root /
+partner diagonal sums. These are now packaged into
+`glueRHS10_two_N_diagonal_form` and connected to the trace boundary by
+`sg_trace_p10_two_N_stratum_pair_diagonal`. Exact weights 10,10,10,10,5
+are preserved (sum 45). The proof uses only definitional expansion of the
+existing pair-sum helper; no matrix product is commuted. This supplies the
+r=2 component needed for a later all-even-strata H10 diagonal assembly.
+Validation is pending.
+
+
+## 2026-11-01 — Repair documentation-comment attachment in H10 r=2 insertion
+
+The r=2 normal-form insertion left the existing four-N theorem's doc-comment
+orphaned immediately before the new r=2 declaration, causing Lean's parser
+error at line 3629. The original comment is moved verbatim to the line
+immediately preceding `sg_trace_p10_four_N_stratum_pair_diagonal`. This is a
+source-layout repair only; the new r=2 statement and proof and all r=4 proof
+content are unchanged. Validation is pending.
+
+## 2026-11-01 — H10 r=8 boundary-to-diagonal normal form
+
+The existing p=10 eight-N theorem supplies five exact cyclic boundary classes
+with weights 10, 10, 10, 10, and 5. Added a local reduction of one
+eight-N boundary term to four ordered corner/partner diagonal pairs. The
+proof collapses the two internal supported diagonal sandwiches in their
+original order, then uses the existing two-kernel supported-diagonal trace
+lemma for the endpoint sum. It needs off-diagonal vanishing only for the
+first, second, and third kernel powers in the eight-factor word; the final
+kernel remains at the right endpoint. All five classes and their exact
+multiplicities are carried into a named aggregate normal form.
+
+This is an r=8 stratum boundary normal form only. It does not establish
+cancellation with the r=2, r=4, r=6, or r=10 strata, does not bridge the
+ordered-word expansion, and does not prove the H10 residual recurrence.
+The source change requires a full Lean build and both Python test suites
+before it is treated as validated. H6 and H8 are not modified.
+
+## 2026-11-01 — H10 r=8 Lean failure diagnosis and focused associativity repair
+
+The full Lean build for 4c6722e5a64cc82f25eb794364b68af77255d574
+failed in the new sg_trace_p10_eight_N_boundary_term_pair_diagonal.
+The primary diagnostic was a deterministic 200000-heartbeat whnf timeout
+at the first congr 1 used to reassociate a Matrix.trace expression
+(GlueTrace.lean:6075); the declaration-level timeout at line 5958 and the
+unknown private helper reported by the later aggregate were cascading from
+that failed proof. No type mismatch or mathematical counterexample was
+reported in the diagonal-sandwich identities.
+
+The local r=6 proof already uses the stable pattern
+calc ... := by simp [Matrix.mul_assoc] directly on a trace expression.
+The r=8 hreduce step is now rewritten in that form, with an explicit
+change to expose the matrix product before the calculation. This changes
+only associativity normalization: all four kernel powers, support premises,
+ordered factors, and five class weights are unchanged. A fresh full Lean
+build is required; this correction is not treated as validated until it
+passes. Python CI for the previous SHA was still running at the time of
+diagnosis. H6 and H8 source regions remain untouched.
+
+
+## 2026-11-01 — H10 r=4 ordered-pair normal-form packaging
+
+Starting point: branch `work/h8-h10-exact-recurrence-certificates`, parent commit `3e2cd9c0805aae4519c0a8fbb4f563bd9c695ac7`.
+Added private definition `glueRHS10_four_N_diagonal_form` containing exactly the existing 22 ordered `glueRHS8_pair_sum` terms from `sg_trace_p10_four_N_stratum_pair_diagonal`. Replaced only that theorem's expanded right-hand side with the named definition and unfolded it at the start of the existing proof. The left-hand side, `sg_trace_p10_four_N_stratum_boundary`, all 22 termwise pair-diagonal rewrites, representatives, pair order, and coefficients are retained.
+
+Static census: 22 classes in the original order; 20 coefficients 10 and two coefficients 5; total weight 210 = `Nat.choose 10 4`. The two period-two classes remain `(1,4,1,4)` and `(2,3,2,3)`. No matrix factors or exponents are permuted. No placeholder or heartbeat change was introduced by this edit.
+
+Mathematical scope: packaging of the already-proved r=4 boundary-to-diagonal identity only. It proves no cross-stratum cancellation, ordered-word bridge, orientation-independence, or H10 closure. Full Lean and Python 3.11/3.12 fast/slow CI results are pending for the resulting commit. Next mathematical barrier, after validation: a recursive ordered-word-to-cyclic-strata bridge for p=10 that preserves order, multiplicity, and periodic orbit weights.
+
+
+CI validation for source commit `c0313f16304fa4e86a958d1537bcc5a80d1035e8`:
+- Lean full build: success, run `41311381921`.
+- Python workflow: success, run `41311381895`; Python 3.11 and 3.12 both passed Fast and Slow convergence tests.
+
+
+## 2026-11-01 — H10 recursive word-count stratification foundation
+
+Starting point: branch `work/h8-h10-exact-recurrence-certificates`, parent commit `c0313f16304fa4e86a958d1537bcc5a80d1035e8`.
+Added `orderedWordExpansionByCount`, a recursive list of the p-letter matrix words containing exactly r occurrences of the second letter. Its recursion splits by the final factor: the A-ending block precedes the B-ending block, matching the order in `orderedWordExpansion` and preserving all occurrences even when matrix products coincide. Proved `orderedWordExpansionByCount_length`: every stratum has exactly `Nat.choose p r` list entries, and added p=2 and p=3 census checks.
+
+This is the first count-stratification lemma only. It does not yet prove that the full ordered expansion is the disjoint union of these strata under trace, does not rotate or group cyclic words, and does not establish the p=10 orbit coefficients or any boundary identity. No H6/H8 theorem is modified. CI for `90d83d197346df54b88cb44be671bdfe4f3872b7`: full Lean build passed (run `41312962957`); Python 3.11/3.12 Fast and Slow tests passed (run `41312963195`).
+Next: prove a list-level reconstruction/decomposition theorem connecting the count-stratified lists to `orderedWordExpansion` while preserving order and multiplicity; verify p=2 and p=3 before introducing cyclic gap representatives.
+
+
+## 2026-11-01 — H10 all-count-strata reconstruction identity
+
+Base: `90d83d197346df54b88cb44be671bdfe4f3872b7` on `work/h8-h10-exact-recurrence-certificates`. Added `orderedWordExpansionByCount_eq_nil_of_lt`, deriving out-of-range empty strata from the exact binomial length theorem, and `orderedWordExpansionByCount_sum_eq_pow`, intended to reconstruct `(A+B)^p` as the sum of all exact-r matrix-list sums. The proof follows the final-factor recursion; it does not commute matrix factors or identify duplicate word occurrences.
+
+Scope: count-stratum reconstruction only. It does not yet prove cyclic trace grouping, orbit weights, or H10 closure. Lean and Python 3.11/3.12 Fast/Slow CI for this source commit are pending.
+Next: validate this induction by full Lean build; if successful, derive the trace-sum corollary, then tackle cyclic gap-composition orbits with exact periodic weights.
+
+
+## 2026-11-01 — H10 count-stratum reconstruction: compiler-driven correction
+
+The first full Lean build of source commit `7b487c484cc1d33ef84ae1e6e42f28fa3b5673ed`
+failed only in the newly added `orderedWordExpansionByCount_sum_eq_pow`
+proof (run `41314657418`, target `EvgenyTheorem.TraceExpand`). The compiler exposed
+two additive-normalization mistakes: the `Finset.sum_range_succ'` expansion places
+the shifted sum before the zero stratum, and the final reassociation/permutation
+of additive matrix terms was not definitionally reflexive.
+
+The correction keeps all matrix products in their original order. It explicitly
+uses `add_comm` for the inner sum split and `abel` only for the final equality
+in the additive commutative group of matrices. No matrix multiplication factors
+are commuted, no hypotheses or heartbeats are changed, and no placeholder is added.
+The corrected source requires a fresh full Lean build; Python workflow
+`41314657466` was still running when this correction was prepared.
+
+
+## 2026-11-01 — Validate H10 exact-count reconstruction and add its trace form
+
+The corrected matrix-level identity
+`orderedWordExpansionByCount_sum_eq_pow` now passes the full Lean
+formalization build on commit
+`ec85d3be723c4e0ada4b4aca2787e39eed759f39`
+(Lean workflow run `41315279912`, conclusion: success).
+The source correction was limited to additive normalization: the range split
+uses explicit `add_comm`, and the final reassociation of additive matrix
+terms uses `abel`; matrix multiplication order is unchanged.
+
+Added `trace_orderedWordExpansionByCount_sum_eq`, obtained by applying
+Mathlib's additive `Matrix.trace_sum` to the finite outer sum and the
+existing `trace_sum_list` to each stratum. This is the trace-level
+exact-count decomposition of `Tr((A+B)^p)), with all word occurrences
+and multiplicities retained. It is not a cyclic-orbit grouping and does
+not establish H10 closure.
+
+At the time of this entry, Python workflow `41315279893` for
+`ec85d3be723c4e0ada4b4aca2787e39eed759f39` remained in progress;
+its final 3.11/3.12 Fast/Slow results must be recorded separately.
+Next mathematical obligation: use the exact-r trace decomposition to
+derive cyclic-composition orbit grouping with correct periodic stabilizer
+weights, then connect those weighted groups to the existing H10 boundary
+strata. Avoid flattening all 1024 words or using a global giant `simp`.
+
+
+## 2026-11-01 — H10 cyclic gap-orbit trace identity
+
+Added a compact generic representation cyclicGapTrace K N gaps, in which
+each positive gap contributes the ordered matrix block K^a * N.
+Proved that rotating the gap list leaves its trace unchanged, using the
+already established trace cyclicity for a split list of matrix factors.
+Defined the cyclic orbit as the finite set of distinct list rotations;
+the orbit trace sum is therefore its true cardinality times the
+representative trace, even when a tuple is periodic.
+
+Added machine-checked cardinality checks for the p=10 exceptional periodic
+tuples: orbit size two for the r=4 classes (1,4,1,4) and (2,3,2,3);
+orbit size three for the r=6 classes (1,1,3,1,1,3) and (1,2,2,1,2,2);
+orbit size four for the r=8 periodic class (1,1,1,2,1,1,1,2);
+and orbit size one for the all-ones r=10 tuple. These are exactly the
+stabilizer reductions behind the coefficients 5 and 1 in the existing
+p=10 stratum tables.
+
+Scope: this establishes the algebraic trace invariance and distinct-orbit
+multiplicity for a given gap representative. It does not yet prove that
+the sum over the exact-count binary words equals the sum over all positive
+gap compositions, nor does it establish a full H10 cancellation. The
+next bridge remains the marked-letter/composition correspondence with its
+p/r multiplicity factor. H6 and H8 are untouched. Full Lean and Python
+3.11/3.12 Fast/Slow CI are required for this commit.
+
+
+## 2026-11-01 — Repair cyclic gap trace rotation proof from Lean diagnostics
+
+The first build of `25fb663188490aee06375fa96751e461f09c7e68`
+failed in `cyclicGapTrace_rotate` (run `41317154470`). The first
+`rw` sequence already closed the first calc equality, so its trailing
+`rfl` produced a "No goals to be solved" error. The remaining actual goal
+was not definitional equality: it was precisely the trace cyclicity step
+`trace (drop.prod * take.prod) = trace (take.prod * drop.prod)`.
+The proof now states that step explicitly with `Matrix.trace_mul_comm`,
+then uses `take_append_drop` and `List.prod_append` to reassemble
+the original product. No factors inside any block are commuted.
+
+Python run `41317154445` passed on both 3.11 and 3.12; the source failure
+was Lean-only. A fresh complete Lean build is required for this repair.
+
+
+## 2026-11-01 — Correct the scoped list rewrite in H10 cyclic gap rotation
+
+The follow-up Lean run `41318805829` on
+`dd354ff42e995f3b72f2e681547c9fff5bbce407` reached the explicit
+`Matrix.trace_mul_comm` step successfully. Its remaining failure was
+caused by `rw [← hsplit, List.prod_append]`: rewriting `blocks` globally
+also rewrote the nested lists `blocks.take j` and `blocks.drop j`
+inside the left side. The repair isolates the product identity first:
+`(blocks.take j).prod * (blocks.drop j).prod = blocks.prod`,
+using `List.prod_append` and `List.take_append_drop`, then rewrites only
+the whole-list product in the trace goal. This leaves both sublists untouched.
+
+A source audit also found that the cyclic-orbit sum proof had applied
+`Finset.sum_congr` to an equality between identical sums. The corrected
+statement compares the orbit sum with the constant sum of the representative
+trace, using `cyclicGapTrace_eq_of_mem_orbit` termwise, then simplifies
+the constant finite sum to the orbit cardinality. Python for the failed
+source commit was still in progress when this correction was prepared.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI are required.
+
+
+## 2026-11-01 — H10 symbolic word layer for the marked-letter bridge
+
+The full Lean build for `c3697988e0ccaa56233c262a0c5775eb7aead5cb`
+passed (run `41319496343`). Python 3.11 and 3.12 Fast tests had passed
+at the time of this source step; both Slow convergence jobs were still
+running and must be recorded after completion.
+
+Added `binaryWordExpansionByCount p r`, a recursive list of symbolic
+Bool-words with exactly r true letters. Its final-letter recursion has
+the same order as `orderedWordExpansionByCount`: false-ending words first,
+true-ending words second. Added `binaryWordMatrix` and proved that the
+existing matrix-word list is exactly the pointwise image of this symbolic
+list. The map is an occurrence-preserving list map, so distinct words that
+evaluate to the same matrix are not collapsed. Added the trace-sum corollary.
+
+This supplies the symbolic positions needed for the marked-letter cut.
+It does not yet prove the marked-word bijection, the p/r identity, or the
+weak-composition orbit sum. The next step is to formalize words with a
+distinguished true position, rotate that position to the final slot, and
+identify the canonical final-true words with weak gap compositions.
+H6 and H8 remain untouched. Full Lean and Python 3.11/3.12 Fast/Slow CI
+are required for this addition.
+
+
+## 2026-11-01 — H10 symbolic trace-map proof correction
+
+The full Lean build for `170a88e3d451a5c927fe0caa7a37e3fb59748d61`
+failed only in `trace_orderedWordExpansionByCount_eq_binaryWordExpansionByCount`
+(run `41320694718`, target `EvgenyTheorem.TraceExpand`, line 2406).
+After rewriting the matrix-word list and simplifying `List.map_map`, Lean
+left equality of two mapped functions: `Matrix.trace ∘ binaryWordMatrix`
+and the pointwise lambda using matrix `.trace`. This is extensional equality,
+not a list-level simplification. The proof now applies
+`List.map_congr_left`, introduces an arbitrary symbolic word, and closes the
+pointwise equality by reflexivity. No matrix algebra, word order, or
+multiplicities are changed. A fresh complete Lean build is required.
+
+
+## 2026-11-01 — Lift H10 trace-map congruence through the list sum
+
+The first trace-map repair commit `47232d1eb7237cf4050a54a1c90cbc534d609961`
+added the pointwise map congruence but omitted the outer congruence step:
+the theorem's target is equality of `List.sum` values, while
+`List.map_congr_left` concludes equality of lists. The required Lean goal
+after `List.map_map` is therefore handled in two explicit layers:
+`congrArg List.sum`, followed by `List.map_congr_left` and pointwise
+reflexivity. This keeps the fix at the correct type level and does not alter
+the symbolic word list, matrix evaluation, or multiplicities. The earlier
+attempt's Lean workflow was still running when this refinement was made;
+the new commit must pass a fresh full Lean build and Python 3.11/3.12
+Fast/Slow checks before further mathematics.
+
+
+## 2026-11-01 — Validate H10 symbolic trace bridge
+
+Commit `010979d0bea48c4138742819aabafdd990b7f019` passed the complete
+Lean formalization build (Actions run `41321448729`). Python 3.11 and
+3.12 both passed Fast tests and the level-7 Slow convergence tests
+(Actions run `41321448737`). The trace-map congruence repair is therefore
+validated on that exact SHA.
+
+## 2026-11-01 — Canonical H10 gap-word evaluation
+
+Added `binaryFalseRun` and `binaryWordGapEncoding`. A finite gap list
+`[a₁,...,aᵣ]` is encoded as
+`false^a₁ ++ [true] ++ ... ++ false^aᵣ ++ [true]`; each gap is the
+number of A factors immediately before its B. Proved the encoded word
+length is `gaps.sum + gaps.length`, and proved by ordered list-product
+identities that its matrix evaluation is exactly
+`(A^a₁ B) ... (A^aᵣ B)`. Consequently its trace is the already-defined
+`cyclicGapTrace` for the same gap list.
+
+This fixes the orientation convention for the marked-letter cut: the
+marked B is the final letter of the canonical representative. The result
+does not yet prove that every exact-count word with a marked B is uniquely
+represented by a rotation offset and such a gap list, and does not yet
+derive the `p/r` trace identity. H6 and H8 are untouched. The new code
+requires fresh full Lean and Python 3.11/3.12 Fast/Slow CI.
+
+
+## 2026-11-01 — Exact letter counts for H10 canonical gap words
+
+The canonical gap encoding added in `fe98156` passed the full Lean build
+(run `41322976893`). Python 3.11 passed both Fast and Slow tests in run
+`41322976871`; Python 3.12 Fast was still running when this step began,
+so its Slow and final job conclusion must be checked separately.
+
+Added filter-based counting lemmas for `binaryWordGapEncoding`: its true
+symbols are exactly one delimiter per gap, and its false symbols are the
+false runs whose lengths are the gap entries. Thus the encoded word has
+exactly `gaps.length` second-letter occurrences and exactly `gaps.sum`
+first-letter occurrences. Together with the existing length theorem this
+makes both letter counts explicit, not merely inferred from total length.
+
+This is the count side of the weak-composition representation. It does not
+yet establish that an arbitrary binary word with a marked true position
+can be uniquely rotated into one such encoding. The next task remains the
+rotation-and-cut bijection, with the chosen true position carried as data.
+H6 and H8 remain untouched. Full Lean and Python 3.11/3.12 Fast/Slow CI
+are required for this addition.
+
+
+## 2026-11-01 — Repair the H10 gap-word filter induction
+
+The full Lean run `41323906052` on `805bda2fcb2944d413a0043b08c036a22bdcd00a`
+failed in exactly two declarations, at lines 2469 and 2479:
+`binaryWordGapEncoding_filter_true` and
+`binaryWordGapEncoding_filter_false`. In each cons case, unrestricted
+`simp [binaryWordGapEncoding, ... , ih]` unfolded the recursive
+`binaryWordGapEncoding rest` into `List.flatMap`, while the induction
+hypothesis remained stated using the named definition. Hence Lean could not
+match the induction hypothesis to the tail filter. The block-level filters
+themselves were not the issue.
+
+The repair keeps the tail encoded word opaque: each cons case first changes
+the target to an explicit append of the one-gap block and
+`binaryWordGapEncoding rest`, and only then simplifies the two append
+filters, the one-block filter, and the induction hypothesis. Thus the
+recursive hypothesis is applied at its exact syntactic boundary. No
+definition or mathematical content is changed.
+
+At the time of this repair, Python run `41323906124` status was:
+test (3.12): in_progress/null; Fast=running, Slow=pending; test (3.11): in_progress/null; Fast=success, Slow=pending. This Python result is independent of the Lean failure and
+must be recorded after completion. A fresh full Lean and Python 3.11/3.12
+Fast/Slow CI is required for this correction.
+
+
+## 2026-11-01 — Finish the H10 true-delimiter filter induction
+
+Lean run `41324872449` on `174936908daa7b7e6b779b9c01d59b5e0dba36da`
+passed the recursive filter rewrite up to one final cons equality:
+`true :: List.replicate rest.length true =
+List.replicate (rest.length + 1) true`. The remaining goal is exactly
+the successor equation for `List.replicate`; the false-filter theorem
+compiled on this source. The proof now includes `List.replicate_succ`
+in the local simplification set, so the right-hand replicate unfolds at
+the successor index and matches the explicit head true.
+
+This is a proof-normalization correction only. It changes neither the
+canonical gap encoding nor the separate letter-count statement. Python
+run `41324872447` status when this correction was prepared: test (3.11)=in_progress/null; Fast=running, Slow=pending; test (3.12)=in_progress/null; Fast=running, Slow=pending.
+Record its final result when complete. Fresh full Lean and Python
+3.11/3.12 Fast/Slow CI are required.
+
+
+## 2026-11-01 — Validate gap letter counts and expose unique gap decoding
+
+Commit `1168f9b5fd74ebf5e85e0cdae2fbe67972fac519` passed the complete
+Lean build (run `41325480306`). Python 3.12 Fast and Slow both passed
+in run `41325480343`; the Python 3.11 job was still running when this
+source step was prepared: test (3.12): completed/success; Fast=success, Slow=success; test (3.11): in_progress/null; Fast=success, Slow=pending. Its final state must be recorded after
+completion.
+
+Added a first-delimiter decoder lemma. In an encoding beginning with gap
+`a`, taking the maximal prefix of false bits returns exactly
+`binaryFalseRun a`; this recovers the first gap. Then proved
+`binaryWordGapEncoding_injective`: the first run determines the first
+entry by its length, and cancellation of the common first run plus its
+true delimiter reduces equality to the encodings of the tails. Empty versus
+nonempty gap lists are distinguished by the previously proved exact true
+count.
+
+This is a genuine inverse-uniqueness result for the canonical gap encoding.
+It does not yet encode arbitrary marked words, construct the rotation offset,
+or prove the global `p/r` weighted trace formula. H6 and H8 remain untouched.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required.
+
+
+## 2026-11-01 — Repair the H10 first-delimiter Lean proof
+
+Full Lean run `41326478086` on `013c8ca32bf95a657e8a4ac5e6fa5bbf448aa0c7`
+failed only in `binaryFalseRun_takeWhile_before_true`, at
+`TraceExpand.lean:2512`. In the successor case, broad simplification
+normalized `[true] ++ tail` to `true :: tail` before applying the
+induction hypothesis, while the hypothesis retained the append form. The
+two terms are definitionally compatible after exposing the leading false
+symbol, so the proof now changes the target to an explicit cons equality
+and closes it with `congrArg (List.cons false) ih`. This avoids broad
+simplification and preserves the exact list boundary. The injectivity
+argument and all matrix/trace statements are unchanged.
+
+Python run `41326478084` completed successfully on the same source:
+Python 3.11 and 3.12 Fast and Slow tests all passed. The focused Lean
+repair and both journal updates are committed separately; fresh full
+Lean and Python 3.11/3.12 Fast/Slow CI is required for that new commit.
+H6 and H8 remain untouched; the marked-word rotation bijection and
+the `p/r` trace identity remain open.
+
+
+## 2026-11-01 — Validate H10 first-delimiter repair and add marked-cut trace transport
+
+The repair commit `f2706e00e5c0a9129701da037d2e92711f24d4b2` passed
+the complete Lean formalization build (run `41327890185`). Both Python
+versions passed their Fast and Slow jobs in run `41327890251`. Thus the
+first-delimiter decoding and canonical gap-encoding injectivity are now
+validated on the branch.
+
+The next H10 step introduces `binaryWordMarkedRotate prefix suffix`,
+which represents cutting the word `(prefix ++ [true]) ++ suffix`
+immediately after its distinguished true symbol. Proved that this cut
+preserves total word length. Also proved equality of the two matrix-word
+traces: the original word evaluates to
+`(eval(prefix) * B) * eval(suffix)`, while the cut word evaluates to
+`eval(suffix) * (eval(prefix) * B)`; `Matrix.trace_mul_comm` exchanges
+only these two grouped factors. The order of all factors inside each
+prefix/suffix is retained.
+
+This is a trace-preserving marked cut, not yet a decoder for arbitrary
+binary words and not the marked-word/gap-list bijection. The remaining
+work is to turn the cut word ending in true into a unique gap list, prove
+the corresponding reconstruction and count the rotation offsets; only
+then can the factor `p/r` be derived. H6 and H8 remain untouched.
+Fresh full Lean and Python 3.11/3.12 Fast/Slow CI is required for the
+new source commit.
+
+
+## 2026-11-02 — Correct the H10 marked-cut parser error
+
+The Lean full build for `a40f1fa257c22e8389eb91c0ea614e398d01edbb`
+failed at `TraceExpand.lean:2597` with the first diagnostic
+`unexpected token 'prefix'; expected '_' or identifier`. The identifiers
+`prefix` used as theorem/definition binders collide with Lean's reserved
+`prefix` syntax. The diagnostics reported at lines 2603–2654 are parser
+cascades from this single reserved-word collision, not independent
+type-level or algebraic failures.
+
+Renamed the two list binders in the marked-cut definition and its lemmas
+to `pre` and `post`. The definitions, theorem propositions up to bound
+variable names, proof steps, grouped matrix factors, and use of
+`Matrix.trace_mul_comm` are otherwise unchanged. Python 3.11 and 3.12
+Fast and Slow jobs all passed on the failed source commit
+(`41346027678`); a new full Lean build and fresh Python validation are
+required for the rename commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Add a canonical H10 gap decoder
+
+The source baseline `bfc2996c235e2e25f6da71bf4d637bac158b9d9a` was
+rechecked before editing. Its complete Lean build passed in Actions run
+`41361034955`; the Python 3.11 and 3.12 Fast and Slow jobs all passed in
+run `41361034890`.
+
+Added a structural decoder `binaryWordGapDecodeAux` that counts false
+symbols until each true delimiter, emits that completed run, and resets its
+counter. Proved that the decoder output length equals the number of true
+symbols for every input word, and proved the left-inverse law
+`binaryWordGapDecode (binaryWordGapEncoding gaps) = gaps`. The helper
+`binaryWordGapDecodeAux_falseRun_block` isolates the list-level scan across
+one encoded false-run/delimiter block; the proof does not reorder matrix
+factors or rely on finite enumeration.
+
+Scope is intentionally limited: the left-inverse theorem applies to
+canonical gap encodings. Reconstruction of an arbitrary cut word ending in
+true, the marked-word/offset bijection, and the trace multiplicity factor
+\(p/r\) are still open. The new source commit requires a fresh complete
+Lean build and Python 3.11/3.12 Fast/Slow validation. H6 and H8 remain
+untouched.
+
+
+## 2026-11-02 — Prove reconstruction for H10 marked-cut words
+
+The preceding decoder commit `d5d1e2013944b0a4c2692c08ec3333555403c57e`
+passed the complete Lean formalization build (Actions run
+`41373363044`). Python 3.11 Fast tests also passed in run
+`41373363082`; its Slow job and Python 3.12 validation were still running
+when this next mathematical step was started.
+
+Added `binaryWordGapPendingAux`, which tracks the unfinished false run at
+the end of a scan, and proved the exact reconstruction invariant
+`binaryWordGapDecodeAux_reconstruct`: emitted canonical gap blocks plus
+the pending false suffix equal the initial false run followed by the input
+word. Proved that appending a final true delimiter forces the pending run
+to zero, and hence established
+`binaryWordGapDecode_roundTrip_append_true` for every word of the form
+`pre ++ [true]`. Together with the previously proved left-inverse law and
+canonical encoding injectivity, this gives unique gap decoding for every
+marked-cut word ending in true.
+
+This is not yet the bijection with marked positions/rotation offsets in the
+original cyclic word, and it does not yet prove the multiplicity identity
+or factor \(p/r\). Those remain explicit H10 obligations. The new source
+commit requires a fresh complete Lean build. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Derive the H10 gap-composition constraints after a marked cut
+
+The marked-cut reconstruction commit `43ea62dd3126ba190c8ff5484e5bbf56dc21beb9`
+passed the complete Lean build (Actions run `41374184498`). Python 3.11
+Fast and Slow tests passed in run `41374184462`; Python 3.12 was still
+running at the time this step was started.
+
+Added `binaryWordGapDecode_stats_append_true`: for every cut word ending
+in true, the decoded gap list has one entry per true delimiter and its gap
+sum equals the number of false letters. Specialized this to the marked cut
+`post ++ pre ++ [true]` in `binaryWordMarkedRotate_gap_stats`, proving
+that the decoded list has length equal to the original marked word's true
+count and sum equal to its false count. The proof uses the established
+round-trip reconstruction, exact encoded length, and an explicit count
+comparison across the cyclic cut; no matrix factors are rearranged.
+
+The offset remains `post.length`; proving a bijection between marked
+word-occurrences and (gap list, offset) pairs is still open. Consequently
+the exact marked-sum multiplicity and the factor \(p/r\) are not yet
+established. A fresh full Lean build and Python 3.12 validation are required
+for this source commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Place H10 marked-cut statistics after their dependencies
+
+During a source-order review of commit `33324c8cc71903b876dc6ec0c613003d23d60e4f`,
+found that `binaryWordMarkedRotate_gap_stats` had been inserted before the
+definition `binaryWordMarkedRotate` and its length theorem. This was a
+declaration-order issue: the theorem's proof depends on both declarations,
+so it must appear after them in Lean. Moved only that theorem below
+`binaryWordMarkedRotate_length`; its statement and proof are unchanged.
+The generic `binaryWordGapDecode_stats_append_true` remains where it is,
+since it depends only on earlier decoder results. The branch was checked
+against the expected parent before this focused reorder. Fresh full Lean
+build is required; no CI result is claimed for the reordered source yet.
+H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair marked-cut gap statistics after Lean diagnostics
+
+The complete Lean build for `324931607ff1aecf3b11b91111ae6dab531cea9f`
+failed only in `binaryWordMarkedRotate_gap_stats`. The first two errors
+were arithmetic normalization goals left by `simp` in the true-filter
+counts: the two sides differed only by association of natural-number sums.
+The third error showed that the proof did not provide Lean with a usable
+identity identifying the number of false symbols in the cut word with the
+number in the original word; attempting to derive the requested subtraction
+from lengths alone left the arithmetic underconstrained.
+
+Reworked the proof using explicit true-filter and false-filter counts.
+The true-count simplifications are now followed by `omega` only for the
+remaining associativity/commutativity arithmetic. The round-trip equation
+is mapped through the false-filter length, and the existing theorem
+`binaryWordGapEncoding_false_count` identifies this with `gaps.sum`.
+False-filter counts are then compared across the two cuts, and a generic
+Boolean-list partition identity (true count + false count = word length)
+closes the subtraction statement. The theorem statement and all preceding
+mathematical definitions are unchanged. This repair commit needs a fresh
+full Lean build and Python 3.11/3.12 Fast/Slow checks. H6 and H8 remain
+untouched.
+
+
+## 2026-11-02 — Simplify the final H10 gap-statistics proof
+
+The full Lean build for `7f31b6ab5b433f3a46f4dc10a607091e51faf6de`
+reduced the H10 statistics failure to one goal: the final `omega` call in
+`binaryWordMarkedRotate_gap_stats` could not connect a subtraction with
+the independently maintained true/false-filter counts. The preceding
+explicit filter lemmas compiled; the failure was localized to the final
+arithmetic step.
+
+Removed the redundant false-filter accounting from that theorem. It now
+reuses the already proved and fully compiled
+`binaryWordGapDecode_stats_append_true` on the rotated word
+`(post ++ pre) ++ [true]`. The remaining right-hand expression is
+rewritten using the established `binaryWordMarkedRotate_length` and
+`hcount` facts. This removes the failing `omega` step rather than adding
+more arithmetic automation. All other statements and declarations are
+unchanged. A new complete Lean build is required; no success is claimed
+until Actions confirms it. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Identify the marked cut with an actual cyclic list rotation
+
+The base commit `555fa853d1dc32dfa12333ce01842049d473ddaa` passed the
+complete Lean build (Actions run `41376710297`). Added
+`binaryWordMarkedRotate_eq_rotate`: for the marked word
+`(pre ++ [true]) ++ post`, moving the marked true symbol to the end is
+exactly `List.rotate` by the amount
+`word.length - post.length = (pre ++ [true]).length`. The proof applies
+Mathlib's `List.rotate_append_length_eq` to the prefix through the marked
+symbol, then uses list associativity. This records the shift convention
+explicitly: the marked symbol's zero-based position is `pre.length`, the
+left-rotation amount is `pre.length + 1`, and `post.length` is the
+complementary trailing-suffix length. Thus `post.length` should not be
+mistaken for the left-rotation amount.
+
+This is a list-level bridge only. The inverse reconstruction of a marked
+word from its decoded gap list and rotation amount, and the exact marked
+multiplicity identity giving \(p/r\), remain open. Full Lean validation
+for this new commit is required. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Reconstruct the original H10 marked word from gaps and offset
+
+On the Lean-green base commit `36760d030f9df7e79ad5792cb77027d6778430cd`,
+added the inverse rotation formula
+`binaryWordMarkedRotate_rotate_back`: rotating the cut word
+`post ++ pre ++ [true]` by `post.length` recovers the original word
+`pre ++ [true] ++ post`. Proved that this offset is strictly below the
+original word length, so it is a valid finite position rather than an
+unbounded or ambiguous shift.
+
+Combined this with the already established round-trip decoder to obtain
+`binaryWordMarkedRotate_decode_reconstruct`: the original marked word
+is reconstructed exactly by rotating the canonical encoding of its decoded
+gap list by the suffix offset. Also added
+`binaryWordMatrix_trace_marked_eq_cyclicGapTrace`, expressing the trace
+of every marked word as the cyclic gap trace of the decoded gap list.
+
+This supplies the explicit reconstruction direction and trace transport
+needed for the marked-word/(gap list, offset) correspondence. It does not
+yet establish surjectivity/uniqueness of that correspondence or the global
+multiplicity identity giving the factor \\(p/r\\). The complete Lean
+build is the acceptance check for this source step. H6 and H8 remain
+untouched.
+
+
+## 2026-11-02 — Prove reverse decoding for every admissible gap-list offset
+
+The inverse reconstruction and trace transport commit
+`999daaf14d7b6bbe8fb7f2d0b82ce255af986612` passed the complete Lean
+build (Actions run `41378939870`). On that verified base, added
+`binaryWordGapEncoding_rotate_back`: for every offset strictly below the
+encoded word length, rotating the canonical gap word by that offset and
+then by its complementary offset returns the canonical word. The proof
+uses the pinned Mathlib theorem `List.rotate_rotate`, the natural-number
+identity `offset + (length - offset) = length`, and
+`List.rotate_length`.
+
+Derived `binaryWordGapEncoding_rotate_decode`: after this inverse cut,
+the existing decoder recovers exactly the input gap list. Thus both sides
+of the reconstruction relation are now explicit: marked words decode to
+their gap data and offset, and canonical gap data with a legal offset
+rotates back to a word whose inverse cut decodes to the original gaps.
+
+This remains a structural inverse statement, not yet the full finite
+bijection or the trace multiplicity identity (r S_{m words}=p
+S_{m gaps}). Those are the next obligations. Full Lean validation is
+required for this commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Construct the marked-position decomposition for every H10 offset
+
+Added binaryWordGapEncoding_getLast? and
+binaryWordGapEncoding_rotate_decompose. For each legal offset k<p,
+the latter constructs pre := (word.drop k).dropLast and
+post := word.take k, and proves word.rotate k = (pre ++ [true]) ++ post,
+post.length = k, and pre.length = p-k-1. It also proves that moving the
+marked delimiter to the end recovers the original canonical encoding and
+hence the original gap list.
+
+The initial Lean build exposed two tactic errors. The first attempted
+correction removed the simp needed to solve true ∈ some true, so the
+second build still failed. The corrected commit
+9a11b40d39d0610e3c15fe5deed07b6ba0e5206e restores that simp and removes
+the redundant rfl. Its full Lean build passed (Actions run 41392191543).
+
+## 2026-11-02 — Repair the H10 uniqueness and converse-inverse declarations
+
+The full Lean run for `d554507b123512e58b4107304d8a99c7a5b220ac`
+failed with three diagnostics in `TraceExpand.lean):
+
+1. `binaryWordGapEncoding_rotate_decompose_unique` had been inserted
+   between the docstring for `binaryWordMarkedRotate_gap_stats` and its
+   declaration.
+2. `binaryWordMarkedRotate_decode_decompose_inverse` had likewise been
+   inserted between the docstring for `binaryWordMatrix_trace_marked_rotate`
+   and its declaration. Both placements caused parser errors.
+3. The inverse proof used `omega` on
+   `(length - trueCount) + trueCount = length) without first providing
+   `trueCount ≤ length).
+
+The repair moves both declarations before the docstrings they interrupted.
+It derives the missing bound from the pinned Mathlib identity
+`List.length_eq_length_filter_add`, then uses
+`Nat.sub_add_cancel` for the subtraction. This repairs the proof
+structure without changing the theorem statements or weakening their
+claims. The full Lean build for the repair commit is the acceptance check.
+H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Package the marked-cut/gap-offset correspondence as an equivalence
+
+On the Lean-green base 02001611f332c5e117e700914d9b3138771ef48e,
+added the type binaryWordGapOffsetData of gap lists paired with legal
+offsets, the two conversion functions, and
+binaryWordMarkedCutGapOffsetEquiv. The forward map decodes
+binaryWordMarkedRotate pre post and records post.length; its offset
+bound follows from the exact gap statistics and encoding-length formula.
+The inverse map chooses the explicit decomposition of the rotated canonical
+encoding. The left inverse uses the fixed-offset uniqueness theorem; the
+right inverse uses the decomposition's exact decoding law.
+
+Also added binaryWordMarkedCut_trace_eq_cyclicGapTrace, making the
+trace-preservation property explicit at the conversion interface. This
+equivalence is between unrestricted marked cuts and legal gap-offset data;
+the next step is to restrict it to fixed length p and true-count r, then
+reindex finite sums and derive the exact factor p/r. The weighted identity
+and final H10 trace formula are not yet proved. Full Lean validation is
+required for this commit. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Correct the H10 equivalence inverse proof and trace declaration order
+
+The Lean run for a437941ded7720015c53aa3d93f8f1f9280ab12c
+reported two errors. In binaryWordMarkedCutGapOffsetEquiv.left_inv,
+the goal contained binaryWordGapOffsetToMarkedCut
+(binaryWordMarkedCutToGapOffset (pre, post)); the available equality
+hdata rewrote the forward map to the chosen subtype value, so the
+rewrite direction must be rw [hdata], not rw [← hdata].
+
+The trace corollary binaryWordMarkedCut_trace_eq_cyclicGapTrace was
+placed before binaryWordMatrix_trace_marked_eq_cyclicGapTrace, which it
+uses. Moved the corollary to after that dependency. No definitions or
+mathematical claims were changed. A fresh complete Lean build is required
+for this correction. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Restrict the marked-cut equivalence to fixed H10 strata
+
+The unrestricted marked-cut/gap-offset equivalence passed the complete
+Lean build in commit 088b75e0f35f8c5362eae5f6f7246b7dd027ae9d
+(Actions run 41396480095). On that verified base, added the fixed-(p,r)
+subtypes binaryWordMarkedCutStratum and binaryWordGapOffsetStratum, and
+the restricted equivalence binaryWordMarkedCutGapOffsetStratumEquiv.
+
+The marked-cut side fixes the word length at p and its number of true
+letters at r. The gap-offset side fixes r gaps, total gap size p-r,
+and a legal offset in the canonical encoding. The two restriction maps
+are proved using binaryWordMarkedRotate_gap_stats and
+binaryWordGapEncoding_length; the inverse laws are inherited from the
+already compiled unrestricted equivalence. The restriction explicitly
+retains each offset and does not quotient periodic words.
+
+This is the required fixed-stratum correspondence before finite-sum
+reindexing. It does not yet prove the weighted trace identity or the
+factor p/r. Full Lean validation is required on this commit. H6 and H8
+remain untouched.
+
+
+## 2026-11-02 — Repair the fixed-stratum docstring placement
+
+The full Lean workflow for `35529bab21d607ca9168fca8d4e5382c3f5d4d52`
+failed in the build step. Source inspection found a declaration-layout
+error: the documentation comment for
+`binaryWordMatrix_trace_marked_rotate` was immediately followed by the
+new documentation comment for `binaryWordGapOffsetStratum`. Lean
+documentation comments must attach to a declaration; the second comment
+interrupted the first. Moved the trace theorem's comment to immediately
+precede its theorem declaration, leaving all definitions, theorem
+statements, and proofs unchanged. No mathematical claim is added or
+weakened. This is a parser/source-order correction only; a new complete
+Lean build is required before this fixed-stratum equivalence is treated
+as validated. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair the actual fixed-stratum Lean proof failures
+
+The full Lean build for commit `99046a0a887d697af019952bea114f5dcde2aef9`
+failed in `TraceExpand.lean`. The previous diagnosis that this was
+only a docstring-placement issue was incorrect: moving the comment did
+not address the four proof errors reported by Lean.
+
+The actual diagnostics were:
+1. The `calc` expression for the length of a rotated encoding used
+   pipeline notation before `.length`, which Lean parsed as an invalid
+   relation. Replaced it with explicit parentheses around the rotated
+   list before taking its length.
+2. The decoder equality in the inverse stratum proof was rewritten
+   against an expression containing a local `let cut`, but the spec
+   theorem still exposed the chosen inverse cut. Added an explicit
+   `hdecode` equality, using `simpa [cut]`, then mapped it through
+   `List.length`.
+3. The two inverse fields of the restricted equivalence were given the
+   unrestricted equivalence laws without first exposing the underlying
+   subtype values. Added explicit `change` steps to state the exact
+   unrestricted left- and right-inverse goals before applying those laws.
+
+No new mathematical statement is introduced. The fixed-stratum
+equivalence remains unverified until the next complete Lean build
+passes. H6 and H8 are untouched.
+
+
+## 2026-11-02 — Roll back the unverified fixed-stratum encoding
+
+The fixed-(p,r) subtype layer introduced after the verified unrestricted
+equivalence did not compile. Lean failures in runs 41399405288,
+41400048495, and 41400808868 showed that the restriction maps and inverse
+laws were not definitionally the same as the unrestricted maps. In
+particular, the final attempted `change` steps did not expose the
+underlying functions, and the inverse specification required explicit
+transport through the subtype constructors.
+
+Rather than stack further tactic patches onto an inadequately checked
+construction, restored `TraceExpand.lean` exactly to the verified source
+blob from commit `088b75e0f35f8c5362eae5f6f7246b7dd027ae9d`.
+That commit's complete Lean workflow (run 41396480095) succeeded.
+This rollback removes only the unverified fixed-stratum declarations;
+the previously verified unrestricted marked-cut/gap-offset equivalence
+and its trace statement are retained.
+
+Next work must restart from the unrestricted equivalence and design the
+finite-sum reindexing directly, with explicit definitions of the finite
+index types and maps. It must not assume that subtype restriction laws
+are definitional. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Restrict the marked-cut equivalence with subtypeEquiv
+
+Starting from the restored Lean-green unrestricted equivalence at
+`030d6ea3f435aeb0a45593ffc22629c60280fe97`, added the fixed-(p,r)
+types `binaryWordMarkedCutStratum` and `binaryWordGapOffsetStratum`.
+The restriction equivalence is now defined by Mathlib's
+`Equiv.subtypeEquiv`, not by hand-written forward/inverse subtype maps.
+
+The predicate equivalence is proved directly from
+`binaryWordMarkedRotate_gap_stats` and
+`binaryWordGapEncoding_length`. In the forward direction, decoded gap
+count is the true-letter count and decoded gap sum is word length minus
+that count. In the reverse direction, the already-proved decode/encode
+round trip identifies the marked cut with the canonical gap encoding;
+the exact encoding-length formula reconstructs p, and the gap-count
+identity reconstructs r. The inverse laws are inherited by construction
+from the unrestricted equivalence; this avoids the failed manual
+`change`/Subtype.ext approach.
+
+Important boundary: these are fixed-invariant subtypes of the existing
+unrestricted data types. This declaration does not yet give the subtypes
+`Fintype` instances, so it is not yet the finite-sum multiplicity
+theorem. The next step is to replace bounded weak gap lists by finite
+vectors indexed by `Fin r`, with entries in `Fin (p-r+1)`, and prove
+that representation equivalent while retaining the exact sum condition.
+H6 and H8 are untouched. A full Lean build is required for this step.
+
+
+## 2026-11-02 — Correct the encoding round-trip rewrite direction
+
+The first Lean run for `bb40cc0` isolated one error in the reverse
+stratum-predicate proof at `TraceExpand.lean:3291`. The established
+round-trip fact is
+`binaryWordGapEncoding (binaryWordGapDecode word) = word`.
+The goal had the encoded expression on the right-hand side, so rewriting
+with `hround` (not `hround.symm`) closes that equality. Corrected this
+single rewrite direction; no definitions or mathematical statements were
+changed. The full Lean build must be rerun.
+
+
+## 2026-11-02 — Give the fixed H10 gap-offset stratum an explicit finite model
+
+Added a finite model `binaryWordGapOffsetVectorStratum`: an r-coordinate
+vector of gap values bounded by p-r, paired with an actual offset in
+`Fin p`. The offset is not quotiented by rotations, so periodic words
+retain all marked positions. A list-coordinate bound is proved directly
+from nonnegativity (`binaryWordGapList_get_le_sum`); `List.ofFn_congr`
+and `List.ofFn_get` establish the list/vector round trip. The exact
+encoding-length identity converts the legal natural offset to `Fin p`
+and back.
+
+The vector model is a subtype of a finite product, hence has a Fintype
+instance. Via explicit equivalences, Fintype instances now transfer to
+`binaryWordGapOffsetStratum p r` and
+`binaryWordMarkedCutStratum p r`. This completes the finite-type
+foundation needed for finite-sum reindexing, but it does not yet prove the
+weighted multiplicity identity or the H10 trace comparison. Full Lean
+build is required for this commit.
+
+
+## 2026-11-02 — Repair finite gap-vector model Lean errors
+
+The first build of `ef1a0fd` found exactly three errors in the new
+finite-model block:
+1. The induction tactic already generalized the dependent `Fin gaps.length`
+   index, so explicitly writing `generalizing i` was rejected as redundant.
+   Removed that modifier.
+2. In the successor-index case, `omega` did not know the definitional
+   list-length equation for `a :: rest`. Added
+   `simp only [List.length_cons] at hi` before using `omega`.
+3. Mathlib does not synthesize a `Fintype` instance for an arbitrary
+   subtype from `infer_instance` alone. Replaced that with the explicit
+   finite carrier `Finset.univ.filter predicate` and
+   `Fintype.subtype`, whose membership equivalence is discharged by
+   `simp`.
+
+The list/vector equivalence and all other definitions are unchanged.
+A complete Lean rebuild is required to validate the corrections.
+
+
+## 2026-11-02 — Reindex the finite marked-cut trace sum by gap offsets
+
+Added `binaryWordMarkedCutStratum_sum_trace_eq_gapOffsetStratum_sum`.
+It applies Mathlib's finite-type sum equivalence to the already
+Lean-verified fixed-(p,r) equivalence and uses the established
+marked-cut trace identity pointwise. The resulting theorem identifies
+the complete finite trace sum over marked cuts with the sum of
+`cyclicGapTrace` over the fixed gap-offset stratum. Since the offset is
+part of the data and is not quotiented by cyclic rotation, periodic words
+retain all marked positions in this sum.
+
+This is a finite-sum reindexing theorem, not yet the weighted
+multiplicity identity: the remaining combinatorial step is to group the
+marked-cut sum by the underlying unmarked binary word and prove that
+each word contributes exactly r marks. The gap-offset side must then be
+grouped by the gap vector, with exactly p offsets. H6 and H8 are not
+modified. Full Lean build required.
+
+
+## 2026-11-02 — Separate H10 gap vectors from cyclic offsets
+
+Added the offset-free finite gap-vector stratum
+`binaryWordGapVectorStratum p r` and the product equivalence
+`binaryWordGapOffsetVectorProdEquiv p r`. The existing vector/offset
+stratum is now explicitly identified with a gap vector paired with
+`Fin p`. A finite-sum theorem reindexes the cyclic gap trace sum as an
+iterated sum over gap vectors and all p offsets. This retains every
+offset separately for periodic words; no cyclic orbit quotient is used.
+
+This isolates the p-fold contribution on the gap side. It does not yet
+prove the matching r-fold marked-word decomposition or the weighted
+identity. The next combinatorial obligation is to represent marked
+binary words as an unmarked length-p, r-true word together with one of
+its true positions, and prove that this representation is bijective.
+H6 and H8 remain untouched. Full Lean build required.
+
+
+## 2026-11-02 — Correct placement of the H10 gap-side decomposition
+
+The initial commit `728e85828465be7c86705c85fe78a86de448069b`
+placed the gap-vector product decomposition at an earlier namespace
+boundary, before the fixed gap-offset vector stratum and cyclic trace
+definitions it references. This was a source-order error. Moved the
+entire block after all its dependencies at the final module boundary.
+No theorem statement or proof body was changed. The initial commit is
+not a validated checkpoint; a fresh full Lean build is required.
+
+
+## 2026-11-02 — Extract the exact p-fold H10 gap multiplicity
+
+Added `binaryWordGapOffsetVectorStratum_sum_trace_eq_card_mul_gap_sum`.
+Combining the product decomposition with the constant-sum identity on
+`Fin p` converts the iterated sum into p times the trace sum over
+unmarked gap vectors. The p offsets remain separate elements; this is
+valid for periodic gap vectors without dividing by orbit size.
+
+This completes the explicit p-fold count on the gap side. The matching
+r-fold marked-word decomposition and the weighted identity remain
+outstanding. Full Lean build required.
+
+
+## 2026-11-02 — Correct H10 multiplicity theorem declaration order
+
+The first insertion of the p-fold multiplicity theorem used the first
+`end EvgenyTheorem` in a file containing multiple namespace sections.
+That placed the theorem before the later gap-vector declarations it
+references. Moved the theorem into the final namespace section, after
+the gap-vector product equivalence and iterated-sum theorem. No theorem
+statement or proof was changed. The prior SHA
+`86d8438a0353fb8d549ed579b3edb614c816dc1b` is not a Lean-validated
+checkpoint; full build required.
+
+
+## 2026-11-02 — Prove the H10 marked-word r-fold multiplicity
+
+Added a finite type of length-p binary words with exactly r true letters,
+and a dependent finite type of such words paired with one true position.
+The true-position fiber has cardinality r, proved by identifying the
+filtered List.ofFn count with the subtype of true coordinates in Fin p.
+
+Added the explicit equivalence from fixed-(p,r) marked cuts to these
+word/position pairs. The forward map records the prefix length as the
+marked position; the inverse splits List.ofFn w using take and drop at
+that position. The marked symbol is recovered from the position
+predicate, and reconstruction uses take_append_drop.
+
+From this equivalence, proved the general finite-sum identity that a
+summand depending only on the unmarked word is counted exactly r times.
+Specialized it to matrix traces, obtaining
+binaryWordMarkedCutStratum_sum_trace_eq_r_mul_word_sum.
+This supplies the word-side r-fold multiplicity needed to combine with
+the p-fold gap-side result. Full Lean build required; H6 and H8 are
+unchanged.
+
+
+## 2026-11-02 — Correct the first H10 marked-word Lean attempt
+
+The first implementation of the marked-word multiplicity (commit
+6d3846b) did not pass Lean. The compiler identified issues in the
+true-position count rewrite, the sigma-sum expansion, and the two inverse
+laws of the cut/word-position equivalence. The mathematical target remains
+the r-fold count of marked true positions; the failed source must not be
+treated as a completed proof.
+
+A corrective proof revision now makes the Bool predicate/count conversion
+explicit, expands the dependent sum after exposing its Sigma type, and
+uses explicit list reconstruction identities for the inverse maps. This
+revision is pending a complete Lean build; no H10 closure is claimed.
+
+
+## 2026-11-02 — Second Lean correction for the H10 marked-word equivalence
+
+The subsequent build isolated two remaining proof-state errors:
+the countP Bool coercion equality was not closed, and the right-inverse
+proof attempted to rewrite a dependent Fin.cast through a list equality.
+The count equality is now closed by definitional equality. The right
+inverse now proves equality of the two indexed words by List.ofFn_injective
+and the reconstructed-list identity, avoiding an invalid dependent rewrite.
+The new run is the validation gate; the r-fold claim remains provisional.
+
+
+## 2026-11-02 — H10 marked-word proof: dependent inverse refinement
+
+The cbe01ca Lean build isolated the remaining errors to the Bool indicator
+conversion in the true-position count and the dependent second component
+of the Sigma right-inverse law. The count conversion now splits Bool
+explicitly. The right-inverse proof establishes equality of the
+underlying exact-weight word subtypes first, then transports the marked
+position across that equality. Full Lean build is required; H10 remains open.
+
+
+## 2026-11-02 — H10 marked-word inverse: use the Sigma subtype extensionality lemma
+
+The build for 23863b7 accepted the Bool counting argument and all
+cut/list reconstruction steps. Its sole remaining error was the
+dependent-pair right inverse: eliminating equality of the first subtype
+was not accepted by Lean. Replaced that elimination with the library's
+Sigma.subtype_ext, which is designed for a sigma whose second component
+is itself a subtype. It takes exactly the already-proved equality of
+the word subtype and equality of the underlying marked Fin index.
+No new encoding or mathematical statement is introduced.
+
+
+## 2026-11-02 — Combine the exact H10 multiplicities into the weighted identity
+
+On the Lean-green marked-word checkpoint `c65bb83687943bbef0e155faecd7ad4a70a2aa40`,
+added the final finite-sum bridge from the list-based gap-offset stratum
+to its finite vector/offset model, preserving ordered coordinates and
+each of the p offsets. Then combined the already-proved r-fold marked-word
+identity, the marked-cut/gap-offset trace reindexing, and the p-fold
+gap-vector identity into
+`binaryWordFinStratum_weighted_trace_eq_gap_vector_sum`:
+r times the exact-weight binary-word trace sum equals p times the
+unmarked gap-vector cyclic-trace sum. The proof uses the common marked-cut
+sum and does not quotient periodic words. H6 and H8 are untouched.
+This is the combinatorial weighted H10 identity; the new declaration
+requires a complete Lean build before it is considered validated.
+
+
+## 2026-11-02 — Fix the parser error in the weighted H10 identity
+
+The first full Lean build for commit `a5be6de26d01e082301d93edbd5b78ebcfa12d7a`
+stopped at `TraceExpand.lean:4049:68` with
+`unexpected token ':='; expected ')', ',' or ':'`. The first
+`calc` step of `binaryWordFinStratum_weighted_trace_eq_gap_vector_sum`
+was missing the closing parenthesis for the `Matrix.trace` argument.
+Added that single delimiter. No theorem statement or proof argument was
+changed. The next full Lean build is required to check the newly exposed
+proof terms; this parser correction alone does not validate the theorem.
+
+
+## 2026-11-02 — Put the weighted H10 identity in the positive-gap coordinates
+
+The validated checkpoint `3c2d634` already proves the exact r-fold/p-fold
+weighted identity for arbitrary two-letter matrices K and B. The p=10
+boundary formulas elsewhere in `GlueTrace.lean` use positive exponents
+`K^e * N`, with the exponents summing to 10. Therefore the intended
+specialization is simply B = K*N: a nonnegative gap a then contributes
+`K^a * (K*N) = K^(a+1) * N`.
+
+Added `cyclicGapTrace_K_mul_N_eq_succ_gaps` for this identity and
+`binaryWordFinStratum_weighted_trace_eq_positive_gap_sum` as its direct
+specialization. No new combinatorial type, no second multiplicity proof,
+and no cyclic-orbit quotient is introduced. The resulting RHS is precisely
+the positive-gap coordinate convention used by the existing p=10 cyclic
+representatives. The following step can now reconcile the fixed-r finite
+gap-vector sum with those already-listed orbit representatives and their
+weights (10 for full orbits, reduced weights for periodic representatives).
+This source step is pending a full Lean build. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair the positive-gap coordinate map proof
+
+The first Lean run for `20fda313a39ecacda1ef69cc73c34e17b2dbcb04`
+reported one unsolved goal in `cyclicGapTrace_K_mul_N_eq_succ_gaps`:
+`List.map_map` exposed a composition whose pointwise equality was not
+closed by rewriting. Replaced that rewrite with `List.map_congr_left` and
+its pointwise definitional equality (`Nat.succ a = a + 1`). This changes
+only the proof of the already-stated coordinate identity; the weighted
+multiplicity theorem and positive-gap statement are unchanged. The full
+Lean build is the validation gate. H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Complete the positive-gap map congruence
+
+The first correction in `b394b12` still failed because
+`List.map_congr_left` was applied before rewriting the nested map on
+the right. Lean reported the exact goal as a map over `List.map Nat.succ gaps`.
+The proof now first rewrites `List.map_map`, then applies
+`List.map_congr_left` to a common source list, and closes the pointwise
+exponent equality `a + 1 = Nat.succ a` with `omega`. No theorem statement or
+mathematical content changes. Full Lean build is required. H6 and H8 remain
+untouched.
+
+
+## 2026-11-02 — Partition the positive p=10 gap sums into exact cyclic orbits
+
+Starting from the Lean-green positive-gap identity at `6848a24`,
+added the finite p=10 positive-gap tuple sets for r = 2, 4, 6, 8, 10.
+For each stratum, the tuple set is proved equal to the disjoint union of
+the canonical cyclic orbits already used in `GlueTrace.lean`. These
+five finite partition equalities are decidable checks on the explicit
+bounded compositions; they assert that no tuple is omitted or counted in
+two different representative orbits.
+
+A common theorem now converts the sum over a disjoint union of cyclic
+orbits into the sum of orbit sums, and each orbit sum is evaluated using
+the already-proved `cyclicGapTrace_sum_orbit_eq`. The exact orbit
+cardinalities are recorded for every representative: full orbits have
+sizes r, while the periodic classes have sizes 1 (r=2), 2 (r=4),
+3 (r=6), and 4 (r=8). Thus the reduced half-weight classes are derived
+from true orbit sizes, not guessed or obtained by quotienting marked
+offsets. This is the direct bridge from the positive finite gap-vector
+sum to the explicit p=10 cyclic representatives. Full Lean validation
+is required before using the bridge in the final H10 trace split.
+H6 and H8 remain untouched.
+
+
+## 2026-11-02 — Repair the finite H10 cyclic-orbit partition proofs
+
+The first orbit-partition attempt `6957cd2` failed for two distinct
+proof-engineering reasons. The r=2,4,6 finite-set equalities reached Lean's
+default recursion-depth limit while reducing the bounded finite
+enumerations. Their proofs now raise `maxRecDepth` locally only around
+those explicit finite decisions.
+
+The five orbit-sum proofs also incorrectly tried to decide the classical
+proposition `Set.PairwiseDisjoint` directly. Replaced that with an
+explicit proof: an intersection of two cyclic orbits gives a cyclic-rotation
+relation between their representatives, while each representative set is
+checked to contain no two distinct cyclic rotations. The rotation relation
+is rewritten using `List.isRotated_iff_mod`, making its witness finite
+and decidable. No orbit representatives or mathematical multiplicities
+were changed. Full Lean build required.
+
+
+## 2026-11-02 — Make the H10 orbit checks genuinely finite and bound their evaluation
+
+The `f67b276` build exposed that `List.isRotated_iff_mod` leaves a bounded
+existential over `Nat`; after simplification Lean still cannot synthesize
+a decidable instance for the universally quantified representative theorem.
+The representative proof now splits both finite representative memberships
+first and uses `List.isRotated_iff_mem_map_range`, whose rotation witness is
+a member of an explicit finite list. It then decides only concrete list
+comparisons.
+
+The disjointness proof target is a set-level `Function.onFun Disjoint`;
+it now changes explicitly to disjointness of the coerced orbit sets and
+uses `Set.disjoint_left`. This avoids rewriting a Finset relation into a
+set-level target.
+
+The r=4 finite composition partition exceeded the default heartbeat limit;
+the r=6 partition exceeded the local recursion-depth limit. Those two finite
+decisions now have narrowly scoped higher limits. The representative lists,
+orbit weights, and theorem statements are unchanged. Full Lean build is
+required.
+
+
+## 2026-11-02 — Prove H10 orbit disjointness directly in the finite-set type
+
+The 71a98e7 Lean run showed that the rotation-relation detour was
+incorrectly elaborated at the Set/Finset boundary, and its helper theorem
+attempted to prove a false non-rotation statement on diagonal pairs.
+Removed that detour. The replacement first reduces Set.PairwiseDisjoint
+to Disjoint of the actual Finset cyclic orbits. For each explicit finite
+representative set, membership is split into its list alternatives;
+diagonal pairs are discharged from a ≠ b and distinct pairs are decided
+directly by the computable finite-set disjointness procedure.
+This checks the actual deduplicated cyclicGapOrbit objects and therefore
+retains the correct reduced orbit sizes for periodic classes.
+
+The r=4 and r=6 composition partition limits are scoped around the whole
+theorem declarations, rather than nested inside the proof bodies, so they
+cover elaboration of the large finite-set expressions too. The lists and
+all five partition equations are unchanged. Full Lean build is required.
+
+
+## 2026-11-02 — Correct Lean option-command placement in H10 finite proofs
+
+The c0e7a5f build exposed a parser error: declaration doc comments had
+been left before the scoped set_option commands. In Lean, the option
+commands must wrap the declaration and therefore precede its doc comment.
+Reordered these declarations so each local option scope comes first,
+followed by the documentation and theorem. Increased the r=6 finite
+checks' local recursion/heartbeat budget based on the prior build's
+recursion-depth failure. No definitions, representatives, statements,
+or multiplicity weights were changed. Full Lean build required.
+
+
+## 2026-11-02 — Bound the H10 r=8 finite orbit-partition computation
+
+The 02e0afd full Lean build passed the repaired declaration parsing and
+the r=4/r=6 finite proofs, but the r=8 partition's `decide` hit the
+default maximum recursion depth at TraceExpand.lean:4239. Scoped the
+same finite-computation resource adjustment to this one r=8 theorem.
+No mathematical statement, representative, or orbit weight changed.
+
+
+## 2026-11-02 — Bridge exact H10 word sums to cyclic representative sums
+
+Added an injectivity proof for the positive-gap list encoding, then
+reindexed the subtype sum of positive gap vectors as the finite image
+used by the p=10 orbit partition. Composed this with the verified
+marked-cut multiplicity identity and the five disjoint cyclic-orbit
+partition theorems. For r = 2, 4, 6, 8, 10, the result now states
+the exact equation r times the original binary-word trace sum equals
+10 times the sum over canonical cyclic representatives weighted by
+the true distinct orbit cardinality. This is the exact point where
+periodic classes retain reduced orbit weights; no division by r or
+cyclic quotient of the original words has been introduced.
+
+Full Lean build required before using these bridge theorems to rewrite
+the coefficients in the Sierpinski boundary formulas.
+
+ 
+## 2026-11-02 — Normalize H10 marked-word sums to exact cyclic-orbit weights
+
+The five p=10 even strata now have normalized word-to-orbit identities:
+for r = 2, 4, 6, 8, 10, the trace sum over exact-weight binary words
+equals the sum over canonical positive-gap cyclic representatives with
+coefficient (10/r) times the true distinct orbit cardinality. This is
+derived from the previously proved marked-cut identity and the five
+finite orbit partitions; it does not divide by a cyclic orbit size.
+Consequently the period-two, period-three, and period-four classes
+produce coefficient five, while full orbits produce coefficient ten
+(and the unique ten-insertion class coefficient one). This is the
+precise normalization needed to compare the combinatorial orbit sums
+with the existing H10 boundary-stratum lists. No H10 cross-stratum
+cancellation or all-level recurrence is claimed yet. Full Lean build
+required for this source revision.
+
+
+## 2026-11-02 — Connect the normalized H10 two-N word stratum to the glued boundary reduction
+
+Added `sg_trace_p10_two_N_word_stratum_diagonal` in `GlueTrace.lean`.
+It starts with the finite sum over all exact-weight p=10 binary words
+having two selected K*N letters, applies the normalized word-to-orbit
+identity, evaluates the five exact orbit sizes, and rewrites the five
+cyclic gap traces as the corresponding ordered matrix traces. It then
+uses the existing glued-corner theorem to obtain the five diagonal
+corner sums, with coefficients (10, 10, 10, 10, 5). This composes the
+new combinatorial identity with the pre-existing geometric boundary
+reduction; it does not assume termwise cancellation between orientations
+or strata. Validation requires a full Lean build on the new source SHA.
+
+## 2026-11-02 — Correct the TraceExpand namespace boundary and isolate Lean CI
+
+The failed fff16c8 Lean build did not expose a mathematical problem in
+the H10 two-N composition. It reported Unknown identifier for
+binaryWordFinStratum, binaryWordMatrix, cyclicGapOrbit, and cyclicGapTrace
+from GlueTrace.lean.
+
+Source inspection found that the second namespace EvgenyTheorem in
+TraceExpand.lean was opened before the first namespace had been closed.
+Consequently the new word/gap declarations were compiled under the
+nested name EvgenyTheorem.EvgenyTheorem, so an import could not expose
+them under the API expected by GlueTrace.lean. Closed the preceding
+namespace before opening the next section. No theorem statement, proof,
+gap representative, or coefficient is changed by this scope correction.
+
+The Tests workflow now ignores commits consisting only of Lean
+formalization files, this research log, and its own path-filter update.
+Such commits still trigger the dedicated full Lean build. Python numerical
+regression and N10 reference tests are not part of this formalization
+validation step. The exact-SHA Lean build remains the acceptance gate.
+
+## 2026-11-02 — Normalize the scalar sum in the H10 two-N composition
+
+The build after the TraceExpand namespace correction now resolves all
+word-stratum and cyclic-gap declarations from GlueTrace. The only
+remaining Lean goal is the final equality in
+sg_trace_p10_two_N_word_stratum_diagonal: both sides contain the same
+five ordered matrix traces and coefficients, but Lean leaves the nested
+parenthesization of complex scalar addition different. Added `ring`
+after the finite orbit-cardinality and cyclic-gap reductions. This
+normalizes only scalar addition; it does not commute, rotate, or
+reassociate any matrix factors. The full Lean build on the updated SHA
+is the acceptance check.
+
+## 2026-11-02 — Connect the exact H10 four-N word stratum to its existing diagonal form
+
+Added sg_trace_p10_four_N_word_stratum_diagonal. The proof starts
+from the finite exact-weight binary-word sum, applies the already
+Lean-checked binaryWordP10WordTraceOrbitAverage4, uses the shared
+22-entry orbit-cardinality certificate (20 orbit sizes four and two
+orbit sizes two), and rewrites the cyclic traces to the ordered matrix
+trace sum consumed by sg_trace_p10_four_N_stratum_pair_diagonal.
+The latter is reused unchanged to reach glueRHS10_four_N_diagonal_form.
+No boundary term, representative, orbit weight, or matrix-factor order
+is redefined. This is a word-to-existing-boundary interface theorem;
+it does not prove cancellation between insertion strata or H10 recurrence.
+Full Lean build on the source SHA is required.
+
+## 2026-11-02 — Connect the exact H10 six-N word stratum to its existing diagonal form
+
+Added sg_trace_p10_six_N_word_stratum_diagonal. The exact-weight six-N
+binary-word sum is first rewritten by the already validated
+binaryWordP10WordTraceOrbitAverage6. The shared representative-cardinality
+certificate supplies the 22 orbit sizes: twenty are six and two are three,
+so the normalized coefficients are ten and five. The cyclic traces are
+then identified with the existing ordered trace list from
+sg_trace_p10_six_N_stratum_boundary, and the existing
+sg_trace_p10_six_N_stratum_pair_diagonal reduces that boundary list to
+glueRHS10_six_N_diagonal_form. No geometric support argument, boundary
+term, or matrix-factor order is duplicated or changed. This is an
+exact-word interface for r=6 only; it does not claim cross-stratum
+cancellation or an H10 recurrence. A full Lean build is required.
+
+## 2026-11-02 — Connect the exact H10 eight-N word stratum to its existing diagonal form
+
+Added sg_trace_p10_eight_N_word_stratum_diagonal. The exact-weight
+eight-N binary-word sum is rewritten using the validated
+binaryWordP10WordTraceOrbitAverage8. The r=8 part of the shared orbit
+cardinality theorem gives [8,8,8,8,4], yielding four coefficients ten
+and one coefficient five after normalization by eight. The five cyclic
+traces are aligned with the already-proved eight-N boundary formula,
+then sg_trace_p10_eight_N_stratum_pair_diagonal is reused unchanged to
+reach glueRHS10_eight_N_diagonal_form. No boundary term, geometric
+support proof, representative, or matrix-factor order is redefined.
+This connects only the exact r=8 word stratum to its existing diagonal
+form; it does not assert cross-stratum cancellation or the H10 recurrence.
+Full Lean build on the source SHA is required.
+
+## 2026-11-02 — Correct the H10 eight-N periodic boundary representative
+
+The failed eight-N word-to-diagonal bridge exposed a genuine mismatch in
+the pre-existing generic boundary theorem, not a scalar-normalization or
+matrix-associativity problem. The canonical r=8 orbit list in
+TraceExpand.lean is correct: its fifth representative is
+(1,1,1,2,1,1,1,2), with orbit size four. The generic boundary formula
+instead used (1,1,2,1,1,1,1,2), which is a rotation of the fourth
+representative (1,1,1,1,2,1,1,2), so the fifth term duplicated that orbit
+and omitted the period-four class.
+
+Corrected the fifth ordered matrix word in GlueAlg.lean and its hkg
+hypotheses (the second diagonalized middle power is now degree two), then
+propagated the same representative to the Sierpinski specialization and
+the ordered four-pair diagonal normal form in GlueTrace.lean. The orbit
+weights remain (10,10,10,10,5); the word order and all existing geometric
+boundary reductions are retained. The eight-N word bridge is now aligned
+with the actual five disjoint cyclic orbits. This is still only an
+individual-stratum identity: no cross-stratum cancellation or H10
+recurrence is claimed. A full Lean build on the corrected source SHA is
+required.
+
+
+The follow-up full Lean build then identified one remaining stale occurrence
+in the *target* of the generic theorem: its fifth right-hand boundary-term
+argument still named the old tuple even though the fifth trace and local
+proof had been corrected. That target argument is now updated to the same
+period-four representative. The failure was localized to this statement
+mismatch; the generic geometric reduction itself remained unchanged.
+
+
+## 2026-11-02 — Complete the missing H10 endpoint word strata
+
+Added the exact-count r=1 word-stratum vanishing theorem. The positive-gap
+marked-word identity reduces the complete binary-word sum to the single
+gap vector [9], whose positive gap is [10]. Its cyclic trace is
+Tr(K^10 N), and the existing block-diagonal single-pairing lemma makes it
+zero without any additional OAnti assumption.
+
+Added the exact-count r=10 word-stratum bridge. The existing orbit-average
+certificate identifies its unique word with the unique period-one cyclic
+gap orbit (orbit size one and coefficient one); the existing Sierpinski
+top-stratum theorem then gives the pointwise fifth-power diagonal sum.
+No geometric support proof or matrix-factor order was changed.
+
+Together with the previously established r=3,5,7,9 vanishing and the
+r=2,4,6,8 diagonal bridges, this closes the endpoint word/diagonal
+interfaces needed before the full H10 stratum aggregation. It does not
+yet assert cancellation among the even strata or an H10 recurrence.
+A full Lean build on this exact source SHA is required.
+
+
+## 2026-11-02 — Repair the endpoint word-stratum proof elaboration
+
+The full Lean build of cbddd73 isolated three diagnostics in the two newly
+added endpoint interfaces. In r=1, the first calc step used an anonymous
+right-hand placeholder, so Lean elaborated a metavariable instead of the
+word sum required by the marked-gap multiplicity theorem. Replaced it with
+the explicit word sum and used simpa on the already-proved weighted
+identity; the gap-by-gap zero argument is unchanged.
+
+In r=10, the orbit-cardinality fact was stated using List.replicate 10 1,
+while simplification of the canonical representative exposed the explicit
+ten-entry list. Restated the same finite cardinality fact on that exact
+list, so it rewrites the coefficient appearing in the goal. No orbit,
+coefficient, matrix word, or geometric theorem is changed.
+
+The previous full Lean run failed only in these two new GlueTrace proofs;
+the corrected source must pass a fresh complete Lean build before the
+endpoint interfaces are treated as validated.
+
+
+## 2026-11-02 — Connect the exact H10 nine-N word stratum to its zero class
+
+Added the missing r=9 cyclic-gap inventory: the positive compositions of
+10 into nine parts form one orbit, represented by [2,1,1,1,1,1,1,1,1],
+with orbit cardinality nine. Added its pairwise-disjoint orbit partition,
+exact orbit-sum identity, marked-word trace sum, and normalized word/orbit
+average. The normalization factor (10/9) times the orbit size nine gives
+the exact coefficient ten.
+
+The concrete Sierpinski theorem sg_trace_p10_nine_N_word_stratum_zero now
+transfers the complete exact-count binary-word sum to the previously
+proved nine-N cyclic class and reuses sg_trace_p10_nine_N_cyclic_class_zero.
+The cyclic trace is identified by trace cyclicity; no kernel factors are
+commuted. This closes the r=9 word-level interface only. The remaining
+r=3,5,7 finite-word interfaces and the full ten-stratum p=10 assembly
+remain separate obligations; no H10 recurrence or cancellation is claimed.
+A full Lean build on this exact source SHA is required.
+
+
+## 2026-11-02 — Fix the r=9 orbit-partition command placement
+
+The full Lean build of d01eb18 failed at TraceExpand.lean:4251 before
+checking the r=9 proof: the local set_option maxRecDepth 4096 in command
+had been placed after the documentation comment, where Lean expected the
+declaration itself. Moved the option command before the doc comment and
+left the theorem statement and by decide proof unchanged. No orbit
+representative, orbit cardinality, trace weight, or matrix identity changed.
+A fresh full Lean build is required; this records only the parser-level
+repair and does not claim the r=9 interface is validated.
+
+
+
+## 2026-11-02 — Avoid definitional matrix reduction in the H10 r=9 trace bridge
+
+The full Lean build of the r=9 exact-word interface timed out at the final
+`rfl`: Lean was normalizing a long matrix-product expression by kernel
+reduction. Keep the same mathematical identity and cyclic trace rotation,
+but replace that reduction with explicit simplification of the nine powers,
+`K ^ 1`, and matrix associativity. This changes proof normalization only;
+it does not commute factors or alter any gap representative, orbit weight,
+or trace term. The line-6308 timeout was a follow-on declaration failure
+after the line-6339 timeout, not a separate mathematical obligation.
+A fresh complete Lean build must validate this change.
+
+
+
+## 2026-11-02 — Connect the exact H10 three-N word stratum to its zero classes
+
+Added the twelve canonical cyclic representatives for the positive
+compositions of 10 into three parts. Direct finite checks establish that
+the 36 positive compositions split into twelve pairwise-disjoint orbits,
+each of cardinality three. The corresponding marked-word trace sum and
+normalized orbit-average identities preserve the factor 10/3 times orbit
+size three.
+
+The new theorem sg_trace_p10_three_N_word_stratum_zero now transfers the
+complete exact-count binary-word trace sum to the twelve already-proved
+three-N cyclic zero classes. The conversion uses the exact gap-shift
+identity and retains the ordered K and N factors; no factors are commuted.
+This closes the r=3 word-level interface only. The analogous r=5 and r=7
+exact-word bridges, full ten-stratum aggregation, cross-stratum boundary
+cancellation, and the H10 recurrence remain open. A full Lean build on
+this exact source SHA is required.
+
+
+
+## 2026-11-02 — Make the H10 r=3 orbit weights rewrite explicitly
+
+The first full Lean build of the r=3 exact-word bridge reached its final
+weighted-sum normalization and exposed one proof-shape issue: a quantified
+orbit-cardinality fact did not rewrite the twelve concrete cardinalities
+inside the finite sum. Replaced it with the twelve explicit finite
+cardinality equalities, destructured as h1 through h12, and recorded the
+scalar identity (10/3)*3=10. The gap representatives, partition, trace
+conversion, order of all matrix factors, and existing twelve-class
+vanishing theorem are unchanged. This is a targeted normalization repair;
+the complete Lean build on the repaired source SHA must still pass.
+
+
+
+## 2026-11-02 — Connect the exact H10 five-N word stratum to its cyclic zero classes
+
+The exact r=3 word-to-orbit interface now passes the full Lean build on
+commit `0017f7125ff94a0a6dd5504697df4f01341346cf`
+(Actions run `41499367122`, attempt 2).
+
+On that verified base, added the 26 canonical positive-gap representatives
+for r=5, the finite partition of all 126 positive compositions into their
+cyclic orbits, pairwise disjointness of those orbits, and the exact orbit
+cardinalities. Twenty-five orbits have size five; the all-twos tuple has
+orbit size one. Combining the already-proved marked-word multiplicity
+identity with this partition gives the normalized exact-word trace formula
+with coefficients ten on the 25 full orbits and two on the periodic orbit.
+
+The new `sg_trace_p10_five_N_word_stratum_zero` then matches those
+coefficients and ordered gap traces to the existing
+`sg_trace_p10_five_N_stratum_zero`. It introduces no cyclic matrix-factor
+rotation and reuses the rotation-free gap normal-form lemma. This closes
+the exact-word interface for r=5 only; r=7, the complete H10 even-boundary
+aggregation, the boundary-orientation comparison, and the H10 residual
+recurrence remain open. The new source SHA requires a complete Lean build.
+
+
+
+
+## 2026-11-02 — Repair the H10 r=5 partition declaration placement
+
+The first build of commit `308d484064be6b967b10be115404830e2e6cf631`
+failed in `TraceExpand.lean`: `binaryWordP10GapOrbitPartition5` had
+been inserted inside the preceding unclosed documentation comment for the
+r=6 partition. Lean therefore parsed the r=5 theorem text as comment and
+reported it as an unknown identifier in `binaryWordP10GapTraceOrbitSum5`.
+
+Moved the r=5 partition into its own correctly closed documentation block
+and restored the r=6 scoped recursion/heartbeat options immediately before
+the r=6 theorem. The 26-representative list was independently checked
+against all 126 positive five-part compositions: the 26 cyclic orbits are
+disjoint, cover the full set, and have sizes twenty-five times five plus
+one. No mathematical statement or matrix product order was changed.
+A complete Lean build on this repaired source SHA is required.
+
+
+
+
+## 2026-11-02 — Connect the exact H10 seven-N word stratum
+
+The previous H10 r=5 exact-word bridge passed the full Lean build on
+commit `b5a7c81547c58a9035083b9a83a8bcf4722c3e3b`
+(Actions run `41506130220`).
+
+For r=7, the twelve representatives are exactly the positive versions
+of the twelve seven-gap exponent tuples in the existing
+`sg_trace_p10_seven_N_stratum_zero`. A finite check over all
+`C(9,6)=84` positive seven-part compositions confirms that these twelve
+cyclic orbits are pairwise disjoint, each has size seven, and together
+cover all 84 tuples.
+
+Added the representative finset, its orbit partition and disjointness,
+the exact orbit-cardinality list, and the marked-word exact trace sum.
+The new `sg_trace_p10_seven_N_word_stratum_zero` matches the normalized
+word sum to the existing twelve-class vanishing theorem. The bridge does
+not add matrix-factor rotations: the finite word/gap equivalence supplies
+the exact cyclic representatives, and the existing class theorem retains
+its already-verified corner arguments. This closes exact-word interfaces
+for r=3, r=5, and r=7; the remaining H10 assembly, even-boundary
+aggregation, orientation comparison, and residual recurrence are still
+open. A complete Lean build on the new source SHA is required.
+
+
+
+
+## 2026-11-02 — Move the H10 r=7 word bridge out of the nine-N doc comment
+
+The build of `c4c1e2edbf6d885f32af7732cf1c2c5473f720e1`
+found a parser error at `GlueTrace.lean:5606`. Inspection of the exact
+source context showed the r=7 bridge had been inserted between the
+documentation comment and declaration for
+`sg_trace_p10_nine_N_class_term`, so it was parsed as part of that
+unclosed comment. The later `/--` then appeared where Lean expected a
+declaration body.
+
+Moved the complete r=7 bridge unchanged to the end of `GlueTrace.lean`,
+after all prerequisite declarations and immediately before
+`end EvgenyTheorem`. No theorem statement, tactic, matrix expression,
+or factor order was altered. The next full Lean build will now also test
+the r=7 bridge proof itself, which the previous parser failure prevented
+Lean from elaborating.
+
+
+
+
+## 2026-11-03 — Assemble the positive-even H10 word strata
+
+The corrected H10 r=7 word bridge passes the full Lean build on
+`efe59c8433b584133d21ba9a041ecf54b5b6679a`
+(Actions run `41510222281`).
+
+Added the canonical `glueRHS10` as the sum of the existing exact
+r=2,4,6,8 diagonal boundary forms and the r=10 fifth-power diagonal
+term. The theorem `sg_trace_p10_even_N_word_strata_diagonal` combines
+the five already-proved exact-count word-stratum identities into this
+single expression. The geometric input remains the existing m>=4
+hypothesis needed by the r=2,4,6,8 boundary reductions; the top term's
+weaker m>=3 condition follows from it.
+
+This is only the positive-even aggregation. The r=0 base word, odd
+stratum vanishing in the full expansion, assembly into the actual
+`trace((K+K*N)^10)` / `pOpO` identity, and the comparison of
+`glueRHS10` across orientations remain to be proved. A full Lean build
+on the new source SHA is required.
+
+
+
+
+## 2026-11-03 — Identify the H10 zero-insertion word stratum
+
+The positive-even H10 aggregation in `glueRHS10` passed the full Lean
+build on commit `fb5b2d9b34428cf3f9ddea1f54ee956bbefd234e`
+(Actions run `41570076457`).
+
+Added `sg_trace_p10_zero_N_word_stratum`: the subtype
+`binaryWordFinStratum 10 0` is a singleton, since its true-position
+subtype has cardinality zero. Its unique word is the all-false word, whose
+ordered matrix product is exactly `K^10`. The proof uses the existing
+`binaryWordFin_true_positions_card` theorem and preserves the original
+left-to-right matrix product.
+
+This supplies the missing r=0 base term for the full H10 trace expansion.
+The next required bridge is to identify the recursive list expansion
+`orderedWordExpansionByCount` with the finite exact-word strata, assemble
+the odd zero terms and the positive-even `glueRHS10`, and then lift the
+result to `pOpO`. A full Lean build on this source SHA is required.
+
+
+
+## 2026-11-03 — Repair the H10 r=0 word-product proof
+
+The build of `c857c45adcf2ebd924c7dcccea7aa92e982bc5d7`
+identified two proof failures in the new zero-insertion stratum.
+
+First, the induction for the product of `List.replicate n K` unfolded
+the list by a head-cons step, giving `K * K^n`; the proof had used
+`pow_succ`, whose right-recursive form gives `K^n * K`. Replaced it
+with `pow_succ'`, which matches the actual left-associated list product.
+Second, the broad `simp [binaryWordMatrix]` recursively expanded the
+ten-letter word beyond Lean's recursion limit. Replaced that step with
+the targeted simplification `List.map_replicate` and `if_false`,
+leaving the product identity to the already-proved `hprod 10`.
+
+Also removed the three empty lines inside the existing r=7 tactic command
+identified by the style linter. No theorem statement, matrix factor order,
+or mathematical assumption changed. The full Lean build must be rerun on
+this source SHA.
+
+
+## 2026-11-03 — Finish the H10 r=0 singleton reduction
+
+The second build of `97a0f6b1b1b95d05365b02421083e3d14f7557e4`
+confirmed that the replicate-product induction now succeeds, but exposed
+two remaining elaboration issues in `hmatrix` and the final finite sum.
+
+The Boolean branch after `List.map_replicate` is
+`if false = true then K*N else K`; `if_false` is not the applicable
+rewrite. Replaced it by `if_neg` with the explicit decidable proof of
+`¬ (false = true)`. The unique-word proof now also installs the local
+`Unique (binaryWordFinStratum 10 0)` instance with default `w0`;
+the final sum is evaluated by `Fintype.sum_unique`, avoiding the
+previous recursion-heavy generic `simp`.
+
+The `DecidableEq X` messages at the beginning of `GlueTrace` were
+compared with the successful full build of `efe59c8` and are identical
+pre-existing linter warnings, not the cause of this failure. No change
+was made to those unrelated declarations. Full Lean validation is still
+required for this revision.

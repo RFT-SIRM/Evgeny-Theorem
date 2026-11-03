@@ -512,6 +512,52 @@ def sgK_radius_two_support (m : ℕ) (w : WSG m) : Finset (WSG m) :=
     w.2.1.1.2 ≤ w'.2.1.1.2 + 2 ∧
     w'.2.1.1.2 ≤ w.2.1.1.2 + 2
 
+/-- The finite coordinate box of radius three about a state of the
+glued copy operator. The copy coordinate is retained, so the set remains
+inside one block of the block-diagonal operator. -/
+def sgK_radius_three_support (m : ℕ) (w : WSG m) : Finset (WSG m) :=
+  Finset.univ.filter fun w' =>
+    w'.1 = w.1 ∧
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 3 ∧
+    w'.2.1.1.1 ≤ w.2.1.1.1 + 3 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 3 ∧
+    w'.2.1.1.2 ≤ w.2.1.1.2 + 3
+
+/-- Any nonzero entry of a power of sgK of degree at most three lies in the
+copy-preserving radius-three support. The coordinate bounds follow from
+the all-power locality estimate; copy preservation follows from block
+diagonality. -/
+theorem sgK_pow_entry_mem_radius_three
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (n : ℕ) (hn : n ≤ 3) (w w' : WSG m)
+    (h : (sgK m θ ax o ^ n) w w' ≠ 0) :
+    w' ∈ sgK_radius_three_support m w := by
+  apply Finset.mem_filter.mpr
+  refine ⟨Finset.mem_univ _, ?_⟩
+  have hdist := sgK_pow_entry_coord_dist m θ ax o n w w' h
+  have hcopy : w'.1 = w.1 := by
+    by_contra hne
+    have hne' : w.1 ≠ w'.1 := fun heq => hne heq.symm
+    have hzero : (sgK m θ ax o ^ n) w w' = 0 := by
+      change (blockK (Hc m θ ax o) ^ n) w w' = 0
+      rw [blockK_pow_local]
+      simp [blockK, hne']
+    exact h hzero
+  exact ⟨hcopy, by omega, by omega, by omega, by omega⟩
+
+/-- A power of degree at most three vanishes outside the finite
+radius-three support. This is the row-support form used by the local
+degree-six/seven diagonal transport. -/
+theorem sgK_pow_entry_zero_outside_radius_three
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (n : ℕ) (hn : n ≤ 3) (w w' : WSG m)
+    (h' : w' ∉ sgK_radius_three_support m w) :
+    (sgK m θ ax o ^ n) w w' = 0 := by
+  by_contra hzero
+  exact h' (sgK_pow_entry_mem_radius_three m θ ax o n hn w w' hzero)
+
 /-- Any nonzero two-step entry of sgK lies in the copy-preserving
 radius-two support set. The coordinate bounds use the generic locality
 estimate; equality of copy indices follows from block diagonality. -/

@@ -1,3 +1,4 @@
+import EvgenyTheorem.TraceExpand
 import EvgenyTheorem.GlueCorner
 
 /-!
@@ -2102,6 +2103,229 @@ theorem sg_trace_p10_six_N_class_113212
       2 (by omega) w w' hw hw' hcopy hne
 
 
+
+/-- Ordered boundary expression for a p=10 six-N word. Three diagonal
+corner factors appear at the three selected positive K-run lengths. -/
+private noncomputable def sg_trace_p10_six_N_boundary_term
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e f : ℕ) : ℂ :=
+  Matrix.trace (K ^ 0 * K ^ a *
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+    K ^ c *
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+    K ^ e *
+    Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0))
+
+/-- Parametric Sierpinski reduction of a six-N p=10 word to its three
+ordered diagonal boundary factors. It uses the full glued-state support
+bound through degree nine; it does not commute any intervening K powers. -/
+private theorem sg_trace_p10_six_N_powers_boundary_sum
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (hb : b ≤ 9) (hd : d ≤ 9) (hf : f ≤ 9) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ e * (sgGlue m).N *
+      sgK m θ ax o ^ f * (sgGlue m).N *
+      sgK m θ ax o ^ 0) =
+      sg_trace_p10_six_N_boundary_term m (sgK m θ ax o)
+        a b c d e f := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 9 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  simpa [sg_trace_p10_six_N_boundary_term, K, pow_zero] using
+    (trace_six_N_powers_boundary (sgGlue m) K
+      (blockK_BD (Hc m θ ax o)) a b c d e f 0
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg d hd w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg f hf w w' hw hw' hcopy hne))
+
+set_option maxHeartbeats 1000000 in
+/-- Complete six-N cyclic stratum of the p=10 ordered-word expansion.
+There are 22 cyclic classes: 20 have orbit size six and coefficient 10;
+the two period-three classes (1,1,3,1,1,3) and (1,2,2,1,2,2)
+have coefficient 5. The coefficients sum to choose(10,6)=210.
+This theorem is a boundary reduction only; it does not assert
+cancellation with the other H10 strata. -/
+theorem sg_trace_p10_six_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 0) =
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 1 5 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 2 4 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 3 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 4 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 1 4 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 2 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 3 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 1 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 2 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 4 1 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 1 4 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 2 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 3 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 1 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 2 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 3 1 2 +
+    5 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 1 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 2 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 2 1 2 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 1 3 +
+    10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 2 2 +
+    5 * sg_trace_p10_six_N_boundary_term m K 1 2 2 1 2 2 := by
+  dsimp
+  rw [
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 1 1 5 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 1 2 4 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 1 3 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 1 4 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 2 1 4 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 2 2 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 2 3 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 3 1 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 3 2 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 1 4 1 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 2 1 1 4 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 2 1 2 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 2 1 3 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 2 2 1 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 2 2 2 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 2 3 1 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 3 1 1 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 3 1 2 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 1 3 2 1 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 2 1 2 1 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 2 1 2 2 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_six_N_powers_boundary_sum m hm θ ax o hanti
+      1 2 2 1 2 2 (by omega) (by omega) (by omega)
+  ]
+
 /-- Concrete Sierpinski specialization of the complete eight-N stratum.
 The five cyclic classes retain their exact multiplicities, including the
 periodic class of weight five. This is a boundary reduction only. -/
@@ -2127,14 +2351,14 @@ theorem sg_trace_p10_eight_N_stratum_boundary
       K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
     5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
-      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
       K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 1 3 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 2 2 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 2 1 2 +
     10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 2 1 1 2 +
-    5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 2 1 1 1 1 2 := by
+    5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 2 1 1 1 2 := by
   dsimp
   apply trace_p10_eight_N_stratum_boundary (sgGlue m)
     (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
@@ -2290,6 +2514,228 @@ theorem sg_trace_p10_four_N_class_1216
   exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
 
 
+/-- Concrete Sierpinski specialization of the (1,1,3,5) four-N
+cyclic class in the p=10 expansion. Its multiplicity is ten; the ordered
+factors in the nested corner sum are unchanged. -/
+theorem sg_trace_p10_four_N_class_1135
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace
+      (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) =
+    10 * (∑ x, if (sgGlue m).g x then
+      (∑ y, if (sgGlue m).g y then
+        ((K ^ 0 * K ^ 1) x y *
+          (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+          (K ^ 3) y x else 0) *
+        (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  apply trace_p10_four_N_class_1135 (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
+
+
+/-- Concrete Sierpinski specialization of the (1,1,4,4) four-N
+cyclic class in the p=10 expansion. Its multiplicity is ten. -/
+theorem sg_trace_p10_four_N_class_1144
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace
+      (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) =
+    10 * (∑ x, if (sgGlue m).g x then
+      (∑ y, if (sgGlue m).g y then
+        ((K ^ 0 * K ^ 1) x y *
+          (K ^ 1) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+          (K ^ 4) y x else 0) *
+        (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  apply trace_p10_four_N_class_1144 (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
+
+
+/-- Concrete Sierpinski specialization of the (1,2,2,5) four-N
+cyclic class in the p=10 expansion. Its multiplicity is ten. -/
+theorem sg_trace_p10_four_N_class_1225
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace
+      (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) =
+    10 * (∑ x, if (sgGlue m).g x then
+      (∑ y, if (sgGlue m).g y then
+        ((K ^ 0 * K ^ 1) x y *
+          (K ^ 2) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+          (K ^ 2) y x else 0) *
+        (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  apply trace_p10_four_N_class_1225 (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
+
+
+/-- Concrete Sierpinski specialization of the period-two (1,4,1,4)
+four-N class. Its cyclic orbit has size two, so its exact multiplicity
+is five rather than ten. -/
+theorem sg_trace_p10_four_N_class_1414
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    5 * Matrix.trace
+      (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) =
+    5 * (∑ x, if (sgGlue m).g x then
+      (∑ y, if (sgGlue m).g y then
+        ((K ^ 0 * K ^ 1) x y *
+          (K ^ 4) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+          (K ^ 1) y x else 0) *
+        (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  apply trace_p10_four_N_class_1414 (sgGlue m)
+    (sgK m θ ax o) (blockK_BD (Hc m θ ax o))
+  intro n hn w w' hw hw' hcopy hne
+  exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti n hn w w' hw hw' hcopy hne
+
+
+
+/-- Nested boundary sum for a p=10 four-pairing word. The four powers
+remain in their original order; the definition introduces no cyclic
+identification or commutation. -/
+private noncomputable def sg_trace_p10_four_N_boundary_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d : ℕ) : ℂ :=
+  ∑ x, if (sgGlue m).g x then
+    (∑ y, if (sgGlue m).g y then
+      ((K ^ a) x y * (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+        (K ^ c) y x else 0) *
+      (K ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x)
+    else 0
+
+/-- Parametric Sierpinski specialization of the generic four-N boundary
+identity for the tenth moment. All corner powers through degree nine are
+covered by the existing glued-state support theorem. -/
+private theorem sg_trace_p10_four_N_powers_boundary_sum
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b ≤ 9) (hd : d ≤ 9) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N *
+      sgK m θ ax o ^ 0) =
+      sg_trace_p10_four_N_boundary_sum m (sgK m θ ax o) a b c d := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 9 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_nine_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  simpa [sg_trace_p10_four_N_boundary_sum, K, pow_zero] using
+    (trace_four_N_powers_explicit (sgGlue m) K
+      (blockK_BD (Hc m θ ax o)) a b c d 0
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg d hd w w' hw hw' hcopy hne))
+
+/-- Complete four-N cyclic stratum of the p=10 ordered-word expansion.
+There are 22 cyclic classes: 20 have orbit size four and coefficient 10;
+the two period-two classes (1,4,1,4) and (2,3,2,3) have coefficient 5.
+The 22 coefficients sum to choose(10,4)=210. The theorem is a boundary
+identity only; it does not assert cancellation between H10 strata. -/
+theorem sg_trace_p10_four_N_stratum_boundary
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ :=
+      sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 1 1 7 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 1 2 6 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 1 3 5 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 1 4 4 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 1 5 3 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 1 6 2 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 2 1 6 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 2 2 5 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 2 3 4 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 2 4 3 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 2 5 2 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 3 1 5 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 3 2 4 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 3 3 3 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 3 4 2 +
+    5 * sg_trace_p10_four_N_boundary_sum m K 1 4 1 4 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 4 2 3 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 4 3 2 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 1 5 2 2 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 2 2 2 4 +
+    10 * sg_trace_p10_four_N_boundary_sum m K 2 2 3 3 +
+    5 * sg_trace_p10_four_N_boundary_sum m K 2 3 2 3 := by
+  dsimp
+  rw [
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 1 1 7 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 1 2 6 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 1 3 5 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 1 4 4 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 1 5 3 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 1 6 2 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 2 1 6 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 2 2 5 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 2 3 4 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 2 4 3 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 2 5 2 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 3 1 5 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 3 2 4 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 3 3 3 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 3 4 2 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 4 1 4 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 4 2 3 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 4 3 2 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 1 5 2 2 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 2 2 2 4 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 2 2 3 3 (by omega) (by omega),
+    sg_trace_p10_four_N_powers_boundary_sum m (by omega) θ ax o hanti 2 3 2 3 (by omega) (by omega)
+  ]
+
+
+
 /-- Convert the concrete p=10 top boundary contribution into a fifth-power
 trace of the kernel times its glued-corner diagonal. This is the operator-level
 version of the generic supported-sum bridge; it does not claim cancellation
@@ -2388,5 +2834,4001 @@ theorem sg_trace_p10_top_stratum_diagonal_fifth
           · simp only [if_pos hg]
             simp [K, d, g, hg]
           · simp [hg, g]
+
+
+theorem sg_trace_p8_two_N_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) =
+    8 * (∑ x, if (sgGlue m).g x then
+      (K ^ 1) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    8 * (∑ x, if (sgGlue m).g x then
+      (K ^ 2) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    8 * (∑ x, if (sgGlue m).g x then
+      (K ^ 3) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+    4 * (∑ x, if (sgGlue m).g x then
+      (K ^ 4) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) := by
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 7 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    have hside : 7 < 2 ^ m := by
+      calc
+        7 < 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti (by omega)
+      w w' hw hw' hcopy hne
+  have h17 : Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 1) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 1 7 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 7)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 7 (by omega) w w' hw hw' hcopy hne))
+  have h26 : Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 2) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 2 6 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 6)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 6 (by omega) w w' hw hw' hcopy hne))
+  have h35 : Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 3) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 3 5 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 5)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 5 (by omega) w w' hw hw' hcopy hne))
+  have h44 : Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 *
+      (sgGlue m).N * K ^ 0) =
+      ∑ x, if (sgGlue m).g x then
+        (K ^ 4) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [pow_zero] using
+      (trace_two_N_powers (sgGlue m) K 4 4 0
+        (BD_pow K (blockK_BD (Hc m θ ax o)) 4)
+        (by
+          intro w w' hw hw' hcopy hne
+          exact hkg 4 (by omega) w w' hw hw' hcopy hne))
+  rw [h17, h26, h35, h44]
+
+
+
+/-- Explicit nested sum for a concrete four-N boundary word. Factor
+order is retained; only the terminal identity power has been removed. -/
+private noncomputable def sg_trace_four_N_boundary_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d : ℕ) : ℂ :=
+  ∑ x, if (sgGlue m).g x then
+    (∑ y, if (sgGlue m).g y then
+      ((K ^ a) x y * (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+        (K ^ c) y x else 0) *
+      (K ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x)
+    else 0
+
+/-- Concrete four-N boundary reduction under OAnti. The two required
+corner powers are bounded by five, so the existing glued-corner spin
+cancellation and the geometric estimate 5 < 2^m apply for m ≥ 3. -/
+private theorem sg_trace_four_N_powers_boundary_sum
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (hb : b ≤ 5) (hd : d ≤ 5) :
+    Matrix.trace (sgK m θ ax o ^ a * (sgGlue m).N *
+      sgK m θ ax o ^ b * (sgGlue m).N *
+      sgK m θ ax o ^ c * (sgGlue m).N *
+      sgK m θ ax o ^ d * (sgGlue m).N * sgK m θ ax o ^ 0) =
+      sg_trace_four_N_boundary_sum m (sgK m θ ax o) a b c d := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkg : ∀ n, n ≤ 5 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  simpa [sg_trace_four_N_boundary_sum, K, pow_zero] using
+    (trace_four_N_powers_explicit (sgGlue m) K
+      (blockK_BD (Hc m θ ax o)) a b c d 0
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg b hb w w' hw hw' hcopy hne)
+      (by
+        intro w w' hw hw' hcopy hne
+        exact hkg d hd w w' hw hw' hcopy hne))
+
+/-- Complete four-N cyclic stratum of the p=8 ordered-word expansion.
+The ten classes have exact multiplicities eight (eight classes), four
+for the periodic class (1,3,1,3), and two for the alternating class
+(2,2,2,2). This is a boundary identity, not an axis-cancellation claim. -/
+theorem sg_trace_p8_four_N_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * sg_trace_four_N_boundary_sum m K 1 1 1 5 +
+    8 * sg_trace_four_N_boundary_sum m K 1 1 4 2 +
+    8 * sg_trace_four_N_boundary_sum m K 1 2 1 4 +
+    8 * sg_trace_four_N_boundary_sum m K 1 1 2 4 +
+    8 * sg_trace_four_N_boundary_sum m K 1 1 3 3 +
+    8 * sg_trace_four_N_boundary_sum m K 1 3 2 2 +
+    8 * sg_trace_four_N_boundary_sum m K 1 2 3 2 +
+    4 * sg_trace_four_N_boundary_sum m K 1 3 1 3 +
+    8 * sg_trace_four_N_boundary_sum m K 1 2 2 3 +
+    2 * sg_trace_four_N_boundary_sum m K 2 2 2 2 := by
+  dsimp
+  rw [
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 1 5 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 4 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 2 1 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 2 4 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 1 3 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 3 2 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 2 3 2 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 3 1 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 1 2 2 3 (by omega) (by omega),
+    sg_trace_four_N_powers_boundary_sum m hm θ ax o hanti 2 2 2 2 (by omega) (by omega)
+  ]
+
+
+
+/-- Complete six-N cyclic stratum of the eighth-moment expansion.
+Its four run-length classes are (1,1,1,1,1,3), (1,1,1,1,2,2),
+(1,1,1,2,1,2), and the period-two class (1,1,2,1,1,2), with
+exact multiplicities eight, eight, eight, and four. -/
+theorem sg_trace_p8_six_N_stratum_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+      fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) +
+    8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) +
+    8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) +
+    4 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) := by
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+    fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  have hkg : ∀ n, n ≤ 5 → ∀ w w',
+      (sgGlue m).g w → (sgGlue m).g w' → w.1 = w'.1 → w ≠ w' →
+        (K ^ n) w w' = 0 := by
+    intro n hn w w' hw hw' hcopy hne
+    exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      n hn w w' hw hw' hcopy hne
+  have h111113 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 1 1 1 3 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 3 (by omega) w w' hw hw' hcopy hne))
+  have h111122 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 1 1 2 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h111212 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 1 2 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  have h112112 :
+      Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+        K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) := by
+    simpa [D] using
+      (trace_six_N_powers_boundary (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 1 1 2 1 1 2 0
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 1 (by omega) w w' hw hw' hcopy hne)
+        (by intro w w' hw hw' hcopy hne; exact hkg 2 (by omega) w w' hw hw' hcopy hne))
+  rw [h111113, h111122, h111212, h112112]
+
+
+
+/-- Exact p=8 boundary correction assembled from all four even insertion
+strata. The r=2 and r=4 strata are weighted corner sums, r=6 retains the
+three ordered diagonal insertions, and r=8 is the fourth-power endpoint.
+No cancellation or axis-independence is built into this definition. -/
+noncomputable def glueRHS8
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+    fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  8 * (∑ x, if (sgGlue m).g x then
+    (K ^ 1) x x * (K ^ 7) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  8 * (∑ x, if (sgGlue m).g x then
+    (K ^ 2) x x * (K ^ 6) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  8 * (∑ x, if (sgGlue m).g x then
+    (K ^ 3) x x * (K ^ 5) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  4 * (∑ x, if (sgGlue m).g x then
+    (K ^ 4) x x * (K ^ 4) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0) +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 1 5 +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 4 2 +
+  8 * sg_trace_four_N_boundary_sum m K 1 2 1 4 +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 2 4 +
+  8 * sg_trace_four_N_boundary_sum m K 1 1 3 3 +
+  8 * sg_trace_four_N_boundary_sum m K 1 3 2 2 +
+  8 * sg_trace_four_N_boundary_sum m K 1 2 3 2 +
+  4 * sg_trace_four_N_boundary_sum m K 1 3 1 3 +
+  8 * sg_trace_four_N_boundary_sum m K 1 2 2 3 +
+  2 * sg_trace_four_N_boundary_sum m K 2 2 2 2 +
+  8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) +
+  8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) +
+  8 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) +
+  4 * Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) +
+  (∑ x, if (sgGlue m).g x then
+    (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0)
+
+
+
+
+
+/-- Left multiplication by a supported diagonal factor only reads rows of
+the right-hand matrix whose indices lie in the support. -/
+private theorem diagonal_left_mul_congr_of_supported_rows
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (d d' : X → ℂ) (A A' : Matrix X X ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hdiag : ∀ x, d x = d' x)
+    (hrow : ∀ x, g x → ∀ y, A x y = A' x y) :
+    Matrix.diagonal d * A = Matrix.diagonal d' * A' := by
+  classical
+  ext x y
+  by_cases hx : g x
+  · simp [Matrix.mul_apply, Matrix.diagonal_apply, hdiag x,
+      hrow x hx y]
+  · have hdx : d x = 0 := hd x hx
+    have hd'x : d' x = 0 := by rw [← hdiag x, hdx]
+    simp [Matrix.mul_apply, Matrix.diagonal_apply, hdx, hd'x]
+
+
+/-- The complete p=8 boundary correction is insensitive to replacing K by
+K' whenever every row starting on the glued set agrees through degree seven.
+This checks all four r=2 terms, all ten ordered r=4 terms, all four ordered
+r=6 traces, and the r=8 endpoint term with their original coefficients. -/
+theorem glueRHS8_congr_of_glued_row_pow
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o o' : Point → Point → Prop)
+    [DecidableRel o] [DecidableRel o']
+    (hanti : OAnti (m + 1) o) (hanti' : OAnti (m + 1) o')
+    (hrow : ∀ w, (sgGlue m).g w → ∀ n, n ≤ 7 → ∀ z,
+      (sgK m θ ax o ^ n) w z = (sgK m θ ax o' ^ n) w z) :
+    glueRHS8 m (sgK m θ ax o) =
+      glueRHS8 m (sgK m θ ax o') := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let K' : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o'
+  let g : WSG m → Prop := (sgGlue m).g
+  have hσ (x : WSG m) (hx : g x) : g ((sgGlue m).σ x) :=
+    (sgGlue m).g_σ x hx
+  have hgap (a b : ℕ) (ha : a ≤ 7) (hb : b ≤ 7) :
+      (∑ x, if g x then
+        (K ^ a) x x * (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) =
+      (∑ x, if g x then
+        (K' ^ a) x x * (K' ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0) := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [if_pos hgx]
+      have hσx := hσ x hgx
+      rw [hrow x hgx a ha x, hrow ((sgGlue m).σ x) hσx b hb
+        ((sgGlue m).σ x)]
+    · simp [hgx]
+  have hfour (a b c d : ℕ)
+      (ha : a ≤ 7) (hb : b ≤ 7) (hc : c ≤ 7) (hd : d ≤ 7) :
+      sg_trace_four_N_boundary_sum m K a b c d =
+        sg_trace_four_N_boundary_sum m K' a b c d := by
+    unfold sg_trace_four_N_boundary_sum
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [g, if_pos hgx]
+      have hinner :
+          (∑ y, if g y then
+            ((K ^ a) x y *
+              (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                (K ^ c) y x else 0) =
+          (∑ y, if g y then
+            ((K' ^ a) x y *
+              (K' ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                (K' ^ c) y x else 0) := by
+        apply Finset.sum_congr rfl
+        intro y hy
+        by_cases hgy : g y
+        · simp only [if_pos hgy]
+          have hσy := hσ y hgy
+          rw [hrow x hgx a ha y, hrow ((sgGlue m).σ y) hσy b hb
+            ((sgGlue m).σ y), hrow y hgy c hc x]
+        · simp [hgy]
+      have hσx := hσ x hgx
+      rw [hinner, hrow ((sgGlue m).σ x) hσx d hd ((sgGlue m).σ x)]
+    · simp [g, hgx]
+  have hsix (a b c d e f : ℕ)
+      (ha : a ≤ 7) (hb : b ≤ 7) (hc : c ≤ 7)
+      (hd : d ≤ 7) (he : e ≤ 7) (hf : f ≤ 7) :
+      Matrix.trace (K ^ a * Matrix.diagonal (fun y =>
+          if g y then (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K ^ c * Matrix.diagonal (fun y =>
+          if g y then (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K ^ e * Matrix.diagonal (fun y =>
+          if g y then (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) =
+      Matrix.trace (K' ^ a * Matrix.diagonal (fun y =>
+          if g y then (K' ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K' ^ c * Matrix.diagonal (fun y =>
+          if g y then (K' ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0) *
+        K' ^ e * Matrix.diagonal (fun y =>
+          if g y then (K' ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)) := by
+    let Db : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Dd : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Df : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Db' : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K' ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Dd' : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K' ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    let Df' : Matrix (WSG m) (WSG m) ℂ := Matrix.diagonal
+      (fun y => if g y then
+        (K' ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    have hDb : Db * K ^ c = Db' * K' ^ c := by
+      apply diagonal_left_mul_congr_of_supported_rows g
+      · intro y hy
+        simp [Db, hy]
+      · intro y
+        by_cases hy : g y
+        · have hσy := hσ y hy
+          simp only [Db, Db', if_pos hy]
+          exact hrow ((sgGlue m).σ y) hσy b hb ((sgGlue m).σ y)
+        · simp [Db, Db', hy]
+      · intro x hx y
+        exact hrow x hx c hc y
+    have hDd : Dd * K ^ e = Dd' * K' ^ e := by
+      apply diagonal_left_mul_congr_of_supported_rows g
+      · intro y hy
+        simp [Dd, hy]
+      · intro y
+        by_cases hy : g y
+        · have hσy := hσ y hy
+          simp only [Dd, Dd', if_pos hy]
+          exact hrow ((sgGlue m).σ y) hσy d hd ((sgGlue m).σ y)
+        · simp [Dd, Dd', hy]
+      · intro x hx y
+        exact hrow x hx e he y
+    have hDf : Df * K ^ a = Df' * K' ^ a := by
+      apply diagonal_left_mul_congr_of_supported_rows g
+      · intro y hy
+        simp [Df, hy]
+      · intro y
+        by_cases hy : g y
+        · have hσy := hσ y hy
+          simp only [Df, Df', if_pos hy]
+          exact hrow ((sgGlue m).σ y) hσy f hf ((sgGlue m).σ y)
+        · simp [Df, Df', hy]
+      · intro x hx y
+        exact hrow x hx a ha y
+    have hcycle :
+        Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+          Matrix.trace ((Db * K ^ c) * (Dd * K ^ e) * (Df * K ^ a)) := by
+      calc
+        Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+            Matrix.trace (K ^ a * (Db * K ^ c * Dd * K ^ e * Df)) := by
+              simp only [Matrix.mul_assoc]
+        _ = Matrix.trace ((Db * K ^ c * Dd * K ^ e * Df) * K ^ a) :=
+          Matrix.trace_mul_comm _ _
+        _ = Matrix.trace ((Db * K ^ c) * (Dd * K ^ e) * (Df * K ^ a)) := by
+          simp only [Matrix.mul_assoc]
+    have hcycle' :
+        Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df') =
+          Matrix.trace ((Db' * K' ^ c) * (Dd' * K' ^ e) * (Df' * K' ^ a)) := by
+      calc
+        Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df') =
+            Matrix.trace (K' ^ a * (Db' * K' ^ c * Dd' * K' ^ e * Df')) := by
+              simp only [Matrix.mul_assoc]
+        _ = Matrix.trace ((Db' * K' ^ c * Dd' * K' ^ e * Df') * K' ^ a) :=
+          Matrix.trace_mul_comm _ _
+        _ = Matrix.trace ((Db' * K' ^ c) * (Dd' * K' ^ e) * (Df' * K' ^ a)) := by
+          simp only [Matrix.mul_assoc]
+    change Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+      Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df')
+    calc
+      Matrix.trace (K ^ a * Db * K ^ c * Dd * K ^ e * Df) =
+          Matrix.trace ((Db * K ^ c) * (Dd * K ^ e) * (Df * K ^ a)) := hcycle
+      _ = Matrix.trace ((Db' * K' ^ c) * (Dd' * K' ^ e) * (Df' * K' ^ a)) := by
+        rw [hDb, hDd, hDf]
+      _ = Matrix.trace (K' ^ a * Db' * K' ^ c * Dd' * K' ^ e * Df') :=
+        hcycle'.symm
+  have htop :
+      (∑ x, if g x then
+        (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) =
+      (∑ x, if g x then
+        (K' x x * K' ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) := by
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp only [g, if_pos hgx]
+      have hσx := hσ x hgx
+      have hxx : K x x = K' x x := by
+        simpa [K, K', pow_one] using hrow x hgx 1 (by omega) x
+      have hσσ : K ((sgGlue m).σ x) ((sgGlue m).σ x) =
+          K' ((sgGlue m).σ x) ((sgGlue m).σ x) := by
+        simpa [K, K', pow_one] using
+          hrow ((sgGlue m).σ x) hσx 1 (by omega) ((sgGlue m).σ x)
+      rw [hxx, hσσ]
+    · simp [g, hgx]
+  change glueRHS8 m K = glueRHS8 m K'
+  dsimp [glueRHS8]
+  simp only [pow_zero, Matrix.one_mul]
+  rw [
+    hgap 1 7 (by omega) (by omega),
+    hgap 2 6 (by omega) (by omega),
+    hgap 3 5 (by omega) (by omega),
+    hgap 4 4 (by omega) (by omega),
+    hfour 1 1 1 5 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 1 4 2 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 2 1 4 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 1 2 4 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 1 3 3 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 3 2 2 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 2 3 2 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 3 1 3 (by omega) (by omega) (by omega) (by omega),
+    hfour 1 2 2 3 (by omega) (by omega) (by omega) (by omega),
+    hfour 2 2 2 2 (by omega) (by omega) (by omega) (by omega),
+    hsix 1 1 1 1 1 3 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    hsix 1 1 1 1 2 2 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    hsix 1 1 1 2 1 2 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    hsix 1 1 2 1 1 2 (by omega) (by omega) (by omega)
+      (by omega) (by omega) (by omega),
+    htop
+  ]
+
+
+
+/-- Entrywise formula for a diagonal sandwich with different left and right
+weights. -/
+private theorem diagonal_sandwich_apply_two
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (d e : X → ℂ) (K : Matrix X X ℂ) (x y : X) :
+    (Matrix.diagonal d * K * Matrix.diagonal e) x y =
+      d x * K x y * e y := by
+  classical
+  simp [Matrix.mul_apply, Matrix.diagonal_apply]
+
+/-- A diagonal sandwich with two supported weights is diagonal on any
+set where the middle kernel has no off-diagonal entries. -/
+private theorem diagonal_sandwich_offdiag_zero_two
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (d e : X → ℂ) (K : Matrix X X ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (he : ∀ x, ¬ g x → e x = 0)
+    (hK : ∀ x y, g x → g y → x ≠ y → K x y = 0) :
+    ∀ x y, x ≠ y →
+      (Matrix.diagonal d * K * Matrix.diagonal e) x y = 0 := by
+  classical
+  intro x y hxy
+  rw [diagonal_sandwich_apply_two]
+  by_cases hx : g x
+  · by_cases hy : g y
+    · rw [hK x y hx hy hxy]
+      ring
+    · rw [he y hy]
+      ring
+  · rw [hd x hx]
+    ring
+
+/-- Two different kernels separated by supported diagonal weights collapse
+to the matching diagonal summands when the first kernel is off-diagonal-zero
+on the support. -/
+private theorem trace_two_kernel_diagonal_kernel_diagonal
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (A E : Matrix X X ℂ) (a d : X → ℂ) :
+    Matrix.trace (A * Matrix.diagonal a * E * Matrix.diagonal d) =
+      ∑ x, ∑ y, A x y * a y * E y x * d x := by
+  classical
+  simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply,
+    Finset.mul_sum, mul_assoc]
+
+private theorem trace_two_kernels_supported_diagonal
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (A E : Matrix X X ℂ) (a d : X → ℂ)
+    (ha : ∀ x, ¬ g x → a x = 0)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0) :
+    Matrix.trace (A * Matrix.diagonal a * E * Matrix.diagonal d) =
+      ∑ x, if g x then A x x * a x * E x x * d x else 0 := by
+  classical
+  rw [trace_two_kernel_diagonal_kernel_diagonal]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : g x
+  · simp only [if_pos hgx]
+    have hinner :
+        (∑ y, A x y * a y * E y x * d x) =
+          A x x * a x * E x x * d x := by
+      calc
+        _ = ∑ y, if y = x then
+              A x y * a y * E y x * d x else 0 := by
+          apply Finset.sum_congr rfl
+          intro y hy
+          by_cases hyx : y = x
+          · subst y
+            simp
+          · by_cases hgy : g y
+            · have hzero := hA x y hgx hgy (Ne.symm hyx)
+              simp [hzero, hyx]
+            · have hazero := ha y hgy
+              simp [hazero, hyx]
+        _ = _ := by simp
+    rw [hinner]
+  · simp [hd x hgx]
+
+/-- Three kernel/diagonal pairs reduce to products of diagonal entries. This
+is the exact diagonal form of the six-N boundary traces used in H8. -/
+private theorem trace_three_kernels_supported_diagonal
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (A C E : Matrix X X ℂ) (d e f : X → ℂ)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (he : ∀ x, ¬ g x → e x = 0)
+    (hf : ∀ x, ¬ g x → f x = 0)
+    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0)
+    (hC : ∀ x y, g x → g y → x ≠ y → C x y = 0) :
+    Matrix.trace (A * Matrix.diagonal d * C * Matrix.diagonal e *
+      E * Matrix.diagonal f) =
+      ∑ x, if g x then
+        (A x x * d x) * (C x x * e x) * (E x x * f x) else 0 := by
+  classical
+  let q : X → ℂ := fun x => d x * C x x * e x
+  have hSand : Matrix.diagonal d * C * Matrix.diagonal e =
+      Matrix.diagonal q := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q] using diagonal_sandwich_apply_two d e C x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two g d e C hd he hC x y hxy
+  have hq : ∀ x, ¬ g x → q x = 0 := by
+    intro x hx
+    simp [q, hd x hx]
+  calc
+    Matrix.trace (A * Matrix.diagonal d * C * Matrix.diagonal e *
+        E * Matrix.diagonal f) =
+        Matrix.trace (A * (Matrix.diagonal d * C * Matrix.diagonal e) *
+          E * Matrix.diagonal f) := by
+            simp [Matrix.mul_assoc]
+    _ = Matrix.trace (A * Matrix.diagonal q * E * Matrix.diagonal f) := by
+          rw [hSand]
+    _ = ∑ x, if g x then A x x * q x * E x x * f x else 0 :=
+          trace_two_kernels_supported_diagonal g A E q f hq hf hA
+    _ = ∑ x, if g x then
+          (A x x * d x) * (C x x * e x) * (E x x * f x) else 0 := by
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : g x
+          · simp only [if_pos hg]
+            simp [q]
+            ring
+          · simp [hg]
+
+/-- Every power through degree five is off-diagonal-zero between distinct
+glued states, including states in different copy blocks. -/
+private theorem sgK_pow_glued_offdiag_of_OAnti
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (n : ℕ) (hn : n ≤ 5) :
+    ∀ x y, (sgGlue m).g x → (sgGlue m).g y → x ≠ y →
+      (sgK m θ ax o ^ n) x y = 0 := by
+  intro x y hx hy hxy
+  by_cases hcopy : x.1 = y.1
+  · exact sgK_pow_hkg_up_to_five_of_OAnti m hm θ ax o hanti
+      n hn x y hx hy hcopy hxy
+  · change (blockK (Hc m θ ax o) ^ n) x y = 0
+    rw [blockK_pow_local]
+    simp [blockK, hcopy]
+
+/-- The p=8 diagonal boundary form is written as a product of adjacent
+corner/partner diagonal powers. A pair (a,b) contributes K^a at the glued
+state and K^b at its partner; lists of pairs encode the r=2,4,6,8 strata. -/
+private noncomputable def glueRHS8_pair_value
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (x : WSG m) (p : ℕ × ℕ) : ℂ :=
+  (K ^ p.1) x x *
+    (K ^ p.2) ((sgGlue m).σ x) ((sgGlue m).σ x)
+
+private noncomputable def glueRHS8_pair_product
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (x : WSG m) : List (ℕ × ℕ) → ℂ
+  | [] => 1
+  | p :: ps =>
+      glueRHS8_pair_value m K x p *
+        glueRHS8_pair_product m K x ps
+
+private noncomputable def glueRHS8_pair_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (ps : List (ℕ × ℕ)) : ℂ :=
+  ∑ x, if (sgGlue m).g x then
+    glueRHS8_pair_product m K x ps else 0
+
+/-- The ten four-N terms of the p=8 boundary expansion are products of two
+corner/partner diagonal pairs. Off-diagonal terms in the two-index sum vanish
+by locality, while different copies vanish by block diagonality. -/
+private theorem sg_trace_four_N_boundary_sum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (ha : a ≤ 5) (hc : c ≤ 5) :
+    sg_trace_four_N_boundary_sum m (sgK m θ ax o) a b c d =
+      glueRHS8_pair_sum m (sgK m θ ax o) [(a, b), (c, d)] := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hAoff := sgK_pow_glued_offdiag_of_OAnti m hm θ ax o hanti a ha
+  unfold sg_trace_four_N_boundary_sum glueRHS8_pair_sum
+  simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : (sgGlue m).g x
+  · simp only [if_pos hgx]
+    have hinner :
+        (∑ y, if (sgGlue m).g y then
+          ((K ^ a) x y *
+            (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+              (K ^ c) y x else 0) =
+        ((K ^ a) x x *
+          (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)) *
+            (K ^ c) x x := by
+      calc
+        _ = ∑ y, if y = x then
+              ((K ^ a) x y *
+                (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                  (K ^ c) y x else 0 := by
+          apply Finset.sum_congr rfl
+          intro y hy
+          by_cases hyx : y = x
+          · subst y
+            simp [hgx]
+          · by_cases hgy : (sgGlue m).g y
+            · have hzero := hAoff x y hgx hgy (Ne.symm hyx)
+              simp [K, hgy, hzero, hyx]
+            · simp [hgy, hyx]
+        _ = _ := by simp
+    rw [hinner]
+    ring
+  · simp [hgx]
+
+/-- The p=10 four-N boundary sum collapses to two diagonal corner
+pairs. Only the first kernel power needs off-diagonal vanishing: on the
+glued support, the inner y-sum is forced to y=x. -/
+private theorem sg_trace_p10_four_N_boundary_sum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d : ℕ) (ha : a ≤ 5) :
+    sg_trace_p10_four_N_boundary_sum m (sgK m θ ax o) a b c d =
+      glueRHS8_pair_sum m (sgK m θ ax o) [(a, b), (c, d)] := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hAoff := sgK_pow_glued_offdiag_of_OAnti m hm θ ax o hanti a ha
+  unfold sg_trace_p10_four_N_boundary_sum glueRHS8_pair_sum
+  simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : (sgGlue m).g x
+  · simp only [if_pos hgx]
+    have hinner :
+        (∑ y, if (sgGlue m).g y then
+          ((K ^ a) x y *
+            (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+              (K ^ c) y x else 0) =
+        ((K ^ a) x x *
+          (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x)) *
+            (K ^ c) x x := by
+      calc
+        _ = ∑ y, if y = x then
+              ((K ^ a) x y *
+                (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y)) *
+                  (K ^ c) y x else 0 := by
+          apply Finset.sum_congr rfl
+          intro y hy
+          by_cases hyx : y = x
+          · subst y
+            simp [hgx]
+          · by_cases hgy : (sgGlue m).g y
+            · have hzero := hAoff x y hgx hgy (Ne.symm hyx)
+              simp [K, hgy, hzero, hyx]
+            · simp [hgy, hyx]
+        _ = _ := by simp
+    rw [hinner]
+    ring
+  · simp [hgx]
+
+/-- The exact r=2 contribution to the p=10 diagonal correction.
+Each cyclic class is one glued-state/partner diagonal pair; the balanced
+class (5,5) retains its orbit weight five. -/
+private noncomputable def glueRHS10_two_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS8_pair_sum m K [(1, 9)] +
+  10 * glueRHS8_pair_sum m K [(2, 8)] +
+  10 * glueRHS8_pair_sum m K [(3, 7)] +
+  10 * glueRHS8_pair_sum m K [(4, 6)] +
+  5 * glueRHS8_pair_sum m K [(5, 5)]
+
+/-- Package the already-proved two-N boundary formula as an ordered
+one-pair diagonal normal form, without commuting any matrix factors. -/
+theorem sg_trace_p10_two_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 9 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 8 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 5 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) =
+      glueRHS10_two_N_diagonal_form m K := by
+  dsimp
+  simpa [glueRHS10_two_N_diagonal_form, glueRHS8_pair_sum,
+    glueRHS8_pair_product, glueRHS8_pair_value] using
+    (sg_trace_p10_two_N_stratum_boundary m hm θ ax o hanti)
+
+private noncomputable def glueRHS10_four_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS8_pair_sum m K [(1, 1), (1, 7)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (2, 6)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (3, 5)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (4, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (5, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 1), (6, 2)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (1, 6)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (2, 5)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (3, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (4, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 2), (5, 2)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (1, 5)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (2, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (3, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 3), (4, 2)] +
+  5 * glueRHS8_pair_sum m K [(1, 4), (1, 4)] +
+  10 * glueRHS8_pair_sum m K [(1, 4), (2, 3)] +
+  10 * glueRHS8_pair_sum m K [(1, 4), (3, 2)] +
+  10 * glueRHS8_pair_sum m K [(1, 5), (2, 2)] +
+  10 * glueRHS8_pair_sum m K [(2, 2), (2, 4)] +
+  10 * glueRHS8_pair_sum m K [(2, 2), (3, 3)] +
+  5 * glueRHS8_pair_sum m K [(2, 3), (2, 3)]
+
+/-- The complete p=10 four-N boundary stratum after collapsing each
+nested glued-state sum to its ordered diagonal-pair product. This is still
+only the r=4 boundary contribution; it does not assert cross-stratum
+cancellation. -/
+theorem sg_trace_p10_four_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ :=
+      sgK m θ ax o
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    10 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    5 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) =
+      glueRHS10_four_N_diagonal_form m K := by
+  dsimp [glueRHS10_four_N_diagonal_form]
+  rw [sg_trace_p10_four_N_stratum_boundary m hm θ ax o hanti]
+  rw [
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 1 7 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 2 6 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 3 5 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 4 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 5 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 1 6 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 1 6 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 2 5 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 3 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 4 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 2 5 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 1 5 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 2 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 3 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 3 4 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 4 1 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 4 2 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 4 3 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 1 5 2 2 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 2 2 4 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 2 3 3 (by omega),
+    sg_trace_p10_four_N_boundary_sum_pair_diagonal m (by omega) θ ax o hanti 2 3 2 3 (by omega)
+  ]
+
+/-- The p=8 six-N boundary traces also reduce to products of three diagonal
+pairs. The middle kernels may have different powers, so the reduction uses
+the three-kernel supported-diagonal identity rather than commuting factors. -/
+private theorem sg_trace_p8_six_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+      fun n => Matrix.diagonal (fun y => if (sgGlue m).g y then
+        (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] +
+    8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] +
+    8 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] +
+    4 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
+  classical
+  dsimp
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let D : ℕ → Matrix (WSG m) (WSG m) ℂ :=
+    fun n => Matrix.diagonal (fun y => if g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0)
+  let d : ℕ → WSG m → ℂ :=
+    fun n y => if g y then
+      (K ^ n) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  have hd (n : ℕ) : ∀ y, ¬ g y → d n y = 0 := by
+    intro y hy
+    simp [d, hy]
+  have hKoff (n : ℕ) (hn : n ≤ 5) :
+      ∀ x y, g x → g y → x ≠ y → (K ^ n) x y = 0 := by
+    intro x y hx hy hxy
+    exact sgK_pow_glued_offdiag_of_OAnti m hm θ ax o hanti n hn x y hx hy hxy
+  have h111113 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 1 * D 3) =
+        glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 1) (K ^ 1) (d 1) (d 1) (d 3)
+      (hd 1) (hd 1) (hd 3) (hKoff 1 (by omega)) (hKoff 1 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 1) * Matrix.diagonal (d 1) * (K ^ 1) *
+          Matrix.diagonal (d 3)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 1) x x * d 1 x) *
+                ((K ^ 1) x x * d 3 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  have h111122 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 1 * K ^ 2 * D 2) =
+        glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 1) (K ^ 2) (d 1) (d 1) (d 2)
+      (hd 1) (hd 1) (hd 2) (hKoff 1 (by omega)) (hKoff 1 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 1) * Matrix.diagonal (d 1) * (K ^ 2) *
+          Matrix.diagonal (d 2)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 1) x x * d 1 x) *
+                ((K ^ 2) x x * d 2 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  have h111212 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 1 * D 2 * K ^ 1 * D 2) =
+        glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 1) (K ^ 1) (d 1) (d 2) (d 2)
+      (hd 1) (hd 2) (hd 2) (hKoff 1 (by omega)) (hKoff 1 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 1) * Matrix.diagonal (d 2) * (K ^ 1) *
+          Matrix.diagonal (d 2)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 1) x x * d 2 x) *
+                ((K ^ 1) x x * d 2 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  have h112112 :
+      Matrix.trace (K ^ 0 * K ^ 1 * D 1 * K ^ 2 * D 1 * K ^ 1 * D 2) =
+        glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
+    have htrace := trace_three_kernels_supported_diagonal
+      g (K ^ 1) (K ^ 2) (K ^ 1) (d 1) (d 1) (d 2)
+      (hd 1) (hd 1) (hd 2) (hKoff 1 (by omega)) (hKoff 2 (by omega))
+    calc
+      _ = Matrix.trace ((K ^ 1) * Matrix.diagonal (d 1) *
+          (K ^ 2) * Matrix.diagonal (d 1) * (K ^ 1) *
+          Matrix.diagonal (d 2)) := by
+            simp [pow_zero, pow_one, Matrix.one_mul, D, d]
+      _ = ∑ x, if g x then
+            ((K ^ 1) x x * d 1 x) *
+              ((K ^ 2) x x * d 1 x) *
+                ((K ^ 1) x x * d 2 x) else 0 := htrace
+      _ = glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] := by
+            unfold glueRHS8_pair_sum
+            simp only [glueRHS8_pair_product, glueRHS8_pair_value]
+            apply Finset.sum_congr rfl
+            intro x hx
+            by_cases hg : g x
+            · simp only [if_pos hg]
+              simp [d, g, hg]
+              ring
+            · simp [d, g, hg]
+  rw [sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti]
+  rw [h111113, h111122, h111212, h112112]
+
+private noncomputable def glueRHS8_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  8 * glueRHS8_pair_sum m K [(1, 7)] +
+  8 * glueRHS8_pair_sum m K [(2, 6)] +
+  8 * glueRHS8_pair_sum m K [(3, 5)] +
+  4 * glueRHS8_pair_sum m K [(4, 4)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 5)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (4, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 2), (1, 4)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (2, 4)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (3, 3)] +
+  8 * glueRHS8_pair_sum m K [(1, 3), (2, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 2), (3, 2)] +
+  4 * glueRHS8_pair_sum m K [(1, 3), (1, 3)] +
+  8 * glueRHS8_pair_sum m K [(1, 2), (2, 3)] +
+  2 * glueRHS8_pair_sum m K [(2, 2), (2, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (1, 3)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 1), (2, 2)] +
+  8 * glueRHS8_pair_sum m K [(1, 1), (1, 2), (1, 2)] +
+  4 * glueRHS8_pair_sum m K [(1, 1), (2, 1), (1, 2)] +
+  glueRHS8_pair_sum m K
+    [(1, 1), (1, 1), (1, 1), (1, 1)]
+
+private theorem sg_trace_p8_two_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) =
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 7)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(2, 6)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(3, 5)] +
+    4 * glueRHS8_pair_sum m (sgK m θ ax o) [(4, 4)] := by
+  simpa [glueRHS8_pair_sum, glueRHS8_pair_product,
+    glueRHS8_pair_value] using
+    (sg_trace_p8_two_N_stratum_boundary m hm θ ax o hanti)
+
+private theorem sg_trace_p8_four_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) +
+    4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0) +
+    2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N *
+      K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0) =
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (1, 5)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (4, 2)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (1, 4)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (2, 4)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 1), (3, 3)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 3), (2, 2)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (3, 2)] +
+    4 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 3), (1, 3)] +
+    8 * glueRHS8_pair_sum m (sgK m θ ax o) [(1, 2), (2, 3)] +
+    2 * glueRHS8_pair_sum m (sgK m θ ax o) [(2, 2), (2, 2)] := by
+  classical
+  dsimp
+  rw [sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti]
+  rw [
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 1 5 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 4 2 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 2 1 4 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 2 4 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 1 3 3 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 3 2 2 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 2 3 2 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 3 1 3 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 1 2 2 3 (by omega) (by omega),
+    sg_trace_four_N_boundary_sum_pair_diagonal m hm θ ax o hanti 2 2 2 2 (by omega) (by omega)
+  ]
+
+private theorem sg_trace_p8_top_stratum_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N *
+      K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0) =
+      glueRHS8_pair_sum m (sgK m θ ax o)
+        [(1, 1), (1, 1), (1, 1), (1, 1)] := by
+  classical
+  have htop := sg_trace_p8_top_stratum_diagonal_fourth m hm θ ax o hanti
+  dsimp at htop
+  calc
+    _ = ∑ x, if (sgGlue m).g x then
+          (sgK m θ ax o x x *
+            sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0 := htop
+    _ = glueRHS8_pair_sum m (sgK m θ ax o)
+        [(1, 1), (1, 1), (1, 1), (1, 1)] := by
+          unfold glueRHS8_pair_sum
+          simp only [glueRHS8_pair_product, glueRHS8_pair_value, pow_one]
+          apply Finset.sum_congr rfl
+          intro x hx
+          by_cases hg : (sgGlue m).g x
+          · simp only [if_pos hg]
+            ring
+          · simp [hg]
+
+/-- Exact normal form of the complete H8 boundary correction. All four even
+insertion strata remain present with their original cyclic weights. -/
+theorem glueRHS8_eq_diagonal_form
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    glueRHS8 m (sgK m θ ax o) =
+      glueRHS8_diagonal_form m (sgK m θ ax o) := by
+  classical
+  have htop :
+      (∑ x, if (sgGlue m).g x then
+        (sgK m θ ax o x x *
+          sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 4 else 0) =
+      glueRHS8_pair_sum m (sgK m θ ax o)
+        [(1, 1), (1, 1), (1, 1), (1, 1)] := by
+    unfold glueRHS8_pair_sum
+    simp only [glueRHS8_pair_product, glueRHS8_pair_value, pow_one]
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hg : (sgGlue m).g x
+    · simp only [if_pos hg]
+      ring
+    · simp [hg]
+  have hTwo :=
+    (sg_trace_p8_two_N_stratum_boundary m hm θ ax o hanti).symm.trans
+      (sg_trace_p8_two_N_stratum_pair_diagonal m hm θ ax o hanti)
+  have hFour :=
+    (sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti).symm.trans
+      (sg_trace_p8_four_N_stratum_pair_diagonal m hm θ ax o hanti)
+  have hSix :=
+    (sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti).symm.trans
+      (sg_trace_p8_six_N_stratum_pair_diagonal m hm θ ax o hanti)
+  dsimp at hSix
+  unfold glueRHS8
+  dsimp
+  unfold glueRHS8_diagonal_form
+  linear_combination hTwo + hFour + hSix + htop
+
+
+/-- Convert a finite sum with a conditional zero extension to the
+corresponding sum over the support subtype. -/
+private theorem glueRHS8_sum_ite_eq_subtype
+    {α : Type*} [Fintype α] (p : α → Prop) [DecidablePred p]
+    (f : α → ℂ) :
+    (∑ x, if p x then f x else 0) =
+      ∑ x : {x // p x}, f x.1 := by
+  classical
+  calc
+    (∑ x, if p x then f x else 0) =
+      (∑ x : {x // p x}, if p x.1 then f x.1 else 0) +
+        ∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0 := by
+          exact (Fintype.sum_subtype_add_sum_subtype p
+            (fun x => if p x then f x else 0)).symm
+    _ = _ := by
+      have hpos :
+          (∑ x : {x // p x}, if p x.1 then f x.1 else 0) =
+            ∑ x : {x // p x}, f x.1 := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        exact if_pos x.2
+      have hneg :
+          (∑ x : {x // ¬ p x}, if p x.1 then f x.1 else 0) = 0 := by
+        apply Finset.sum_eq_zero
+        intro x hx
+        exact if_neg x.2
+      rw [hpos, hneg]
+      exact add_zero _
+
+/-- Reindex one H8 diagonal pair-product across adjacent levels.
+The first power is evaluated at the glued root and the second at its
+partner. The hypotheses preserve both entries through degree seven. -/
+private theorem glueRHS8_pair_product_transport
+    (m : ℕ)
+    (Khi : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
+    (Klo : Matrix (WSG m) (WSG m) ℂ)
+    (e : {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w})
+    (hpow : ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w),
+      ∀ n, n ≤ 7 →
+        (Khi ^ n) w w =
+          (Klo ^ n) (e ⟨w, hw⟩).1 (e ⟨w, hw⟩).1 ∧
+        (Khi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+          (Klo ^ n) ((sgGlue m).σ (e ⟨w, hw⟩).1)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1))
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w)
+    (ps : List (ℕ × ℕ))
+    (hbound : ∀ p ∈ ps, p.1 ≤ 7 ∧ p.2 ≤ 7) :
+    glueRHS8_pair_product (m + 1) Khi w ps =
+      glueRHS8_pair_product m Klo (e ⟨w, hw⟩).1 ps := by
+  classical
+  revert hbound
+  induction ps with
+  | nil =>
+      intro _
+      rfl
+  | cons p ps ih =>
+      intro hbound
+      have hp := hbound p (by simp)
+      have htail : ∀ q ∈ ps, q.1 ≤ 7 ∧ q.2 ≤ 7 := by
+        intro q hq
+        exact hbound q (by simp [hq])
+      have hvalue :
+          glueRHS8_pair_value (m + 1) Khi w p =
+            glueRHS8_pair_value m Klo (e ⟨w, hw⟩).1 p := by
+        have hfirst := (hpow w hw p.1 hp.1).1
+        have hsecond := (hpow w hw p.2 hp.2).2
+        simp only [glueRHS8_pair_value, hfirst, hsecond]
+      change
+        glueRHS8_pair_value (m + 1) Khi w p *
+            glueRHS8_pair_product (m + 1) Khi w ps =
+          glueRHS8_pair_value m Klo (e ⟨w, hw⟩).1 p *
+            glueRHS8_pair_product m Klo (e ⟨w, hw⟩).1 ps
+      rw [hvalue, ih htail]
+
+/-- A complete finite sum of H8 diagonal pair-products transports across
+an equivalence of the glued-state subtypes. No terms outside the glued set
+are introduced: the conditional sums are converted to subtype sums first. -/
+private theorem glueRHS8_pair_sum_transport
+    (m : ℕ)
+    (Khi : Matrix (WSG (m + 1)) (WSG (m + 1)) ℂ)
+    (Klo : Matrix (WSG m) (WSG m) ℂ)
+    (e : {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w})
+    (hpow : ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w),
+      ∀ n, n ≤ 7 →
+        (Khi ^ n) w w =
+          (Klo ^ n) (e ⟨w, hw⟩).1 (e ⟨w, hw⟩).1 ∧
+        (Khi ^ n) ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+          (Klo ^ n) ((sgGlue m).σ (e ⟨w, hw⟩).1)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1))
+    (ps : List (ℕ × ℕ))
+    (hbound : ∀ p ∈ ps, p.1 ≤ 7 ∧ p.2 ≤ 7) :
+    glueRHS8_pair_sum (m + 1) Khi ps =
+      glueRHS8_pair_sum m Klo ps := by
+  classical
+  unfold glueRHS8_pair_sum
+  calc
+    (∑ w, if (sgGlue (m + 1)).g w then
+        glueRHS8_pair_product (m + 1) Khi w ps else 0) =
+      ∑ w : {w : WSG (m + 1) // (sgGlue (m + 1)).g w},
+        glueRHS8_pair_product (m + 1) Khi w.1 ps := by
+          exact glueRHS8_sum_ite_eq_subtype
+            (fun w : WSG (m + 1) => (sgGlue (m + 1)).g w)
+            (fun w => glueRHS8_pair_product (m + 1) Khi w ps)
+    _ = ∑ w : {w : WSG (m + 1) // (sgGlue (m + 1)).g w},
+        glueRHS8_pair_product m Klo (e w).1 ps := by
+          apply Finset.sum_congr rfl
+          intro w hw
+          exact glueRHS8_pair_product_transport m Khi Klo e hpow
+            (w := w.1) w.2 ps hbound
+    _ = ∑ w : {w : WSG m // (sgGlue m).g w},
+        glueRHS8_pair_product m Klo w.1 ps := by
+          exact Equiv.sum_comp e
+            (fun w : {w : WSG m // (sgGlue m).g w} =>
+              glueRHS8_pair_product m Klo w.1 ps)
+    _ = ∑ w, if (sgGlue m).g w then
+        glueRHS8_pair_product m Klo w ps else 0 := by
+          exact (glueRHS8_sum_ite_eq_subtype
+            (fun w : WSG m => (sgGlue m).g w)
+            (fun w => glueRHS8_pair_product m Klo w ps)).symm
+
+/-- Adjacent-level transport of the complete H8 boundary correction.
+The exact diagonal normal form contains nineteen pair-product sums. Each
+is reindexed by the same glued-root equivalence, using both root and partner
+diagonal powers through degree seven. -/
+theorem glueRHS8_adjacent_level_eq_of_diagonal_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (oHi oLo : Point → Point → Prop)
+    [DecidableRel oHi] [DecidableRel oLo]
+    (hantiHi : OAnti (m + 2) oHi)
+    (hantiLo : OAnti (m + 1) oLo)
+    (e : {w : WSG (m + 1) // (sgGlue (m + 1)).g w} ≃
+      {w : WSG m // (sgGlue m).g w})
+    (hpow : ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w),
+      ∀ n, n ≤ 7 →
+        (sgK (m + 1) θ ax oHi ^ n) w w =
+          (sgK m θ ax oLo ^ n) (e ⟨w, hw⟩).1 (e ⟨w, hw⟩).1 ∧
+        (sgK (m + 1) θ ax oHi ^ n) ((sgGlue (m + 1)).σ w)
+            ((sgGlue (m + 1)).σ w) =
+          (sgK m θ ax oLo ^ n)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1)
+            ((sgGlue m).σ (e ⟨w, hw⟩).1)) :
+    glueRHS8 (m + 1) (sgK (m + 1) θ ax oHi) =
+      glueRHS8 m (sgK m θ ax oLo) := by
+  rw [glueRHS8_eq_diagonal_form (m + 1) (by omega) θ ax oHi hantiHi,
+    glueRHS8_eq_diagonal_form m hm θ ax oLo hantiLo]
+  unfold glueRHS8_diagonal_form
+  have hsum (ps : List (ℕ × ℕ))
+      (hbound : ∀ p ∈ ps, p.1 ≤ 7 ∧ p.2 ≤ 7) :=
+    glueRHS8_pair_sum_transport m
+      (sgK (m + 1) θ ax oHi) (sgK m θ ax oLo) e hpow ps hbound
+  rw [
+    hsum [(1, 7)] (by norm_num),
+    hsum [(2, 6)] (by norm_num),
+    hsum [(3, 5)] (by norm_num),
+    hsum [(4, 4)] (by norm_num),
+    hsum [(1, 1), (1, 5)] (by norm_num),
+    hsum [(1, 1), (4, 2)] (by norm_num),
+    hsum [(1, 2), (1, 4)] (by norm_num),
+    hsum [(1, 1), (2, 4)] (by norm_num),
+    hsum [(1, 1), (3, 3)] (by norm_num),
+    hsum [(1, 3), (2, 2)] (by norm_num),
+    hsum [(1, 2), (3, 2)] (by norm_num),
+    hsum [(1, 3), (1, 3)] (by norm_num),
+    hsum [(1, 2), (2, 3)] (by norm_num),
+    hsum [(2, 2), (2, 2)] (by norm_num),
+    hsum [(1, 1), (1, 1), (1, 3)] (by norm_num),
+    hsum [(1, 1), (1, 1), (2, 2)] (by norm_num),
+    hsum [(1, 1), (1, 2), (1, 2)] (by norm_num),
+    hsum [(1, 1), (2, 1), (1, 2)] (by norm_num),
+    hsum [(1, 1), (1, 1), (1, 1), (1, 1)] (by norm_num)
+  ]
+
+/-- Original p=8 even-stratum contribution before boundary reduction.
+The sum contains all positive even insertion strata r=2,4,6,8 with
+exact cyclic-orbit weights; the r=0 word is kept separate as trace(K^8). -/
+noncomputable def glueLHS8
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  (
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 7 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 6 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 3 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 4 * Matrix.trace (K ^ 4 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+  )
+  + (
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 5 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 4 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 2 * Matrix.trace (K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+  )
+  + (
+    8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 3 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 8 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+    + 4 * Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 2 * (sgGlue m).N * K ^ 0)
+  )
+  + Matrix.trace (K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 1 * (sgGlue m).N * K ^ 0)
+
+/-- The already-proved positive even p=8 strata combine into glueRHS8.
+This theorem is only the level-local even-boundary assembly: it asserts
+neither odd-stratum cancellation nor a trace split or level recurrence. -/
+theorem sg_trace_p8_all_even_strata_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    glueLHS8 m (sgK m θ ax o) = glueRHS8 m (sgK m θ ax o) := by
+  unfold glueLHS8
+  rw [sg_trace_p8_two_N_stratum_boundary m hm θ ax o hanti,
+    sg_trace_p8_four_N_stratum_boundary m hm θ ax o hanti,
+    sg_trace_p8_six_N_stratum_boundary m hm θ ax o hanti,
+    sg_trace_p8_top_stratum_diagonal_fourth m hm θ ax o hanti]
+  unfold glueRHS8
+  ring
+
+
+/-- The complete three-N cyclic stratum of the p=10 ordered-word expansion
+vanishes under OAnti. Its twelve cyclic classes have orbit weight ten
+(the weights sum to choose(10,3)=120). Each representative is rotated
+to the three-pairing normal form; its first selected gap is at most three,
+so the existing corner-vanishing theorem applies for m >= 3. -/
+theorem sg_trace_p10_three_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
+    10 * Matrix.trace
+      (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0
+  have hside : 3 < 2 ^ m := by
+    calc
+      3 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hrot_r3_1 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 7) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), (K * N), K, K,
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_1 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) = 0 := by
+    rw [hrot_r3_1]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 1 7 (by omega)
+  have hrot_r3_2 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 6) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, (K * N), K,
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_2 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) = 0 := by
+    rw [hrot_r3_2]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 2 6 (by omega)
+  have hrot_r3_3 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 5) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, (K * N),
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_3 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) = 0 := by
+    rw [hrot_r3_3]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 3 5 (by omega)
+  have hrot_r3_4 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 4) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        (K * N), K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_4 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) = 0 := by
+    rw [hrot_r3_4]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 4 4 (by omega)
+  have hrot_r3_5 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 5 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        K, (K * N), K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_5 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+    rw [hrot_r3_5]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 5 3 (by omega)
+  have hrot_r3_6 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 6 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        K, K, (K * N), K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_6 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) = 0 := by
+    rw [hrot_r3_6]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 6 2 (by omega)
+  have hrot_r3_7 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 7 * N * K ^ 1) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        (K * N), K, K, K,
+        K, K, K, (K * N),
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_7 :
+      Matrix.trace (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) = 0 := by
+    rw [hrot_r3_7]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 7 1 (by omega)
+  have hrot_r3_8 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 5) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, (K * N),
+        K, K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_8 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) = 0 := by
+    rw [hrot_r3_8]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 2 5 (by omega)
+  have hrot_r3_9 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 4) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, K,
+        (K * N), K, K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_9 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) = 0 := by
+    rw [hrot_r3_9]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 3 4 (by omega)
+  have hrot_r3_10 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 4 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, K,
+        K, (K * N), K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_10 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+    rw [hrot_r3_10]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 4 3 (by omega)
+  have hrot_r3_11 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 5 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, (K * N), K, K,
+        K, K, (K * N), K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_11 :
+      Matrix.trace (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) = 0 := by
+    rw [hrot_r3_11]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 5 2 (by omega)
+  have hrot_r3_12 :
+      Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 3 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+        K, K, (K * N), K,
+        K, (K * N), K, K,
+        K
+      ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r3_12 :
+      Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) = 0 := by
+    rw [hrot_r3_12]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 3 3 3 (by omega)
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_1
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_2
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_3
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_4
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_5
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_6
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_7
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_8
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_9
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_10
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_11
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+    at hzero_r3_12
+  simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+  linear_combination
+    10 * hzero_r3_1 + 10 * hzero_r3_2 + 10 * hzero_r3_3 +
+    10 * hzero_r3_4 + 10 * hzero_r3_5 + 10 * hzero_r3_6 +
+    10 * hzero_r3_7 + 10 * hzero_r3_8 + 10 * hzero_r3_9 +
+    10 * hzero_r3_10 + 10 * hzero_r3_11 + 10 * hzero_r3_12
+/-- Connect the complete exact-count p=10 three-N binary-word
+stratum to its twelve cyclic zero classes. The orbit normalization is
+(10/3) times orbit size three, so each existing class has coefficient ten. -/
+theorem sg_trace_p10_three_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 3,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 3,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcards3 :
+      ([(cyclicGapOrbit [1, 1, 8]).card,
+        (cyclicGapOrbit [1, 2, 7]).card,
+        (cyclicGapOrbit [1, 3, 6]).card,
+        (cyclicGapOrbit [1, 4, 5]).card,
+        (cyclicGapOrbit [1, 5, 4]).card,
+        (cyclicGapOrbit [1, 6, 3]).card,
+        (cyclicGapOrbit [1, 7, 2]).card,
+        (cyclicGapOrbit [2, 2, 6]).card,
+        (cyclicGapOrbit [2, 3, 5]).card,
+        (cyclicGapOrbit [2, 4, 4]).card,
+        (cyclicGapOrbit [2, 5, 3]).card,
+        (cyclicGapOrbit [3, 3, 4]).card] : List ℕ) =
+          [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] := by
+    decide
+  simp only [List.cons.injEq] at hcards3
+  rcases hcards3 with
+    ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩
+  have hcoef3 : ((10 : ℂ) / (3 : ℂ)) * 3 = 10 := by
+    norm_num
+  have htrace (e0 e1 e2 : ℕ) :
+      cyclicGapTrace K N
+        [Nat.succ e0, Nat.succ e1, Nat.succ e2] =
+      Matrix.trace
+        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+          K ^ e2 * (K * N)) := by
+    calc
+      _ = cyclicGapTrace K (K * N) [e0, e1, e2] := by
+        symm
+        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N [e0, e1, e2]
+      _ = _ := by
+        simp [cyclicGapTrace, Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps3,
+        ((10 : ℂ) / (3 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage3 K N
+    _ = 10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 0 * (K * N) * K ^ 7 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 1 * (K * N) * K ^ 6 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 2 * (K * N) * K ^ 5 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 3 * (K * N) * K ^ 4 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 4 * (K * N) * K ^ 3 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 5 * (K * N) * K ^ 2 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 0 * (K * N) * K ^ 6 * (K * N) * K ^ 1 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 1 * (K * N) * K ^ 5 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 2 * (K * N) * K ^ 4 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 3 * (K * N) * K ^ 3 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 1 * (K * N) * K ^ 4 * (K * N) * K ^ 2 * (K * N)) +
+        10 * Matrix.trace
+          (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K ^ 3 * (K * N)) := by
+      simp [binaryWordP10GapOrbitReps3, htrace, h1, h2, h3, h4, h5, h6,
+        h7, h8, h9, h10, h11, h12, hcoef3]
+      ring
+    _ = 0 := by
+      simpa [K, N] using
+        (sg_trace_p10_three_N_stratum_zero m hm θ ax o hanti)
+
+
+
+/-- The unique r=1 cyclic class in the p=8 ordered-word expansion
+vanishes. Its orbit weight is eight and its representative is
+K^7 * (K*N). The generic single-pairing lemma applies because K is
+block diagonal across the glued copies; no OAnti hypothesis is needed. -/
+theorem sg_trace_p8_one_N_stratum_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    8 * Matrix.trace
+      (sgK m θ ax o ^ 7 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+  have hzero :
+      Matrix.trace
+        (sgK m θ ax o ^ 7 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+    simpa using
+      (trace_single_KN_word_zero (sgGlue m) (sgK m θ ax o)
+        (blockK_BD (Hc m θ ax o)) 7 0)
+  simp [hzero]
+
+
+/-- The complete r=3 cyclic stratum of the p=8 ordered-word expansion
+vanishes under OAnti. Its seven cyclic classes each have orbit weight eight.
+Each class is rotated exactly to K^1*N*K^b*N*K^c*N*K^d; the only required
+corner exponent b is at most two, so m >= 3 is sufficient. -/
+theorem sg_trace_p8_three_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+8 * Matrix.trace (K ^ 5 * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K ^ 4 * (K * N) * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K ^ 4 * (K * N) * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K ^ 3 * (K * N) * K ^ 2 * (K * N) * (K * N))
+    + 8 * Matrix.trace (K ^ 3 * (K * N) * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K ^ 3 * (K * N) * (K * N) * K ^ 2 * (K * N))
+    + 8 * Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K * (K * N)) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    8 * Matrix.trace (K ^ 5 * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 4 * (K * N) * K * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 4 * (K * N) * (K * N) * K * (K * N))
+      + 8 * Matrix.trace (K ^ 3 * (K * N) * K ^ 2 * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 3 * (K * N) * K * (K * N) * K * (K * N))
+      + 8 * Matrix.trace (K ^ 3 * (K * N) * (K * N) * K ^ 2 * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K * (K * N)) = 0
+  have hside : 2 < 2 ^ m := by
+    calc
+      2 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+
+  have hrot_r3_1 :
+      Matrix.trace (K ^ 5 * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 5) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_1 : Matrix.trace (K ^ 5 * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r3_1]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 1 5 (by omega)
+
+  have hrot_r3_2 :
+      Matrix.trace (K ^ 4 * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 5 * N * K ^ 1) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, (K * N), K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_2 : Matrix.trace (K ^ 4 * (K * N) * K * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r3_2]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 5 1 (by omega)
+
+  have hrot_r3_3 :
+      Matrix.trace (K ^ 4 * (K * N) * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_3 : Matrix.trace (K ^ 4 * (K * N) * (K * N) * K * (K * N)) = 0 := by
+    rw [hrot_r3_3]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 2 4 (by omega)
+
+  have hrot_r3_4 :
+      Matrix.trace (K ^ 3 * (K * N) * K ^ 2 * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, (K * N), K, K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_4 : Matrix.trace (K ^ 3 * (K * N) * K ^ 2 * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r3_4]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 4 2 (by omega)
+
+  have hrot_r3_5 :
+      Matrix.trace (K ^ 3 * (K * N) * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_5 : Matrix.trace (K ^ 3 * (K * N) * K * (K * N) * K * (K * N)) = 0 := by
+    rw [hrot_r3_5]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 2 3 (by omega)
+
+  have hrot_r3_6 :
+      Matrix.trace (K ^ 3 * (K * N) * (K * N) * K ^ 2 * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), (K * N), K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_6 : Matrix.trace (K ^ 3 * (K * N) * (K * N) * K ^ 2 * (K * N)) = 0 := by
+    rw [hrot_r3_6]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 1 3 3 (by omega)
+
+  have hrot_r3_7 :
+      Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N), K, K] : List (Matrix (WSG m) (WSG m) ℂ)) ([(K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r3_7 : Matrix.trace (K ^ 2 * (K * N) * K ^ 2 * (K * N) * K * (K * N)) = 0 := by
+    rw [hrot_r3_7]
+    exact trace_three_N_word_zero_of_OAnti m θ ax o hanti
+      1 2 3 2 (by omega)
+
+  simp [hzero_r3_1, hzero_r3_2, hzero_r3_3, hzero_r3_4, hzero_r3_5, hzero_r3_6, hzero_r3_7]
+
+
+/-- The complete r=5 cyclic stratum of the p=8 ordered-word expansion
+vanishes under OAnti. The seven cyclic classes all have orbit weight eight.
+Each representative is rotated to the five-N normal form; the two selected
+middle powers are at most three, so m >= 3 suffices. -/
+theorem sg_trace_p8_five_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    8 * Matrix.trace (K ^ 3 * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * (K * N) * K * (K * N))
+      + 8 * Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N) * (K * N)) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    8 * Matrix.trace (K ^ 3 * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N))
+      + 8 * Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * (K * N) * K * (K * N))
+      + 8 * Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N) * (K * N))
+      + 8 * Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N) * (K * N)) = 0
+  have hside : 3 < 2 ^ m := by
+    calc
+      3 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+
+  have hrot_r5_1 :
+      Matrix.trace (K ^ 3 * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 4 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, K, K, (K * N), (K * N), (K * N), (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_1 :
+      Matrix.trace (K ^ 3 * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r5_1]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      4 1 1 1 1 0 (by omega) (by omega)
+
+  have hrot_r5_2 :
+      Matrix.trace (K ^ 2 * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, (K * N), (K * N), (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_2 :
+      Matrix.trace (K ^ 2 * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r5_2]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      2 1 1 1 3 0 (by omega) (by omega)
+
+  have hrot_r5_3 :
+      Matrix.trace (K ^ 2 * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, (K * N), (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_3 :
+      Matrix.trace (K ^ 2 * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r5_3]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      2 1 1 3 1 0 (by omega) (by omega)
+
+  have hrot_r5_4 :
+      Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 3 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, K, (K * N), (K * N), (K * N), K, (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_4 :
+      Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r5_4]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      3 1 1 2 1 0 (by omega) (by omega)
+
+  have hrot_r5_5 :
+      Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 3 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, K, (K * N), (K * N), (K * N), (K * N), K, (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_5 :
+      Matrix.trace (K ^ 2 * (K * N) * (K * N) * (K * N) * (K * N) * K * (K * N)) = 0 := by
+    rw [hrot_r5_5]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      3 1 1 1 2 0 (by omega) (by omega)
+
+  have hrot_r5_6 :
+      Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, (K * N), K, (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, (K * N), (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_6 :
+      Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r5_6]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      2 1 1 2 2 0 (by omega) (by omega)
+
+  have hrot_r5_7 :
+      Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, (K * N), (K * N), K, (K * N), (K * N)] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hzero_r5_7 :
+      Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * K * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r5_7]
+    exact trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      2 1 2 1 2 0 (by omega) (by omega)
+
+  simp [hzero_r5_1, hzero_r5_2, hzero_r5_3, hzero_r5_4,
+    hzero_r5_5, hzero_r5_6, hzero_r5_7]
+
+
+/-- The complete r=7 cyclic stratum of the p=8 ordered-word expansion
+vanishes under OAnti. The unique class has orbit weight eight. After a
+cyclic rotation, the seven selected middle powers are all K^1 and the
+remaining terminal gap is K^2, so m >= 3 suffices. -/
+theorem sg_trace_p8_seven_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    8 * Matrix.trace
+      (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change 8 * Matrix.trace
+    (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0
+  have hside : 1 < 2 ^ m := by
+    calc
+      1 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hrot_r7 :
+      Matrix.trace
+        (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+      Matrix.trace
+        (K ^ 0 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([N, K, N, K, N, K, N, K, N, K, N, K, N] :
+          List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero_r7 :
+      Matrix.trace
+        (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
+    rw [hrot_r7]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      0 1 1 1 1 1 1 2 (by omega) (by omega) (by omega)
+  simp [hzero_r7]
+
+
+/-- The positive even cyclic classes in the p=8 expansion, in exactly the
+order returned by `trace_orderedWordExpansion_eight_cyclic`. -/
+private def sg_trace_p8_cyclic_even
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  8 * Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N))
+    + 8 * Matrix.trace (K * K * K * K * (K * N) * (K * N) * (K * N) * (K * N))
+    + 4 * Matrix.trace (K * K * K * (K * N) * K * K * K * (K * N))
+    + 8 * Matrix.trace (K * K * K * (K * N) * K * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * K * (K * N) * (K * N) * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * K * K * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * K * (K * N) * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * K * (K * N))
+    + 4 * Matrix.trace (K * K * (K * N) * (K * N) * K * K * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+    + 2 * Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * K * (K * N))
+    + 8 * Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+    + 8 * Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N))
+    + 4 * Matrix.trace (K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N))
+    + 1 * Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N))
+
+/-- The 19 positive even cyclic classes are precisely the representatives
+stored in glueLHS8. Each equality below is a cyclic rotation of the ordered
+K/(K*N) word; no factors are commuted or reversed. -/
+private theorem sg_trace_p8_cyclic_even_eq_glueLHS8
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) :
+    sg_trace_p8_cyclic_even m K (sgGlue m).N = glueLHS8 m K := by
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+
+  have hrot_even_2_1 :
+      Matrix.trace (K * K * K * K * K * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 7 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_2_2 :
+      Matrix.trace (K * K * K * K * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 6 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_2_3 :
+      Matrix.trace (K * K * K * K * (K * N) * K * K * (K * N)) =
+        Matrix.trace (K ^ 3 * N * K ^ 5 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_1 :
+      Matrix.trace (K * K * K * K * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 5 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_2_4 :
+      Matrix.trace (K * K * K * (K * N) * K * K * K * (K * N)) =
+        Matrix.trace (K ^ 4 * N * K ^ 4 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, K, K, (K * N), K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_2 :
+      Matrix.trace (K * K * K * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 4 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_3 :
+      Matrix.trace (K * K * K * (K * N) * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 4 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), K, (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_4 :
+      Matrix.trace (K * K * K * (K * N) * (K * N) * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 4 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_5 :
+      Matrix.trace (K * K * (K * N) * K * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 3 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N), K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_6 :
+      Matrix.trace (K * K * (K * N) * K * (K * N) * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N), K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_7 :
+      Matrix.trace (K * K * (K * N) * K * (K * N) * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 3 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_8 :
+      Matrix.trace (K * K * (K * N) * (K * N) * K * K * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), K, K, (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_9 :
+      Matrix.trace (K * K * (K * N) * (K * N) * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 3 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_6_1 :
+      Matrix.trace (K * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), (K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_4_10 :
+      Matrix.trace (K * (K * N) * K * (K * N) * K * (K * N) * K * (K * N)) =
+        Matrix.trace (K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([K, (K * N), K, (K * N), K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_6_2 :
+      Matrix.trace (K * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_6_3 :
+      Matrix.trace (K * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, (K * N), (K * N), K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_6_4 :
+      Matrix.trace (K * (K * N) * (K * N) * (K * N) * K * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([K, (K * N)] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), K, (K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  have hrot_even_8_1 :
+      Matrix.trace ((K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
+        Matrix.trace (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 0) := by
+    simpa [Matrix.mul_assoc, pow_succ, pow_one, pow_zero,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list ([] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N), (K * N), (K * N), (K * N), (K * N), (K * N), (K * N), (K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+
+  unfold sg_trace_p8_cyclic_even glueLHS8
+  rw [hrot_even_2_1,
+    hrot_even_2_2,
+    hrot_even_2_3,
+    hrot_even_4_1,
+    hrot_even_2_4,
+    hrot_even_4_2,
+    hrot_even_4_3,
+    hrot_even_4_4,
+    hrot_even_4_5,
+    hrot_even_4_6,
+    hrot_even_4_7,
+    hrot_even_4_8,
+    hrot_even_4_9,
+    hrot_even_6_1,
+    hrot_even_4_10,
+    hrot_even_6_2,
+    hrot_even_6_3,
+    hrot_even_6_4,
+    hrot_even_8_1]
+  ring
+
+/-- Full ordered p=8 trace split. The 36 cyclic classes are partitioned into
+the r=0 base term, the four vanishing odd strata r=1,3,5,7, and all 19
+positive even classes. The latter are then reduced to the explicit weighted
+boundary expression glueRHS8. This is a level-local trace split, not an
+all-level H8 recurrence or a boundary-cancellation theorem. -/
+theorem sg_trace_p8_ordered_expansion_boundary
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace
+      ((sgK m θ ax o + sgK m θ ax o * (sgGlue m).N) ^ 8) =
+      Matrix.trace (sgK m θ ax o ^ 8) + glueRHS8 m (sgK m θ ax o) := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change Matrix.trace ((K + K * N) ^ 8) =
+    Matrix.trace (K ^ 8) + glueRHS8 m K
+  have hOne := sg_trace_p8_one_N_stratum_zero m θ ax o
+  have hThree := sg_trace_p8_three_N_stratum_zero m hm θ ax o hanti
+  have hFive := sg_trace_p8_five_N_stratum_zero m hm θ ax o hanti
+  have hSeven := sg_trace_p8_seven_N_stratum_zero m hm θ ax o hanti
+  calc
+    Matrix.trace ((K + K * N) ^ 8) =
+        Matrix.trace (K ^ 8) + sg_trace_p8_cyclic_even m K N := by
+      rw [trace_orderedWordExpansion K (K * N) 8,
+        trace_orderedWordExpansion_eight_cyclic K (K * N)]
+      unfold sg_trace_p8_cyclic_even
+      dsimp [K, N] at hOne hThree hFive hSeven ⊢
+      simp only [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_assoc] at hOne hThree hFive hSeven ⊢
+      linear_combination hOne + hThree + hFive + hSeven
+    _ = Matrix.trace (K ^ 8) + glueLHS8 m K := by
+      simpa [N] using sg_trace_p8_cyclic_even_eq_glueLHS8 m K
+    _ = Matrix.trace (K ^ 8) + glueRHS8 m K := by
+      rw [sg_trace_p8_all_even_strata_boundary m hm θ ax o hanti]
+
+
+/-- The actual level-(m+1) operator has the exact p=8 trace split into
+the three copy contributions and the full even boundary correction.
+The boundary term is retained; no axis-independence or cancellation is
+asserted here. -/
+theorem pOpO_trace8_glue_final
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hanti : OAnti (m + 1) o) :
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ 8) =
+      (∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 8)) +
+        glueRHS8 m (sgK m θ ax o) := by
+  let K := sgK m θ ax o
+  let N := (sgGlue m).N
+  have hwords :
+      Matrix.trace ((pOpO (m + 1) θ ax o) ^ 8) =
+        ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum := by
+    simpa [K, N] using
+      (pOpO_succ_trace_ordered_words m θ ax o hax1 hax2 8 (by omega))
+  have hordered :
+      ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum =
+        Matrix.trace (K ^ 8) + glueRHS8 m K := by
+    rw [← trace_orderedWordExpansion K (K * N) 8]
+    simpa [K, N] using
+      (sg_trace_p8_ordered_expansion_boundary m hm θ ax o hanti)
+  have hcopy :
+      Matrix.trace (K ^ 8) =
+        ∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 8) := by
+    simpa [K, sgK] using (trace_blockK_pow (Hc m θ ax o) 8)
+  calc
+    Matrix.trace ((pOpO (m + 1) θ ax o) ^ 8) =
+        ((orderedWordExpansion K (K * N) 8).map Matrix.trace).sum := hwords
+    _ = Matrix.trace (K ^ 8) + glueRHS8 m K := hordered
+    _ = (∑ c : GCopy, Matrix.trace (Hc m θ ax o c ^ 8)) +
+        glueRHS8 m K := by
+      rw [hcopy]
+
+
+/-- Eighth-moment defect between two axis configurations at the same
+level and orientation. -/
+noncomputable def defectO8
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] : ℂ :=
+  Matrix.trace ((pOpO m θ ax o) ^ 8) -
+    Matrix.trace ((pOpO m θ ax' o) ^ 8)
+
+
+/-- The eighth-moment defect depends on the orientation only through its
+values on flux edges. -/
+theorem defectO8_congr
+    (m : ℕ) (θ : ℝ) (ax ax' : ℕ → Axis)
+    (o o' : Point → Point → Prop) [DecidableRel o] [DecidableRel o']
+    (h : ∀ p q : Point, p ≠ q →
+      EdgeB m p.1 p.2 q.1 q.2 = true →
+      (if p ≤ q then (p, q) else (q, p)) ∈ fluxEdges m →
+      (o p q ↔ o' p q)) :
+    defectO8 m θ ax ax' o = defectO8 m θ ax ax' o' := by
+  have e : ∀ b : ℕ → Axis, pOpO m θ b o = pOpO m θ b o' := by
+    intro b
+    funext x y
+    exact pHeO_orient_congr m θ b o o' h x.1.1 y.1.1 x.2 y.2
+  unfold defectO8
+  rw [e ax, e ax']
+
+
+/-- Exact level recursion for the eighth-moment axis defect. The three
+copy defects are separated, and the difference of the two complete H8
+boundary corrections is retained explicitly. No boundary cancellation
+or stabilization is assumed. -/
+theorem defectO8_succ
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ)
+    (ax ax' : ℕ → Axis) (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (hax1 : ∀ k, ax (3 ^ m + k) = ax k)
+    (hax2 : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (hax1' : ∀ k, ax' (3 ^ m + k) = ax' k)
+    (hax2' : ∀ k, ax' (2 * 3 ^ m + k) = ax' k) :
+    defectO8 (m + 1) θ ax ax' o =
+      defectO8 m θ ax ax' o +
+      defectO8 m θ ax ax' (oBo m o) +
+      defectO8 m θ ax ax' (oCo m o) +
+      (glueRHS8 m (sgK m θ ax o) -
+        glueRHS8 m (sgK m θ ax' o)) := by
+  have hA : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.A = pOpO m θ b o := fun _ => rfl
+  have hB : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.B = pOpO m θ b (oBo m o) := fun _ => rfl
+  have hC : ∀ b : ℕ → Axis,
+      Hc m θ b o GCopy.C = pOpO m θ b (oCo m o) := fun _ => rfl
+  unfold defectO8
+  rw [pOpO_trace8_glue_final m hm θ ax o hax1 hax2 hanti,
+    pOpO_trace8_glue_final m hm θ ax' o hax1' hax2' hanti]
+  rw [sum_gcopy, sum_gcopy,
+    hA ax, hA ax', hB ax, hB ax', hC ax, hC ax']
+  ring
+
+
+
+/-- A p=10 word representative with seven selected K*N factors.
+The seven entries record the extra plain K factors in the seven cyclic gaps. -/
+private def sg_trace_p10_seven_N_class_term
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ)
+    (e0 e1 e2 e3 e4 e5 e6 : ℕ) : ℂ :=
+  Matrix.trace
+    (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+      K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+      K ^ e4 * (K * N) * K ^ e5 * (K * N) *
+      K ^ e6 * (K * N))
+
+/-- Complete p=10 seven-N stratum. The twelve cyclic classes are
+handled with explicit finite rotations (rather than a symbolic-power
+normalization), followed by the existing seven-N corner lemma. -/
+theorem sg_trace_p10_seven_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  have hside : 4 < 2 ^ m := by
+    calc
+      4 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hrot1 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), (K * N),
+          (K * N), K, K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero1 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 = 0 := by
+    rw [hrot1]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 1 3
+      (by omega) (by omega) (by omega)
+  have hrot2 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), (K * N),
+          K, (K * N), K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero2 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 = 0 := by
+    rw [hrot2]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 2 2
+      (by omega) (by omega) (by omega)
+  have hrot3 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), (K * N),
+          K, K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero3 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 = 0 := by
+    rw [hrot3]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 3 1
+      (by omega) (by omega) (by omega)
+  have hrot4 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), K,
+          (K * N), (K * N), K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero4 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 = 0 := by
+    rw [hrot4]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 2 1 2
+      (by omega) (by omega) (by omega)
+  have hrot5 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), K,
+          (K * N), K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero5 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 = 0 := by
+    rw [hrot5]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 2 2 1
+      (by omega) (by omega) (by omega)
+  have hrot6 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), (K * N), K,
+          K, (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero6 : sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 = 0 := by
+    rw [hrot6]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 3 1 1
+      (by omega) (by omega) (by omega)
+  have hrot7 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, (K * N),
+          (K * N), (K * N), K, K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero7 : sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 = 0 := by
+    rw [hrot7]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 2 1 1 2
+      (by omega) (by omega) (by omega)
+  have hrot8 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, (K * N),
+          (K * N), K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero8 : sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 = 0 := by
+    rw [hrot8]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 2 1 2 1
+      (by omega) (by omega) (by omega)
+  have hrot9 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, (K * N),
+          K, (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero9 : sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 = 0 := by
+    rw [hrot9]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 2 2 1 1
+      (by omega) (by omega) (by omega)
+  have hrot10 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 3 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), (K * N), K, K,
+          (K * N), (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero10 : sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 = 0 := by
+    rw [hrot10]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 3 1 1 1
+      (by omega) (by omega) (by omega)
+  have hrot11 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), K, (K * N), (K * N),
+          (K * N), K, (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero11 : sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 = 0 := by
+    rw [hrot11]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 2 1 1 2 1
+      (by omega) (by omega) (by omega)
+  have hrot12 :
+      sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 2 * N * K ^ 1 * N * K ^ 1) := by
+    unfold sg_trace_p10_seven_N_class_term
+    simpa [Matrix.mul_assoc, pow_succ, pow_zero, pow_one,
+      Matrix.one_mul, Matrix.mul_one] using
+      (trace_cyclic_list
+        ([
+          (K * N), (K * N), K, (K * N), (K * N),
+          K, (K * N), (K * N), K
+        ] : List (Matrix (WSG m) (WSG m) ℂ))
+        ([(K * N)] : List (Matrix (WSG m) (WSG m) ℂ)))
+  have hzero12 : sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0 := by
+    rw [hrot12]
+    exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 2 1 2 1 1
+      (by omega) (by omega) (by omega)
+  change
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 +
+    10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 = 0
+  simp [
+    hzero1,
+    hzero2,
+    hzero3,
+    hzero4,
+    hzero5,
+    hzero6,
+    hzero7,
+    hzero8,
+    hzero9,
+    hzero10,
+    hzero11,
+    hzero12
+  ]
+
+
+/-- Trace representative of the unique p=10 cyclic class with nine
+insertions of N. Each selected letter in the ordered expansion is K*N,
+so the class contains ten K factors and nine N factors. This representative
+places one K at the cyclic cut, with all ten K runs written as K^1. -/
+
+
+
+noncomputable def sg_trace_p10_nine_N_class_term
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  Matrix.trace
+    (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+      K ^ 1 * N * K ^ 1)
+
+/-- The p=10 nine-N cyclic class has orbit weight ten. Its trace vanishes
+by the existing nine-pairing corner theorem; all four selected middle
+powers are K^1 and are strictly below 2^m for m >= 3. -/
+theorem sg_trace_p10_nine_N_cyclic_class_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    10 * sg_trace_p10_nine_N_class_term m
+      (sgK m θ ax o) (sgGlue m).N = 0 := by
+  have hside : 1 < 2 ^ m := by
+    calc
+      1 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hzero :
+      sg_trace_p10_nine_N_class_term m
+        (sgK m θ ax o) (sgGlue m).N = 0 := by
+    unfold sg_trace_p10_nine_N_class_term
+    exact trace_nine_N_powers_zero_of_OAnti m θ ax o hanti
+      1 1 1 1 1 1 1 1 1 1 hside hside hside hside
+  simp [hzero]
+
+/-- A p=10 five-N gap word is already in the normal form required by
+the five-pairing corner lemma; no cyclic trace rotation is needed.
+For five nonnegative extra-K gaps summing to five, the two constrained
+middle powers are e1+1 and e3+1, both at most six. -/
+private theorem sg_trace_p10_five_N_gap_word_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (e0 e1 e2 e3 e4 : ℕ)
+    (hgap : e0 + e1 + e2 + e3 + e4 = 5) :
+    Matrix.trace
+      (sgK m θ ax o ^ e0 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e1 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e2 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e3 * (sgK m θ ax o * (sgGlue m).N) *
+        sgK m θ ax o ^ e4 * (sgK m θ ax o * (sgGlue m).N)) = 0 := by
+  have hside : 6 < 2 ^ m := by
+    calc
+      6 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hb : e1 + 1 < 2 ^ m := by omega
+  have hd : e3 + 1 < 2 ^ m := by omega
+  simpa [pow_succ, pow_zero, Matrix.one_mul, Matrix.mul_one,
+    Matrix.mul_assoc] using
+    (trace_five_N_powers_zero_of_OAnti m θ ax o hanti
+      (e0 + 1) (e1 + 1) (e2 + 1) (e3 + 1) (e4 + 1) 0 hb hd)
+
+/-- Trace of a p=10 five-N gap representative. The entries are the
+numbers of extra plain K factors between the five selected K*N letters. -/
+private noncomputable def sg_trace_p10_five_N_class_term
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ)
+    (e0 e1 e2 e3 e4 : ℕ) : ℂ :=
+  Matrix.trace
+    (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+      K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+      K ^ e4 * (K * N))
+
+/-- Exact weighted sum over the 26 cyclic gap classes in the p=10
+five-N stratum. The unique periodic class has weight two; the other
+25 classes have weight ten. -/
+private noncomputable def sg_trace_p10_five_N_stratum_sum
+    (m : ℕ) (K N : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 0 5 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 1 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 2 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 3 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 0 4 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 0 4 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 1 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 2 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 1 3 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 2 0 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 2 1 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 2 2 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 3 0 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 3 1 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 0 4 0 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 0 1 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 0 2 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 0 3 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 1 0 3 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 1 1 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 1 2 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 2 0 2 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 1 2 1 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 2 0 2 1 +
+  10 * sg_trace_p10_five_N_class_term m K N 0 2 1 1 1 +
+  2 * sg_trace_p10_five_N_class_term m K N 1 1 1 1 1
+
+/-- The complete p=10 five-N cyclic stratum vanishes under OAnti.
+Each of its 26 canonical gap representatives is directly in the
+five-pairing corner normal form; no cyclic trace rotation is needed.
+The orbit weights total 252 = choose(10,5). -/
+theorem sg_trace_p10_five_N_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    sg_trace_p10_five_N_stratum_sum m
+      (sgK m θ ax o) (sgGlue m).N = 0 := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change sg_trace_p10_five_N_stratum_sum m K N = 0
+  have hzero_r5_01 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 0 5 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 0 5 (by norm_num))
+  have hzero_r5_02 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 1 4 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 1 4 (by norm_num))
+  have hzero_r5_03 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 2 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 2 3 (by norm_num))
+  have hzero_r5_04 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 3 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 3 2 (by norm_num))
+  have hzero_r5_05 :
+      sg_trace_p10_five_N_class_term m K N 0 0 0 4 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 0 4 1 (by norm_num))
+  have hzero_r5_06 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 0 4 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 0 4 (by norm_num))
+  have hzero_r5_07 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 1 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 1 3 (by norm_num))
+  have hzero_r5_08 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 2 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 2 2 (by norm_num))
+  have hzero_r5_09 :
+      sg_trace_p10_five_N_class_term m K N 0 0 1 3 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 1 3 1 (by norm_num))
+  have hzero_r5_10 :
+      sg_trace_p10_five_N_class_term m K N 0 0 2 0 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 2 0 3 (by norm_num))
+  have hzero_r5_11 :
+      sg_trace_p10_five_N_class_term m K N 0 0 2 1 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 2 1 2 (by norm_num))
+  have hzero_r5_12 :
+      sg_trace_p10_five_N_class_term m K N 0 0 2 2 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 2 2 1 (by norm_num))
+  have hzero_r5_13 :
+      sg_trace_p10_five_N_class_term m K N 0 0 3 0 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 3 0 2 (by norm_num))
+  have hzero_r5_14 :
+      sg_trace_p10_five_N_class_term m K N 0 0 3 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 3 1 1 (by norm_num))
+  have hzero_r5_15 :
+      sg_trace_p10_five_N_class_term m K N 0 0 4 0 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 0 4 0 1 (by norm_num))
+  have hzero_r5_16 :
+      sg_trace_p10_five_N_class_term m K N 0 1 0 1 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 0 1 3 (by norm_num))
+  have hzero_r5_17 :
+      sg_trace_p10_five_N_class_term m K N 0 1 0 2 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 0 2 2 (by norm_num))
+  have hzero_r5_18 :
+      sg_trace_p10_five_N_class_term m K N 0 1 0 3 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 0 3 1 (by norm_num))
+  have hzero_r5_19 :
+      sg_trace_p10_five_N_class_term m K N 0 1 1 0 3 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 1 0 3 (by norm_num))
+  have hzero_r5_20 :
+      sg_trace_p10_five_N_class_term m K N 0 1 1 1 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 1 1 2 (by norm_num))
+  have hzero_r5_21 :
+      sg_trace_p10_five_N_class_term m K N 0 1 1 2 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 1 2 1 (by norm_num))
+  have hzero_r5_22 :
+      sg_trace_p10_five_N_class_term m K N 0 1 2 0 2 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 2 0 2 (by norm_num))
+  have hzero_r5_23 :
+      sg_trace_p10_five_N_class_term m K N 0 1 2 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 1 2 1 1 (by norm_num))
+  have hzero_r5_24 :
+      sg_trace_p10_five_N_class_term m K N 0 2 0 2 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 2 0 2 1 (by norm_num))
+  have hzero_r5_25 :
+      sg_trace_p10_five_N_class_term m K N 0 2 1 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        0 2 1 1 1 (by norm_num))
+  have hzero_r5_26 :
+      sg_trace_p10_five_N_class_term m K N 1 1 1 1 1 = 0 := by
+    simpa [sg_trace_p10_five_N_class_term] using
+      (sg_trace_p10_five_N_gap_word_zero m hm θ ax o hanti
+        1 1 1 1 1 (by norm_num))
+  simp [sg_trace_p10_five_N_stratum_sum,
+    hzero_r5_01,
+    hzero_r5_02,
+    hzero_r5_03,
+    hzero_r5_04,
+    hzero_r5_05,
+    hzero_r5_06,
+    hzero_r5_07,
+    hzero_r5_08,
+    hzero_r5_09,
+    hzero_r5_10,
+    hzero_r5_11,
+    hzero_r5_12,
+    hzero_r5_13,
+    hzero_r5_14,
+    hzero_r5_15,
+    hzero_r5_16,
+    hzero_r5_17,
+    hzero_r5_18,
+    hzero_r5_19,
+    hzero_r5_20,
+    hzero_r5_21,
+    hzero_r5_22,
+    hzero_r5_23,
+    hzero_r5_24,
+    hzero_r5_25,
+    hzero_r5_26
+  ]
+
+
+
+private noncomputable def glueRHS10_three_pair_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e f : ℕ) : ℂ :=
+  glueRHS8_pair_sum m K [(a, b), (c, d), (e, f)]
+
+private noncomputable def glueRHS10_six_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 1 5 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 2 4 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 3 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 1 4 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 2 1 4 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 2 2 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 2 3 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 3 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 3 2 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 1 4 1 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 1 1 4 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 1 2 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 1 3 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 2 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 2 2 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 2 3 1 2 +
+  5 * glueRHS10_three_pair_sum m K 1 1 3 1 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 1 3 1 2 2 +
+  10 * glueRHS10_three_pair_sum m K 1 1 3 2 1 2 +
+  10 * glueRHS10_three_pair_sum m K 1 2 1 2 1 3 +
+  10 * glueRHS10_three_pair_sum m K 1 2 1 2 2 2 +
+  5 * glueRHS10_three_pair_sum m K 1 2 2 1 2 2
+
+/-- Collapse the three diagonal factors of a p=10 six-N boundary term.
+The two intervening kernel powers are off-diagonal-zero on glued support;
+the final kernel is kept in its original position. -/
+private theorem sg_trace_p10_six_N_boundary_term_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f : ℕ) (ha : a ≤ 5) (hc : c ≤ 5) :
+    sg_trace_p10_six_N_boundary_term m (sgK m θ ax o) a b c d e f =
+      glueRHS10_three_pair_sum m (sgK m θ ax o) a b c d e f := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g : WSG m → Prop := (sgGlue m).g
+  let db : WSG m → ℂ := fun y =>
+    if g y then (K ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  let dd : WSG m → ℂ := fun y =>
+    if g y then (K ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  let df : WSG m → ℂ := fun y =>
+    if g y then (K ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0
+  have hdb : ∀ y, ¬ g y → db y = 0 := by
+    intro y hy
+    simp [db, hy]
+  have hdd : ∀ y, ¬ g y → dd y = 0 := by
+    intro y hy
+    simp [dd, hy]
+  have hdf : ∀ y, ¬ g y → df y = 0 := by
+    intro y hy
+    simp [df, hy]
+  have hA := sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti a ha
+  have hC := sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti c hc
+  have htrace := trace_three_kernels_supported_diagonal
+    g (K ^ a) (K ^ c) (K ^ e) db dd df hdb hdd hdf hA hC
+  have hboundary :
+      sg_trace_p10_six_N_boundary_term m K a b c d e f =
+        ∑ x, if g x then
+          ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+            ((K ^ e) x x * df x) else 0 := by
+    change Matrix.trace
+      (K ^ 0 * K ^ a * Matrix.diagonal db * K ^ c *
+        Matrix.diagonal dd * K ^ e * Matrix.diagonal df) = _
+    simpa only [pow_zero, Matrix.one_mul] using htrace
+  have hpair :
+      (∑ x, if g x then
+        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+          ((K ^ e) x x * df x) else 0) =
+        glueRHS10_three_pair_sum m K a b c d e f := by
+    unfold glueRHS10_three_pair_sum glueRHS8_pair_sum
+    change (∑ x, if g x then
+        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+          ((K ^ e) x x * df x) else 0) =
+      ∑ x, if g x then
+        glueRHS8_pair_product m K x [(a, b), (c, d), (e, f)] else 0
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g x
+    · simp [glueRHS8_pair_product, glueRHS8_pair_value,
+        db, dd, df, hgx]
+      ring
+    · simp [hgx]
+  calc
+    sg_trace_p10_six_N_boundary_term m (sgK m θ ax o) a b c d e f =
+        sg_trace_p10_six_N_boundary_term m K a b c d e f := rfl
+    _ = ∑ x, if g x then
+        ((K ^ a) x x * db x) * ((K ^ c) x x * dd x) *
+          ((K ^ e) x x * df x) else 0 := hboundary
+    _ = glueRHS10_three_pair_sum m K a b c d e f := hpair
+
+/-- The weighted r=6 boundary-term sum in ordered diagonal-pair form.
+All 22 classes retain their exact weights, including the two weight-five classes. -/
+theorem sg_trace_p10_six_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 1 5 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 2 4 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 3 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 1 4 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 1 4 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 2 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 2 3 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 3 2 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 1 4 1 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 1 4 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 2 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 1 3 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 2 2 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 2 3 1 2 +
+        5 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 1 2 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 1 3 2 1 2 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 1 3 +
+        10 * sg_trace_p10_six_N_boundary_term m K 1 2 1 2 2 2 +
+        5 * sg_trace_p10_six_N_boundary_term m K 1 2 2 1 2 2 =
+      glueRHS10_six_N_diagonal_form m K := by
+  dsimp
+  rw [
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 1 5 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 2 4 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 3 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 1 4 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 1 4 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 2 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 2 3 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 3 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 3 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 1 4 1 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 1 4 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 2 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 1 3 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 2 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 2 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 2 3 1 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 1 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 1 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 1 3 2 1 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 1 2 1 3 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 1 2 2 2 (by omega) (by omega),
+    sg_trace_p10_six_N_boundary_term_pair_diagonal m hm θ ax o hanti 1 2 2 1 2 2 (by omega) (by omega)
+  ]
+  rfl
+
+
+/-- The p=10 eight-N boundary contribution in ordered four-pair form.
+The order of the four corner/partner pairs is inherited from the boundary
+word; no kernel factors are permuted. -/
+private noncomputable def glueRHS10_four_pair_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e f g h : ℕ) : ℂ :=
+  glueRHS8_pair_sum m K [(a, b), (c, d), (e, f), (g, h)]
+
+private noncomputable def glueRHS10_eight_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 1 1 3 +
+  10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 1 2 2 +
+  10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 2 1 2 +
+  10 * glueRHS10_four_pair_sum m K 1 1 1 1 2 1 1 2 +
+   5 * glueRHS10_four_pair_sum m K 1 1 1 2 1 1 1 2
+
+/-- Collapse one p=10 eight-N boundary term to four ordered diagonal pairs.
+The two internal diagonal sandwiches are collapsed successively using
+off-diagonal vanishing of the corresponding middle powers. The first
+remaining kernel then collapses the endpoint sum; the final kernel stays
+in its original position. -/
+private theorem sg_trace_p10_eight_N_boundary_term_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h : ℕ)
+    (ha : a ≤ 5) (hc : c ≤ 5) (he : e ≤ 5) :
+    trace_p10_eight_N_boundary_term (sgGlue m) (sgK m θ ax o)
+        a b c d e f g h =
+      glueRHS10_four_pair_sum m (sgK m θ ax o) a b c d e f g h := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g0 : WSG m → Prop := (sgGlue m).g
+  let db : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dd : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let df : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dh : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ h) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let q : WSG m → ℂ := fun x => db x * (K ^ c) x x * dd x
+  let r : WSG m → ℂ := fun x => q x * (K ^ e) x x * df x
+  have hdb : ∀ x, ¬ g0 x → db x = 0 := by
+    intro x hx
+    simp [db, hx]
+  have hdd : ∀ x, ¬ g0 x → dd x = 0 := by
+    intro x hx
+    simp [dd, hx]
+  have hdf : ∀ x, ¬ g0 x → df x = 0 := by
+    intro x hx
+    simp [df, hx]
+  have hdh : ∀ x, ¬ g0 x → dh x = 0 := by
+    intro x hx
+    simp [dh, hx]
+  have hq : ∀ x, ¬ g0 x → q x = 0 := by
+    intro x hx
+    simp [q, db, hx]
+  have hr : ∀ x, ¬ g0 x → r x = 0 := by
+    intro x hx
+    simp [r, q, db, hx]
+  have hAoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ a) x y = 0 := by
+    exact sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti a ha
+  have hCoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ c) x y = 0 := by
+    exact sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti c hc
+  have hEoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ e) x y = 0 := by
+    exact sgK_pow_glued_offdiag_of_OAnti m (by omega) θ ax o hanti e he
+  have hqdiag :
+      Matrix.diagonal db * K ^ c * Matrix.diagonal dd =
+        Matrix.diagonal q := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q] using diagonal_sandwich_apply_two db dd (K ^ c) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 db dd (K ^ c) hdb hdd hCoff x y hxy
+  have hrdiag :
+      Matrix.diagonal q * K ^ e * Matrix.diagonal df =
+        Matrix.diagonal r := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [r] using diagonal_sandwich_apply_two q df (K ^ e) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q df (K ^ e) hq hdf hEoff x y hxy
+  have htrace := trace_two_kernels_supported_diagonal
+    g0 (K ^ a) (K ^ g) r dh hr hdh hAoff
+  let M : Matrix (WSG m) (WSG m) ℂ :=
+    K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+      K ^ e * Matrix.diagonal df * K ^ g
+  have hprod :
+      ([K ^ 0, K ^ a, Matrix.diagonal db, K ^ c,
+        Matrix.diagonal dd, K ^ e, Matrix.diagonal df, K ^ g] :
+          List (Matrix (WSG m) (WSG m) ℂ)).prod = M := by
+    simp [M, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+  have htraceDiag :
+      ∀ (A : Matrix (WSG m) (WSG m) ℂ) (w : WSG m → ℂ),
+        Matrix.trace (A * Matrix.diagonal w) =
+          ∑ x, A x x * w x := by
+    intro A w
+    simp [Matrix.trace, Matrix.mul_apply, Matrix.diagonal_apply]
+  have hboundary :
+      Matrix.trace (M * Matrix.diagonal dh) =
+        trace_p10_eight_N_boundary_term (sgGlue m) K a b c d e f g h := by
+    calc
+      Matrix.trace (M * Matrix.diagonal dh) =
+          ∑ x, M x x * dh x := htraceDiag M dh
+      _ = ∑ x, if g0 x then
+            (([K ^ 0, K ^ a, Matrix.diagonal db, K ^ c,
+              Matrix.diagonal dd, K ^ e, Matrix.diagonal df, K ^ g] :
+                List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
+              (K ^ h) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        by_cases hgx : g0 x
+        · simp [g0, dh, hgx, ← hprod]
+        · simp [g0, dh, hgx]
+      _ = trace_p10_eight_N_boundary_term (sgGlue m) K a b c d e f g h := rfl
+  have hreduce :
+      Matrix.trace (M * Matrix.diagonal dh) =
+        Matrix.trace (K ^ a * Matrix.diagonal r * K ^ g *
+          Matrix.diagonal dh) := by
+    change Matrix.trace
+      (K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+        K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh) =
+      Matrix.trace (K ^ a * Matrix.diagonal r * K ^ g *
+        Matrix.diagonal dh)
+    calc
+      _ = Matrix.trace (K ^ a *
+            (Matrix.diagonal db * K ^ c * Matrix.diagonal dd) *
+            K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh) := by
+        simp [Matrix.mul_assoc]
+      _ = Matrix.trace (K ^ a * Matrix.diagonal q *
+            K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh) := by
+        rw [hqdiag]
+      _ = Matrix.trace (K ^ a *
+            (Matrix.diagonal q * K ^ e * Matrix.diagonal df) *
+            K ^ g * Matrix.diagonal dh) := by
+        simp [Matrix.mul_assoc]
+      _ = Matrix.trace (K ^ a * Matrix.diagonal r *
+            K ^ g * Matrix.diagonal dh) := by
+        rw [hrdiag]
+  have hpair :
+      (∑ x, if g0 x then
+        (K ^ a) x x * r x * (K ^ g) x x * dh x else 0) =
+          glueRHS10_four_pair_sum m K a b c d e f g h := by
+    unfold glueRHS10_four_pair_sum glueRHS8_pair_sum
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g0 x
+    · simp [glueRHS8_pair_product, glueRHS8_pair_value,
+        g0, r, q, db, dd, df, dh, hgx] <;> ring
+    · simp [g0, hgx]
+  calc
+    trace_p10_eight_N_boundary_term (sgGlue m) (sgK m θ ax o)
+        a b c d e f g h =
+        Matrix.trace (M * Matrix.diagonal dh) := hboundary.symm
+    _ = Matrix.trace (K ^ a * Matrix.diagonal r *
+          K ^ g * Matrix.diagonal dh) := hreduce
+    _ = ∑ x, if g0 x then
+          (K ^ a) x x * r x * (K ^ g) x x * dh x else 0 := htrace
+    _ = glueRHS10_four_pair_sum m K a b c d e f g h := hpair
+
+/-- The five cyclic classes of the p=10 eight-N stratum, with their exact
+multiplicities (10, 10, 10, 10, 5), reduce to the ordered four-pair
+diagonal normal form. This is still a stratum-level identity, not a
+cross-stratum cancellation theorem. -/
+theorem sg_trace_p10_eight_N_stratum_pair_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 1 3 +
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 1 2 2 +
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 1 2 1 2 +
+    10 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 1 2 1 1 2 +
+     5 * trace_p10_eight_N_boundary_term (sgGlue m) K 1 1 1 2 1 1 1 2 =
+      glueRHS10_eight_N_diagonal_form m K := by
+  dsimp
+  rw [
+    sg_trace_p10_eight_N_boundary_term_pair_diagonal
+      m hm θ ax o hanti 1 1 1 1 1 1 1 3 (by omega) (by omega) (by omega),
+    sg_trace_p10_eight_N_boundary_term_pair_diagonal
+      m hm θ ax o hanti 1 1 1 1 1 1 2 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_eight_N_boundary_term_pair_diagonal
+      m hm θ ax o hanti 1 1 1 1 1 2 1 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_eight_N_boundary_term_pair_diagonal
+      m hm θ ax o hanti 1 1 1 1 2 1 1 2 (by omega) (by omega) (by omega),
+    sg_trace_p10_eight_N_boundary_term_pair_diagonal
+      m hm θ ax o hanti 1 1 1 2 1 1 1 2 (by omega) (by omega) (by omega)
+  ]
+  rfl
+
+
+/-- The exact-count p=10 two-N word sum is the existing one-pair
+diagonal normal form. The word-to-orbit identity supplies the exact
+coefficients, and the existing pair-diagonal theorem finishes the
+geometric reduction without repeating its proof. -/
+theorem sg_trace_p10_two_N_word_stratum_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 2,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    glueRHS10_two_N_diagonal_form m (sgK m θ ax o) := by
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 2,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+      glueRHS10_two_N_diagonal_form m K
+  have hcards :
+      (cyclicGapOrbit [1, 9]).card = 2 ∧
+      (cyclicGapOrbit [2, 8]).card = 2 ∧
+      (cyclicGapOrbit [3, 7]).card = 2 ∧
+      (cyclicGapOrbit [4, 6]).card = 2 ∧
+      (cyclicGapOrbit [5, 5]).card = 1 := by
+    decide
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps2,
+        ((10 : ℂ) / (2 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage2 K N
+    _ = 10 * Matrix.trace (K ^ 1 * N * K ^ 9 * N * K ^ 0) +
+        10 * Matrix.trace (K ^ 2 * N * K ^ 8 * N * K ^ 0) +
+        10 * Matrix.trace (K ^ 3 * N * K ^ 7 * N * K ^ 0) +
+        10 * Matrix.trace (K ^ 4 * N * K ^ 6 * N * K ^ 0) +
+         5 * Matrix.trace (K ^ 5 * N * K ^ 5 * N * K ^ 0) := by
+      rcases hcards with ⟨h1, h2, h3, h4, h5⟩
+      norm_num [binaryWordP10GapOrbitReps2, h1, h2, h3, h4, h5,
+        cyclicGapTrace, Matrix.mul_assoc]
+      ring
+    _ = glueRHS10_two_N_diagonal_form m K := by
+      simpa [K, N] using
+        (sg_trace_p10_two_N_stratum_pair_diagonal m hm θ ax o hanti)
+
+/-- The exact-count p=10 four-N word sum is the existing complete
+ordered two-pair diagonal form. The positive-gap orbit average gives
+the same 22 cyclic representatives and the two period-two corrections
+as the already-proved four-N boundary theorem. -/
+theorem sg_trace_p10_four_N_word_stratum_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 4,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    glueRHS10_four_N_diagonal_form m (sgK m θ ax o) := by
+  have hcards4 := binaryWordP10GapOrbitRepresentativeCardinals.2.1
+  simp only [List.cons.injEq] at hcards4
+  rcases hcards4 with
+    ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11,
+      h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22⟩
+  have hcoef10 : ((10 : ℂ) / (4 : ℂ)) * 4 = 10 := by norm_num
+  have hcoef5 : ((10 : ℂ) / (4 : ℂ)) * 2 = 5 := by norm_num
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps4,
+        ((10 : ℂ) / (4 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace (sgK m θ ax o) ((sgGlue m).N) rep := by
+      exact binaryWordP10WordTraceOrbitAverage4
+        (sgK m θ ax o) ((sgGlue m).N)
+    _ = glueRHS10_four_N_diagonal_form m (sgK m θ ax o) := by
+      have hdiag :=
+        sg_trace_p10_four_N_stratum_pair_diagonal m hm θ ax o hanti
+      dsimp at hdiag
+      rw [← hdiag]
+      simp [binaryWordP10GapOrbitReps4, cyclicGapTrace, Matrix.mul_assoc,
+        h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11,
+        h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22,
+        hcoef10, hcoef5]
+      <;> ring
+
+/-- The exact-count p=10 six-N word sum is the existing three-pair
+diagonal normal form. The two period-three gap orbits retain coefficient
+five; all other twenty cyclic classes retain coefficient ten. -/
+theorem sg_trace_p10_six_N_word_stratum_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 6,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    glueRHS10_six_N_diagonal_form m (sgK m θ ax o) := by
+  have hcards6 := binaryWordP10GapOrbitRepresentativeCardinals.2.2.1
+  simp only [List.cons.injEq] at hcards6
+  rcases hcards6 with
+    ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11,
+      h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22⟩
+  have hcoef10 : ((10 : ℂ) / (6 : ℂ)) * 6 = 10 := by norm_num
+  have hcoef5 : ((10 : ℂ) / (6 : ℂ)) * 3 = 5 := by norm_num
+  have hboundary :=
+    sg_trace_p10_six_N_stratum_boundary m hm θ ax o hanti
+  dsimp at hboundary
+  have hdiag :=
+    sg_trace_p10_six_N_stratum_pair_diagonal m hm θ ax o hanti
+  dsimp at hdiag
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps6,
+        ((10 : ℂ) / (6 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace (sgK m θ ax o) ((sgGlue m).N) rep := by
+      exact binaryWordP10WordTraceOrbitAverage6
+        (sgK m θ ax o) ((sgGlue m).N)
+    _ = glueRHS10_six_N_diagonal_form m (sgK m θ ax o) := by
+      rw [← hdiag, ← hboundary]
+      simp [binaryWordP10GapOrbitReps6, cyclicGapTrace, Matrix.mul_assoc,
+        h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11,
+        h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22,
+        hcoef10, hcoef5]
+      ring
+
+/-- The exact-count p=10 eight-N word sum is the existing four-pair
+diagonal normal form. Its four full cyclic orbits have coefficient ten;
+the period-four orbit has the corrected coefficient five. -/
+theorem sg_trace_p10_eight_N_word_stratum_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 8,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    glueRHS10_eight_N_diagonal_form m (sgK m θ ax o) := by
+  have hcards8 := binaryWordP10GapOrbitRepresentativeCardinals.2.2.2.1
+  simp only [List.cons.injEq] at hcards8
+  rcases hcards8 with ⟨h1, h2, h3, h4, h5⟩
+  have hcoef10 : ((10 : ℂ) / (8 : ℂ)) * 8 = 10 := by norm_num
+  have hcoef5 : ((10 : ℂ) / (8 : ℂ)) * 4 = 5 := by norm_num
+  have hboundary :=
+    sg_trace_p10_eight_N_stratum_boundary m hm θ ax o hanti
+  dsimp at hboundary
+  have hdiag :=
+    sg_trace_p10_eight_N_stratum_pair_diagonal m hm θ ax o hanti
+  dsimp at hdiag
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps8,
+        ((10 : ℂ) / (8 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace (sgK m θ ax o) ((sgGlue m).N) rep := by
+      exact binaryWordP10WordTraceOrbitAverage8
+        (sgK m θ ax o) ((sgGlue m).N)
+    _ = glueRHS10_eight_N_diagonal_form m (sgK m θ ax o) := by
+      rw [← hdiag, ← hboundary]
+      simp [binaryWordP10GapOrbitReps8, cyclicGapTrace, Matrix.mul_assoc,
+        h1, h2, h3, h4, h5, hcoef10, hcoef5]
+      ring
+
+
+/-- The exact-count p=10 nine-N word stratum vanishes.
+Its positive-gap tuples form one orbit of size nine, and the resulting
+cyclic trace is the already-proved nine-pairing corner-zero class. -/
+theorem sg_trace_p10_nine_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 9,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 9,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcard :
+      (cyclicGapOrbit
+        ([2, 1, 1, 1, 1, 1, 1, 1, 1] : List ℕ)).card = 9 := by
+    decide
+  have hcyclic :
+      cyclicGapTrace K N [2, 1, 1, 1, 1, 1, 1, 1, 1] =
+        sg_trace_p10_nine_N_class_term m K N := by
+    calc
+      cyclicGapTrace K N [2, 1, 1, 1, 1, 1, 1, 1, 1] =
+          Matrix.trace (K * (K * N) ^ 9) := by
+        simp [cyclicGapTrace, Matrix.mul_assoc, pow_succ, pow_one]
+      _ = Matrix.trace ((K * N) ^ 9 * K) :=
+        Matrix.trace_mul_comm _ _
+      _ = sg_trace_p10_nine_N_class_term m K N := by
+        simp [sg_trace_p10_nine_N_class_term, pow_one, pow_succ,
+          Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps9,
+        ((10 : ℂ) / (9 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage9 K N
+    _ = 10 * sg_trace_p10_nine_N_class_term m K N := by
+      simp [binaryWordP10GapOrbitReps9, hcard, hcyclic]
+    _ = 0 := by
+      simpa using
+        (sg_trace_p10_nine_N_cyclic_class_zero m hm θ ax o hanti)
+
+/-- The exact-count p=10 one-N word stratum vanishes. The marked-gap
+identity reduces its full binary-word sum to the unique positive gap [10],
+and the generic single-pairing trace lemma kills that term because K is
+block diagonal across glued copies. -/
+theorem sg_trace_p10_one_N_word_stratum_zero
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    (∑ w : binaryWordFinStratum 10 1,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 1,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hweighted :=
+    binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 10 1
+  have hgap : ∀ gaps : binaryWordGapVectorStratum 10 1,
+      List.ofFn (fun i : Fin 1 => (gaps.val i).val) = [9] := by
+    intro gaps
+    have hvalue : (gaps.val 0).val = 9 := by
+      simpa using gaps.property.2
+    simp [hvalue]
+  have htrace : ∀ gaps : binaryWordGapVectorStratum 10 1,
+      cyclicGapTrace K N
+        ((List.ofFn (fun i : Fin 1 => (gaps.val i).val)).map Nat.succ) = 0 := by
+    intro gaps
+    rw [hgap gaps]
+    simpa [cyclicGapTrace] using
+      (trace_pow_mul_N_zero (sgGlue m) K
+        (blockK_BD (Hc m θ ax o)) 10)
+  calc
+    (∑ w : binaryWordFinStratum 10 1,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+        (10 : ℂ) *
+          ∑ gaps : binaryWordGapVectorStratum 10 1,
+            cyclicGapTrace K N
+              ((List.ofFn (fun i : Fin 1 => (gaps.val i).val)).map Nat.succ) := by
+      simpa using hweighted
+    _ = (10 : ℂ) *
+        ∑ gaps : binaryWordGapVectorStratum 10 1, (0 : ℂ) := by
+      congr 1
+      apply Finset.sum_congr rfl
+      intro gaps hgaps
+      exact htrace gaps
+    _ = 0 := by simp
+
+
+/-- Connect the exact-count p=10 ten-N word stratum to the already-proved
+pointwise fifth-power diagonal formula. The unique cyclic gap orbit has
+cardinality one, so the normalized word/orbit coefficient is exactly one;
+the geometric boundary proof is reused unchanged. -/
+theorem sg_trace_p10_ten_N_word_stratum_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+    ∑ x, if (sgGlue m).g x then
+      (sgK m θ ax o x x *
+        sgK m θ ax o ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+    ∑ x, if (sgGlue m).g x then
+      (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0
+  have hcard :
+      (cyclicGapOrbit
+        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1] : List ℕ)).card = 1 := by
+    decide
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps10,
+        ((10 : ℂ) / (10 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage10 K N
+    _ = Matrix.trace
+        (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 0) := by
+      simp [binaryWordP10GapOrbitReps10, hcard, cyclicGapTrace,
+        Matrix.mul_assoc, pow_one, pow_zero, Matrix.one_mul, Matrix.mul_one]
+    _ = ∑ x, if (sgGlue m).g x then
+          (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0 := by
+      simpa [K] using
+        (sg_trace_p10_top_stratum_diagonal_fifth m hm θ ax o hanti)
+
+
+
+
+/-- The complete exact-count p=10 five-N binary-word stratum vanishes.
+The word-to-orbit identity gives coefficient ten on the 25 full orbits
+and coefficient two on the period-one orbit; these are exactly the
+weights in the already-proved five-N glued-corner zero theorem. -/
+theorem sg_trace_p10_five_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 5,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 5,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcards5 :
+      ([(cyclicGapOrbit [1, 1, 1, 1, 6]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 5]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 4, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 5, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 5]).card,
+      (cyclicGapOrbit [1, 1, 2, 2, 4]).card,
+      (cyclicGapOrbit [1, 1, 2, 3, 3]).card,
+      (cyclicGapOrbit [1, 1, 2, 4, 2]).card,
+      (cyclicGapOrbit [1, 1, 3, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 3, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 3, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 4, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 4, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 5, 1, 2]).card,
+      (cyclicGapOrbit [1, 2, 1, 2, 4]).card,
+      (cyclicGapOrbit [1, 2, 1, 3, 3]).card,
+      (cyclicGapOrbit [1, 2, 1, 4, 2]).card,
+      (cyclicGapOrbit [1, 2, 2, 1, 4]).card,
+      (cyclicGapOrbit [1, 2, 2, 2, 3]).card,
+      (cyclicGapOrbit [1, 2, 2, 3, 2]).card,
+      (cyclicGapOrbit [1, 2, 3, 1, 3]).card,
+      (cyclicGapOrbit [1, 2, 3, 2, 2]).card,
+      (cyclicGapOrbit [1, 3, 1, 3, 2]).card,
+      (cyclicGapOrbit [1, 3, 2, 2, 2]).card,
+      (cyclicGapOrbit [2, 2, 2, 2, 2]).card] : List ℕ) =
+        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1] := by
+    exact binaryWordP10GapOrbitRepresentativeCardinals5
+  simp only [List.cons.injEq] at hcards5
+  rcases hcards5 with ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26⟩
+  have hcoef5 : ((10 : ℂ) / (5 : ℂ)) * 5 = 10 := by
+    norm_num
+  have htrace (e0 e1 e2 e3 e4 : ℕ) :
+      cyclicGapTrace K N
+        [Nat.succ e0, Nat.succ e1, Nat.succ e2,
+          Nat.succ e3, Nat.succ e4] =
+      Matrix.trace
+        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+          K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+          K ^ e4 * (K * N)) := by
+    calc
+      _ = cyclicGapTrace K (K * N) [e0, e1, e2, e3, e4] := by
+        symm
+        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N
+          [e0, e1, e2, e3, e4]
+      _ = _ := by
+        simp [cyclicGapTrace, Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps5,
+        ((10 : ℂ) / (5 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage5 K N
+    _ = sg_trace_p10_five_N_stratum_sum m K N := by
+      simp [binaryWordP10GapOrbitReps5, htrace, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26,
+        hcoef5, sg_trace_p10_five_N_stratum_sum,
+        sg_trace_p10_five_N_class_term]
+      ring
+    _ = 0 := by
+      simpa [K, N] using
+        (sg_trace_p10_five_N_stratum_zero m hm θ ax o hanti)
+
+
+
+
+/-- The complete exact-count p=10 seven-N binary-word stratum vanishes.
+The marked-word/gap identity assigns coefficient ten to each of the
+twelve full cyclic orbits, matching the existing seven-N class theorem. -/
+theorem sg_trace_p10_seven_N_word_stratum_zero
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 7,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 7,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) = 0
+  have hcards7 :
+      ([(cyclicGapOrbit [1, 1, 1, 1, 1, 1, 4]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 2, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 1, 3, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 2, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 1, 3, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 1, 3]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 2, 2, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 1, 3, 1, 1, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 1, 2, 2]).card,
+      (cyclicGapOrbit [1, 1, 2, 1, 2, 1, 2]).card] : List ℕ) =
+        [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7] := by
+    exact binaryWordP10GapOrbitRepresentativeCardinals7
+  simp only [List.cons.injEq] at hcards7
+  rcases hcards7 with ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12⟩
+  have hcoef7 : ((10 : ℂ) / (7 : ℂ)) * 7 = 10 := by
+    norm_num
+  have htrace (e0 e1 e2 e3 e4 e5 e6 : ℕ) :
+      cyclicGapTrace K N
+        [Nat.succ e0, Nat.succ e1, Nat.succ e2, Nat.succ e3,
+          Nat.succ e4, Nat.succ e5, Nat.succ e6] =
+      Matrix.trace
+        (K ^ e0 * (K * N) * K ^ e1 * (K * N) *
+          K ^ e2 * (K * N) * K ^ e3 * (K * N) *
+          K ^ e4 * (K * N) * K ^ e5 * (K * N) *
+          K ^ e6 * (K * N)) := by
+    calc
+      _ = cyclicGapTrace K (K * N)
+          [e0, e1, e2, e3, e4, e5, e6] := by
+        symm
+        exact cyclicGapTrace_K_mul_N_eq_succ_gaps K N
+          [e0, e1, e2, e3, e4, e5, e6]
+      _ = _ := by
+        simp [cyclicGapTrace, Matrix.mul_assoc]
+  calc
+    _ = ∑ rep ∈ binaryWordP10GapOrbitReps7,
+        ((10 : ℂ) / (7 : ℂ)) *
+          ((cyclicGapOrbit rep).card : ℂ) *
+          cyclicGapTrace K N rep := by
+      exact binaryWordP10WordTraceOrbitAverage7 K N
+    _ =
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 0 3 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 1 2 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 0 2 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 0 2 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 1 1 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 0 2 0 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 0 2 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 0 1 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 1 1 0 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 0 2 0 0 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 0 1 1 +
+        10 * sg_trace_p10_seven_N_class_term m K N 0 0 1 0 1 0 1 := by
+      simp [binaryWordP10GapOrbitReps7, htrace,
+        h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, hcoef7,
+        sg_trace_p10_seven_N_class_term]
+      ring
+    _ = 0 := by
+      simpa [K, N, sg_trace_p10_seven_N_class_term] using
+        (sg_trace_p10_seven_N_stratum_zero m hm θ ax o hanti)
+
+
+
+
+/-- The top p=10 even stratum is the fifth power of the two supported
+diagonal K entries. -/
+private noncomputable def glueRHS10_ten_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  ∑ x, if (sgGlue m).g x then
+    (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0
+
+/-- The complete positive-even H10 boundary correction. Its five pieces
+are the exact r=2,4,6,8 diagonal strata and the r=10 top diagonal term.
+No cancellation between different strata is built into this definition. -/
+noncomputable def glueRHS10
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  glueRHS10_two_N_diagonal_form m K +
+  glueRHS10_four_N_diagonal_form m K +
+  glueRHS10_six_N_diagonal_form m K +
+  glueRHS10_eight_N_diagonal_form m K +
+  glueRHS10_ten_N_diagonal_form m K
+
+/-- All five positive-even exact-count p=10 word strata combine into the
+single boundary correction glueRHS10. The statement retains the individual
+word sums and all periodic-orbit weights proved in their stratum theorems. -/
+theorem sg_trace_p10_even_N_word_strata_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 2,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 4,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 6,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 8,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+      glueRHS10 m (sgK m θ ax o) := by
+  rw [
+    sg_trace_p10_two_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_four_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_six_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_eight_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_ten_N_word_stratum_diagonal m (by omega) θ ax o hanti
+  ]
+  rfl
+
+
+
+
+/-- The zero-insertion p=10 word stratum contains only the all-K word,
+so its exact finite-word trace is Tr(K^10). -/
+theorem sg_trace_p10_zero_N_word_stratum
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o] :
+    (∑ w : binaryWordFinStratum 10 0,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+      Matrix.trace (sgK m θ ax o ^ 10) := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 10 0,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+      Matrix.trace (K ^ 10)
+  let w0 : binaryWordFinStratum 10 0 :=
+    ⟨fun _ => false, by
+      constructor
+      · omega
+      · simp⟩
+  have hunique : ∀ w : binaryWordFinStratum 10 0, w = w0 := by
+    intro w
+    apply Subtype.ext
+    funext i
+    cases h : w.val i with
+    | false => rfl
+    | true =>
+        have hcard := binaryWordFin_true_positions_card 10 0 w
+        have hpos :
+            0 < Fintype.card {j : Fin 10 // w.val j = true} :=
+          Fintype.card_pos_iff.mpr ⟨⟨i, h⟩⟩
+        rw [hcard] at hpos
+        omega
+  letI : Unique (binaryWordFinStratum 10 0) :=
+    ⟨⟨w0⟩, fun w => hunique w⟩
+  have hword0 :
+      List.ofFn (fun _ : Fin 10 => false) = List.replicate 10 false := by
+    simp
+  have hprod (n : ℕ) :
+      (List.replicate n K).prod = K ^ n := by
+    induction n with
+    | zero => simp
+    | succ n ih =>
+        simp [List.replicate_succ, ih, pow_succ']
+  have hmatrix :
+      binaryWordMatrix K (K * N) (List.ofFn w0.val) = K ^ 10 := by
+    change
+      binaryWordMatrix K (K * N)
+        (List.ofFn (fun _ : Fin 10 => false)) = K ^ 10
+    rw [hword0]
+    calc
+      binaryWordMatrix K (K * N) (List.replicate 10 false) =
+          (List.replicate 10 K).prod := by
+        unfold binaryWordMatrix
+        rw [List.map_replicate]
+        rw [if_neg (by decide : ¬ (false = true))]
+      _ = K ^ 10 := hprod 10
+  calc
+    _ = ∑ w : binaryWordFinStratum 10 0,
+          Matrix.trace
+            (binaryWordMatrix K (K * N) (List.ofFn w0.val)) := by
+      apply Finset.sum_congr rfl
+      intro w hw
+      rw [hunique w]
+    _ = Matrix.trace
+          (binaryWordMatrix K (K * N) (List.ofFn w0.val)) := by
+      rw [Fintype.sum_unique]
+    _ = Matrix.trace (K ^ 10) := by
+      rw [hmatrix]
+
 
 end EvgenyTheorem
