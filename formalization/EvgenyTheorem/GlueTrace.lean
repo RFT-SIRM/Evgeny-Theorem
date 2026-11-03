@@ -6700,4 +6700,62 @@ theorem sg_trace_p10_seven_N_word_stratum_zero
       simpa [K, N, sg_trace_p10_seven_N_class_term] using
         (sg_trace_p10_seven_N_stratum_zero m hm θ ax o hanti)
 
+
+
+
+/-- The top p=10 even stratum is the fifth power of the two supported
+diagonal K entries. -/
+private noncomputable def glueRHS10_ten_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  ∑ x, if (sgGlue m).g x then
+    (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0
+
+/-- The complete positive-even H10 boundary correction. Its five pieces
+are the exact r=2,4,6,8 diagonal strata and the r=10 top diagonal term.
+No cancellation between different strata is built into this definition. -/
+noncomputable def glueRHS10
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  glueRHS10_two_N_diagonal_form m K +
+  glueRHS10_four_N_diagonal_form m K +
+  glueRHS10_six_N_diagonal_form m K +
+  glueRHS10_eight_N_diagonal_form m K +
+  glueRHS10_ten_N_diagonal_form m K
+
+/-- All five positive-even exact-count p=10 word strata combine into the
+single boundary correction glueRHS10. The statement retains the individual
+word sums and all periodic-orbit weights proved in their stratum theorems. -/
+theorem sg_trace_p10_even_N_word_strata_diagonal
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 10 2,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 4,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 6,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 8,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) +
+    (∑ w : binaryWordFinStratum 10 10,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+      glueRHS10 m (sgK m θ ax o) := by
+  rw [
+    sg_trace_p10_two_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_four_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_six_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_eight_N_word_stratum_diagonal m hm θ ax o hanti,
+    sg_trace_p10_ten_N_word_stratum_diagonal m (by omega) θ ax o hanti
+  ]
+  rfl
+
 end EvgenyTheorem

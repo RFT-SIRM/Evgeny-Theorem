@@ -6558,3 +6558,26 @@ or factor order was altered. The next full Lean build will now also test
 the r=7 bridge proof itself, which the previous parser failure prevented
 Lean from elaborating.
 
+
+
+
+## 2026-11-03 — Assemble the positive-even H10 word strata
+
+The corrected H10 r=7 word bridge passes the full Lean build on
+`efe59c8433b584133d21ba9a041ecf54b5b6679a`
+(Actions run `41510222281`).
+
+Added the canonical `glueRHS10` as the sum of the existing exact
+r=2,4,6,8 diagonal boundary forms and the r=10 fifth-power diagonal
+term. The theorem `sg_trace_p10_even_N_word_strata_diagonal` combines
+the five already-proved exact-count word-stratum identities into this
+single expression. The geometric input remains the existing m>=4
+hypothesis needed by the r=2,4,6,8 boundary reductions; the top term's
+weaker m>=3 condition follows from it.
+
+This is only the positive-even aggregation. The r=0 base word, odd
+stratum vanishing in the full expansion, assembly into the actual
+`trace((K+K*N)^10)` / `pOpO` identity, and the comparison of
+`glueRHS10` across orientations remain to be proved. A full Lean build
+on the new source SHA is required.
+
