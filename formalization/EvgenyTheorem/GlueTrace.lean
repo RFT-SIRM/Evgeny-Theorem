@@ -4954,7 +4954,6 @@ theorem sg_trace_p8_seven_N_stratum_zero
     calc
       1 < 2 ^ 3 := by norm_num
       _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
-
   have hrot_r7 :
       Matrix.trace
         (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) =
@@ -4966,14 +4965,12 @@ theorem sg_trace_p8_seven_N_stratum_zero
       (trace_cyclic_list ([K, K] : List (Matrix (WSG m) (WSG m) ℂ))
         ([N, K, N, K, N, K, N, K, N, K, N, K, N] :
           List (Matrix (WSG m) (WSG m) ℂ)))
-
   have hzero_r7 :
       Matrix.trace
         (K * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N) * (K * N)) = 0 := by
     rw [hrot_r7]
     exact trace_seven_N_powers_zero_of_OAnti m θ ax o hanti
       0 1 1 1 1 1 1 2 (by omega) (by omega) (by omega)
-
   simp [hzero_r7]
 
 
@@ -6804,7 +6801,7 @@ theorem sg_trace_p10_zero_N_word_stratum
     induction n with
     | zero => simp
     | succ n ih =>
-        simp [List.replicate_succ, ih, pow_succ]
+        simp [List.replicate_succ, ih, pow_succ']
   have hmatrix :
       binaryWordMatrix K (K * N) (List.ofFn w0.val) = K ^ 10 := by
     change
@@ -6814,7 +6811,7 @@ theorem sg_trace_p10_zero_N_word_stratum
     calc
       binaryWordMatrix K (K * N) (List.replicate 10 false) =
           (List.replicate 10 K).prod := by
-        simp [binaryWordMatrix]
+        simp only [binaryWordMatrix, List.map_replicate, if_false]
       _ = K ^ 10 := hprod 10
   calc
     _ = ∑ w : binaryWordFinStratum 10 0,

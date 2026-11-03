@@ -6603,3 +6603,23 @@ The next required bridge is to identify the recursive list expansion
 the odd zero terms and the positive-even `glueRHS10`, and then lift the
 result to `pOpO`. A full Lean build on this source SHA is required.
 
+
+
+## 2026-11-03 — Repair the H10 r=0 word-product proof
+
+The build of `c857c45adcf2ebd924c7dcccea7aa92e982bc5d7`
+identified two proof failures in the new zero-insertion stratum.
+
+First, the induction for the product of `List.replicate n K` unfolded
+the list by a head-cons step, giving `K * K^n`; the proof had used
+`pow_succ`, whose right-recursive form gives `K^n * K`. Replaced it
+with `pow_succ'`, which matches the actual left-associated list product.
+Second, the broad `simp [binaryWordMatrix]` recursively expanded the
+ten-letter word beyond Lean's recursion limit. Replaced that step with
+the targeted simplification `List.map_replicate` and `if_false`,
+leaving the product identity to the already-proved `hprod 10`.
+
+Also removed the three empty lines inside the existing r=7 tactic command
+identified by the style linter. No theorem statement, matrix factor order,
+or mathematical assumption changed. The full Lean build must be rerun on
+this source SHA.
