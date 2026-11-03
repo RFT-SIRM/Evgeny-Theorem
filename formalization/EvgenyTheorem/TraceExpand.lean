@@ -5242,54 +5242,54 @@ theorem binaryWordExpansionByCount_mem_complete
       | succ r =>
           simp at hcount
   | succ p ih =>
-      let prefix : Fin p → Bool := fun i => word i.castSucc
+      let preWord : Fin p → Bool := fun i => word i.castSucc
       have hdecomp :
-          List.ofFn word = List.ofFn prefix ++ [word (Fin.last p)] := by
+          List.ofFn word = List.ofFn preWord ++ [word (Fin.last p)] := by
         rw [List.ofFn_succ']
-        simp [prefix, List.concat_eq_append]
+        simp [preWord, List.concat_eq_append]
       have hsplit :
-          ((List.ofFn prefix).filter id).length +
+          ((List.ofFn preWord).filter id).length +
             (if word (Fin.last p) then 1 else 0) = r := by
         rw [hdecomp, List.filter_append] at hcount
         simpa using hcount
       cases hbit : word (Fin.last p) with
       | false =>
           have hprefix :
-              ((List.ofFn prefix).filter id).length = r := by
+              ((List.ofFn preWord).filter id).length = r := by
             simpa [hbit] using hsplit
-          have hmem := ih r prefix hprefix
+          have hmem := ih r preWord hprefix
           have hword :
-              List.ofFn word = List.ofFn prefix ++ [false] := by
+              List.ofFn word = List.ofFn preWord ++ [false] := by
             rw [hdecomp, hbit]
           rw [hword]
           cases r with
           | zero =>
               simp only [binaryWordExpansionByCount, List.mem_map]
-              exact ⟨List.ofFn prefix, hmem, by simp⟩
+              exact ⟨List.ofFn preWord, hmem, by simp⟩
           | succ r =>
               simp only [binaryWordExpansionByCount, List.mem_append,
                 List.mem_map]
-              exact Or.inl ⟨List.ofFn prefix, hmem, by simp⟩
+              exact Or.inl ⟨List.ofFn preWord, hmem, by simp⟩
       | true =>
           cases r with
           | zero =>
-              have hfalse : ((List.ofFn prefix).filter id).length + 1 = 0 := by
+              have hfalse : ((List.ofFn preWord).filter id).length + 1 = 0 := by
                 simpa [hbit] using hsplit
               omega
           | succ r =>
               have hprefix :
-                  ((List.ofFn prefix).filter id).length = r := by
+                  ((List.ofFn preWord).filter id).length = r := by
                 have h := hsplit
                 simp [hbit] at h
                 omega
-              have hmem := ih r prefix hprefix
+              have hmem := ih r preWord hprefix
               have hword :
-                  List.ofFn word = List.ofFn prefix ++ [true] := by
+                  List.ofFn word = List.ofFn preWord ++ [true] := by
                 rw [hdecomp, hbit]
               rw [hword]
               simp only [binaryWordExpansionByCount, List.mem_append,
                 List.mem_map]
-              exact Or.inr ⟨List.ofFn prefix, hmem, by simp⟩
+              exact Or.inr ⟨List.ofFn preWord, hmem, by simp⟩
 
 /-- The recursive exact-count list has no repeated words. The two
 recurrence branches are disjoint because their last letters differ. -/
