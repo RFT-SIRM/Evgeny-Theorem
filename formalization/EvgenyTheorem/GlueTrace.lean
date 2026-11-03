@@ -6794,7 +6794,7 @@ theorem sg_trace_p10_zero_N_word_stratum
         rw [hcard] at hpos
         omega
   letI : Unique (binaryWordFinStratum 10 0) :=
-    ⟨w0, fun w => hunique w⟩
+    ⟨⟨w0⟩, fun w => hunique w⟩
   have hword0 :
       List.ofFn (fun _ : Fin 10 => false) = List.replicate 10 false := by
     simp
