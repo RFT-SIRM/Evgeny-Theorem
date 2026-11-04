@@ -60,7 +60,7 @@ The following list matches the Lean modules currently present under `formalizati
 
 | Layer | Modules |
 |---|---|
-| **Graph geometry and indexing** | `Graph/Sierpinski`, `Graph/Faces`, `SGStruct`, `CornerFaces`, `EdgeStep`, `EdgeCopies`, `EdgeSplit`, `VertexIndex`, `VertexOrder`, `ListOrder`, `Orientation` |
+| **Graph geometry and indexing** | `Graph/Sierpinski`, `Graph/Faces`, `SGStruct`, `CornerFaces`, `CornerLocality`, `EdgeStep`, `EdgeCopies`, `EdgeSplit`, `VertexIndex`, `VertexOrder`, `ListOrder`, `Orientation` |
 | **SU(2) operators and local structure** | `SU2`, `Operator`, `Locality`, `PointModel1`, `PointModel2`, `OpSplit1`, `OpSplit2`, `OpSplit3`, `DegSplit`, `FluxSplit`, `OrientSq`, `PairUnit` |
 | **Orientation changes** | `FlipB`, `FlipC`, `FlipCount`, `FlipFaces` |
 | **Base cases and trace expansion** | `Algebra`, `AlgebraTilde`, `BaseCase`, `BaseCaseTheorem`, `Setup`, `TildeBase`, `TildeEntries`, `TraceExpand` |

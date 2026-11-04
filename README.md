@@ -357,6 +357,8 @@ Evgeny-Theorem/
 │   ├── EvgenyTheorem.lean
 │   ├── HIGHER_MOMENT_RESEARCH_LOG.md
 │   ├── PROOF_WORK_LOG.md
+│   ├── .gitignore
+│   ├── .gitkeep
 │   ├── .github/workflows/
 │   │   ├── create-release.yml
 │   │   ├── lean_action_ci.yml
