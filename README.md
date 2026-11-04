@@ -65,6 +65,7 @@ at $\theta = \pi/2$, with geometric convergence confirmed through $m = 7$.
 | **H6 path-class zero theorem** | Single- and two-triangle classes contribute zero |
 | **H6/H8/H10 reference values** | Numerical regression, locked by tests |
 | **Lean-kernel proof of the finite H6 base transition; all-angle H8/H10 recurrence** | Open; the H6 base transition is exact symbolic Python arithmetic, not yet a Lean theorem |
+| **Lean 4: H10 infrastructure** (`GlueTrace10`, `FinalOrient10`, `GlueRows10`) | Machine-checked: p=10 gluing assembly `pOpO_trace10_glue_final`; recursions for the numbering and flipped-corner orientations; corner-flip row transport for powers up to 9 (m >= 4); boundary-correction transport between adjacent levels *conditional on* glued-state diagonal transport. **Conditional result:** `defectO10_num_affine_closed_form_from_level5` (affine closed form for levels n+5, with an explicit constant) is machine-checked *under the explicit hypothesis* `H10TransportAll` (glued-state diagonal transport through degree 9, radius-4 corner locality). **Open:** proving `H10TransportAll` and evaluating the level-5 constant. |
 | **Lean 4: graph infrastructure** ($SG(m)$, `Vertex`, `Adj`, `degree`) | Computable, decidable, machine-checked (`lake build`) |
 | **Lean 4: operator-level closed form** (`traceDefect_closed`) | Machine-checked for every `m >= 1` and every `theta`, for the concrete operators; no `sorry`, standard axioms only (see below) |
 

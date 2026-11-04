@@ -3512,13 +3512,13 @@ private theorem sgK_pow_glued_offdiag_of_OAnti
 /-- The p=8 diagonal boundary form is written as a product of adjacent
 corner/partner diagonal powers. A pair (a,b) contributes K^a at the glued
 state and K^b at its partner; lists of pairs encode the r=2,4,6,8 strata. -/
-private noncomputable def glueRHS8_pair_value
+noncomputable def glueRHS8_pair_value
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (x : WSG m) (p : ℕ × ℕ) : ℂ :=
   (K ^ p.1) x x *
     (K ^ p.2) ((sgGlue m).σ x) ((sgGlue m).σ x)
 
-private noncomputable def glueRHS8_pair_product
+noncomputable def glueRHS8_pair_product
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (x : WSG m) : List (ℕ × ℕ) → ℂ
   | [] => 1
@@ -3526,7 +3526,7 @@ private noncomputable def glueRHS8_pair_product
       glueRHS8_pair_value m K x p *
         glueRHS8_pair_product m K x ps
 
-private noncomputable def glueRHS8_pair_sum
+noncomputable def glueRHS8_pair_sum
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (ps : List (ℕ × ℕ)) : ℂ :=
   ∑ x, if (sgGlue m).g x then
@@ -3627,7 +3627,7 @@ private theorem sg_trace_p10_four_N_boundary_sum_pair_diagonal
 /-- The exact r=2 contribution to the p=10 diagonal correction.
 Each cyclic class is one glued-state/partner diagonal pair; the balanced
 class (5,5) retains its orbit weight five. -/
-private noncomputable def glueRHS10_two_N_diagonal_form
+noncomputable def glueRHS10_two_N_diagonal_form
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   10 * glueRHS8_pair_sum m K [(1, 9)] +
   10 * glueRHS8_pair_sum m K [(2, 8)] +
@@ -3653,7 +3653,7 @@ theorem sg_trace_p10_two_N_stratum_pair_diagonal
     glueRHS8_pair_product, glueRHS8_pair_value] using
     (sg_trace_p10_two_N_stratum_boundary m hm θ ax o hanti)
 
-private noncomputable def glueRHS10_four_N_diagonal_form
+noncomputable def glueRHS10_four_N_diagonal_form
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   10 * glueRHS8_pair_sum m K [(1, 1), (1, 7)] +
   10 * glueRHS8_pair_sum m K [(1, 1), (2, 6)] +
@@ -4046,7 +4046,7 @@ theorem glueRHS8_eq_diagonal_form
 
 /-- Convert a finite sum with a conditional zero extension to the
 corresponding sum over the support subtype. -/
-private theorem glueRHS8_sum_ite_eq_subtype
+theorem glueRHS8_sum_ite_eq_subtype
     {α : Type*} [Fintype α] (p : α → Prop) [DecidablePred p]
     (f : α → ℂ) :
     (∑ x, if p x then f x else 0) =
@@ -5875,12 +5875,12 @@ theorem sg_trace_p10_five_N_stratum_zero
 
 
 
-private noncomputable def glueRHS10_three_pair_sum
+noncomputable def glueRHS10_three_pair_sum
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (a b c d e f : ℕ) : ℂ :=
   glueRHS8_pair_sum m K [(a, b), (c, d), (e, f)]
 
-private noncomputable def glueRHS10_six_N_diagonal_form
+noncomputable def glueRHS10_six_N_diagonal_form
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   10 * glueRHS10_three_pair_sum m K 1 1 1 1 1 5 +
   10 * glueRHS10_three_pair_sum m K 1 1 1 1 2 4 +
@@ -6033,12 +6033,12 @@ theorem sg_trace_p10_six_N_stratum_pair_diagonal
 /-- The p=10 eight-N boundary contribution in ordered four-pair form.
 The order of the four corner/partner pairs is inherited from the boundary
 word; no kernel factors are permuted. -/
-private noncomputable def glueRHS10_four_pair_sum
+noncomputable def glueRHS10_four_pair_sum
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (a b c d e f g h : ℕ) : ℂ :=
   glueRHS8_pair_sum m K [(a, b), (c, d), (e, f), (g, h)]
 
-private noncomputable def glueRHS10_eight_N_diagonal_form
+noncomputable def glueRHS10_eight_N_diagonal_form
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 1 1 3 +
   10 * glueRHS10_four_pair_sum m K 1 1 1 1 1 1 2 2 +
@@ -6702,7 +6702,7 @@ theorem sg_trace_p10_seven_N_word_stratum_zero
 
 /-- The top p=10 even stratum is the fifth power of the two supported
 diagonal K entries. -/
-private noncomputable def glueRHS10_ten_N_diagonal_form
+noncomputable def glueRHS10_ten_N_diagonal_form
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
   ∑ x, if (sgGlue m).g x then
     (K x x * K ((sgGlue m).σ x) ((sgGlue m).σ x)) ^ 5 else 0

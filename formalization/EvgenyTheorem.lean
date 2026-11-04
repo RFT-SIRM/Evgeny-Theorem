@@ -44,6 +44,10 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import EvgenyTheorem.GlueTrace10
+import EvgenyTheorem.FinalOrient10
+import EvgenyTheorem.GlueRows10
+import EvgenyTheorem.FinalClosed10
 
 namespace EvgenyTheorem
 
