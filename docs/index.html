@@ -1230,7 +1230,7 @@ footer{
           </div>
           <div class="verdict open">
             <div class="v-head"><span class="v-name">scope</span><span class="v-badge open">NOT CLAIMED</span></div>
-            <p>m = 0, and any moment other than the fourth: the H6/H8/H10 values stay numerical regression references. No overclaim.</p>
+            <p>The H⁴ theorem is for m ≥ 1 (not m = 0). Higher moments have distinct proof status: H6 and H8 have Lean-checked recurrences with exact finite base certificates; H10 has a Lean-checked affine form from level five under the explicit radius-four transport hypothesis <code>H10TransportAll</code>. That hypothesis is not yet proved, so no unconditional H10 closed form is claimed.</p>
           </div>
         </div>
       </div>
@@ -1242,8 +1242,9 @@ footer{
           <tr><td>Lean 4 graph infrastructure — SG(m), Vertex, Adj, degree</td><td class="ok">CONFIRMED</td><td>computable + decidable instances, lake build</td></tr>
           <tr><td>H4 exact closed form · I∞(π/2) = −8/9</td><td style="color:var(--amber)">DERIVED</td><td>exact formula, verified numerically to 1e−13</td></tr>
           <tr><td>Gauge invariance · vanishes at p = 1, 2, 3</td><td class="ok">CONFIRMED</td><td>&lt; 8e−15 under random SU(2) gauge · first nonzero at p = 4</td></tr>
-          <tr><td>H6 growth law α(θ)·3^m + β(θ) · recurrence · path-class zero</td><td style="color:var(--amber)">DERIVED</td><td>machine-precision numerics, locked by tests</td></tr>
-          <tr><td>H6 / H8 / H10 closed forms</td><td style="color:var(--pink)">OPEN</td><td>no claim made — reference values only</td></tr>
+          <tr><td>H6 all-angle recurrence and closed form (m ≥ 2)</td><td style="color:var(--amber)">DERIVED</td><td>Lean recurrence for m ≥ 3; exact symbolic certificate for the m = 2 → 3 base transition</td></tr>
+          <tr><td>H8 all-angle affine law and closed form (m ≥ 2)</td><td style="color:var(--amber)">DERIVED</td><td>Lean recurrence for m ≥ 3; exact sparse-polynomial certificate for the m = 2 → 3 base transition</td></tr>
+          <tr><td>H10 affine form from level five (m ≥ 5)</td><td style="color:var(--amber)">CONDITIONAL</td><td>Lean-checked under explicit <code>H10TransportAll</code>; radius-four diagonal transport through degree nine remains unproved, and the level-five constant is an exact trace expression</td></tr>
           <tr><td>Lean 4 operator-level closed form (all m &ge; 1, all &theta;)</td><td class="ok">CONFIRMED</td><td>machine-checked, no sorry &middot; <code>traceDefect_closed</code></td></tr>
         </tbody>
       </table>
@@ -1279,10 +1280,18 @@ footer{
         </ul>
       </div>
       <div class="scope-card out reveal d1">
-        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Open — explicitly no claim</h3>
+        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Remaining proof obligations</h3>
         <ul>
-          <li><b>Closed forms for H6, H8, H10.</b> The 486 walks of class {0,1,2} carry different axis sequences whose SU(2) holonomies do not collapse to a finite trig polynomial.</li>
-          <li>Values below are regression anchors, locked by <span class="chip chip-pink">tests/test_higher_moments.py</span> and <span class="chip chip-pink">tests/test_path_class_h6.py</span>.</li>
+          <li><b>H6 and H8 finite base bridges.</b> Their exceptional m = 2 → 3 transitions have exact symbolic certificates, but those finite bridges are not yet Lean-kernel theorems.</li>
+          <li><b>H10 radius-four transport.</b> The affine form from level five assumes <code>H10TransportAll</code>: glued-state diagonal transport through degree nine for every m ≥ 4. This hypothesis is explicit and remains unproved.</li>
+          <li><b>H10 coefficient evaluation.</b> The level-five residual is an exact trace expression, not yet a closed trigonometric polynomial.</li>
+          <li><b>Conditional recurrence and closed form.</b> Under <code>H10TransportAll</code>:
+            <div style="font-family:var(--mono);font-size:13px;line-height:1.9;overflow-wrap:anywhere;color:var(--ink);background:rgba(5,6,14,.55);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0;">
+              D<sub>m+1</sub><sup>(10)</sup>(&theta;) = 3D<sub>m</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;)<br>
+              D<sub>m</sub><sup>(10)</sup>(&theta;) = 3<sup>m−5</sup>(D<sub>5</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;)/2) − C<sub>10</sub><sup>(5)</sup>(&theta;)/2, &nbsp; m ≥ 5
+            </div>
+          </li>
+          <li>Values below remain numerical regression anchors, locked by <span class="chip chip-pink">tests/test_higher_moments.py</span> and <span class="chip chip-pink">tests/test_path_class_h6.py</span>.</li>
         </ul>
       </div>
     </div>

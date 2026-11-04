@@ -63,8 +63,8 @@ at $\theta = \pi/2$, with geometric convergence confirmed through $m = 7$.
 | **H6 explicit closed form** ($m \ge 2$) | $D_m=-(12336\cdot3^{m-2}+2256)s^2+(1440\cdot3^{m-2}-96)cs^2-384s^3$ |
 | **H6 coefficient** | Exact symbolic certificate: $C_6(\theta)=4512s^2+192cs^2+768s^3$; $C_6(\pi)=5280$ |
 | **H6 path-class zero theorem** | Single- and two-triangle classes contribute zero |
-| **H6/H8/H10 reference values** | Numerical regression, locked by tests |
-| **Open** | (i) Lean-kernel proof of the finite H6 base transition (currently exact symbolic Python arithmetic); (ii) closed trigonometric evaluation of the H8 level-4 and H10 level-5 constants; (iii) proof of `H10TransportAll`, which would make the H10 affine form unconditional. |
+| **Higher-moment reference values (H6/H8/H10)** | Numerical regression anchors, locked by tests |
+| **Remaining proof obligations** | (i) Lean-kernel proof of the finite H6 base transition; (ii) completion/evaluation of the finite H8 and H10 constants as explicit trigonometric expressions; (iii) proof of `H10TransportAll`, which would make the H10 affine form unconditional. |
 | **Lean 4: H8 affine recurrence** | Machine-checked for every $\theta$: `defectO8_succ_num_level4_constant_boundary` ($D_{m+1}=3D_m+C_8(\theta)$, $m \ge 3$) and `defectO8_num_affine_closed_form_from_level4`. The level-4 constant $C_8$ is kept as an exact trace expression; it is not yet evaluated in closed trigonometric form. |
 | **Lean 4: H10 conditional closed form** (`GlueTrace10`, `FinalOrient10`, `GlueRows10`, `FinalClosed10`) | Machine-checked, no `sorry`, axioms `propext`, `Classical.choice`, `Quot.sound`: p=10 gluing assembly `pOpO_trace10_glue_final`; recursions for both orientations; corner-flip row transport (powers $\le 9$, $m \ge 4$); level-to-level boundary transport; `defectO10_num_affine_closed_form_from_level5`. **Conditional:** the last step assumes the explicit hypothesis `H10TransportAll` (glued-state diagonal transport through degree 9, i.e. radius-4 corner locality), which is not yet proved. |
 | **Lean 4: graph infrastructure** ($SG(m)$, `Vertex`, `Adj`, `degree`) | Computable, decidable, machine-checked (`lake build`) |
@@ -144,11 +144,11 @@ The proof follows a different route from the hand proof in `docs/PROOF.md`: the 
 Check it yourself: `lake build`. The final theorems contain no `sorry` and depend only on
 the standard axioms `propext`, `Classical.choice`, `Quot.sound` (verify with `#print axioms EvgenyTheorem.traceDefect_closed`). Details and a file map: [`formalization/README.md`](formalization/README.md).
 
-What this does *not* cover: the theorem above is the fourth-moment formula only (`m >= 1`, not `m = 0`). H6 has a separate all-angle recurrence and closed form for `m >= 2`, combining the Lean-proved recurrence for `m >= 3` with an exact symbolic base-transition certificate. The finite base transition is not yet a Lean-kernel theorem; general H8/H10 recurrences remain open. The edge orientation in the Lean operator is the vertex-index order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
+What this does *not* cover: the fourth-moment theorem applies for `m >= 1`, not `m = 0`. H6 has a Lean-proved recurrence for `m >= 3` and an exact symbolic certificate for the exceptional `m = 2 -> 3` transition; that finite bridge is not yet a Lean-kernel theorem. H8 has a Lean-proved affine recurrence for `m >= 3` and an exact sparse-polynomial certificate for its `m = 2 -> 3` base transition; that finite bridge is also not yet a Lean-kernel theorem. H10 has a Lean-checked affine form from level five, but it is conditional on `H10TransportAll`, the radius-four glued-state diagonal-transport hypothesis, which is not yet proved. The edge orientation in the Lean operator is the vertex-index order of `sg_graph.py` (see [`docs/ORIENTATION_NOTE.md`](docs/ORIENTATION_NOTE.md)).
 
 ---
 
-## Higher moments: closed H6 recurrence and open H8/H10 program
+## Higher moments: H6/H8 recurrences and the conditional H10 result
 
 ### H6: explicit all-angle recurrence and closed form for m ≥ 2
 
@@ -193,34 +193,57 @@ symbolic bridge are complementary proof components; only the recurrence for
 
 ### H8: all-angle affine law from level two
 
-Write \(D_m(\theta)=\operatorname{defectO8}(m,\theta,\mathrm{faceAxis},2,\mathrm{oNum})\),
-\(c=\cos(\theta/2)\), and \(s=\sin(\theta/2)\). The Lean development proves
-\(D_{m+1}=3D_m+C_8(\theta)\) for every \(m\ge3\). An exact sparse-polynomial
-certificate verifies the exceptional transition \(D_3-3D_2=D_4-3D_3\),
-with
-\[
+Write $D_m(\theta)=\operatorname{defectO8}(m,\theta,\mathrm{faceAxis},2,\mathrm{oNum})$,
+$c=\cos(\theta/2)$, and $s=\sin(\theta/2)$. The Lean development proves
+$D_{m+1}=3D_m+C_8(\theta)$ for every $m\ge3$. An exact sparse-polynomial
+certificate verifies the exceptional transition $D_3-3D_2=D_4-3D_3$, with
+$$
 \begin{aligned}
 D_2(\theta)={}&-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4,\\
 C_8(\theta)={}&193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
 \end{aligned}
-\]
-Consequently, for every \(m\ge2\),
-\[
+$$
+Consequently, for every $m\ge2$,
+$$
 D_m(\theta)=3^{m-2}D_2(\theta)
 +\frac{3^{m-2}-1}{2}C_8(\theta).
-\]
-At \(\theta=\pi\), the exact coefficient is \(C_8(\pi)=277504\).
+$$
+At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
 
-**Proof boundary:** the structural recurrence and its level-two arithmetic
-extension are Lean-formalized; the exceptional finite level-\(2\)-to-\(3\)
-identity is discharged by exact Gaussian-integer polynomial arithmetic in
-computational/p8_base_certificate.py and checked against the independent
-\(\theta=\pi\) certificate. This finite bridge is not yet a Lean-kernel theorem.
+**Proof boundary:** the structural recurrence is Lean-formalized for $m\ge3$.
+The exceptional finite level-$2$-to-$3$ identity is checked by exact
+Gaussian-integer polynomial arithmetic in computational/p8_base_certificate.py
+and by an independent $\theta=\pi$ certificate. This finite bridge is not
+yet a Lean-kernel theorem.
 
-### H10: still open
+### H10: conditional affine closed form from level five
 
-H10 has finite-level and stratum reductions, but no complete all-angle
-boundary stabilization or closed form is claimed.
+The p=10 gluing assembly, the recurrences for the numbering and flipped-corner
+orientations, and the corner-flip row transport through degree nine are
+machine-checked in Lean 4. Define
+$D_m^{(10)}(\theta)=\operatorname{defectO10}(m,\theta,\mathrm{faceAxis},2,\mathrm{oNum})$,
+and let $C_{10}^{(5)}(\theta)$ denote the exact level-five residual constant
+defined by defectO10_num_residual_constant.
+
+Under the explicit hypothesis H10TransportAll(theta) (glued-state diagonal
+transport through degree nine, i.e. radius-four corner locality), Lean proves
+for every $m\ge4$:
+$$
+D_{m+1}^{(10)}(\theta)=3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta).
+$$
+Consequently, for every $m\ge5$,
+$$
+D_m^{(10)}(\theta)=
+3^{m-5}\left(D_5^{(10)}(\theta)+\frac{C_{10}^{(5)}(\theta)}{2}\right)
+-\frac{C_{10}^{(5)}(\theta)}{2}.
+$$
+
+This is a machine-checked **conditional** affine closed form. The hypothesis
+H10TransportAll(theta) is explicit in the theorem and is not proved in the current
+Lean development. The level-five residual constant is still an exact trace
+expression; it has not been reduced to a closed trigonometric polynomial.
+Thus an unconditional all-angle H10 closed form is not claimed yet.
+
 
 ### Numerical reference values at theta = pi/2
 
