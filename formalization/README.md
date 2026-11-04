@@ -1,10 +1,10 @@
-# Lean formalization — Evgeny's Theorem
+# Lean 4 formalization — Evgeny's Theorem
 
-Lean 4 + Mathlib (versions pinned in `lean-toolchain` / `lakefile.toml` in the repository root, which sets `srcDir = "formalization"`). Build with `lake build` from the repository root.
+The Lean project is built with the pinned Lean toolchain and Mathlib versions in `lean-toolchain` and `lakefile.toml`. The repository root sets `srcDir = "formalization"`, so all commands below are run from the repository root.
 
-## Main result (machine-checked)
+## Main theorem: fourth spectral moment
 
-For every refinement level `m ≥ 1` and every angle `θ`, for the concrete operators:
+For every refinement level $m\ge1$ and every angle $\theta$, the concrete operators satisfy
 
 ```lean
 theorem traceDefect_closed (θ : ℝ) (m : ℕ) (hm : 1 ≤ m) :
@@ -12,53 +12,75 @@ theorem traceDefect_closed (θ : ℝ) (m : ℕ) (hm : 1 ≤ m) :
       -16 * ((3 : ℂ) ^ (m - 1) + 1) * ((Real.sin (θ / 2) : ℝ) : ℂ) ^ 2
 ```
 
-(`EvgenyTheorem/TildeEntries.lean`). `EvgenyTheorem.lean` restates it with the real closed form `delta` as
-`traceDefect m θ = (delta m θ : ℂ)` (`traceDefect_eq_delta`, with `traceDefect_re_eq_delta` and
-`traceDefect_im_eq_zero`). `traceDefect m θ` is the difference of the fourth traces of `HC` and `HCprime`
-(`Operator.lean`).
+The theorem is in `EvgenyTheorem/TildeEntries.lean`. The root module `EvgenyTheorem.lean` restates the identity using the real closed form `delta` through `traceDefect_eq_delta`, `traceDefect_re_eq_delta`, and `traceDefect_im_eq_zero`.
 
-Scope: `m ≥ 1` only; the fourth moment only. No `sorry`, no numerical tolerance, no axiom asserting the target.
-`SanityChecks.lean` uses `native_decide` for a few degree examples at level 1; the final theorems do not depend on it.
+The final theorem contains no `sorry` and uses the standard axioms `propext`, `Classical.choice`, and `Quot.sound`. It is a theorem about the concrete H⁴ operators for $m\ge1$; it does not by itself prove the higher-moment results.
 
-## Check it
+## Build and inspect the theorem
 
-    lake build
-    printf 'import EvgenyTheorem\n#print axioms EvgenyTheorem.traceDefect_closed\n' > /tmp/ax.lean
-    lake env lean /tmp/ax.lean      # expect: propext, Classical.choice, Quot.sound
+Run from the repository root:
 
-## Proof structure
+```bash
+lake build
+```
 
-The route differs from the hand proof in `docs/PROOF.md`: it glues three copies of level `m` into level `m+1` and
-closes a coupled recursion over two orientations (full plan: `docs/LEAN_PLAN_GENERAL_M.md`, "Final route").
+To inspect the declared axioms:
 
-1. **Base cases.** `traceDefect_one` (`m = 1`, explicit 12×12 matrices in `Algebra.lean`, `BaseCaseTheorem.lean`) and
-   `tilde_base` (`TildeBase.lean`, `TildeEntries.lean`, `AlgebraTilde.lean`): the same computation with the corner flux edge
-   reversed, where the defect is `0`.
-2. **Gluing.** `H_{m+1} = E K Eᵀ` for the block-diagonal operator `K` of three copies (`GlueSG`, `GlueK`); an abstract
-   trace identity (`GlueAlg`, `GlueBridge`, `GlueTrace`) leaves only corner data at the six glued points, proved as
-   `sgK_corner_data` (`GlueCorner*.lean`: corner geometry, triangle sum, independence of the axis function).
-3. **Orientation transport.** The numbering orientation on the three copies is transported to level `m` and to the
-   orientation with the corner edge reversed (`FinalOrient.lean`, using `FlipFaces.lean`).
-4. **Coupled recursion and induction.** `defect_succ_num`: `D_{m+1} = 2 D_m + D~_m`; `defect_succ_til`:
-   `D~_{m+1} = D_m + 2 D~_m` (`FinalTilde.lean`); the closed form follows by induction (`FinalArith.lean`,
-   `FinalTheorem.lean`).
+```bash
+printf 'import EvgenyTheorem\n#print axioms EvgenyTheorem.traceDefect_closed\n' > /tmp/ax.lean
+lake env lean /tmp/ax.lean
+```
 
-Edge orientation is the vertex-index order `vIdx` of `sg_graph.py` (`Orientation.lean`); see `docs/ORIENTATION_NOTE.md`
-for why this matters.
+`SanityChecks.lean` uses `native_decide` for selected finite graph checks. Those checks are not assumptions in the proof of `traceDefect_closed`.
 
-## File map
+## Proof architecture for H⁴
 
-| Layer | Files |
+The Lean proof uses the recursive gluing of three level-$m$ copies into level $m+1$ and a coupled recursion over two orientations.
+
+1. **Base cases.** `traceDefect_one` treats level one with explicit 12×12 matrices. `tilde_base` treats the orientation with the corner flux edge reversed.
+2. **Gluing.** The next-level operator is represented using a block-diagonal operator of three copies. `GlueAlg`, `GlueBridge`, `GlueSG`, and `GlueK` reduce the trace identity to corner data.
+3. **Corner structure.** The `GlueCorner*` modules establish the geometric and algebraic identities at the glued vertices.
+4. **Orientation transport.** `FinalOrient` and the flip modules identify the orientations induced on the copies.
+5. **Coupled recursion.** `FinalTilde` proves the two recurrences
+   $D_{m+1}=2D_m+\widetilde D_m$ and
+   $\widetilde D_{m+1}=D_m+2\widetilde D_m$.
+6. **Closed form.** `FinalArith` and `FinalTheorem` complete the induction.
+
+The edge orientation is the vertex-index order `vIdx` of the graph construction. See [ORIENTATION_NOTE.md](../docs/ORIENTATION_NOTE.md).
+
+## Higher moments: current Lean boundary
+
+The H⁶ and H⁸ Lean developments prove their all-angle structural recurrences for the stated ranges. Their exceptional finite base transitions are verified by separate exact symbolic certificates and are not yet Lean-kernel theorems.
+
+The H¹⁰ development is more extensive than a numerical reference calculation. The current source contains the p=10 gluing assembly, exact ordered-word stratum reductions, orientation recurrences, and row transport through degree nine. The final affine formula is machine-checked under the explicit assumption `H10TransportAll`. That assumption is not proved in the current source, so the H¹⁰ formula is conditional rather than an unconditional Lean theorem. See [HIGHER_MOMENTS.md](../docs/HIGHER_MOMENTS.md) for the formulas and exact proof boundaries.
+
+## Lean module map
+
+The following list matches the Lean modules currently present under `formalization/EvgenyTheorem/`.
+
+| Layer | Modules |
 |---|---|
-| Graph and gasket structure | `Graph/Sierpinski`, `Graph/Faces`, `SGStruct`, `EdgeStep`, `EdgeCopies`, `EdgeSplit`, `VertexOrder`, `VertexIndex`, `ListOrder`, `Orientation`, `CornerFaces` |
-| SU(2) and operators | `SU2`, `Operator`, `Locality`, `PointModel1`, `PointModel2`, `OpSplit1`–`3`, `DegSplit`, `FluxSplit`, `OrientSq`, `PairUnit` |
-| Orientation flips | `FlipB`, `FlipC`, `FlipFaces`, `FlipCount` |
-| Base cases | `Algebra`, `Setup`, `BaseCase`, `BaseCaseTheorem`, `TraceExpand`, `AlgebraTilde`, `TildeBase`, `TildeEntries` |
-| Gluing | `GlueAlg`, `GlueBridge`, `GlueSG`, `GlueK`, `GlueTrace`, `GlueCorner`, `GlueCornerData`, `GlueCornerU`, `GlueCornerTri`, `GlueCornerSum`, `GlueCornerGeom`, `GlueCornerCube` |
-| Recursion and closed form | `FinalOrient`, `FinalArith`, `FinalTilde`, `FinalTheorem`, `TildeEntries` |
-| Sanity checks | `SanityChecks`, `SanityChecksLevel4` (slow; not in the default build) |
+| **Graph geometry and indexing** | `Graph/Sierpinski`, `Graph/Faces`, `SGStruct`, `CornerFaces`, `EdgeStep`, `EdgeCopies`, `EdgeSplit`, `VertexIndex`, `VertexOrder`, `ListOrder`, `Orientation` |
+| **SU(2) operators and local structure** | `SU2`, `Operator`, `Locality`, `PointModel1`, `PointModel2`, `OpSplit1`, `OpSplit2`, `OpSplit3`, `DegSplit`, `FluxSplit`, `OrientSq`, `PairUnit` |
+| **Orientation changes** | `FlipB`, `FlipC`, `FlipCount`, `FlipFaces` |
+| **Base cases and trace expansion** | `Algebra`, `AlgebraTilde`, `BaseCase`, `BaseCaseTheorem`, `Setup`, `TildeBase`, `TildeEntries`, `TraceExpand` |
+| **Gluing and corner data** | `GlueAlg`, `GlueBridge`, `GlueCorner`, `GlueCornerCube`, `GlueCornerData`, `GlueCornerGeom`, `GlueCornerSum`, `GlueCornerTri`, `GlueCornerU`, `GlueK`, `GlueSG`, `GlueTrace` |
+| **H¹⁰ gluing and transport** | `GlueRows10`, `GlueTrace10` |
+| **Recurrences and closed forms** | `FinalArith`, `FinalOrient`, `FinalOrient10`, `FinalClosed10`, `FinalTheorem`, `FinalTilde` |
+| **Finite graph checks** | `SanityChecks`, `SanityChecksLevel4` (the level-four check is slow and is not part of the default build) |
 
-The Python suite in the main repository remains the computational verification layer for the numerical claims
-(including H6/H8/H10, which are not covered by this formalization).
+## Research records and supporting directories
 
-Do **not** make `formalization/` a separate Git repository and do not create a nested `.git`.
+The primary chronological records are:
+
+- `formalization/HIGHER_MOMENT_RESEARCH_LOG.md` — detailed higher-moment research journal;
+- `formalization/PROOF_WORK_LOG.md` — Lean proof-development journal.
+
+Other supporting material:
+
+- `computational/` — exact finite symbolic certificates, corner-power reports, and trace-word inventories;
+- `tests/` — numerical regression, exact symbolic checks, graph-convention checks, and structural tests;
+- `docs/` — mathematical proofs, exact verification, higher-moment status, orientation note, and proof roadmaps;
+- `src/` — Python graph, SU(2), operator, and moment implementations.
+
+Do not make `formalization/` a separate Git repository and do not create a nested `.git` directory.

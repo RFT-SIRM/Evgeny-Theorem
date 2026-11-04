@@ -1,180 +1,237 @@
-# Higher Spectral Moments: H⁶, H⁸, H¹⁰
+# Higher spectral moments: H⁶, H⁸, and H¹⁰
 
-## Status
+This note records the current mathematical and formal status of the higher spectral moments for the SU(2)-valued operators defined in this repository. It separates all-level recurrence proofs from finite exact certificates and numerical reference data.
 
-**H⁴** has an exact closed form. See [THEOREM.md](../THEOREM.md).
+## Status at a glance
 
-**H⁶** has an explicit all-angle recurrence and closed form for every level
-`m ≥ 2`. The recurrence for `m ≥ 3` is Lean-proved; the finite transition
-`m = 2 → 3` and coefficient formula are certified by exact symbolic
-polynomial arithmetic in the Python regression suite. That base transition is
-not yet a Lean-kernel theorem. **H⁸** has an all-angle affine recurrence for every level \(m\ge3\), plus an
-exact symbolic finite transition \(m=2\to3\); together these give the explicit
-closed form for every \(m\ge2\). The finite transition is an exact Python
-polynomial certificate, not yet a Lean-kernel theorem. **H¹⁰** remains open.
+| Moment | Established result | Remaining proof boundary |
+|---|---|---|
+| **H⁴** | Unconditional all-angle closed form, Lean-checked for every $m\ge1$. | None for the stated theorem. |
+| **H⁶** | Lean recurrence for $m\ge3$, plus an exact finite symbolic bridge for $m=2\to3$. Combined all-angle formula for $m\ge2$. | The finite bridge is not yet a Lean-kernel theorem. |
+| **H⁸** | Lean recurrence for $m\ge3$, plus an exact sparse-polynomial bridge for $m=2\to3$. Combined all-angle formula for $m\ge2$. | The finite bridge is not yet a Lean-kernel theorem. |
+| **H¹⁰** | Lean-checked p=10 gluing and orientation recurrences; a conditional affine closed form from level five. | The explicit hypothesis `H10TransportAll` remains unproved; the level-five constant remains an exact trace expression. |
+
+H⁴ is stated in [THEOREM.md](../THEOREM.md). The detailed tenth-moment Lean layer is in `formalization/EvgenyTheorem/GlueTrace10.lean`, `GlueRows10.lean`, `FinalOrient10.lean`, and `FinalClosed10.lean`.
 
 ---
 
-## H⁶: Structural results
+## Notation
 
-### 1. All-angle recurrence and explicit closed form (combined Lean + exact certificate)
+For $p\in\{6,8,10\}$, let $\Delta_m^{(p)}(\theta)$ be the difference between the p-th traces of the non-commuting SU(2) configuration and the commuting control. For the level-dependent recurrences below, $D_m^{(p)}(\theta)$ denotes the orientation-specific defect used in the corresponding Lean declarations.
 
-Write
-`D_m(θ) = defectO6 m θ faceAxis (fun _ => 2) (oNum m)`,
-`c = cos(θ/2)`, and `s = sin(θ/2)`.
-
-The Lean proof establishes the recurrence for every angle and `m ≥ 3`.
-The exact Gaussian-integer polynomial certificate in
-`tests/test_higher_moments.py` checks the finite `m = 2 → 3` transition
-by expanding the exact level-2 and level-3 trace polynomials and reducing only
-with `c² + s² = 1`. Together these results give, for every angle and `m ≥ 2`,
+Throughout this note,
 
 $$
-D_{m+1}(\theta)=3D_m(\theta)+C_6(\theta),
+c=\cos\left(\frac{\theta}{2}\right),
+\qquad
+s=\sin\left(\frac{\theta}{2}\right).
 $$
 
-with the explicit coefficient
+The names `defectO6`, `defectO8`, and `defectO10` refer to the concrete Lean definitions. The superscripts in $D_m^{(p)}$ label the moment order; they are not powers of $D_m$.
+
+---
+
+## H⁶ — all-angle recurrence and explicit formula
+
+Write $D_m^{(6)}(\theta)$ for the level-$m$ numbering-orientation quantity defined by `defectO6`.
+
+The Lean proof establishes
 
 $$
-C_6(\theta)=4512s^2+192cs^2+768s^3.
+D_{m+1}^{(6)}(\theta)
+=
+3D_m^{(6)}(\theta)+C_6(\theta),
+\qquad m\ge3.
 $$
 
-The level-two value is
+The exact finite polynomial certificate establishes the exceptional level-two transition. The level-two value and recurrence coefficient are
 
 $$
-D_2(\theta)=-14592s^2+1344cs^2-384s^3.
+D_2^{(6)}(\theta)
+=
+-14592s^2+1344cs^2-384s^3,
 $$
 
-Thus the all-level closed form is
-
 $$
-D_m(\theta)=3^{m-2}D_2(\theta)
-+\frac{3^{m-2}-1}{2}C_6(\theta),
-\qquad m\ge2,
+C_6(\theta)
+=
+4512s^2+192cs^2+768s^3.
 $$
 
-or, fully expanded,
+Combining the Lean recurrence with the exact finite transition gives, for every $m\ge2$,
 
 $$
-D_m(\theta)=-(12336\cdot3^{m-2}+2256)s^2
-+(1440\cdot3^{m-2}-96)cs^2-384s^3.
+D_m^{(6)}(\theta)
+=
+3^{m-2}D_2^{(6)}(\theta)
++
+\frac{3^{m-2}-1}{2}C_6(\theta).
 $$
 
-At `θ = π`, this gives `C₆(π) = 5280`, agreeing with the exact sparse
-Gaussian-integer certificates.
+Equivalently,
 
-**Proof boundary:** `defectO6_num_growth_recurrence` in
-`formalization/EvgenyTheorem/FinalTilde.lean` is Lean-proved for `m ≥ 3`.
-The exceptional finite base transition is established by exact symbolic Python
-polynomial arithmetic and regression tests, not currently by Lean's kernel.
-No floating-point sampling is used for that polynomial identity.
+$$
+D_m^{(6)}(\theta)
+=
+-\left(12336\cdot3^{m-2}+2256\right)s^2
++\left(1440\cdot3^{m-2}-96\right)cs^2
+-384s^3.
+$$
 
-### 2. Exact symbolic base-transition certificate
+At $\theta=\pi$, the coefficient is exactly $C_6(\pi)=5280$.
 
-The certificate pins the raw level-two defect polynomial, verifies
-`D₃ - 3D₂ = C₆(θ)`, and checks that the adjusted residual
-`D_{m+1} - 3D_m + F₃` has the same exact polynomial at `m = 2` and `m = 3`.
-This is the one finite bridge needed to extend the Lean recurrence to `m ≥ 2`.
+**Proof boundary.** The recurrence theorem `defectO6_num_growth_recurrence` is in `formalization/EvgenyTheorem/FinalTilde.lean` and is Lean-proved for $m\ge3$. The exceptional finite transition is certified by exact Gaussian-integer polynomial arithmetic, with code in `computational/p6_level3_orientation_certificate.py` and regression checks in `tests/test_higher_moments.py`. No floating-point angle grid is used to establish the symbolic bridge. The finite transition is exact, but it is not yet a Lean-kernel theorem.
 
-### 3. Path-class zero pattern on SG(1) (finite-level result)
+### H⁶ path-class result on the first gasket
 
-On `SG(1)` (6 vertices, 9 edges, 3 triangles), closed walks of length 6 were classified computationally by which triangles they visit. Their contribution to
-`Δ(H⁶) = Tr(H_C⁶) − Tr(H_C′⁶)` is reported as follows:
+On $SG(1)$, closed walks of length six can be classified by which elementary triangles they visit. The exact finite-level calculation gives:
 
-| Path class (triangles visited) | Count | Δ contribution |
+| Triangles visited | Number of walks | Contribution to the H⁶ defect |
 |---|---:|---:|
-| Single triangle `{0}`, `{1}`, or `{2}` | 66 each | **0** (exact) |
-| Two triangles `{0,1}`, `{0,2}`, or `{1,2}` | 168 each | **0** (exact) |
-| All three triangles `{0,1,2}` | 486 | **nonzero** |
+| One triangle | 66 in each class | Zero |
+| Two triangles | 168 in each class | Zero |
+| All three triangles | 486 | Nonzero |
 
-In these finite-level calculations, only paths sampling all three rotation axes (x, y, z) contribute. The isolated triangle calculations agree to `10⁻¹²`; this is not an all-level theorem.
-
-The physical reason: for two axes, `Tr([R_a, R_b] · M) = 0` — the
-pairwise commutator leaves no trace. All three axes are required.
-
-### 4. Why H⁶ differs from the simpler H⁴ formula
-
-H⁴ has the particularly simple factor `−4·sin²(θ/2)` per contributing
-triangular traversal. H⁶ still has an explicit level-growth closed form, but
-its coefficient contains several trigonometric monomials. The contributing
-three-triangle class `{0,1,2}` contains 486 walks with different sequences of
-rotation axes; the exact level-growth formula above comes from the recurrence
-and finite symbolic base certificate, not from identifying those walks with
-one common H⁴ contribution.
-
-### 5. What remains open
-
-- Formalize the exact finite level-2-to-3 base transition in Lean, so the combined H⁶ result is kernel-checked end to end.
-- H⁸ is now covered by the combined Lean recurrence plus exact finite base-transition certificate described below.
-- Derive the corresponding all-angle recurrence and closed form for H¹⁰.
-
-The path-class inventory and exact sparse certificate remain useful for
-simplifying the finite coefficient; they are not needed to claim the all-level
-affine law for H⁶ when `m ≥ 3`.## H⁸: all-angle affine law from level two
-
-Let
-\[
-D_m(\theta)=\operatorname{defectO8}(m,\theta,\mathrm{faceAxis},2,\mathrm{oNum}),
-\quad c=\cos(\theta/2),\quad s=\sin(\theta/2).
-\]
-The Lean proof establishes the exact recurrence
-\[
-D_{m+1}(\theta)=3D_m(\theta)+C_8(\theta),\qquad m\ge3.
-\]
-An exact sparse-polynomial certificate computes the finite traces at levels
-2, 3, and 4 and proves coefficient-by-coefficient that
-\[
-D_3-3D_2=D_4-3D_3=C_8(\theta).
-\]
-The resulting explicit coefficient and level-two value are
-\[
-\begin{aligned}
-D_2(\theta)={}&-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4,\\
-C_8(\theta)={}&193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
-\end{aligned}
-\]
-Therefore, for every \(m\ge2\),
-\[
-D_m(\theta)=3^{m-2}D_2(\theta)
-+\frac{3^{m-2}-1}{2}C_8(\theta).
-\]
-At \(\theta=\pi\), this gives \(C_8(\pi)=277504\), agreeing with the
-independent exact Gaussian-integer trace certificate.
-
-**Proof boundary.** The all-level structural recurrence and the arithmetic
-closed-form step are Lean-formalized. The exceptional \(m=2\to3\) transition
-is verified by exact polynomial arithmetic over Gaussian integers in
-computational/p8_base_certificate.py; its values at \(\theta=\pi\) are
-cross-checked against computational/higher_moment_pi_certificate.py.
-The finite transition is an exact reproducible certificate, not yet a
-Lean-kernel theorem. No sampled-angle fit is used.
+At this finite level, only walks that sample all three rotation axes contribute. This statement concerns the first gasket and the enumerated length-six walks; it is not asserted as an all-level path-class theorem.
 
 ---
 
-## H⁸ and H¹⁰: Numerical results
+## H⁸ — all-angle affine law and explicit formula
 
-The same structural pattern holds:
+Write $D_m^{(8)}(\theta)$ for the level-$m$ numbering-orientation quantity defined by `defectO8`.
 
-- Growth law `α(θ)·3^m + β(θ)` verified to machine precision.
-- No quadratic `3^(2m)` terms (coefficient ratio `< 10⁻¹⁵`).
-- No closed form is claimed.
+The Lean development proves the all-angle recurrence
 
-### Reference values at θ = π/2
+$$
+D_{m+1}^{(8)}(\theta)
+=
+3D_m^{(8)}(\theta)+C_8(\theta),
+\qquad m\ge3.
+$$
 
-| m | Δ(H⁶) | Δ(H⁸) | Δ(H¹⁰) |
+The exact sparse-polynomial certificate gives
+
+$$
+D_2^{(8)}(\theta)
+=
+-1335552s^2
++244352cs^2
+-40064s^3
++64cs^3
++1920s^4,
+$$
+
+$$
+C_8(\theta)
+=
+193600s^2
++75776cs^2
++83712s^3
+-512cs^3
++192s^4.
+$$
+
+It also verifies the finite transition identity
+
+$$
+D_3^{(8)}-3D_2^{(8)}
+=
+D_4^{(8)}-3D_3^{(8)}
+=
+C_8(\theta).
+$$
+
+Consequently, for every $m\ge2$,
+
+$$
+D_m^{(8)}(\theta)
+=
+3^{m-2}D_2^{(8)}(\theta)
++
+\frac{3^{m-2}-1}{2}C_8(\theta).
+$$
+
+At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
+
+**Proof boundary.** The recurrence is Lean-formalized for $m\ge3$. The exceptional finite $m=2\to3$ identity is computed coefficient-by-coefficient over Gaussian integers in `computational/p8_base_certificate.py`. It is an exact reproducible certificate, not yet a Lean-kernel theorem. No sampled-angle fit is used.
+
+---
+
+## H¹⁰ — p=10 gluing and conditional affine closed form
+
+The tenth-moment proof layer goes beyond numerical trace tables. The current Lean source includes:
+
+- the ordered p=10 gluing assembly, theorem `pOpO_trace10_glue_final`;
+- the exact even-word-stratum aggregation and the zero-insertion term;
+- recurrences for the numbering orientation and the flipped-corner orientation;
+- transfer of the corner-flip rows through powers up to nine;
+- adjacent-level transport of the complete boundary correction, conditional on glued-state diagonal transport.
+
+Write $D_m^{(10)}(\theta)$ for the level-$m$ numbering-orientation quantity defined by `defectO10`. The level-five residual is named `defectO10_num_residual_constant` in Lean; denote it by $C_{10}^{(5)}(\theta)$. Its current definition is an exact finite trace expression.
+
+The remaining transport hypothesis is explicitly named `H10TransportAll`. It asks for the glued-state diagonal powers through degree nine to agree between adjacent levels, for both the face-axis and fixed-axis configurations, at every level $m\ge4$. This is the radius-four corner-locality statement required by the final transport step.
+
+**Under this explicit hypothesis**, Lean proves
+
+$$
+D_{m+1}^{(10)}(\theta)
+=
+3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),
+\qquad m\ge4.
+$$
+
+The corresponding closed affine form is
+
+$$
+D_m^{(10)}(\theta)
+=
+3^{m-5}
+\left(
+D_5^{(10)}(\theta)+\frac{C_{10}^{(5)}(\theta)}{2}
+\right)
+-\frac{C_{10}^{(5)}(\theta)}{2},
+\qquad m\ge5.
+$$
+
+This theorem is machine-checked **with `H10TransportAll` as an explicit assumption**. The hypothesis itself is not proved in the current Lean source. Also, $C_{10}^{(5)}(\theta)$ has not yet been simplified to an explicit trigonometric polynomial. Therefore the current repository does not claim an unconditional all-angle H¹⁰ closed form.
+
+### H¹⁰ source map
+
+| Component | Lean module | Role |
+|---|---|---|
+| Tenth-power trace expansion and word strata | `GlueTrace.lean` and `TraceExpand.lean` | Exact ordered-word expansion and stratum reductions. |
+| p=10 gluing assembly | `GlueTrace10.lean` | Connects the ordered expansion to the tenth-moment boundary expression. |
+| Glued-row transport | `GlueRows10.lean` | Establishes corner-flip row identities through degree nine and transports the boundary correction under the diagonal hypothesis. |
+| Orientation recurrences | `FinalOrient10.lean` | Recurrences for the numbering and flipped-corner orientations. |
+| Conditional affine form | `FinalClosed10.lean` | States `H10TransportAll` and proves the affine theorem assuming it. |
+
+---
+
+## Numerical reference values
+
+The following table records direct numerical regression values at $\theta=\pi/2$. The table is a finite computational record; it is not the proof of the all-angle H⁶/H⁸ identities and does not discharge the H¹⁰ transport hypothesis.
+
+| $m$ | $\Delta_m(H^6,\pi/2)$ | $\Delta_m(H^8,\pi/2)$ | $\Delta_m(H^{10},\pi/2)$ |
 |---:|---:|---:|---:|
 | 1 | −3180.000000000000 | −246909.026268397924 | −14013358.982483163476 |
 | 2 | −6956.588745030516 | −595053.284942481667 | −37686518.369789719582 |
 | 3 | −18274.354980121832 | −1632052.331668503582 | −107772338.487565994263 |
 | 4 | −52227.653685396537 | −4743049.471846580505 | −318029798.840893745422 |
 
-Locked by `tests/test_higher_moments.py` and `tests/test_path_class_h6.py`.
+These values are locked by `tests/test_higher_moments.py`. Additional exact angle-$\pi$ certificates are maintained in `computational/higher_moment_pi_certificate.py`.
 
 ---
 
-## Contributing
+## How to read the evidence
 
-If you can derive a closed form for `C(θ)` or `Δ_m(H⁶, θ)`, establish
-the recurrence analytically, or extend the path-class theorem to H⁸ or H¹⁰,
-please open an issue or pull request with the derivation and reproducible
-numerical checks.
+- **Lean-kernel theorem:** the proposition and proof are checked by Lean under the displayed hypotheses.
+- **Exact symbolic certificate:** a finite algebraic identity is verified without floating-point sampling. It may still be outside the Lean kernel.
+- **Numerical regression:** a reproducible finite computation checked against fixed reference values. It is not an all-level proof.
+- **Conditional theorem:** Lean verifies the implication from an explicitly stated hypothesis; the hypothesis must still be proved before the result is unconditional.
+
+The source journals preserve the chronology and details of the formalization:
+
+- [Higher-moment research log](../formalization/HIGHER_MOMENT_RESEARCH_LOG.md)
+- [Lean proof-work log](../formalization/PROOF_WORK_LOG.md)
+
+These journals are intentionally retained as research records. This page is their organized mathematical summary, not a replacement for the underlying history.
