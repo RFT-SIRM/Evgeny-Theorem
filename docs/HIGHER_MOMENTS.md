@@ -22,9 +22,7 @@ For $p\in\{6,8,10\}$, let $\Delta_m^{(p)}(\theta)$ be the difference between the
 Throughout this note,
 
 $$
-c=\cos\left(\frac{\theta}{2}\right),
-\qquad
-s=\sin\left(\frac{\theta}{2}\right).
+c=\cos(\theta/2),\quad s=\sin(\theta/2).
 $$
 
 The names `defectO6`, `defectO8`, and `defectO10` refer to the concrete Lean definitions. The superscripts in $D_m^{(p)}$ label the moment order; they are not powers of $D_m$.
@@ -38,44 +36,29 @@ Write $D_m^{(6)}(\theta)$ for the level-$m$ numbering-orientation quantity defin
 The Lean proof establishes
 
 $$
-D_{m+1}^{(6)}(\theta)
-=
-3D_m^{(6)}(\theta)+C_6(\theta),
-\qquad m\ge3.
+D_{m+1}^{(6)}(\theta)=3D_m^{(6)}(\theta)+C_6(\theta),\quad m\ge3.
 $$
 
 The exact finite polynomial certificate establishes the exceptional level-two transition. The level-two value and recurrence coefficient are
 
 $$
-D_2^{(6)}(\theta)
-=
--14592s^2+1344cs^2-384s^3,
+D_2^{(6)}(\theta)=-14592s^2+1344cs^2-384s^3.
 $$
 
 $$
-C_6(\theta)
-=
-4512s^2+192cs^2+768s^3.
+C_6(\theta)=4512s^2+192cs^2+768s^3.
 $$
 
 Combining the Lean recurrence with the exact finite transition gives, for every $m\ge2$,
 
 $$
-D_m^{(6)}(\theta)
-=
-3^{m-2}D_2^{(6)}(\theta)
-+
-\frac{3^{m-2}-1}{2}C_6(\theta).
+D_m^{(6)}(\theta)=3^{m-2}D_2^{(6)}(\theta)+\frac{3^{m-2}-1}{2}C_6(\theta).
 $$
 
 Equivalently,
 
 $$
-D_m^{(6)}(\theta)
-=
--\left(12336\cdot3^{m-2}+2256\right)s^2
-+\left(1440\cdot3^{m-2}-96\right)cs^2
--384s^3.
+D_m^{(6)}(\theta)=-(12336\cdot3^{m-2}+2256)s^2+(1440\cdot3^{m-2}-96)cs^2-384s^3.
 $$
 
 At $\theta=\pi$, the coefficient is exactly $C_6(\pi)=5280$.
@@ -103,52 +86,29 @@ Write $D_m^{(8)}(\theta)$ for the level-$m$ numbering-orientation quantity defin
 The Lean development proves the all-angle recurrence
 
 $$
-D_{m+1}^{(8)}(\theta)
-=
-3D_m^{(8)}(\theta)+C_8(\theta),
-\qquad m\ge3.
+D_{m+1}^{(8)}(\theta)=3D_m^{(8)}(\theta)+C_8(\theta),\quad m\ge3.
 $$
 
 The exact sparse-polynomial certificate gives
 
 $$
-D_2^{(8)}(\theta)
-=
--1335552s^2
-+244352cs^2
--40064s^3
-+64cs^3
-+1920s^4,
+D_2^{(8)}(\theta)=-1335552s^2+244352cs^2-40064s^3+64cs^3+1920s^4.
 $$
 
 $$
-C_8(\theta)
-=
-193600s^2
-+75776cs^2
-+83712s^3
--512cs^3
-+192s^4.
+C_8(\theta)=193600s^2+75776cs^2+83712s^3-512cs^3+192s^4.
 $$
 
 It also verifies the finite transition identity
 
 $$
-D_3^{(8)}-3D_2^{(8)}
-=
-D_4^{(8)}-3D_3^{(8)}
-=
-C_8(\theta).
+D_3^{(8)}-3D_2^{(8)}=D_4^{(8)}-3D_3^{(8)}=C_8(\theta).
 $$
 
 Consequently, for every $m\ge2$,
 
 $$
-D_m^{(8)}(\theta)
-=
-3^{m-2}D_2^{(8)}(\theta)
-+
-\frac{3^{m-2}-1}{2}C_8(\theta).
+D_m^{(8)}(\theta)=3^{m-2}D_2^{(8)}(\theta)+\frac{3^{m-2}-1}{2}C_8(\theta).
 $$
 
 At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
@@ -174,23 +134,13 @@ The remaining transport hypothesis is explicitly named `H10TransportAll`. It ask
 **Under this explicit hypothesis**, Lean proves
 
 $$
-D_{m+1}^{(10)}(\theta)
-=
-3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),
-\qquad m\ge4.
+D_{m+1}^{(10)}(\theta)=3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),\quad m\ge4.
 $$
 
 The corresponding closed affine form is
 
 $$
-D_m^{(10)}(\theta)
-=
-3^{m-5}
-\left(
-D_5^{(10)}(\theta)+\frac{C_{10}^{(5)}(\theta)}{2}
-\right)
--\frac{C_{10}^{(5)}(\theta)}{2},
-\qquad m\ge5.
+D_m^{(10)}(\theta)=3^{m-5}(D_5^{(10)}(\theta)+C_{10}^{(5)}(\theta)/2)-C_{10}^{(5)}(\theta)/2,\quad m\ge5.
 $$
 
 This theorem is machine-checked **with `H10TransportAll` as an explicit assumption**. The hypothesis itself is not proved in the current Lean source. Also, $C_{10}^{(5)}(\theta)$ has not yet been simplified to an explicit trigonometric polynomial. Therefore the current repository does not claim an unconditional all-angle H¹⁰ closed form.

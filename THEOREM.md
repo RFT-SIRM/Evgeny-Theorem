@@ -5,11 +5,7 @@
 Let $SG(m)$ be the standard Sierpiński-gasket approximation graph at refinement level $m$, built by recursive triangle subdivision in `src/graph/sg_graph.py`. Its vertex count, edge count, and number of elementary triangular faces are
 
 $$
-|V_m|=\frac{3^{m+1}+3}{2},
-\qquad
-|E_m|=3^{m+1},
-\qquad
-|F_m|=3^m.
+|V_m|=(3^{m+1}+3)/2,\quad |E_m|=3^{m+1},\quad |F_m|=3^m.
 $$
 
 The Hilbert space is $\mathbb{C}^{|V_m|}\otimes\mathbb{C}^{2}$. Every graph edge carries a unitary $U(a,b)\in SU(2)$, with $U(b,a)=U(a,b)^\dagger$. Flux is placed on one designated edge per elementary triangle. Two configurations are compared at the same local rotation angle $\theta$:
@@ -21,23 +17,16 @@ At $\theta=0$, both configurations reduce to two decoupled copies of the plain S
 
 ## Fourth-moment theorem
 
-Define
+Define the fourth-moment trace defect by
 
 $$
-\Delta_m(H^4,\theta)
-=
-\mathrm{Tr}(H_C^4)-\mathrm{Tr}(H_{C'}^4).
+\Delta_m(H^4,\theta)=\mathrm{Tr}(H_C^4)-\mathrm{Tr}(H_{C'}^4).
 $$
 
 Then, for every $m\ge1$ and every real $\theta$,
 
 $$
-\boxed{
-\Delta_m(H^4,\theta)
-=
--16\left(3^{m-1}+1\right)
-\sin^2\left(\frac{\theta}{2}\right)
-}.
+\Delta_m(H^4,\theta)=-16(3^{m-1}+1)\sin^2(\theta/2),\quad m\ge1.
 $$
 
 This identity has three complementary records:
@@ -59,19 +48,13 @@ $$
 Define
 
 $$
-I_m(\theta)
-=
-\frac{\Delta_m(H^4,\theta)}{3^{m+1}+3}.
+I_m(\theta)=\frac{\Delta_m(H^4,\theta)}{3^{m+1}+3}.
 $$
 
 Its limit is
 
 $$
-I_\infty(\theta)
-=
--\frac{16}{9}\sin^2\left(\frac{\theta}{2}\right),
-\qquad
-I_\infty\left(\frac{\pi}{2}\right)=-\frac89.
+I_\infty(\theta)=-\frac{16}{9}\sin^2(\theta/2),\quad I_\infty(\pi/2)=-\frac89.
 $$
 
 ## Higher-moment results
