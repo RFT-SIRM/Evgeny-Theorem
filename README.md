@@ -2,318 +2,179 @@
 
 # Evgeny's Theorem
 
-### Exact spectral moments of a noncommutative SU(2) connection on the Sierpiński gasket
+### Spectral trace identities for non-commutative SU(2) operators on the Sierpiński gasket
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/RFT-SIRM/Evgeny-Theorem/tests.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-yellow?style=for-the-badge)](LICENSE)
 [![H⁴ theorem](https://img.shields.io/badge/H⁴-Exact%20closed%20form-5aa9ff?style=for-the-badge)](THEOREM.md)
 [![Lean 4](https://img.shields.io/badge/Lean%204-Machine--checked-3ee290?style=for-the-badge)](formalization/README.md)
-[![Higher moments](https://img.shields.io/badge/Higher%20moments-Research%20results-orange?style=for-the-badge)](docs/HIGHER_MOMENTS.md)
-[![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-lightgrey?style=for-the-badge)](reproducibility/requirements.txt)
+[![Higher moments](https://img.shields.io/badge/Higher%20moments-Research%20programme-orange?style=for-the-badge)](docs/HIGHER_MOMENTS.md)
 [![Research site](https://img.shields.io/badge/Research%20site-GitHub%20Pages-c6ff5c?style=for-the-badge)](https://rft-sirm.github.io/Evgeny-Theorem/)
 
 </div>
 
 ---
 
-## The mathematical object
+## 1. The mathematical object
 
-At refinement level $m$, let $SG(m)$ be the finite Sierpiński-gasket graph. Its numbers of vertices, edges, and elementary triangular faces are
-
-$$
-|V_m|=\frac{3^{m+1}+3}{2},\qquad
-|E_m|=3^{m+1},\qquad
-|F_m|=3^m.
-$$
-
-The operator acts on $\mathbb{C}^{|V_m|}\otimes\mathbb{C}^{2}$, and therefore has dimension
+Let $SG(m)$ be the Sierpiński-gasket graph at refinement level $m$. Its numbers of vertices, edges, and elementary triangular faces are
 
 $$
-\dim H_m=3^{m+1}+3.
+|V_m|=(3^{m+1}+3)/2,\quad |E_m|=3^{m+1},\quad |F_m|=3^m.
 $$
 
-Every oriented edge carries an $SU(2)$ unitary. In configuration $C$, the rotation axis on the flux edge of each elementary triangle cycles through $x,y,z$. The comparison configuration $C'$ keeps the same graph and flux placement but fixes the axis to $z$, so its edge matrices commute.
-
-The comparison is controlled: the graph, dimension, and flux placement are held fixed; the changed ingredient is the non-commuting axis pattern. At level $m=7$, the graph has 3,282 vertices and the operator dimension is 6,564.
-
-This repository records the mathematical construction, its exact identities, the formal proof architecture, the higher-moment programme, and the computational evidence needed to audit each claim.
-
-## The central theorem — the fourth spectral moment
-
-Define the fourth-moment trace defect
+The operators act on a two-component state at every graph vertex. Their matrix dimension is
 
 $$
-\Delta_m(H^4,\theta)
-=
-\mathrm{Tr}(H_C^4)-\mathrm{Tr}(H_{C'}^4).
+N_m=2|V_m|=3^{m+1}+3.
 $$
 
-For every refinement level $m\ge1$ and every real angle $\theta$,
+Each oriented graph edge carries an $SU(2)$ unitary. In configuration $C$, the rotation axis attached to the flux edge of an elementary triangle cycles through $x,y,z$. The comparison configuration $C'$ keeps the graph and flux placement fixed, but uses the same $z$ axis on every triangle. Thus the second configuration is commuting, while the first carries genuinely non-commuting transport.
+
+The comparison changes the connection structure without changing the underlying graph, its size, or the locations of the flux edges.
+
+### The scale of the construction
+
+The graph grows exponentially with refinement. The matrix dimensions below follow directly from the exact graph-size formula.
+
+| Refinement level $m$ | Vertices $|V_m|$ | Operator dimension $N_m$ |
+|---:|---:|---:|
+| 1 | 6 | 12 |
+| 4 | 123 | 246 |
+| 7 | 3,282 | 6,564 |
+| 10 | 88,575 | 177,150 |
+| 12 | 797,163 | 1,594,326 |
+
+At level 12, the operator already acts on a space of dimension 1,594,326. The purpose of the recurrence and closed-form programme is to understand spectral quantities for this recursively growing family without treating every level as an unrelated finite matrix.
+
+---
+
+## 2. The central result: the fourth spectral moment
+
+For the non-commuting configuration and its commuting control, define the fourth-moment trace defect
 
 $$
-\boxed{
-\Delta_m(H^4,\theta)
-=
--16\left(3^{m-1}+1\right)
-\sin^2\left(\frac{\theta}{2}\right)
-}
+\Delta_m(H^4,\theta)=\mathrm{Tr}(H_C(m,\theta)^4)-\mathrm{Tr}(H_{C'}(m,\theta)^4).
 $$
 
-This is the principal unconditional closed-form theorem in the repository. It is proved for the concrete operators in Lean 4 by `traceDefect_closed`, not merely fitted to a finite table.
+The exact identity is
+
+$$
+\Delta_m(H^4,\theta)=-16(3^{m-1}+1)\sin^2(\theta/2),\quad m\geq1.
+$$
+
+This is the principal unconditional closed-form theorem in the repository. It is machine-checked in Lean 4 for every refinement level $m\geq1$ and every real angle $\theta$.
 
 Normalizing by the matrix dimension gives
 
 $$
-I_m(\theta)=\frac{\Delta_m(H^4,\theta)}{3^{m+1}+3}.
+I_m(\theta)=\Delta_m(H^4,\theta)/(3^{m+1}+3).
 $$
 
-Its all-angle limit is
+Its exact limit is
 
 $$
-I_\infty(\theta)
-=
--\frac{16}{9}\sin^2\left(\frac{\theta}{2}\right),
-\qquad
-I_\infty\left(\frac{\pi}{2}\right)=-\frac{8}{9}.
+I_\infty(\theta)=-\frac{16}{9}\sin^2(\theta/2),\quad I_\infty(\pi/2)=-8/9.
 $$
 
-The refinement sequence, held-out checks, gauge comparison, and reproduction commands are recorded in [VERIFICATION.md](VERIFICATION.md).
+The proof, theorem declaration, numerical checks, and gauge-invariance record are linked below in [THEOREM.md](THEOREM.md), [VERIFICATION.md](VERIFICATION.md), and [formalization/README.md](formalization/README.md).
 
 ---
 
-## What has been established
+## 3. Higher spectral moments
 
-A Lean-kernel theorem, an exact finite symbolic certificate, and a numerical regression are different kinds of evidence. This repository labels them separately.
+The higher moments require separate arguments. The fourth-moment theorem does not by itself imply recurrences for the sixth, eighth, or tenth moments.
 
-| Result | Current status | Evidence and scope |
+Use the notation $\Delta_m^{(p)}(\theta)$ for the trace defect at moment order $p$. For the recurrence statements, write $D_m^{(p)}(\theta)$ for the corresponding orientation-specific quantity in the Lean development.
+
+### H⁶ — sixth moment
+
+Lean proves the all-angle recurrence
+
+$$
+D_{m+1}^{(6)}(\theta)=3D_m^{(6)}(\theta)+C_6(\theta),\quad m\geq3.
+$$
+
+The exact finite polynomial certificate supplies the exceptional transition from level two to level three. Together, the Lean recurrence and that certificate give the all-level formula for $m\geq2$. The level-two value and coefficient are recorded in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
+
+At $\theta=\pi$, the exact recurrence coefficient is $C_6(\pi)=5280$.
+
+**Proof boundary:** the recurrence is inside the Lean kernel for $m\geq3$. The finite $m=2\to3$ bridge is an exact symbolic certificate, but is not yet a Lean-kernel theorem.
+
+### H⁸ — eighth moment
+
+Lean proves the all-angle affine recurrence
+
+$$
+D_{m+1}^{(8)}(\theta)=3D_m^{(8)}(\theta)+C_8(\theta),\quad m\geq3.
+$$
+
+An exact sparse-polynomial certificate establishes the exceptional finite transition and supplies the level-two polynomial. Together these give the explicit all-angle formula for $m\geq2$.
+
+At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
+
+**Proof boundary:** the structural recurrence is Lean-formalized for $m\geq3$. The finite $m=2\to3$ bridge is an exact Gaussian-integer polynomial certificate, not yet a Lean-kernel theorem.
+
+### H¹⁰ — tenth moment
+
+The tenth-moment development includes the ordered p=10 trace expansion, exact word-stratum reductions, the gluing assembly, the two orientation recurrences, and corner-row transport through degree nine.
+
+Write $D_m^{(10)}(\theta)$ for the numbering-orientation defect, and let $C_{10}^{(5)}(\theta)$ be the exact level-five residual constant defined in Lean.
+
+Under the explicit hypothesis `H10TransportAll`, Lean proves
+
+$$
+D_{m+1}^{(10)}(\theta)=3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),\quad m\geq4.
+$$
+
+Consequently, for every $m\geq5$,
+
+$$
+D_m^{(10)}(\theta)=3^{m-5}(D_5^{(10)}(\theta)+C_{10}^{(5)}(\theta)/2)-C_{10}^{(5)}(\theta)/2.
+$$
+
+This is a machine-checked **conditional** affine closed form. The hypothesis `H10TransportAll` is explicit in the Lean theorem but is not yet proved in the current source. The level-five constant is an exact trace expression and has not yet been reduced to a closed trigonometric polynomial. An unconditional all-angle H¹⁰ closed form is therefore not claimed.
+
+The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and `FinalClosed10`. The detailed dependency and theorem names are listed in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
+
+---
+
+## 4. What the project establishes
+
+| Result | Status | Evidence boundary |
 |---|---|---|
-| **H⁴ — fourth moment** | **Unconditional theorem** | Exact all-level, all-angle identity; machine-checked in Lean 4 for every $m\ge1$. |
-| **H⁶ — sixth moment** | **All-angle recurrence and formula, Lean + exact certificate** | Lean recurrence for $m\ge3$, plus an exact symbolic $m=2\to3$ bridge. Combined formula for $m\ge2$; the finite bridge is not yet a Lean-kernel theorem. |
-| **H⁸ — eighth moment** | **All-angle recurrence and formula, Lean + exact certificate** | Lean recurrence for $m\ge3$, plus an exact sparse-polynomial $m=2\to3$ bridge. Combined formula for $m\ge2$; the finite bridge is not yet a Lean-kernel theorem. |
-| **H¹⁰ — tenth moment** | **Machine-checked conditional affine theorem** | p=10 gluing and orientation recurrences are formalized. The affine formula from level five assumes `H10TransportAll`, which is not yet proved in the current Lean source. |
-| **Moments p=1,2,3** | **Exact vanishing** | The defect vanishes; the first nonzero moment in this family is p=4. |
-| **H⁶ path classes on SG(1)** | **Exact finite-level result** | Single- and two-triangle classes contribute zero; the all-three-triangle class carries the nonzero contribution. |
+| H⁴ exact closed form | **Unconditional theorem** | Lean-checked for all $m\geq1$ and all $\theta$. |
+| Normalized H⁴ limit | **Exact formula** | Follows from the closed form and graph dimension. |
+| H⁶ recurrence | **Lean theorem for $m\geq3$** | Finite level-two transition supplied by exact symbolic arithmetic. |
+| H⁶ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
+| H⁸ recurrence | **Lean theorem for $m\geq3$** | Finite level-two transition supplied by exact sparse-polynomial arithmetic. |
+| H⁸ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
+| H¹⁰ affine form | **Conditional Lean theorem** | Depends on the unproved hypothesis `H10TransportAll`. |
+| H⁶ path-class cancellation on $SG(1)$ | **Exact finite-level result** | Single- and two-triangle classes vanish; the all-three-triangle class contributes. |
 
-The formulas and proof boundaries are collected in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md). In particular, the H¹⁰ statement is presented with its explicit hypothesis, not as an unconditional closed form.
-
-## H⁶ — sixth moment
-
-Write $D_m^{(6)}(\theta)$ for the Lean quantity `defectO6` evaluated at level $m$ in the numbering orientation, with the face-axis configuration compared against the fixed-$z$ control. Put
-
-$$
-c=\cos\left(\frac{\theta}{2}\right),
-\qquad
-s=\sin\left(\frac{\theta}{2}\right).
-$$
-
-Lean proves the recurrence for $m\ge3$:
-
-$$
-D_{m+1}^{(6)}(\theta)
-=
-3D_m^{(6)}(\theta)+C_6(\theta).
-$$
-
-The exact finite certificate supplies
-
-$$
-D_2^{(6)}(\theta)
-=
--14592s^2+1344cs^2-384s^3,
-$$
-
-$$
-C_6(\theta)
-=
-4512s^2+192cs^2+768s^3.
-$$
-
-Together they give, for every $m\ge2$,
-
-$$
-D_m^{(6)}(\theta)
-=
-3^{m-2}D_2^{(6)}(\theta)
-+
-\frac{3^{m-2}-1}{2}C_6(\theta).
-$$
-
-Equivalently,
-
-$$
-D_m^{(6)}(\theta)
-=
--\left(12336\cdot3^{m-2}+2256\right)s^2
-+\left(1440\cdot3^{m-2}-96\right)cs^2
--384s^3.
-$$
-
-At $\theta=\pi$, the exact coefficient is $C_6(\pi)=5280$.
-
-**Proof boundary.** The recurrence for $m\ge3$ is Lean-proved. The exceptional finite transition is established by exact Gaussian-integer polynomial arithmetic in `computational/p6_level3_orientation_certificate.py` and checked in the regression suite; it is not yet part of the Lean-kernel proof.
-
-## H⁸ — eighth moment
-
-Write $D_m^{(8)}(\theta)$ for the Lean quantity `defectO8` with the same numbering and comparison conventions. Lean proves, for $m\ge3$,
-
-$$
-D_{m+1}^{(8)}(\theta)
-=
-3D_m^{(8)}(\theta)+C_8(\theta).
-$$
-
-The exact sparse-polynomial certificate gives the level-two value
-
-$$
-D_2^{(8)}(\theta)
-=
--1335552s^2
-+244352cs^2
--40064s^3
-+64cs^3
-+1920s^4,
-$$
-
-and the recurrence coefficient
-
-$$
-C_8(\theta)
-=
-193600s^2
-+75776cs^2
-+83712s^3
--512cs^3
-+192s^4.
-$$
-
-It verifies the finite transition
-
-$$
-D_3^{(8)}-3D_2^{(8)}
-=
-D_4^{(8)}-3D_3^{(8)}
-=
-C_8(\theta).
-$$
-
-Therefore, for every $m\ge2$,
-
-$$
-D_m^{(8)}(\theta)
-=
-3^{m-2}D_2^{(8)}(\theta)
-+
-\frac{3^{m-2}-1}{2}C_8(\theta).
-$$
-
-At $\theta=\pi$, $C_8(\pi)=277504$.
-
-**Proof boundary.** The structural recurrence is Lean-formalized for $m\ge3$. The exceptional $m=2\to3$ transition is an exact Gaussian-integer polynomial certificate in [computational/p8_base_certificate.py](computational/p8_base_certificate.py), not yet a Lean-kernel theorem. No sampled-angle fit is used.
-
-## H¹⁰ — tenth moment: conditional affine theorem
-
-The H¹⁰ formalization includes the ordered tenth-power expansion, exact word-stratum reductions, the p=10 gluing assembly, recurrences for the numbering and flipped-corner orientations, and corner-flip row transport through degree nine.
-
-Write $D_m^{(10)}(\theta)$ for the Lean quantity `defectO10` in the numbering orientation. Let $C_{10}^{(5)}(\theta)$ be the exact level-five residual defined by `defectO10_num_residual_constant`.
-
-Under the explicit hypothesis `H10TransportAll` — glued-state diagonal transport through degree nine, corresponding to radius-four corner locality — Lean proves, for every $m\ge4$,
-
-$$
-D_{m+1}^{(10)}(\theta)
-=
-3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta).
-$$
-
-Consequently, for every $m\ge5$,
-
-$$
-D_m^{(10)}(\theta)
-=
-3^{m-5}
-\left(
-D_5^{(10)}(\theta)
-+\frac{C_{10}^{(5)}(\theta)}{2}
-\right)
--\frac{C_{10}^{(5)}(\theta)}{2}.
-$$
-
-This is a machine-checked **conditional** affine closed form. The hypothesis `H10TransportAll` is explicit in the theorem and is not proved in the current Lean development. The level-five residual remains an exact trace expression; it has not yet been reduced to an explicit trigonometric polynomial. The unconditional all-angle H¹⁰ closed form is therefore not claimed by the current source.
-
-The H¹⁰ source modules are:
-
-- `GlueTrace10.lean` — tenth-power gluing assembly;
-- `GlueRows10.lean` — glued-row and boundary transport;
-- `FinalOrient10.lean` — orientation recurrences and comparison;
-- `FinalClosed10.lean` — explicit transport hypothesis and conditional affine theorem.
-
-Direct numerical values at $\theta=\pi/2$ remain regression references in `tests/test_higher_moments.py`. They do not replace the missing transport proof.
+A finite exact certificate, a numerical regression, and a Lean-kernel theorem are not interchangeable. The documentation preserves these proof boundaries explicitly.
 
 ---
 
-## The scale and the research programme
+## 5. The formal and computational programme
 
-The mathematical object is a recursively defined family of non-commutative operators on a self-similar graph, not a single fitted curve or an isolated finite matrix. The graph grows exponentially with refinement; the theorem and recurrence statements describe how spectral traces change across that hierarchy.
+The repository brings together several complementary forms of work.
 
-The research record keeps six layers visible:
+**Graph and operator construction.** The finite Sierpiński-gasket graphs, their indexing conventions, the $SU(2)$ connection, the non-commuting operator, and its commuting control are implemented in the Python source and formalized in Lean.
 
-1. **The object:** the graph, edge connection, two SU(2) configurations, and trace defect.
-2. **The exact identity:** the fourth-moment formula and normalized limit.
-3. **The higher-moment structure:** recurrence laws, finite symbolic corrections, and the tenth-order gluing reduction.
-4. **The formal proof:** concrete Lean declarations and their assumptions.
-5. **The computational evidence:** source code, exact certificates, numerical reference tables, and tests.
-6. **The research history:** chronological journals recording what was attempted, proved, repaired, and left open.
+**Exact trace calculations.** The computational directory contains exact finite certificates, trace-word counts, reduction ledgers, and supporting calculations for the higher moments.
 
-The objective is auditability: a reader can move from the statement to the construction, from the construction to the proof, and from the proof to the reproducible record.
+**Lean 4 proof.** The formalization proves the fourth-moment theorem and contains the higher-moment recurrence, gluing, orientation, and conditional transport developments. Its current assumptions are stated next to the corresponding results.
 
-## Verification and formalization
+**Reproducibility.** Tests, data, environment notes, and verification documents record how to repeat the computational checks. The chronological research journals preserve the sequence of proof work and mathematical decisions.
 
-### Lean 4
-
-The principal theorem is
-
-```lean
-theorem traceDefect_closed (θ : ℝ) (m : ℕ) (hm : 1 ≤ m) :
-    traceDefect m θ =
-      -16 * ((3 : ℂ) ^ (m - 1) + 1) * ((Real.sin (θ / 2) : ℝ) : ℂ) ^ 2
-```
-
-The final theorem contains no `sorry` and depends on the standard axioms `propext`, `Classical.choice`, and `Quot.sound`. The proof architecture and module map are in [formalization/README.md](formalization/README.md).
-
-Build from the repository root:
-
-```bash
-lake build
-```
-
-To inspect the theorem's axioms:
-
-```bash
-printf 'import EvgenyTheorem\n#print axioms EvgenyTheorem.traceDefect_closed\n' > /tmp/ax.lean
-lake env lean /tmp/ax.lean
-```
-
-### Python and exact certificates
-
-The computational layer provides direct operator calculations, exact polynomial certificates, trace-word inventories, and regression tests.
-
-```bash
-python -m pip install -r reproducibility/requirements.txt
-pytest tests/ -m "not slow" -v
-```
-
-The slower refinement checks are run separately:
-
-```bash
-pytest tests/ -m slow -v
-```
-
-The test workflow uses Python 3.11 and 3.12. The Lean workflow builds the formalization when Lean sources or the toolchain configuration change. A passing workflow certifies only the checks it actually runs.
+This is a research programme about a recursively defined family of large non-commutative operators. Its scale comes from the graph hierarchy and its spectral structure; its credibility comes from keeping the mathematical statements, proof assumptions, exact certificates, and numerical evidence distinguishable and inspectable.
 
 ---
 
-## Repository map
+## 6. Repository map
 
-This map follows the files present in the current repository. The two research logs are primary chronological records; this README is an overview, not a replacement for them.
+The tree below is synchronized with the current `main` branch. It includes the research journals, exact certificates, current H¹⁰ modules, source code, tests, and supporting data.
 
 ```text
 Evgeny-Theorem/
@@ -467,26 +328,43 @@ Evgeny-Theorem/
 
 ### Reading guide
 
-| Start here | Purpose |
+| Document | What it contains |
 |---|---|
-| [THEOREM.md](THEOREM.md) | Concise statement of the fourth-moment theorem and its mathematical object. |
-| [VERIFICATION.md](VERIFICATION.md) | Numerical tables, held-out checks, gauge test, and reproduction commands. |
-| [docs/PROOF.md](docs/PROOF.md) | Human-readable mathematical proof of the fourth-moment identity. |
-| [docs/EXACT_VERIFICATION.md](docs/EXACT_VERIFICATION.md) | Exact symbolic verification and locality mechanism. |
-| [docs/SPLIT_AUTOMATON.md](docs/SPLIT_AUTOMATON.md) | Recursive sibling-vertex split and its mechanism. |
-| [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md) | H⁶/H⁸ formulas, H¹⁰ conditional theorem, and exact proof boundaries. |
-| [formalization/README.md](formalization/README.md) | Lean theorem, build command, proof architecture, and module map. |
+| [THEOREM.md](THEOREM.md) | Mathematical statement of the fourth-moment theorem and its scope. |
+| [VERIFICATION.md](VERIFICATION.md) | Refinement tables, held-out checks, gauge test, and reproduction commands. |
+| [docs/PROOF.md](docs/PROOF.md) | Human-readable proof of the fourth-moment identity. |
+| [docs/EXACT_VERIFICATION.md](docs/EXACT_VERIFICATION.md) | Exact symbolic verification and the local mechanism. |
+| [docs/SPLIT_AUTOMATON.md](docs/SPLIT_AUTOMATON.md) | Recursive split rule and its structural explanation. |
+| [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md) | Full H⁶, H⁸, and H¹⁰ formulas and proof boundaries. |
+| [formalization/README.md](formalization/README.md) | Lean theorem, proof architecture, build command, and module map. |
 | [formalization/HIGHER_MOMENT_RESEARCH_LOG.md](formalization/HIGHER_MOMENT_RESEARCH_LOG.md) | Chronological higher-moment research journal. |
 | [formalization/PROOF_WORK_LOG.md](formalization/PROOF_WORK_LOG.md) | Chronological Lean proof-development journal. |
-| [docs/LEAN_ROADMAP.md](docs/LEAN_ROADMAP.md) and [docs/LEAN_PLAN_GENERAL_M.md](docs/LEAN_PLAN_GENERAL_M.md) | Formalization roadmap and general-level proof plan. |
-| [docs/ORIENTATION_NOTE.md](docs/ORIENTATION_NOTE.md) | Edge-orientation convention used by the graph and Lean operator. |
+
+---
+
+## 7. Reproduce the checks
+
+From a clean checkout:
+
+```bash
+git clone https://github.com/RFT-SIRM/Evgeny-Theorem.git
+cd Evgeny-Theorem
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r reproducibility/requirements.txt
+pytest tests/ -m "not slow" -v
+pytest tests/ -m slow -v
+lake build
+```
+
+The Python workflow runs the fast and slow suites on Python 3.11 and 3.12. The Lean workflow builds the formalization when Lean sources or the toolchain configuration change. A passing workflow certifies only the checks it actually executes.
+
+---
 
 ## Authorship and research record
 
-This repository records the mathematical construction, theorem statements, formal proof development, exact certificates, computational checks, and the sequence of research decisions that led to them. It is intended to be read as mathematics, checked as formal code, and audited as a reproducible research record.
-
 **Evgeny Zaprudnov**  
-*Author of Evgeny's Theorem and originator of the mathematical research programme recorded here.*
+*Author of Evgeny's Theorem and originator of the mathematical research programme recorded in this repository.*
 
 Sierpiński Gasket · Non-commutative SU(2) Connection · Spectral Moments · Lean 4
 
