@@ -189,7 +189,15 @@ I_m(\theta)-I_\infty(\theta)
 \sin^2\left(\frac{\theta}{2}\right).
 }
 ```
-In particular, I∞(π/2) = −8/9, and the ratio of successive absolute remainders tends to 1/3. This is a limit of the normalized fourth-moment trace defect, not a statement about eigenvalue convergence or the spectral gap.
+In particular, I∞(π/2) = −8/9. For θ ∉ 2πℤ, the ratio of successive absolute remainders is
+```math
+\frac{|I_{m+1}(\theta)-I_\infty(\theta)|}
+{|I_m(\theta)-I_\infty(\theta)|}
+=
+\frac{3^m+1}{3^{m+1}+1}
+\longrightarrow\frac13.
+```
+For θ ∈ 2πℤ, both remainders vanish identically, so this ratio is undefined. This is a limit of the normalized fourth-moment trace defect, not a statement about eigenvalue convergence or the spectral gap.
 
 ## 5. Lean proof architecture
 

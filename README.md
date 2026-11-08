@@ -15,7 +15,7 @@
 
 ## Research dissertation
 
-The complete research dissertation is available as [**DISSERTATION.md**](DISSERTATION.md). The opening of the [research website](https://rft-sirm.github.io/Evgeny-Theorem/) also presents the dissertation immediately after the hero banner and before the numbered research sections.
+The complete research dissertation is available as [**DISSERTATION.md**](DISSERTATION.md). A link to the standalone document appears in the contact block at the bottom of the [research website](https://rft-sirm.github.io/Evgeny-Theorem/).
 
 ---
 
