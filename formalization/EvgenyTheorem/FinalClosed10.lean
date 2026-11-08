@@ -3,10 +3,9 @@ import EvgenyTheorem.FinalOrient10
 
 namespace EvgenyTheorem
 
-/-- Glued-state diagonal transport through degree 9 between levels `m+1` and `m`
-for the flipped-corner orientation. This is an explicit hypothesis here
-(the radius-4 analogue of the degree-7 transport proved for H8); it is NOT
-proved in this file. -/
+/-- The diagonal transport needed for the tenth-moment boundary recurrence
+for the flipped-corner orientation. The all-level radius-four statement
+for both configurations is proved below as `H10TransportAll_proved`. -/
 def H10Transport (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) : Prop :=
   ∀ (w : WSG (m + 1)) (hw : (sgGlue (m + 1)).g w), ∀ n, n ≤ 9 →
     (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w w =
@@ -20,6 +19,21 @@ def H10Transport (m : ℕ) (θ : ℝ) (ax : ℕ → Axis) : Prop :=
 
 def H10TransportAll (θ : ℝ) : Prop :=
   ∀ m : ℕ, 4 ≤ m → H10Transport m θ faceAxis ∧ H10Transport m θ (fun _ => 2)
+
+/-- Radius-four diagonal transport for both H10 axes at every level `m ≥ 4`. -/
+theorem H10TransportAll_proved (θ : ℝ) : H10TransportAll θ := by
+  intro m hm
+  constructor
+  · intro w hw n hn
+    exact sgK_glued_state_diag_one_to_nine_transport
+      m (by omega) θ faceAxis
+      (faceAxis_pow1 m (by omega))
+      (faceAxis_pow2 m (by omega)) hw n hn
+  · intro w hw n hn
+    exact sgK_glued_state_diag_one_to_nine_transport
+      m (by omega) θ (fun _ => 2)
+      (by intro k; rfl)
+      (by intro k; rfl) hw n hn
 
 theorem glueRHS10_pair_product_congr
     (m : ℕ) (K K' : Matrix (WSG m) (WSG m) ℂ)
@@ -224,5 +238,26 @@ theorem defectO10_num_affine_closed_form_from_level5
   intro n
   have := affine_closed_form_aux D (defectO10_num_residual_constant θ) hrec n
   simpa [D] using this
+
+/-- Unconditional H10 recurrence using the proved radius-four transport. -/
+theorem defectO10_succ_num_level5_constant_boundary_unconditional
+    (θ : ℝ) (m : ℕ) (hm : 4 ≤ m) :
+    defectO10 (m + 1) θ faceAxis (fun _ => 2) (oNum (m + 1)) =
+      3 * defectO10 m θ faceAxis (fun _ => 2) (oNum m) +
+        defectO10_num_residual_constant θ := by
+  exact defectO10_succ_num_level5_constant_boundary
+    θ (H10TransportAll_proved θ) m hm
+
+/-- Unconditional closed affine form for the H10 numbering-orientation defect. -/
+theorem defectO10_num_affine_closed_form_from_level5_unconditional
+    (θ : ℝ) :
+    ∀ n : ℕ,
+      defectO10 (n + 5) θ faceAxis (fun _ => 2) (oNum (n + 5)) =
+        (3 : ℂ) ^ n *
+          (defectO10 5 θ faceAxis (fun _ => 2) (oNum 5) +
+            defectO10_num_residual_constant θ / 2) -
+          defectO10_num_residual_constant θ / 2 := by
+  exact defectO10_num_affine_closed_form_from_level5
+    θ (H10TransportAll_proved θ)
 
 end EvgenyTheorem

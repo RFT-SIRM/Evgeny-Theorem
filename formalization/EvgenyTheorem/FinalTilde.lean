@@ -1287,6 +1287,63 @@ theorem pHeO_corner_O_radius_three_entry_next_num
         p q i j
 
 
+/-- Across the O/A radius-four box, the next-level numbering entry
+agrees with the parent-level numbering entry. -/
+theorem pHeO_corner_O_radius_four_entry_next_num
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : p.2 ≤ 4)
+    (hqx : q.1 ≤ 4) (hqy : q.2 ≤ 4)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+      pHeO m θ ax (oNum (m + 1)) p q i j := by
+  obtain ⟨hp', hpX, hpY⟩ :=
+    corner_O_radius_four_transport m hm hp hpx hpy
+  obtain ⟨hq', _, _⟩ :=
+    corner_O_radius_four_transport m hm hq hqx hqy
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+        pHeO m θ ax (oNum (m + 2)) p q i j :=
+      pHeO_succ_A_local_entry m θ ax (oNum (m + 2))
+        hp' hq' hpX hpY i j
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_orient_congr m θ ax (oNum (m + 2)) (oNum (m + 1))
+        (by
+          intro a b hab hE hfl
+          have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hmEdge.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hmEdge.2
+          have ha' : a ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inl ha
+          have hb' : b ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inl hb
+          exact oNum_succ_restrict m ha' hb')
+        p q i j
+
+
+/-- Direct O-corner transport for numbering on the radius-four box. -/
+theorem pHeO_corner_O_radius_four_entry
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : p.2 ≤ 4)
+    (hqx : q.1 ≤ 4) (hqy : q.2 ≤ 4)
+    (i j : C2) :
+    pHeO (m + 1) θ ax (oNum (m + 1)) p q i j =
+      pHeO m θ ax (oNum m) p q i j := by
+  obtain ⟨hp', hpX, hpY⟩ :=
+    corner_O_radius_four_transport m hm hp hpx hpy
+  obtain ⟨hq', _, _⟩ :=
+    corner_O_radius_four_transport m hm hq hqx hqy
+  exact pHeO_succ_A_num_entry m θ ax hp' hq' hpX hpY i j
+
+
+
 /-- For operator level n, the exceptional edge used by `oTil (n+1)`
 lies outside the level-n vertex set. Consequently the actual tilde
 orientation and the numbering give the same point-operator entry. -/
@@ -1710,6 +1767,34 @@ private theorem cp1_not_O_radius_two
     have hx : q.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
     omega
 
+/-- The exceptional flipped edge cannot meet a B-shifted O-box
+of radius four. -/
+private theorem cp1_not_B_shift_radius_four
+    (n : ℕ) (hn : 3 ≤ n) {p q : Point}
+    (hp : p.1 ≤ 4) (hq : q.1 ≤ 4) :
+    ¬ cp1 (n + 1) (shiftPoint (2 ^ n) 1 0 p) (shiftPoint (2 ^ n) 1 0 q) ∧
+    ¬ cp1 (n + 1) (shiftPoint (2 ^ n) 1 0 q) (shiftPoint (2 ^ n) 1 0 p) := by
+  have hpow : 5 < 2 ^ n := by
+    calc
+      5 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hn
+  have hsep : 2 ^ n + 4 < 2 ^ (n + 1) - 1 := by
+    rw [pow_succ]
+    omega
+  constructor
+  · intro h
+    have hx : (shiftPoint (2 ^ n) 1 0 p).1 = 2 ^ (n + 1) - 1 :=
+      congrArg Prod.fst h.1
+    simp only [shiftPoint] at hx
+    omega
+  · intro h
+    have hx : (shiftPoint (2 ^ n) 1 0 q).1 = 2 ^ (n + 1) - 1 :=
+      congrArg Prod.fst h.1
+    simp only [shiftPoint] at hx
+    omega
+
+
+
 /-- The exceptional edge cp1 at level n cannot meet either endpoint
 of an O-radius-three box. -/
 private theorem cp1_not_O_radius_three
@@ -1728,6 +1813,26 @@ private theorem cp1_not_O_radius_three
   · intro h
     have hx : q.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
     omega
+
+
+/-- The exceptional O-corner edge is disjoint from the radius-four box. -/
+private theorem cp1_not_O_radius_four
+    (n : ℕ) (hn : 3 ≤ n) {p q : Point}
+    (hp : p.1 ≤ 4) (hq : q.1 ≤ 4) :
+    ¬ cp1 n p q ∧ ¬ cp1 n q p := by
+  have hpow : 6 ≤ 2 ^ n := by
+    calc
+      6 ≤ 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ n := Nat.pow_le_pow_right (by norm_num) hn
+  have hcorner : 4 < 2 ^ n - 1 := by omega
+  constructor
+  · intro h
+    have hx : p.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
+    omega
+  · intro h
+    have hx : q.1 = 2 ^ n - 1 := congrArg Prod.fst h.1
+    omega
+
 
 
 /-- The Y/C point-entry transport with the exact tilde orientations used by
@@ -2097,6 +2202,184 @@ theorem sgK_C_O_entry_next_til_radius_three
         p q i j (hLowOrient p q)).symm
 
 
+/-- O-corner radius-four entry transport for copy A. -/
+private theorem sgK_A_O_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : p.2 ≤ 4)
+    (hqx : q.1 ≤ 4) (hqy : q.2 ≤ 4) (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  change pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+    pHeO m θ ax (oTil (m + 1)) p q i j
+  calc
+    _ = pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_til_eq_num_of_level_domain (m + 1) (by omega) θ ax p q i j
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_radius_four_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil (m + 1)) p q i j :=
+      (pHeO_til_eq_num_of_level_domain m (by omega)
+        θ ax p q i j).symm
+
+
+/-- O-corner radius-four entry transport for copy B. -/
+private theorem sgK_B_O_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : p.2 ≤ 4)
+    (hqx : q.1 ≤ 4) (hqy : q.2 ≤ 4) (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.B, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.B, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.B, ((⟨p, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.B, ((⟨q, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  have hp' : p ∈ vertexOrder m :=
+    (corner_O_radius_four_transport m hm hp hpx hpy).1
+  have hq' : q ∈ vertexOrder m :=
+    (corner_O_radius_four_transport m hm hq hqx hqy).1
+  have hhighNoCorner :=
+    cp1_not_B_shift_radius_four (m + 1) (by omega) hpx hqx
+  have hhighOrient :
+      oBo (m + 1) (oTil (m + 2)) p q ↔ oNum (m + 2) p q := by
+    calc
+      oBo (m + 1) (oTil (m + 2)) p q ↔
+          oBo (m + 1) (oNum (m + 2)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hhighNoCorner.1 hhighNoCorner.2
+      _ ↔ oNum (m + 1) p q := oBo_num_iff_oNum (m + 1) hp hq
+      _ ↔ oNum (m + 2) p q := (oNum_succ_restrict m hp hq).symm
+  have hlowNoCorner :=
+    cp1_not_B_shift_radius_four m hm hpx hqx
+  have hlowOrient :
+      oBo m (oTil (m + 1)) p q ↔ oNum (m + 1) p q := by
+    calc
+      oBo m (oTil (m + 1)) p q ↔
+          oBo m (oNum (m + 1)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hlowNoCorner.1 hlowNoCorner.2
+      _ ↔ oNum m p q := oBo_num_iff_oNum m hp' hq'
+      _ ↔ oNum (m + 1) p q := by
+        unfold oNum
+        rw [vIdx_succ_of_mem hp', vIdx_succ_of_mem hq']
+  change
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+      pHeO m θ ax (oBo m (oTil (m + 1))) p q i j
+  calc
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oNum (m + 2)) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oBo (m + 1) (oTil (m + 2))) (oNum (m + 2))
+        p q i j hhighOrient
+    _ = pHeO m θ ax (oNum (m + 1)) p q i j :=
+      pHeO_corner_O_radius_four_entry_next_num m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oBo m (oTil (m + 1))) p q i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oBo m (oTil (m + 1))) (oNum (m + 1))
+        p q i j hlowOrient).symm
+
+
+/-- O-corner radius-four entry transport for copy C. -/
+private theorem sgK_C_O_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : p.2 ≤ 4)
+    (hqx : q.1 ≤ 4) (hqy : q.2 ≤ 4) (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  have hp' : p ∈ vertexOrder m :=
+    (corner_O_radius_four_transport m hm hp hpx hpy).1
+  have hq' : q ∈ vertexOrder m :=
+    (corner_O_radius_four_transport m hm hq hqx hqy).1
+  have hHighOrient : ∀ a b : Point,
+      oCo (m + 1) (oTil (m + 2)) a b ↔
+        oCo (m + 1) (oNum (m + 2)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC (m + 1) (p := a) (q := b)
+    change oTil (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b) ↔
+      oNum (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hLowOrient : ∀ a b : Point,
+      oCo m (oTil (m + 1)) a b ↔
+        oCo m (oNum (m + 1)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC m (p := a) (q := b)
+    change oTil (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b) ↔
+      oNum (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hHighC :
+      pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := by
+    have h := Hc_C_num_eq_parent_til (m + 1) (by omega) θ ax
+      (oNum_anti (m + 2))
+      ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i)
+      ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)
+    change pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j at h
+    exact h
+  have hLowC :
+      pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+        pHeO m θ ax (oTil m) p q i j := by
+    have h := Hc_C_num_eq_parent_til m (by omega) θ ax
+      (oNum_anti (m + 1))
+      ((⟨p, List.mem_toFinset.mpr hp'⟩ : Pt m), i)
+      ((⟨q, List.mem_toFinset.mpr hq'⟩ : Pt m), j)
+    change pHeO m θ ax (oCo m (oNum (m + 1))) p q i j =
+      pHeO m θ ax (oTil m) p q i j at h
+    exact h
+  change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oCo m (oTil (m + 1))) p q i j
+  calc
+    pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
+        p q i j (hHighOrient p q)
+    _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
+    _ = pHeO (m + 1) θ ax (oNum (m + 1)) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax (oTil (m + 1)) (oNum (m + 1))
+        p q i j (oTil_of_no_corner
+          (cp1_not_O_radius_four (m + 1) (by omega) hpx hqx).1
+          (cp1_not_O_radius_four (m + 1) (by omega) hpx hqx).2)
+    _ = pHeO m θ ax (oNum m) p q i j :=
+      pHeO_corner_O_radius_four_entry m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+    _ = pHeO m θ ax (oTil m) p q i j :=
+      (pHeO_rel_congr_local m θ ax (oTil m) (oNum m)
+        p q i j (oTil_of_no_corner
+          (cp1_not_O_radius_four m (by omega) hpx hqx).1
+          (cp1_not_O_radius_four m (by omega) hpx hqx).2)).symm
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p q i j := hLowC.symm
+    _ = pHeO m θ ax (oCo m (oTil (m + 1))) p q i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
+        p q i j (hLowOrient p q)).symm
+
+
+
 /-- The level-(m+1) radius-two support at O is exactly the old A-copy
 part of the same coordinate box. The copy coordinate is still explicit;
 spin states are retained unchanged by the state index. -/
@@ -2240,9 +2523,78 @@ noncomputable def sgK_radius_three_support_O_equiv
     apply Subtype.ext
     rfl
 
+/-- The level-(m+1) radius-four support around O is exactly the old
+A-copy coordinate box. -/
+theorem sgK_radius_four_support_O_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 0) : Point)) :
+    z ∈ sgK_radius_four_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        z.2.1.1 ∈ vertexOrder m ∧
+        z.2.1.1.1 ≤ 4 ∧ z.2.1.1.2 ≤ 4 := by
+  simp only [sgK_radius_four_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, _, hx, _, hy⟩
+    have hzX : z.2.1.1.1 ≤ 4 := by simpa [hw] using hx
+    have hzY : z.2.1.1.2 ≤ 4 := by simpa [hw] using hy
+    have hmem := corner_O_radius_four_transport m hm
+      (z := z.2.1.1) (List.mem_toFinset.mp z.2.1.2) hzX hzY
+    exact ⟨hcopy, hmem.1, hzX, hzY⟩
+  · rintro ⟨hcopy, _, hx, hy⟩
+    exact ⟨hcopy, by simp [hw], by simpa [hw] using hx,
+      by simp [hw], by simpa [hw] using hy⟩
+
+/-- Parent-level finite-state support for the radius-four box around O. -/
+def sgK_radius_four_O_parent_support (m : ℕ) (c : GCopy) :
+    Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ z.2.1.1.1 ≤ 4 ∧ z.2.1.1.2 ≤ 4
+
+/-- The level-(m+1) radius-four support at O is bijective to its
+parent-level support, retaining copy, point and spin. -/
+noncomputable def sgK_radius_four_support_O_equiv
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 0) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_four_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_four_O_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    have hz := (sgK_radius_four_support_O_box_iff m hm hw).mp z.2
+    refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hz.2.1⟩,
+      z.1.2.2)), ?_⟩
+    simp only [sgK_radius_four_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hz.2.2.1, hz.2.2.2⟩
+  · intro z
+    have hp : z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inl (List.mem_toFinset.mp z.1.2.1.2)
+    refine ⟨(z.1.1, (⟨z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+      z.1.2.2)), ?_⟩
+    apply (sgK_radius_four_support_O_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_four_O_parent_support m w.1 :=
+      z.2
+    simp only [sgK_radius_four_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, List.mem_toFinset.mp z.1.2.1.2,
+      hparent.2.1, hparent.2.2⟩
+  · intro z
+    apply Subtype.ext
+    rfl
+  · intro z
+    apply Subtype.ext
+    rfl
+
 /-- The level-(m+1) radius-three support at X is the image of the
 parent-level box under the B-copy shift. The copy coordinate is fixed,
 and the spin coordinate is retained. -/
+
 theorem sgK_radius_three_support_X_box_iff
     (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
     (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
@@ -2490,6 +2842,282 @@ noncomputable def sgK_radius_three_support_Y_equiv
     · apply Prod.ext
       · apply Subtype.ext
         have hz := (sgK_radius_three_support_Y_box_iff m hm hw).mp z.2
+        rcases hz.2 with ⟨q, _, _, _, hpoint⟩
+        have hcoordx : z.1.2.1.1.1 = q.1 := by
+          have h := congrArg Prod.fst hpoint
+          simpa [shiftPoint] using h
+        have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+          have h := congrArg Prod.snd hpoint
+          simpa [shiftPoint] using h
+        change shiftPoint (2 ^ m) 0 1
+          (z.1.2.1.1.1, z.1.2.1.1.2 - 2 ^ m) = z.1.2.1.1
+        simp only [shiftPoint, zero_mul, one_mul, Nat.add_zero]
+        apply Prod.ext
+        · rfl
+        · omega
+      · rfl
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        dsimp
+        simp [shiftPoint, Nat.add_sub_cancel_right]
+      · rfl
+
+
+
+/-- The level-(m+1) radius-four support at X is the image of the
+parent-level box under the B-copy shift. The copy coordinate is fixed,
+and the spin coordinate is retained. -/
+
+theorem sgK_radius_four_support_X_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    z ∈ sgK_radius_four_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        ∃ p : Point, p ∈ vertexOrder m ∧
+          2 ^ m ≤ p.1 + 4 ∧ p.2 ≤ 4 ∧
+          z.2.1.1 = shiftPoint (2 ^ m) 1 0 p := by
+  simp only [sgK_radius_four_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, hx, _, _, hy⟩
+    have hboxX : 2 ^ (m + 1) ≤ z.2.1.1.1 + 4 := by
+      simpa [hw] using hx
+    have hboxY : z.2.1.1.2 ≤ 4 := by
+      simpa [hw] using hy
+    rcases (corner_X_radius_four_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mp ⟨hboxX, hboxY⟩
+      with ⟨p, hp, hpx, hpy, hz⟩
+    exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+  · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+    have hbox := (corner_X_radius_four_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mpr
+      ⟨p, hp, hpx, hpy, hz⟩
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1
+      (List.mem_toFinset.mp z.2.1.2)
+    refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
+    · simpa [hw] using hbox.1
+    · simp [hw]
+      omega
+    · simp [hw]
+    · simpa [hw] using hbox.2
+
+/-- Parent-level finite-state support for the radius-four box around X.
+It fixes the copy label and leaves spin unrestricted. -/
+def sgK_radius_four_X_parent_support (m : ℕ) (c : GCopy) :
+    Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ 2 ^ m ≤ z.2.1.1.1 + 4 ∧ z.2.1.1.2 ≤ 4
+
+/-- The X radius-four support is bijective to its parent-level box by
+the inverse B shift. This is only a finite-state reindexing statement;
+it does not yet compare matrix entries. -/
+noncomputable def sgK_radius_four_support_X_equiv
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_four_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_four_X_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    let p : Point := (z.1.2.1.1.1 - 2 ^ m, z.1.2.1.1.2)
+    have hz := (sgK_radius_four_support_X_box_iff m hm hw).mp z.2
+    have hp : p ∈ vertexOrder m := by
+      rcases hz.2 with ⟨q, hq, _, _, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      have hpEq : p = q := by
+        dsimp [p]
+        exact Prod.ext (by omega) hcoordy
+      rw [hpEq]
+      exact hq
+    have hbounds : 2 ^ m ≤ p.1 + 4 ∧ p.2 ≤ 4 := by
+      rcases hz.2 with ⟨q, _, hqx, hqy, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      constructor
+      · dsimp [p]
+        omega
+      · dsimp [p]
+        rw [hcoordy]
+        exact hqy
+    refine ⟨(z.1.1, (⟨p, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
+    simp only [sgK_radius_four_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hbounds.1, hbounds.2⟩
+  · intro z
+    have hp : shiftPoint (2 ^ m) 1 0 z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr
+        ⟨z.1.2.1.1, List.mem_toFinset.mp z.1.2.1.2, rfl⟩))
+    refine ⟨(z.1.1,
+      (⟨shiftPoint (2 ^ m) 1 0 z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+        z.1.2.2)), ?_⟩
+    apply (sgK_radius_four_support_X_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_four_X_parent_support m w.1 := z.2
+    simp only [sgK_radius_four_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, ⟨z.1.2.1.1,
+      List.mem_toFinset.mp z.1.2.1.2, hparent.2.1, hparent.2.2, rfl⟩⟩
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        have hz := (sgK_radius_four_support_X_box_iff m hm hw).mp z.2
+        rcases hz.2 with ⟨q, _, _, _, hpoint⟩
+        have hcoordx : z.1.2.1.1.1 = q.1 + 2 ^ m := by
+          have h := congrArg Prod.fst hpoint
+          simpa [shiftPoint] using h
+        have hcoordy : z.1.2.1.1.2 = q.2 := by
+          have h := congrArg Prod.snd hpoint
+          simpa [shiftPoint] using h
+        change shiftPoint (2 ^ m) 1 0
+          (z.1.2.1.1.1 - 2 ^ m, z.1.2.1.1.2) = z.1.2.1.1
+        simp only [shiftPoint, one_mul, zero_mul, Nat.add_zero]
+        apply Prod.ext
+        · omega
+        · rfl
+      · rfl
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        dsimp
+        simp [shiftPoint, Nat.add_sub_cancel_right]
+      · rfl
+
+/-- The level-(m+1) radius-four support at Y is the image of the
+parent-level box under the C-copy shift. The copy coordinate is fixed,
+and the spin coordinate is retained. -/
+theorem sgK_radius_four_support_Y_box_iff
+    (m : ℕ) (hm : 3 ≤ m) {w z : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    z ∈ sgK_radius_four_support (m + 1) w ↔
+      z.1 = w.1 ∧
+        ∃ p : Point, p ∈ vertexOrder m ∧
+          p.1 ≤ 4 ∧ 2 ^ m ≤ p.2 + 4 ∧
+          z.2.1.1 = shiftPoint (2 ^ m) 0 1 p := by
+  simp only [sgK_radius_four_support, Finset.mem_filter,
+    Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨hcopy, _, hx, hy, _⟩
+    have hboxX : z.2.1.1.1 ≤ 4 := by
+      simpa [hw] using hx
+    have hboxY : 2 ^ (m + 1) ≤ z.2.1.1.2 + 4 := by
+      simpa [hw] using hy
+    rcases (corner_Y_radius_four_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mp ⟨hboxX, hboxY⟩
+      with ⟨p, hp, hpx, hpy, hz⟩
+    exact ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+  · rintro ⟨hcopy, ⟨p, hp, hpx, hpy, hz⟩⟩
+    have hbox := (corner_Y_radius_four_box_iff m hm
+      (List.mem_toFinset.mp z.2.1.2)).mpr
+      ⟨p, hp, hpx, hpy, hz⟩
+    have hsum := vertexOrder_sum_le (m + 1) z.2.1.1
+      (List.mem_toFinset.mp z.2.1.2)
+    refine ⟨hcopy, ?_, ?_, ?_, ?_⟩
+    · simp [hw]
+    · simpa [hw] using hbox.1
+    · simpa [hw] using hbox.2
+    · simp [hw]
+      omega
+
+/-- Parent-level finite-state support for the radius-four box around Y.
+It fixes the copy label and leaves spin unrestricted. -/
+def sgK_radius_four_Y_parent_support (m : ℕ) (c : GCopy) :
+    Finset (WSG m) :=
+  Finset.univ.filter fun z =>
+    z.1 = c ∧ z.2.1.1.1 ≤ 4 ∧ 2 ^ m ≤ z.2.1.1.2 + 4
+
+/-- The Y radius-four support is bijective to its parent-level box by
+the inverse C shift. This is only a finite-state reindexing statement;
+it does not yet compare matrix entries. -/
+noncomputable def sgK_radius_four_support_Y_equiv
+    (m : ℕ) (hm : 3 ≤ m) {w : WSG (m + 1)}
+    (hw : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    {z : WSG (m + 1) // z ∈ sgK_radius_four_support (m + 1) w} ≃
+      {z : WSG m // z ∈ sgK_radius_four_Y_parent_support m w.1} := by
+  classical
+  refine
+    { toFun := ?_
+      invFun := ?_
+      left_inv := ?_
+      right_inv := ?_ }
+  · intro z
+    let p : Point := (z.1.2.1.1.1, z.1.2.1.1.2 - 2 ^ m)
+    have hz := (sgK_radius_four_support_Y_box_iff m hm hw).mp z.2
+    have hp : p ∈ vertexOrder m := by
+      rcases hz.2 with ⟨q, hq, _, _, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      have hpEq : p = q := by
+        dsimp [p]
+        exact Prod.ext hcoordx (by omega)
+      rw [hpEq]
+      exact hq
+    have hbounds : p.1 ≤ 4 ∧ 2 ^ m ≤ p.2 + 4 := by
+      rcases hz.2 with ⟨q, _, hqx, hqy, hpoint⟩
+      have hcoordx : z.1.2.1.1.1 = q.1 := by
+        have h := congrArg Prod.fst hpoint
+        simpa [shiftPoint] using h
+      have hcoordy : z.1.2.1.1.2 = q.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpoint
+        simpa [shiftPoint] using h
+      constructor
+      · dsimp [p]
+        rw [hcoordx]
+        exact hqx
+      · dsimp [p]
+        rw [hcoordy]
+        simpa [Nat.add_sub_cancel_right] using hqy
+    refine ⟨(z.1.1, (⟨p, List.mem_toFinset.mpr hp⟩, z.1.2.2)), ?_⟩
+    simp only [sgK_radius_four_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    exact ⟨hz.1, hbounds.1, hbounds.2⟩
+  · intro z
+    have hp : shiftPoint (2 ^ m) 0 1 z.1.2.1.1 ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inr (List.mem_map.mpr
+        ⟨z.1.2.1.1, List.mem_toFinset.mp z.1.2.1.2, rfl⟩))
+    refine ⟨(z.1.1,
+      (⟨shiftPoint (2 ^ m) 0 1 z.1.2.1.1, List.mem_toFinset.mpr hp⟩,
+        z.1.2.2)), ?_⟩
+    apply (sgK_radius_four_support_Y_box_iff m hm hw).mpr
+    have hparent : z.1 ∈ sgK_radius_four_Y_parent_support m w.1 := z.2
+    simp only [sgK_radius_four_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hparent
+    exact ⟨hparent.1, ⟨z.1.2.1.1,
+      List.mem_toFinset.mp z.1.2.1.2, hparent.2.1, hparent.2.2, rfl⟩⟩
+  · intro z
+    apply Subtype.ext
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        have hz := (sgK_radius_four_support_Y_box_iff m hm hw).mp z.2
         rcases hz.2 with ⟨q, _, _, _, hpoint⟩
         have hcoordx : z.1.2.1.1.1 = q.1 := by
           have h := congrArg Prod.fst hpoint
@@ -3264,6 +3892,131 @@ noncomputable def sgK_glued_root_equiv (m : ℕ) :
 
 
 
+/-- Spin-resolved point-entry transport in the radius-four Y/C box.
+The geometric C pullback avoids both exceptional C-shift endpoints, and
+the parent orientation is normalized only on this restricted box. -/
+theorem pHeO_corner_Y_radius_four_box_entry_next_num
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : 2 ^ (m + 1) ≤ p.2 + 4)
+    (hqx : q.1 ≤ 4) (hqy : 2 ^ (m + 1) ≤ q.2 + 4)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 0 1 p' ∧
+      q = shiftPoint (2 ^ m) 0 1 q' ∧
+      pHeO (m + 1) θ ax (oNum (m + 2)) p q i j =
+        pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j := by
+  rcases (corner_Y_radius_four_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', hpy', rfl⟩
+  rcases (corner_Y_radius_four_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', hqx', hqy', rfl⟩
+  have hpow : 4 < 2 ^ m := by
+    calc
+      4 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.2 = 0 := congrArg Prod.snd heq
+    omega
+  have hpX : p' ≠ (2 ^ m, 0) := by
+    intro heq
+    have hcoord : p'.1 = 2 ^ m := congrArg Prod.fst heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oNum (m + 2))
+        (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j =
+      pHeO m θ ax (oCo m (oNum (m + 2))) p' q' i j :=
+        pHeO_succ_C_local_entry m θ ax (oNum (m + 2)) hax
+          hp' hq' hp0 hpX i j
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j :=
+      pHeO_orient_congr m θ ax (oCo m (oNum (m + 2)))
+        (oCo m (oNum (m + 1)))
+        (by
+          intro a b hab hE hfl
+          have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+          have ha : a ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m a).mpr hmEdge.1
+          have hb : b ∈ vertexOrder m :=
+            (mem_vertexOrder_iff m b).mpr hmEdge.2
+          have haC : shiftPoint (2 ^ m) 0 1 a ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inr (Or.inr (List.mem_map.mpr ⟨a, ha, rfl⟩))
+          have hbC : shiftPoint (2 ^ m) 0 1 b ∈ vertexOrder (m + 1) := by
+            rw [mem_vertexOrder_succ_iff]
+            exact Or.inr (Or.inr (List.mem_map.mpr ⟨b, hb, rfl⟩))
+          unfold oCo
+          exact oNum_succ_restrict m haC hbC)
+        p' q' i j
+
+/-- The Y/C radius-four point-entry bridge with the exact tilde
+orientations needed by the adjacent-level diagonal argument. -/
+theorem pHeO_corner_Y_radius_four_box_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : 2 ^ (m + 1) ≤ p.2 + 4)
+    (hqx : q.1 ≤ 4) (hqy : 2 ^ (m + 1) ≤ q.2 + 4)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 0 1 p' ∧
+      q = shiftPoint (2 ^ m) 0 1 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO m θ ax (oTil (m + 1)) p' q' i j := by
+  rcases pHeO_corner_Y_radius_four_box_entry_next_num m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p', q', hp', hq', rfl, rfl, hentry⟩
+  have hpx' : p'.1 ≤ 4 := by
+    simpa [shiftPoint] using hpx
+  have hqx' : q'.1 ≤ 4 := by
+    simpa [shiftPoint] using hqx
+  have hpy' : 2 ^ m ≤ p'.2 + 4 := by
+    have hh : 2 ^ (m + 1) ≤ p'.2 + 2 ^ m + 4 := by
+      simpa [shiftPoint] using hpy
+    rw [pow_succ] at hh
+    omega
+  have hqy' : 2 ^ m ≤ q'.2 + 4 := by
+    have hh : 2 ^ (m + 1) ≤ q'.2 + 2 ^ m + 4 := by
+      simpa [shiftPoint] using hqy
+    rw [pow_succ] at hh
+    omega
+  have hCnum := Hc_C_num_eq_parent_til m (by omega) θ ax
+    (oNum_anti (m + 1))
+    ((⟨p', List.mem_toFinset.mpr hp'⟩ : Pt m), i)
+    ((⟨q', List.mem_toFinset.mpr hq'⟩ : Pt m), j)
+  change pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j =
+    pHeO m θ ax (oTil m) p' q' i j at hCnum
+  have hcpM := cp1_not_O_radius_four m (by omega) hpx' hqx'
+  have hcpM1 := cp1_not_A m (by omega) hp' hq'
+  have hnum : oNum m p' q' ↔ oNum (m + 1) p' q' := by
+    unfold oNum
+    rw [vIdx_succ_of_mem hp', vIdx_succ_of_mem hq']
+  have htil : oTil m p' q' ↔ oTil (m + 1) p' q' := by
+    calc
+      oTil m p' q' ↔ oNum m p' q' :=
+        oTil_of_no_corner hcpM.1 hcpM.2
+      _ ↔ oNum (m + 1) p' q' := hnum
+      _ ↔ oTil (m + 1) p' q' :=
+        (oTil_of_no_corner hcpM1.1 hcpM1.2).symm
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2))
+        (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j =
+        pHeO (m + 1) θ ax (oNum (m + 2))
+          (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j :=
+      pHeO_til_eq_num_of_level_domain (m + 1) (by omega)
+        θ ax (shiftPoint (2 ^ m) 0 1 p') (shiftPoint (2 ^ m) 0 1 q') i j
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p' q' i j := hentry
+    _ = pHeO m θ ax (oTil m) p' q' i j := hCnum
+    _ = pHeO m θ ax (oTil (m + 1)) p' q' i j :=
+      pHeO_rel_congr_local m θ ax (oTil m) (oTil (m + 1))
+        p' q' i j htil
+
 /-- Spin-resolved point-entry transport in the radius-three Y/C box.
 The geometric C pullback avoids both exceptional C-shift endpoints, and
 the parent orientation is normalized only on this restricted box. -/
@@ -3391,6 +4144,34 @@ theorem pHeO_corner_Y_radius_three_box_entry_next_til
         p' q' i j htil
 
 
+/-- State-index radius-four entry bridge for the A copy at Y. -/
+theorem sgK_A_Y_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : 2 ^ (m + 1) ≤ p.2 + 4)
+    (hqx : q.1 ≤ 4) (hqy : 2 ^ (m + 1) ≤ q.2 + 4)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 0 1 p'.1 ∧
+      q = shiftPoint (2 ^ m) 0 1 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, (p', i))
+        (GCopy.A, (q', j)) := by
+  rcases pHeO_corner_Y_radius_four_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
+  change pHeO (m + 1) θ ax (oTil (m + 2))
+      (shiftPoint (2 ^ m) 0 1 p0) (shiftPoint (2 ^ m) 0 1 q0) i j =
+    pHeO m θ ax (oTil (m + 1)) p0 q0 i j
+  exact hentry
+
 /-- State-index radius-three entry bridge for the A copy at Y. -/
 theorem sgK_A_Y_entry_next_til_radius_three
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
@@ -3419,6 +4200,93 @@ theorem sgK_A_Y_entry_next_til_radius_three
     pHeO m θ ax (oTil (m + 1)) p0 q0 i j
   exact hentry
 
+
+/-- State-index radius-four entry bridge for the B copy at Y. Its
+orientation conversion explicitly excludes the exceptional B-shift edge
+at both the high and parent levels. -/
+theorem sgK_B_Y_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : 2 ^ (m + 1) ≤ p.2 + 4)
+    (hqx : q.1 ≤ 4) (hqy : 2 ^ (m + 1) ≤ q.2 + 4)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 0 1 p'.1 ∧
+      q = shiftPoint (2 ^ m) 0 1 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.B, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.B, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.B, (p', i))
+        (GCopy.B, (q', j)) := by
+  rcases pHeO_corner_Y_radius_four_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, hpEq, hqEq, hentry⟩
+  have hpCoord : p.1 = p0.1 := by
+    simpa [shiftPoint] using congrArg Prod.fst hpEq
+  have hqCoord : q.1 = q0.1 := by
+    simpa [shiftPoint] using congrArg Prod.fst hqEq
+  have hpx' : p0.1 ≤ 4 := by rw [← hpCoord]; exact hpx
+  have hqx' : q0.1 ≤ 4 := by rw [← hqCoord]; exact hqx
+  have hHighBShift :=
+    cp1_not_B_shift_radius_four (m + 1) (by omega) hpx hqx
+  have hHighLocal := cp1_not_O_radius_four (m + 2) (by omega) hpx hqx
+  have hHighOrient :
+      oBo (m + 1) (oTil (m + 2)) p q ↔ oTil (m + 2) p q := by
+    calc
+      oBo (m + 1) (oTil (m + 2)) p q ↔
+          oBo (m + 1) (oNum (m + 2)) p q := by
+        unfold oBo
+        exact oTil_of_no_corner hHighBShift.1 hHighBShift.2
+      _ ↔ oNum (m + 1) p q := oBo_num_iff_oNum (m + 1) hp hq
+      _ ↔ oNum (m + 2) p q := (oNum_succ_restrict m hp hq).symm
+      _ ↔ oTil (m + 2) p q :=
+        (oTil_of_no_corner hHighLocal.1 hHighLocal.2).symm
+  have hLowBShift := cp1_not_B_shift_radius_four m (by omega) hpx' hqx'
+  have hLowBNum :
+      oBo m (oTil (m + 1)) p0 q0 ↔ oNum m p0 q0 := by
+    calc
+      oBo m (oTil (m + 1)) p0 q0 ↔
+          oBo m (oNum (m + 1)) p0 q0 := by
+        unfold oBo
+        exact oTil_of_no_corner hLowBShift.1 hLowBShift.2
+      _ ↔ oNum m p0 q0 := oBo_num_iff_oNum m hp0 hq0
+  obtain ⟨h1, h2⟩ := cp1_not_A m (by omega) hp0 hq0
+  have hnum : oNum (m + 1) p0 q0 ↔ oNum m p0 q0 := by
+    unfold oNum
+    rw [vIdx_succ_of_mem hp0, vIdx_succ_of_mem hq0]
+  have hLowTilNum : oTil (m + 1) p0 q0 ↔ oNum m p0 q0 := by
+    calc
+      oTil (m + 1) p0 q0 ↔ oNum (m + 1) p0 q0 :=
+        oTil_of_no_corner h1 h2
+      _ ↔ oNum m p0 q0 := hnum
+  have hLowOrient :
+      oBo m (oTil (m + 1)) p0 q0 ↔ oTil (m + 1) p0 q0 :=
+    hLowBNum.trans hLowTilNum.symm
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), hpEq, hqEq, ?_⟩
+  change pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oBo m (oTil (m + 1))) p0 q0 i j
+  calc
+    pHeO (m + 1) θ ax (oBo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 2)) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oBo (m + 1) (oTil (m + 2))) (oTil (m + 2))
+        p q i j hHighOrient
+    _ = pHeO m θ ax (oTil (m + 1)) p0 q0 i j := hentry
+    _ = pHeO m θ ax (oBo m (oTil (m + 1))) p0 q0 i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oBo m (oTil (m + 1))) (oTil (m + 1))
+        p0 q0 i j hLowOrient).symm
+
+
+end EvgenyTheorem
+
+
+
+namespace EvgenyTheorem
 
 /-- State-index radius-three entry bridge for the B copy at Y. Its
 orientation conversion explicitly excludes the exceptional B-shift edge
@@ -4098,6 +4966,178 @@ private theorem matrix_pow_four_five_diag_eq_of_local_equiv
                   (fun y : {z : V // z ∈ T} => (L ^ 2) x' y.1 * (L ^ 3) y.1 x')
       _ = (L ^ 5) x' x' := hfiveL.symm
 
+
+
+
+/-- Matched local matrix entries determine the eighth- and ninth-power
+diagonal entries whenever rows and columns through degree four vanish outside
+the matched finite neighborhoods. The diagonal factorizations are
+K^8 = K^4*K^4 and K^9 = K^4*K^5. -/
+theorem matrix_pow_eight_nine_diag_eq_of_local_equiv
+    {W V : Type*} [Fintype W] [DecidableEq W] [Fintype V] [DecidableEq V]
+    (K : Matrix W W ℂ) (L : Matrix V V ℂ)
+    (S : Finset W) (T : Finset V)
+    (e : {z : W // z ∈ S} ≃ {z : V // z ∈ T})
+    (x : W) (x' : V) (hx : x ∈ S) (hx' : x' ∈ T)
+    (hroot : e ⟨x, hx⟩ = ⟨x', hx'⟩)
+    (hEntry : ∀ a b : {z : W // z ∈ S},
+      K a.1 b.1 = L (e a).1 (e b).1)
+    (hRow : ∀ n, n ≤ 4 → ∀ z, z ∉ S → (K ^ n) x z = 0)
+    (hCol : ∀ n, n ≤ 4 → ∀ z, z ∉ S → (K ^ n) z x = 0)
+    (hRow' : ∀ n, n ≤ 4 → ∀ z, z ∉ T → (L ^ n) x' z = 0)
+    (hCol' : ∀ n, n ≤ 4 → ∀ z, z ∉ T → (L ^ n) z x' = 0) :
+    (K ^ 8) x x = (L ^ 8) x' x' ∧
+      (K ^ 9) x x = (L ^ 9) x' x' := by
+  classical
+  let xr : {z : W // z ∈ S} := ⟨x, hx⟩
+  have hrootVal : (e xr).1 = x' := congrArg Subtype.val hroot
+
+  have hIndex : ∀ y : {z : W // z ∈ S},
+      x = y.1 ↔ x' = (e y).1 := by
+    intro y
+    constructor
+    · intro hxy
+      have hy : y = xr := Subtype.ext hxy.symm
+      subst y
+      exact hrootVal.symm
+    · intro hxy
+      have heq : e y = e xr := by
+        apply Subtype.ext
+        calc
+          (e y).1 = x' := hxy.symm
+          _ = (e xr).1 := hrootVal.symm
+      have hy : y = xr := e.injective heq
+      exact (congrArg Subtype.val hy).symm
+
+  have hIndexCol : ∀ y : {z : W // z ∈ S},
+      y.1 = x ↔ (e y).1 = x' := by
+    intro y
+    constructor
+    · intro h
+      exact ((hIndex y).mp h.symm).symm
+    · intro h
+      exact ((hIndex y).mpr h.symm).symm
+
+  have hpowRow : ∀ n, n ≤ 5 → ∀ y : {z : W // z ∈ S},
+      (K ^ n) x y.1 = (L ^ n) x' (e y).1 := by
+    intro n
+    induction n with
+    | zero =>
+        intro _ y
+        simp [pow_zero, Matrix.one_apply, hIndex y]
+    | succ n ih =>
+        intro hn y
+        have hn4 : n ≤ 4 := by omega
+        calc
+          (K ^ (n + 1)) x y.1 =
+              ∑ z, (K ^ n) x z * K z y.1 := by
+                rw [pow_succ, Matrix.mul_apply]
+          _ = ∑ z : {z : W // z ∈ S},
+              (K ^ n) x z.1 * K z.1 y.1 :=
+            finset_sum_eq_subtype_of_zero_outside S
+              (fun z => (K ^ n) x z * K z y.1)
+              (by
+                intro z hz
+                simp [hRow n hn4 z hz])
+          _ = ∑ z : {z : W // z ∈ S},
+              (L ^ n) x' (e z).1 * L (e z).1 (e y).1 := by
+                apply Finset.sum_congr rfl
+                intro z hz
+                rw [ih (by omega) z, hEntry z y]
+          _ = ∑ z : {z : V // z ∈ T},
+              (L ^ n) x' z.1 * L z.1 (e y).1 :=
+            Equiv.sum_comp e
+              (fun z : {z : V // z ∈ T} =>
+                (L ^ n) x' z.1 * L z.1 (e y).1)
+          _ = ∑ z, (L ^ n) x' z * L z (e y).1 := by
+                symm
+                exact finset_sum_eq_subtype_of_zero_outside T
+                  (fun z => (L ^ n) x' z * L z (e y).1)
+                  (by
+                    intro z hz
+                    simp [hRow' n hn4 z hz])
+          _ = (L ^ (n + 1)) x' (e y).1 := by
+                rw [pow_succ, Matrix.mul_apply]
+
+  have hpowCol : ∀ n, n ≤ 5 → ∀ y : {z : W // z ∈ S},
+      (K ^ n) y.1 x = (L ^ n) (e y).1 x' := by
+    intro n
+    induction n with
+    | zero =>
+        intro _ y
+        simp [pow_zero, Matrix.one_apply, hIndexCol y]
+    | succ n ih =>
+        intro hn y
+        have hn4 : n ≤ 4 := by omega
+        calc
+          (K ^ (n + 1)) y.1 x =
+              ∑ z, K y.1 z * (K ^ n) z x := by
+                rw [show n + 1 = 1 + n by omega,
+                  pow_add, pow_one, Matrix.mul_apply]
+          _ = ∑ z : {z : W // z ∈ S},
+              K y.1 z.1 * (K ^ n) z.1 x :=
+            finset_sum_eq_subtype_of_zero_outside S
+              (fun z => K y.1 z * (K ^ n) z x)
+              (by
+                intro z hz
+                simp [hCol n hn4 z hz])
+          _ = ∑ z : {z : W // z ∈ S},
+              L (e y).1 (e z).1 * (L ^ n) (e z).1 x' := by
+                apply Finset.sum_congr rfl
+                intro z hz
+                rw [hEntry y z, ih (by omega) z]
+          _ = ∑ z : {z : V // z ∈ T},
+              L (e y).1 z.1 * (L ^ n) z.1 x' :=
+            Equiv.sum_comp e
+              (fun z : {z : V // z ∈ T} =>
+                L (e y).1 z.1 * (L ^ n) z.1 x')
+          _ = ∑ z, L (e y).1 z * (L ^ n) z x' := by
+                symm
+                exact finset_sum_eq_subtype_of_zero_outside T
+                  (fun z => L (e y).1 z * (L ^ n) z x')
+                  (by
+                    intro z hz
+                    simp [hCol' n hn4 z hz])
+          _ = (L ^ (n + 1)) (e y).1 x' := by
+                rw [show n + 1 = 1 + n by omega,
+                  pow_add, pow_one, Matrix.mul_apply]
+
+  have hsplit (a b : ℕ) (ha : a ≤ 4) (hb : b ≤ 5) :
+      (K ^ (a + b)) x x = (L ^ (a + b)) x' x' := by
+    calc
+      (K ^ (a + b)) x x =
+          ∑ z, (K ^ a) x z * (K ^ b) z x := by
+            rw [pow_add, Matrix.mul_apply]
+      _ = ∑ z : {z : W // z ∈ S},
+          (K ^ a) x z.1 * (K ^ b) z.1 x :=
+        finset_sum_eq_subtype_of_zero_outside S
+          (fun z => (K ^ a) x z * (K ^ b) z x)
+          (by
+            intro z hz
+            simp [hRow a ha z hz])
+      _ = ∑ z : {z : W // z ∈ S},
+          (L ^ a) x' (e z).1 * (L ^ b) (e z).1 x' := by
+            apply Finset.sum_congr rfl
+            intro z hz
+            rw [hpowRow a (by omega) z, hpowCol b (by omega) z]
+      _ = ∑ z : {z : V // z ∈ T},
+          (L ^ a) x' z.1 * (L ^ b) z.1 x' :=
+        Equiv.sum_comp e
+          (fun z : {z : V // z ∈ T} =>
+            (L ^ a) x' z.1 * (L ^ b) z.1 x')
+      _ = ∑ z, (L ^ a) x' z * (L ^ b) z x' := by
+            symm
+            exact finset_sum_eq_subtype_of_zero_outside T
+              (fun z => (L ^ a) x' z * (L ^ b) z x')
+              (by
+                intro z hz
+                simp [hRow' a ha z hz])
+      _ = (L ^ (a + b)) x' x' := by
+            rw [pow_add, Matrix.mul_apply]
+
+  have h8 := hsplit 4 4 (by omega) (by omega)
+  have h9 := hsplit 4 5 (by omega) (by omega)
+  exact ⟨by simpa using h8, by simpa using h9⟩
 
 
 /-- Local entries on matched radius-three neighborhoods determine the
@@ -5909,6 +6949,34 @@ private theorem sgK_O_entry_next_til_radius_three
   | C => exact sgK_C_O_entry_next_til_radius_three m hm θ ax hp hq hpx hpy hqx hqy i j
 
 
+/-- Common O radius-four entry transport for all three copy labels. -/
+private theorem sgK_O_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis) (c : GCopy)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : p.1 ≤ 4) (hpy : p.2 ≤ 4)
+    (hqx : q.1 ≤ 4) (hqy : q.2 ≤ 4) (i j : C2) :
+    sgK (m + 1) θ ax (oTil (m + 2))
+        (c, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (c, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (c, ((⟨p, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hp hpx hpy).1⟩ : Pt m), i))
+        (c, ((⟨q, List.mem_toFinset.mpr
+          (corner_O_radius_four_transport m hm hq hqx hqy).1⟩ : Pt m), j)) := by
+  cases c with
+  | A =>
+      exact sgK_A_O_entry_next_til_radius_four m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+  | B =>
+      exact sgK_B_O_entry_next_til_radius_four m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+  | C =>
+      exact sgK_C_O_entry_next_til_radius_four m hm θ ax
+        hp hq hpx hpy hqx hqy i j
+
+
+
 /-- The O-corner radius-three neighborhood transports the diagonal entries
 of powers six and seven between adjacent levels. The support equivalence
 retains copy, point, and spin; the local entry bridge dispatches over all
@@ -6134,6 +7202,357 @@ private theorem sgK_O_diag_six_seven_transport
     hRowOne' hColOne' hRowTwo' hColTwo' hRowThree' hColThree'
 
 
+private theorem sgK_O_diag_eight_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    {w : WSG (m + 1)}
+    (hwPoint : w.2.1.1 = ((0, 0) : Point)) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by  classical
+  let S : Finset (WSG (m + 1)) := sgK_radius_four_support (m + 1) w
+  let T : Finset (WSG m) := sgK_radius_four_O_parent_support m w.1
+  let e := sgK_radius_four_support_O_equiv m hm (w := w) hwPoint
+  let x' : WSG m := sgK_root_pullback m w
+
+  have hwS : w ∈ S := by
+    simp [S, sgK_radius_four_support, hwPoint]
+
+  have hpull : x'.2.1.1 = ((0, 0) : Point) := by
+    change (sgK_root_pullback_pt m w.2.1).1 = ((0, 0) : Point)
+    exact sgK_root_pullback_pt_O m hwPoint
+  have hrootX : x'.2.1.1.1 = 0 := by
+    have h := congrArg Prod.fst hpull
+    simpa using h
+  have hrootY : x'.2.1.1.2 = 0 := by
+    have h := congrArg Prod.snd hpull
+    simpa using h
+
+  have hwT : x' ∈ T := by
+    simp only [T, sgK_radius_four_O_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨rfl, ?_, ?_⟩
+    · rw [hrootX]
+      norm_num
+    · rw [hrootY]
+      norm_num
+
+  have hroot : e ⟨w, hwS⟩ = ⟨x', hwT⟩ := by
+    apply Subtype.ext
+    change (sgK_radius_four_support_O_equiv m hm (w := w) hwPoint
+      ⟨w, hwS⟩).1 = sgK_root_pullback m w
+    apply Prod.ext
+    · rfl
+    · apply Prod.ext
+      · apply Subtype.ext
+        exact hwPoint.trans hpull.symm
+      · rfl
+
+  have hEntry : ∀ a b : {z : WSG (m + 1) // z ∈ S},
+      sgK (m + 1) θ ax (oTil (m + 2)) a.1 b.1 =
+        sgK m θ ax (oTil (m + 1)) (e a).1 (e b).1 := by
+    intro a b
+    have haS : a.1 ∈ sgK_radius_four_support (m + 1) w := by
+      simpa [S] using a.2
+    have hbS : b.1 ∈ sgK_radius_four_support (m + 1) w := by
+      simpa [S] using b.2
+    have haBox := (sgK_radius_four_support_O_box_iff m hm hwPoint).mp haS
+    have hbBox := (sgK_radius_four_support_O_box_iff m hm hwPoint).mp hbS
+    have haCopy : a.1.1 = w.1 := haBox.1
+    have hbCopy : b.1.1 = w.1 := hbBox.1
+    have haX : a.1.2.1.1.1 ≤ 4 := haBox.2.2.1
+    have haY : a.1.2.1.1.2 ≤ 4 := haBox.2.2.2
+    have hbX : b.1.2.1.1.1 ≤ 4 := hbBox.2.2.1
+    have hbY : b.1.2.1.1.2 ≤ 4 := hbBox.2.2.2
+
+    have hpa := corner_O_radius_four_transport m hm
+      (List.mem_toFinset.mp a.1.2.1.2) haX haY
+    have hpb := corner_O_radius_four_transport m hm
+      (List.mem_toFinset.mp b.1.2.1.2) hbX hbY
+    have hbridge := sgK_O_entry_next_til_radius_four m hm θ ax w.1
+      (List.mem_toFinset.mp a.1.2.1.2)
+      (List.mem_toFinset.mp b.1.2.1.2)
+      haX haY hbX hbY a.1.2.2 b.1.2.2
+
+    have haPt :
+        (⟨a.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp a.1.2.1.2)⟩ : Pt (m + 1)) = a.1.2.1 := by
+      apply Subtype.ext
+      rfl
+    have hbPt :
+        (⟨b.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp b.1.2.1.2)⟩ : Pt (m + 1)) = b.1.2.1 := by
+      apply Subtype.ext
+      rfl
+    have haState : a.1 = (w.1, a.1.2) := Prod.ext haCopy rfl
+    have hbState : b.1 = (w.1, b.1.2) := Prod.ext hbCopy rfl
+    have haMap :
+        (e a).1 =
+          (w.1,
+            ((⟨a.1.2.1.1, List.mem_toFinset.mpr hpa.1⟩ : Pt m),
+              a.1.2.2)) := by
+      apply Prod.ext
+      · exact haCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          rfl
+        · rfl
+    have hbMap :
+        (e b).1 =
+          (w.1,
+            ((⟨b.1.2.1.1, List.mem_toFinset.mpr hpb.1⟩ : Pt m),
+              b.1.2.2)) := by
+      apply Prod.ext
+      · exact hbCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          rfl
+        · rfl
+    rw [haState, hbState]
+    rw [haPt, hbPt] at hbridge
+    rw [haMap, hbMap]
+    exact hbridge
+
+  have hnotS : ∀ z, z ∉ T → z ∉ sgK_radius_four_support m x' := by
+    intro z hzT hz
+    have hzs := hz
+    simp only [sgK_radius_four_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hzs
+    have hzParent : z ∈ T := by
+      simp only [T, sgK_radius_four_O_parent_support, Finset.mem_filter,
+        Finset.mem_univ, true_and]
+      refine ⟨?_, ?_, ?_⟩
+      · have hxCopy : x'.1 = w.1 := by
+          rfl
+        exact hzs.1.trans hxCopy
+      · have hbound := hzs.2.2.1
+        simpa [hrootX] using hbound
+      · have hbound := hzs.2.2.2.2
+        simpa [hrootY] using hbound
+    exact hzT hzParent
+
+
+  have hRow : ∀ n, n ≤ 4 → ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w z = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four
+      (m + 1) θ ax (oTil (m + 2)) n hn w z
+      (by simpa [S] using hz)
+
+  have hCol : ∀ n, n ≤ 4 → ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) z w = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four_col
+      (m + 1) θ ax (oTil (m + 2)) n hn w z
+      (by simpa [S] using hz)
+
+  have hRow' : ∀ n, n ≤ 4 → ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ n) x' z = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four
+      m θ ax (oTil (m + 1)) n hn x' z (hnotS z hz)
+
+  have hCol' : ∀ n, n ≤ 4 → ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ n) z x' = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four_col
+      m θ ax (oTil (m + 1)) n hn x' z (hnotS z hz)
+
+  exact matrix_pow_eight_nine_diag_eq_of_local_equiv
+    (sgK (m + 1) θ ax (oTil (m + 2)))
+    (sgK m θ ax (oTil (m + 1)))
+    S T e w x' hwS hwT hroot hEntry hRow hCol hRow' hCol'
+
+
+/-- Spin-resolved radius-four transport at the X corner. The B-shift
+pullback avoids both B-copy glued endpoints by the geometric radius-four
+transport lemma. The orientation conversion is kept explicit: the high
+tilde orientation is reduced to numbering, the B-local entry is transported,
+and the parent B orientation is converted back to the parent tilde graph. -/
+theorem pHeO_corner_X_radius_four_box_entry_next_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 4) (hpy : p.2 ≤ 4)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 4) (hqy : q.2 ≤ 4)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 2)) p q i j =
+        pHeO m θ ax (oTil (m + 1)) p' q' i j := by
+  rcases corner_X_radius_four_transport m hm hp hpx hpy with
+    ⟨p', hp', rfl, hp0, hpY⟩
+  rcases corner_X_radius_four_transport m hm hq hqx hqy with
+    ⟨q', hq', rfl, _, _⟩
+  have hhighOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB (m + 1) a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges (m + 1) →
+        (oTil (m + 2) a b ↔ oNum (m + 2) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem (m + 1) a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder (m + 1) :=
+      (mem_vertexOrder_iff (m + 1) a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder (m + 1) :=
+      (mem_vertexOrder_iff (m + 1) b).mpr hmEdge.2
+    obtain ⟨h1, h2⟩ := cp1_not_A (m + 1) (by omega) ha hb
+    exact oTil_of_no_corner h1 h2
+  have hhigh := pHeO_orient_congr (m + 1) θ ax
+    (oTil (m + 2)) (oNum (m + 2)) hhighOrient
+  have hmiddleOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB m a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges m →
+        (oBo m (oNum (m + 2)) a b ↔
+          oBo m (oNum (m + 1)) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m b).mpr hmEdge.2
+    have haB : shiftPoint (2 ^ m) 1 0 a ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr ⟨a, ha, rfl⟩))
+    have hbB : shiftPoint (2 ^ m) 1 0 b ∈ vertexOrder (m + 1) := by
+      rw [mem_vertexOrder_succ_iff]
+      exact Or.inr (Or.inl (List.mem_map.mpr ⟨b, hb, rfl⟩))
+    unfold oBo
+    exact oNum_succ_restrict m haB hbB
+  have hparentOrient :
+      ∀ a b : Point, a ≠ b →
+        EdgeB m a.1 a.2 b.1 b.2 = true →
+        (if a ≤ b then (a, b) else (b, a)) ∈ fluxEdges m →
+        (oBo m (oNum (m + 1)) a b ↔ oTil (m + 1) a b) := by
+    intro a b hab hE hfl
+    have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+    have ha : a ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m a).mpr hmEdge.1
+    have hb : b ∈ vertexOrder m :=
+      (mem_vertexOrder_iff m b).mpr hmEdge.2
+    have hbo : oBo m (oNum (m + 1)) a b ↔ oNum m a b :=
+      oBo_num_iff_oNum m ha hb
+    have hnum : oNum m a b ↔ oNum (m + 1) a b := by
+      unfold oNum
+      rw [vIdx_succ_of_mem ha, vIdx_succ_of_mem hb]
+    obtain ⟨h1, h2⟩ := cp1_not_A m (by omega) ha hb
+    calc
+      oBo m (oNum (m + 1)) a b ↔ oNum m a b := hbo
+      _ ↔ oNum (m + 1) a b := hnum
+      _ ↔ oTil (m + 1) a b := (oTil_of_no_corner h1 h2).symm
+  have hlocal :
+      pHeO (m + 1) θ ax (oNum (m + 2))
+          (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+        pHeO m θ ax (oBo m (oNum (m + 2))) p' q' i j :=
+    pHeO_succ_B_local_entry m θ ax (oNum (m + 2)) hax
+      hp' hq' hp0 hpY i j
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+      pHeO (m + 1) θ ax (oNum (m + 2))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j :=
+      hhigh _ _ i j
+    _ = pHeO m θ ax (oBo m (oNum (m + 2))) p' q' i j := hlocal
+    _ = pHeO m θ ax (oBo m (oNum (m + 1))) p' q' i j :=
+      pHeO_orient_congr m θ ax
+        (oBo m (oNum (m + 2))) (oBo m (oNum (m + 1)))
+        hmiddleOrient p' q' i j
+    _ = pHeO m θ ax (oTil (m + 1)) p' q' i j :=
+      pHeO_orient_congr m θ ax
+        (oBo m (oNum (m + 1))) (oTil (m + 1))
+        hparentOrient p' q' i j
+
+/-- The same X radius-four local entry transport, but with the parent
+tilde orientations required after converting both matrix entries from
+copy C to the underlying point operator. In contrast to the A-block
+transport above, this is oTil (m+1) on the high level and oTil m on
+the parent level. -/
+theorem pHeO_corner_X_radius_four_box_entry_next_parent_til
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 4) (hpy : p.2 ≤ 4)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 4) (hqy : q.2 ≤ 4)
+    (i j : C2) :
+    ∃ p' q' : Point,
+      p' ∈ vertexOrder m ∧ q' ∈ vertexOrder m ∧
+      p = shiftPoint (2 ^ m) 1 0 p' ∧
+      q = shiftPoint (2 ^ m) 1 0 q' ∧
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j =
+        pHeO m θ ax (oTil m) p' q' i j := by
+  rcases (corner_X_radius_four_box_iff m hm hp).mp ⟨hpx, hpy⟩ with
+    ⟨p', hp', hpx', _, rfl⟩
+  rcases (corner_X_radius_four_box_iff m hm hq).mp ⟨hqx, hqy⟩ with
+    ⟨q', hq', _, _, rfl⟩
+  have hpow : 4 < 2 ^ m := by
+    calc
+      4 < 2 ^ 3 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  have hp0 : p' ≠ (0, 0) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  have hpY : p' ≠ (0, 2 ^ m) := by
+    intro heq
+    have hcoord : p'.1 = 0 := congrArg Prod.fst heq
+    omega
+  refine ⟨p', q', hp', hq', rfl, rfl, ?_⟩
+  calc
+    pHeO (m + 1) θ ax (oTil (m + 1))
+        (shiftPoint (2 ^ m) 1 0 p') (shiftPoint (2 ^ m) 1 0 q') i j =
+      pHeO m θ ax (oBo m (oTil (m + 1))) p' q' i j :=
+        pHeO_succ_B_local_entry m θ ax (oTil (m + 1)) hax
+          hp' hq' hp0 hpY i j
+    _ = pHeO m θ ax (oTil m) p' q' i j := by
+      apply pHeO_orient_congr m θ ax
+        (oBo m (oTil (m + 1))) (oTil m)
+      intro a b hab hE hfl
+      have hmEdge := EdgeB_mem m a.1 a.2 b.1 b.2 hE
+      have ha : a ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m a).mpr hmEdge.1
+      have hb : b ∈ vertexOrder m :=
+        (mem_vertexOrder_iff m b).mpr hmEdge.2
+      have fl : ∀ a b : Point, (a, b) ∈ fluxEdges m →
+          ∃ f ∈ facesExact m, f.1 = a ∧ f.2.1 = b := by
+        intro a b hab
+        obtain ⟨f, hf, hfe⟩ := List.mem_map.mp hab
+        have hle := flux_edge_order m f hf
+        have h' : fluxEdge f = (f.1, f.2.1) := by
+          simp [fluxEdge, hle]
+        rw [h'] at hfe
+        exact ⟨f, hf, (Prod.mk.inj hfe).1, (Prod.mk.inj hfe).2⟩
+      have hanti : OAnti m (oBo m (oTil (m + 1))) :=
+        oanti_B m _ (oTil_anti (m + 1))
+      by_cases hle : a ≤ b
+      · rw [if_pos hle] at hfl
+        obtain ⟨f, hf, h1, h2⟩ := fl a b hfl
+        rw [← h1, ← h2]
+        obtain ⟨hs1, hs2⟩ := flux_edge_shape m f hf
+        obtain ⟨k1, k2⟩ := cp1_shiftB m hs1
+        show oTil (m + 1) (shiftPoint (2 ^ m) 1 0 f.1)
+            (shiftPoint (2 ^ m) 1 0 f.2.1) ↔ oTil m f.1 f.2.1
+        exact oTil_transport (faceB m f hf) k1 k2
+      · rw [if_neg hle] at hfl
+        obtain ⟨f, hf, h1, h2⟩ := fl b a hfl
+        have h3 : oBo m (oTil (m + 1)) f.1 f.2.1 ↔
+            oTil m f.1 f.2.1 := by
+          obtain ⟨hs1, hs2⟩ := flux_edge_shape m f hf
+          obtain ⟨k1, k2⟩ := cp1_shiftB m hs1
+          show oTil (m + 1) (shiftPoint (2 ^ m) 1 0 f.1)
+              (shiftPoint (2 ^ m) 1 0 f.2.1) ↔ oTil m f.1 f.2.1
+          exact oTil_transport (faceB m f hf) k1 k2
+        rw [h1, h2] at h3
+        have hanti' : OAnti m (oTil m) := oTil_anti m
+        rw [hanti a b ha hb hab, hanti' a b ha hb hab]
+        exact not_congr h3
+
 /-- Spin-resolved radius-three transport at the X corner. The B-shift
 pullback avoids both B-copy glued endpoints by the geometric radius-three
 transport lemma. The orientation conversion is kept explicit: the high
@@ -6325,6 +7744,36 @@ theorem pHeO_corner_X_radius_three_box_entry_next_parent_til
 
 
 
+/-- A-copy entries in the X radius-four box transport to their parent
+B-shift representatives. This is the direct state-level bridge needed by
+the X finite-support diagonal argument. -/
+theorem sgK_A_X_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 4) (hpy : p.2 ≤ 4)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 4) (hqy : q.2 ≤ 4)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+      q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.A, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.A, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.A, (p', i))
+        (GCopy.A, (q', j)) := by
+  rcases pHeO_corner_X_radius_four_box_entry_next_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, rfl, rfl, hentry⟩
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), rfl, rfl, ?_⟩
+  change pHeO (m + 1) θ ax (oTil (m + 2))
+      (shiftPoint (2 ^ m) 1 0 p0) (shiftPoint (2 ^ m) 1 0 q0) i j =
+    pHeO m θ ax (oTil (m + 1)) p0 q0 i j
+  exact hentry
+
 /-- A-copy entries in the X radius-three box transport to their parent
 B-shift representatives. This is the direct state-level bridge needed by
 the X finite-support diagonal argument. -/
@@ -6355,6 +7804,86 @@ theorem sgK_A_X_entry_next_til_radius_three
     pHeO m θ ax (oTil (m + 1)) p0 q0 i j
   exact hentry
 
+
+/-- C-copy entries in the X radius-four box transport to their parent
+B-shift representatives. The C-orientation conversion remains explicit
+and separate from the underlying B-shift point transport. -/
+theorem sgK_C_X_entry_next_til_radius_four
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {p q : Point}
+    (hp : p ∈ vertexOrder (m + 1)) (hq : q ∈ vertexOrder (m + 1))
+    (hpx : 2 ^ (m + 1) ≤ p.1 + 4) (hpy : p.2 ≤ 4)
+    (hqx : 2 ^ (m + 1) ≤ q.1 + 4) (hqy : q.2 ≤ 4)
+    (i j : C2) :
+    ∃ p' q' : Pt m,
+      p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+      q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+      sgK (m + 1) θ ax (oTil (m + 2))
+        (GCopy.C, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+        (GCopy.C, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+      sgK m θ ax (oTil (m + 1))
+        (GCopy.C, (p', i))
+        (GCopy.C, (q', j)) := by
+  rcases pHeO_corner_X_radius_four_box_entry_next_parent_til m hm θ ax hax
+      hp hq hpx hpy hqx hqy i j with
+    ⟨p0, q0, hp0, hq0, hpEq, hqEq, hentry⟩
+  have hHighOrient : ∀ a b : Point,
+      oCo (m + 1) (oTil (m + 2)) a b ↔
+        oCo (m + 1) (oNum (m + 2)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC (m + 1) (p := a) (q := b)
+    change oTil (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b) ↔
+      oNum (m + 2) (shiftPoint (2 ^ (m + 1)) 0 1 a)
+        (shiftPoint (2 ^ (m + 1)) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hHighC :
+      pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := by
+    have h := Hc_C_num_eq_parent_til (m + 1) (by omega) θ ax
+      (oNum_anti (m + 2))
+      ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i)
+      ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)
+    change pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j =
+      pHeO (m + 1) θ ax (oTil (m + 1)) p q i j at h
+    exact h
+  have hLowOrient : ∀ a b : Point,
+      oCo m (oTil (m + 1)) a b ↔ oCo m (oNum (m + 1)) a b := by
+    intro a b
+    obtain ⟨h1, h2⟩ := cp1_shiftC m (p := a) (q := b)
+    change oTil (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b) ↔
+      oNum (m + 1) (shiftPoint (2 ^ m) 0 1 a)
+        (shiftPoint (2 ^ m) 0 1 b)
+    exact oTil_of_no_corner h1 h2
+  have hLowC :
+      pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
+        pHeO m θ ax (oTil m) p0 q0 i j := by
+    have h := Hc_C_num_eq_parent_til m (by omega) θ ax
+      (oNum_anti (m + 1))
+      ((⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m), i)
+      ((⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), j)
+    change pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j =
+      pHeO m θ ax (oTil m) p0 q0 i j at h
+    exact h
+  refine ⟨(⟨p0, List.mem_toFinset.mpr hp0⟩ : Pt m),
+      (⟨q0, List.mem_toFinset.mpr hq0⟩ : Pt m), hpEq, hqEq, ?_⟩
+  change pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+    pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j
+  calc
+    pHeO (m + 1) θ ax (oCo (m + 1) (oTil (m + 2))) p q i j =
+        pHeO (m + 1) θ ax (oCo (m + 1) (oNum (m + 2))) p q i j :=
+      pHeO_rel_congr_local (m + 1) θ ax
+        (oCo (m + 1) (oTil (m + 2))) (oCo (m + 1) (oNum (m + 2)))
+        p q i j (hHighOrient p q)
+    _ = pHeO (m + 1) θ ax (oTil (m + 1)) p q i j := hHighC
+    _ = pHeO m θ ax (oTil m) p0 q0 i j := hentry
+    _ = pHeO m θ ax (oCo m (oNum (m + 1))) p0 q0 i j := hLowC.symm
+    _ = pHeO m θ ax (oCo m (oTil (m + 1))) p0 q0 i j :=
+      (pHeO_rel_congr_local m θ ax
+        (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
+        p0 q0 i j (hLowOrient p0 q0)).symm
 
 /-- C-copy entries in the X radius-three box transport to their parent
 B-shift representatives. The C-orientation conversion remains explicit
@@ -6436,6 +7965,248 @@ theorem sgK_C_X_entry_next_til_radius_three
         (oCo m (oTil (m + 1))) (oCo m (oNum (m + 1)))
         p0 q0 i j (hLowOrient p0 q0)).symm
 
+
+/-- Eighth/ninth diagonal transport at the X corner. The proof uses the radius-four finite support and the K⁸/K⁹ local-equivalence identity. -/
+private theorem sgK_X_diag_eight_nine_transport_of_entry_bridge
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    (c : GCopy) {w : WSG (m + 1)}
+    (hwCopy : w.1 = c)
+    (hwPoint : w.2.1.1 = ((2 ^ (m + 1), 0) : Point))
+    (hBridge :
+      ∀ {p q : Point}
+        (hp : p ∈ vertexOrder (m + 1))
+        (hq : q ∈ vertexOrder (m + 1))
+        (hpx : 2 ^ (m + 1) ≤ p.1 + 4)
+        (hpy : p.2 ≤ 4)
+        (hqx : 2 ^ (m + 1) ≤ q.1 + 4)
+        (hqy : q.2 ≤ 4)
+        (i j : C2),
+          ∃ p' q' : Pt m,
+            p = shiftPoint (2 ^ m) 1 0 p'.1 ∧
+            q = shiftPoint (2 ^ m) 1 0 q'.1 ∧
+            sgK (m + 1) θ ax (oTil (m + 2))
+              (c, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+              (c, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+            sgK m θ ax (oTil (m + 1))
+              (c, (p', i)) (c, (q', j))) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  classical
+  let S : Finset (WSG (m + 1)) := sgK_radius_four_support (m + 1) w
+  let T : Finset (WSG m) := sgK_radius_four_X_parent_support m w.1
+  let e := sgK_radius_four_support_X_equiv m hm (w := w) hwPoint
+  let x' : WSG m := sgK_root_pullback m w
+
+  have hwS : w ∈ S := by
+    simp [S, sgK_radius_four_support]
+  have hpull : x'.2.1.1 = ((2 ^ m, 0) : Point) := by
+    change (sgK_root_pullback_pt m w.2.1).1 = ((2 ^ m, 0) : Point)
+    exact sgK_root_pullback_pt_X m hwPoint
+  have hrootX : x'.2.1.1.1 = 2 ^ m := by
+    have h := congrArg Prod.fst hpull
+    simpa using h
+  have hrootY : x'.2.1.1.2 = 0 := by
+    have h := congrArg Prod.snd hpull
+    simpa using h
+
+  have hwT : x' ∈ T := by
+    simp only [T, sgK_radius_four_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨?_, ?_, ?_⟩
+    · change w.1 = w.1
+      rfl
+    · rw [hrootX]
+      omega
+    · rw [hrootY]
+      norm_num
+
+  have hroot : e ⟨w, hwS⟩ = ⟨x', hwT⟩ := by
+    apply Subtype.ext
+    simp [e, sgK_radius_four_support_X_equiv, x',
+      sgK_root_pullback, sgK_root_pullback_pt, hwPoint,
+      pow_succ, Nat.mul_two]
+
+  have hEntry : ∀ a b : {z : WSG (m + 1) // z ∈ S},
+      sgK (m + 1) θ ax (oTil (m + 2)) a.1 b.1 =
+        sgK m θ ax (oTil (m + 1)) (e a).1 (e b).1 := by
+    intro a b
+    have haS : a.1 ∈ sgK_radius_four_support (m + 1) w := by
+      simpa [S] using a.2
+    have hbS : b.1 ∈ sgK_radius_four_support (m + 1) w := by
+      simpa [S] using b.2
+    have haBox :=
+      (sgK_radius_four_support_X_box_iff m hm hwPoint).mp haS
+    have hbBox :=
+      (sgK_radius_four_support_X_box_iff m hm hwPoint).mp hbS
+    have haCopy : a.1.1 = c := haBox.1.trans hwCopy
+    have hbCopy : b.1.1 = c := hbBox.1.trans hwCopy
+
+    have haRaw := a.2
+    have hbRaw := b.2
+    simp only [S, sgK_radius_four_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at haRaw hbRaw
+    have haX : 2 ^ (m + 1) ≤ a.1.2.1.1.1 + 4 := by
+      simpa [hwPoint] using haRaw.2.1
+    have haY : a.1.2.1.1.2 ≤ 4 := by
+      simpa [hwPoint] using haRaw.2.2.2.2
+    have hbX : 2 ^ (m + 1) ≤ b.1.2.1.1.1 + 4 := by
+      simpa [hwPoint] using hbRaw.2.1
+    have hbY : b.1.2.1.1.2 ≤ 4 := by
+      simpa [hwPoint] using hbRaw.2.2.2.2
+
+    obtain ⟨pa, pb, hpa, hpb, hbridge⟩ :=
+      hBridge
+        (p := a.1.2.1.1) (q := b.1.2.1.1)
+        (List.mem_toFinset.mp a.1.2.1.2)
+        (List.mem_toFinset.mp b.1.2.1.2)
+        haX haY hbX hbY a.1.2.2 b.1.2.2
+
+    have haPt :
+        (⟨a.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp a.1.2.1.2)⟩ : Pt (m + 1)) =
+            a.1.2.1 := by
+      apply Subtype.ext
+      rfl
+    have hbPt :
+        (⟨b.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp b.1.2.1.2)⟩ : Pt (m + 1)) =
+            b.1.2.1 := by
+      apply Subtype.ext
+      rfl
+
+    have hpaPoint :
+        (a.1.2.1.1.1 - 2 ^ m, a.1.2.1.1.2) = pa.1 := by
+      have hx : a.1.2.1.1.1 = pa.1.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpa
+        simpa [shiftPoint] using h
+      have hy : a.1.2.1.1.2 = pa.1.2 := by
+        have h := congrArg Prod.snd hpa
+        simpa [shiftPoint] using h
+      exact Prod.ext (by omega) hy
+    have hpbPoint :
+        (b.1.2.1.1.1 - 2 ^ m, b.1.2.1.1.2) = pb.1 := by
+      have hx : b.1.2.1.1.1 = pb.1.1 + 2 ^ m := by
+        have h := congrArg Prod.fst hpb
+        simpa [shiftPoint] using h
+      have hy : b.1.2.1.1.2 = pb.1.2 := by
+        have h := congrArg Prod.snd hpb
+        simpa [shiftPoint] using h
+      exact Prod.ext (by omega) hy
+
+    have haState : a.1 = (c, a.1.2) := Prod.ext haCopy rfl
+    have hbState : b.1 = (c, b.1.2) := Prod.ext hbCopy rfl
+    have haMap : (e a).1 = (c, (pa, a.1.2.2)) := by
+      apply Prod.ext
+      · exact haCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          change (a.1.2.1.1.1 - 2 ^ m, a.1.2.1.1.2) = pa.1
+          exact hpaPoint
+        · rfl
+    have hbMap : (e b).1 = (c, (pb, b.1.2.2)) := by
+      apply Prod.ext
+      · exact hbCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          change (b.1.2.1.1.1 - 2 ^ m, b.1.2.1.1.2) = pb.1
+          exact hpbPoint
+        · rfl
+
+    rw [haState, hbState]
+    rw [haPt, hbPt] at hbridge
+    rw [haMap, hbMap]
+    exact hbridge
+
+  have hnotS : ∀ z, z ∉ T →
+      z ∉ sgK_radius_four_support m x' := by
+    intro z hzT hz
+    apply hzT
+    have hzs := hz
+    simp only [sgK_radius_four_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hzs
+    simp only [T, sgK_radius_four_X_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨?_, ?_, ?_⟩
+    · have hxCopy : x'.1 = w.1 := rfl
+      exact hzs.1.trans hxCopy
+    · simpa only [hrootX] using hzs.2.1
+    · simpa only [hrootY] using hzs.2.2.2.2
+
+  have hRow : ∀ n, n ≤ 4 → ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w z = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four
+      (m + 1) θ ax (oTil (m + 2)) n hn w z
+      (by simpa [S] using hz)
+
+  have hCol : ∀ n, n ≤ 4 → ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) z w = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four_col
+      (m + 1) θ ax (oTil (m + 2)) n hn w z
+      (by simpa [S] using hz)
+
+  have hRow' : ∀ n, n ≤ 4 → ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ n) x' z = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four
+      m θ ax (oTil (m + 1)) n hn x' z (hnotS z hz)
+
+  have hCol' : ∀ n, n ≤ 4 → ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ n) z x' = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four_col
+      m θ ax (oTil (m + 1)) n hn x' z (hnotS z hz)
+
+  exact matrix_pow_eight_nine_diag_eq_of_local_equiv
+    (sgK (m + 1) θ ax (oTil (m + 2)))
+    (sgK m θ ax (oTil (m + 1)))
+    S T e w x' hwS hwT hroot hEntry hRow hCol hRow' hCol'
+
+
+/-- Eighth/ninth diagonal transport for the A-copy at its X corner. -/
+private theorem sgK_A_X_diag_eight_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {w : WSG (m + 1)}
+    (hwCopy : w.1 = GCopy.A)
+    (hwPoint : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  exact sgK_X_diag_eight_nine_transport_of_entry_bridge
+    m hm θ ax hax GCopy.A hwCopy hwPoint (by
+      intro p q hp hq hpx hpy hqx hqy i j
+      exact sgK_A_X_entry_next_til_radius_four m hm θ ax hax
+        hp hq hpx hpy hqx hqy i j)
+
+
+/-- Eighth/ninth diagonal transport for the C-copy at its X corner. -/
+private theorem sgK_C_X_diag_eight_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (3 ^ m + k) = ax k)
+    {w : WSG (m + 1)}
+    (hwCopy : w.1 = GCopy.C)
+    (hwPoint : w.2.1.1 = ((2 ^ (m + 1), 0) : Point)) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  exact sgK_X_diag_eight_nine_transport_of_entry_bridge
+    m hm θ ax hax GCopy.C hwCopy hwPoint (by
+      intro p q hp hq hpx hpy hqx hqy i j
+      exact sgK_C_X_entry_next_til_radius_four m hm θ ax hax
+        hp hq hpx hpy hqx hqy i j)
 
 /-- The X radius-three finite-state support transports sixth and seventh
 diagonal powers whenever a spin-resolved local entry bridge is supplied.
@@ -6759,6 +8530,248 @@ private theorem sgK_C_X_diag_six_seven_transport
         hp hq hpx hpy hqx hqy i j)
 
 
+/-- Eighth/ninth diagonal transport at the Y corner. The proof uses the radius-four finite support and the K⁸/K⁹ local-equivalence identity. -/
+private theorem sgK_Y_diag_eight_nine_transport_of_entry_bridge
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    (c : GCopy) {w : WSG (m + 1)}
+    (hwCopy : w.1 = c)
+    (hwPoint : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point))
+    (hBridge :
+      ∀ {p q : Point}
+        (hp : p ∈ vertexOrder (m + 1))
+        (hq : q ∈ vertexOrder (m + 1))
+        (hpx : p.1 ≤ 4)
+        (hpy : 2 ^ (m + 1) ≤ p.2 + 4)
+        (hqx : q.1 ≤ 4)
+        (hqy : 2 ^ (m + 1) ≤ q.2 + 4)
+        (i j : C2),
+          ∃ p' q' : Pt m,
+            p = shiftPoint (2 ^ m) 0 1 p'.1 ∧
+            q = shiftPoint (2 ^ m) 0 1 q'.1 ∧
+            sgK (m + 1) θ ax (oTil (m + 2))
+              (c, ((⟨p, List.mem_toFinset.mpr hp⟩ : Pt (m + 1)), i))
+              (c, ((⟨q, List.mem_toFinset.mpr hq⟩ : Pt (m + 1)), j)) =
+            sgK m θ ax (oTil (m + 1))
+              (c, (p', i)) (c, (q', j))) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  classical
+  let S : Finset (WSG (m + 1)) := sgK_radius_four_support (m + 1) w
+  let T : Finset (WSG m) := sgK_radius_four_Y_parent_support m w.1
+  let e := sgK_radius_four_support_Y_equiv m hm (w := w) hwPoint
+  let x' : WSG m := sgK_root_pullback m w
+
+  have hwS : w ∈ S := by
+    simp [S, sgK_radius_four_support]
+  have hpull : x'.2.1.1 = ((0, 2 ^ m) : Point) := by
+    change (sgK_root_pullback_pt m w.2.1).1 = ((0, 2 ^ m) : Point)
+    exact sgK_root_pullback_pt_Y m hwPoint
+  have hrootX : x'.2.1.1.1 = 0 := by
+    have h := congrArg Prod.fst hpull
+    simpa using h
+  have hrootY : x'.2.1.1.2 = 2 ^ m := by
+    have h := congrArg Prod.snd hpull
+    simpa using h
+
+  have hwT : x' ∈ T := by
+    simp only [T, sgK_radius_four_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨?_, ?_, ?_⟩
+    · change w.1 = w.1
+      rfl
+    · rw [hrootX]
+      omega
+    · rw [hrootY]
+      norm_num
+
+  have hroot : e ⟨w, hwS⟩ = ⟨x', hwT⟩ := by
+    apply Subtype.ext
+    simp [e, sgK_radius_four_support_Y_equiv, x',
+      sgK_root_pullback, sgK_root_pullback_pt, hwPoint,
+      pow_succ, Nat.mul_two]
+
+  have hEntry : ∀ a b : {z : WSG (m + 1) // z ∈ S},
+      sgK (m + 1) θ ax (oTil (m + 2)) a.1 b.1 =
+        sgK m θ ax (oTil (m + 1)) (e a).1 (e b).1 := by
+    intro a b
+    have haS : a.1 ∈ sgK_radius_four_support (m + 1) w := by
+      simpa [S] using a.2
+    have hbS : b.1 ∈ sgK_radius_four_support (m + 1) w := by
+      simpa [S] using b.2
+    have haBox :=
+      (sgK_radius_four_support_Y_box_iff m hm hwPoint).mp haS
+    have hbBox :=
+      (sgK_radius_four_support_Y_box_iff m hm hwPoint).mp hbS
+    have haCopy : a.1.1 = c := haBox.1.trans hwCopy
+    have hbCopy : b.1.1 = c := hbBox.1.trans hwCopy
+
+    have haRaw := a.2
+    have hbRaw := b.2
+    simp only [S, sgK_radius_four_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at haRaw hbRaw
+    have haX : a.1.2.1.1.1 ≤ 4 := by
+      simpa [hwPoint] using haRaw.2.2.1
+    have haY : 2 ^ (m + 1) ≤ a.1.2.1.1.2 + 4 := by
+      simpa [hwPoint] using haRaw.2.2.2.1
+    have hbX : b.1.2.1.1.1 ≤ 4 := by
+      simpa [hwPoint] using hbRaw.2.2.1
+    have hbY : 2 ^ (m + 1) ≤ b.1.2.1.1.2 + 4 := by
+      simpa [hwPoint] using hbRaw.2.2.2.1
+
+    obtain ⟨pa, pb, hpa, hpb, hbridge⟩ :=
+      hBridge
+        (p := a.1.2.1.1) (q := b.1.2.1.1)
+        (List.mem_toFinset.mp a.1.2.1.2)
+        (List.mem_toFinset.mp b.1.2.1.2)
+        haX haY hbX hbY a.1.2.2 b.1.2.2
+
+    have haPt :
+        (⟨a.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp a.1.2.1.2)⟩ : Pt (m + 1)) =
+            a.1.2.1 := by
+      apply Subtype.ext
+      rfl
+    have hbPt :
+        (⟨b.1.2.1.1, List.mem_toFinset.mpr
+          (List.mem_toFinset.mp b.1.2.1.2)⟩ : Pt (m + 1)) =
+            b.1.2.1 := by
+      apply Subtype.ext
+      rfl
+
+    have hpaPoint :
+        (a.1.2.1.1.1, a.1.2.1.1.2 - 2 ^ m) = pa.1 := by
+      have hx : a.1.2.1.1.1 = pa.1.1 := by
+        have h := congrArg Prod.fst hpa
+        simpa [shiftPoint] using h
+      have hy : a.1.2.1.1.2 = pa.1.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpa
+        simpa [shiftPoint] using h
+      exact Prod.ext hx (by omega)
+    have hpbPoint :
+        (b.1.2.1.1.1, b.1.2.1.1.2 - 2 ^ m) = pb.1 := by
+      have hx : b.1.2.1.1.1 = pb.1.1 := by
+        have h := congrArg Prod.fst hpb
+        simpa [shiftPoint] using h
+      have hy : b.1.2.1.1.2 = pb.1.2 + 2 ^ m := by
+        have h := congrArg Prod.snd hpb
+        simpa [shiftPoint] using h
+      exact Prod.ext hx (by omega)
+
+    have haState : a.1 = (c, a.1.2) := Prod.ext haCopy rfl
+    have hbState : b.1 = (c, b.1.2) := Prod.ext hbCopy rfl
+    have haMap : (e a).1 = (c, (pa, a.1.2.2)) := by
+      apply Prod.ext
+      · exact haCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          change (a.1.2.1.1.1, a.1.2.1.1.2 - 2 ^ m) = pa.1
+          exact hpaPoint
+        · rfl
+    have hbMap : (e b).1 = (c, (pb, b.1.2.2)) := by
+      apply Prod.ext
+      · exact hbCopy
+      · apply Prod.ext
+        · apply Subtype.ext
+          change (b.1.2.1.1.1, b.1.2.1.1.2 - 2 ^ m) = pb.1
+          exact hpbPoint
+        · rfl
+
+    rw [haState, hbState]
+    rw [haPt, hbPt] at hbridge
+    rw [haMap, hbMap]
+    exact hbridge
+
+  have hnotS : ∀ z, z ∉ T →
+      z ∉ sgK_radius_four_support m x' := by
+    intro z hzT hz
+    apply hzT
+    have hzs := hz
+    simp only [sgK_radius_four_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at hzs
+    simp only [T, sgK_radius_four_Y_parent_support, Finset.mem_filter,
+      Finset.mem_univ, true_and]
+    refine ⟨?_, ?_, ?_⟩
+    · have hxCopy : x'.1 = w.1 := rfl
+      exact hzs.1.trans hxCopy
+    · simpa only [hrootX] using hzs.2.2.1
+    · simpa only [hrootY] using hzs.2.2.2.1
+
+  have hRow : ∀ n, n ≤ 4 → ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w z = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four
+      (m + 1) θ ax (oTil (m + 2)) n hn w z
+      (by simpa [S] using hz)
+
+  have hCol : ∀ n, n ≤ 4 → ∀ z, z ∉ S →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) z w = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four_col
+      (m + 1) θ ax (oTil (m + 2)) n hn w z
+      (by simpa [S] using hz)
+
+  have hRow' : ∀ n, n ≤ 4 → ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ n) x' z = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four
+      m θ ax (oTil (m + 1)) n hn x' z (hnotS z hz)
+
+  have hCol' : ∀ n, n ≤ 4 → ∀ z, z ∉ T →
+      (sgK m θ ax (oTil (m + 1)) ^ n) z x' = 0 := by
+    intro n hn z hz
+    exact sgK_pow_entry_zero_outside_radius_four_col
+      m θ ax (oTil (m + 1)) n hn x' z (hnotS z hz)
+
+  exact matrix_pow_eight_nine_diag_eq_of_local_equiv
+    (sgK (m + 1) θ ax (oTil (m + 2)))
+    (sgK m θ ax (oTil (m + 1)))
+    S T e w x' hwS hwT hroot hEntry hRow hCol hRow' hCol'
+
+
+/-- Eighth/ninth diagonal transport for the A-copy at its Y corner. -/
+private theorem sgK_A_Y_diag_eight_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)}
+    (hwCopy : w.1 = GCopy.A)
+    (hwPoint : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  exact sgK_Y_diag_eight_nine_transport_of_entry_bridge
+    m hm θ ax hax GCopy.A hwCopy hwPoint (by
+      intro p q hp hq hpx hpy hqx hqy i j
+      exact sgK_A_Y_entry_next_til_radius_four m hm θ ax hax
+        hp hq hpx hpy hqx hqy i j)
+
+
+/-- Eighth/ninth diagonal transport for the B-copy at its Y corner. -/
+private theorem sgK_B_Y_diag_eight_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)}
+    (hwCopy : w.1 = GCopy.B)
+    (hwPoint : w.2.1.1 = ((0, 2 ^ (m + 1)) : Point)) :
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) w w =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+  exact sgK_Y_diag_eight_nine_transport_of_entry_bridge
+    m hm θ ax hax GCopy.B hwCopy hwPoint (by
+      intro p q hp hq hpx hpy hqx hqy i j
+      exact sgK_B_Y_entry_next_til_radius_four m hm θ ax hax
+        hp hq hpx hpy hqx hqy i j)
+
 private theorem sgK_Y_diag_one_two_three_six_seven_transport_of_entry_bridge
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (hax : ∀ k, ax (2 * 3 ^ m + k) = ax k)
@@ -7063,6 +9076,43 @@ private theorem sgK_B_Y_diag_one_two_three_six_seven_transport
         hp hq hpx hpy hqx hqy i j)
 
 
+/-- The six glued-partner cases transport the eighth and ninth
+diagonal powers using the radius-four corner bridges. -/
+private theorem sgK_glued_partner_diag_eight_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
+    let v := (sgGlue (m + 1)).σ w
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) := by
+  classical
+  dsimp
+  have hex : ∃ w', glW (m + 1) w w' := by
+    change ∃ w', glW (m + 1) w w'
+    exact hw
+  have hpartner : glW (m + 1) w ((sgGlue (m + 1)).σ w) := by
+    change glW (m + 1) w (sgσ (m + 1) w)
+    exact glW_sgσ hex
+  rcases hpartner with ⟨hgl, hspin⟩
+  rcases hgl with
+      ⟨hA, hX, hB, hO⟩
+    | ⟨hB, hO, hA, hX⟩
+    | ⟨hA, hY, hC, hO⟩
+    | ⟨hC, hO, hA, hY⟩
+    | ⟨hB, hY, hC, hX⟩
+    | ⟨hC, hX, hB, hY⟩
+  · exact sgK_O_diag_eight_nine_transport m hm θ ax hO
+  · exact sgK_A_X_diag_eight_nine_transport m hm θ ax haxX hA hX
+  · exact sgK_O_diag_eight_nine_transport m hm θ ax hO
+  · exact sgK_A_Y_diag_eight_nine_transport m hm θ ax haxY hA hY
+  · exact sgK_C_X_diag_eight_nine_transport m hm θ ax haxX hC hX
+  · exact sgK_B_Y_diag_eight_nine_transport m hm θ ax haxY hB hY
+
 private theorem sgK_glued_partner_diag_one_two_three_six_seven_transport
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (haxX : ∀ k, ax (3 ^ m + k) = ax k)
@@ -7102,6 +9152,54 @@ private theorem sgK_glued_partner_diag_one_two_three_six_seven_transport
   · exact sgK_C_X_diag_six_seven_transport m hm θ ax haxX hC hX
   · exact sgK_B_Y_diag_one_two_three_six_seven_transport m hm θ ax haxY hB hY
 
+
+
+/-- Combined diagonal transport for every glued partner through degree nine. -/
+private theorem sgK_glued_partner_diag_one_to_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
+    let v := (sgGlue (m + 1)).σ w
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 1) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 1)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 2) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 2)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 3) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 3)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 4) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 4)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 5) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 5)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 6) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 6)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 7) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 7)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 8) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 8)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) ∧
+    (sgK (m + 1) θ ax (oTil (m + 2)) ^ 9) v v =
+      (sgK m θ ax (oTil (m + 1)) ^ 9)
+        (sgK_root_pullback m v) (sgK_root_pullback m v) := by
+  classical
+  dsimp
+  obtain ⟨h1, h2, h3, h6, h7⟩ :=
+    sgK_glued_partner_diag_one_two_three_six_seven_transport
+      m hm θ ax haxX haxY hw
+  obtain ⟨h4, h5⟩ :=
+    sgK_glued_partner_diag_four_five_transport
+      m (by omega) θ ax haxX haxY hw
+  obtain ⟨h8, h9⟩ :=
+    sgK_glued_partner_diag_eight_nine_transport
+      m hm θ ax haxX haxY hw
+  exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩
 
 /-- Combined diagonal transport for every glued partner, including all
 intermediate powers needed by the eighth-moment boundary correction. -/
@@ -7196,6 +9294,68 @@ private theorem sgK_glued_state_diag_one_to_seven_transport
   intro n hn
   exact ⟨hroot n hn, hpartner n hn⟩
 
+
+/-- Complete glued-state diagonal transport through degree nine.
+Partner transport at `σ w` gives the root diagonals; the pullback-sigma
+identity aligns the partner diagonals on the parent level. -/
+theorem sgK_glued_state_diag_one_to_nine_transport
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (haxX : ∀ k, ax (3 ^ m + k) = ax k)
+    (haxY : ∀ k, ax (2 * 3 ^ m + k) = ax k)
+    {w : WSG (m + 1)} (hw : (sgGlue (m + 1)).g w) :
+    ∀ n, n ≤ 9 →
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w w =
+        (sgK m θ ax (oTil (m + 1)) ^ n)
+          (sgK_root_pullback m w) (sgK_root_pullback m w) ∧
+      (sgK (m + 1) θ ax (oTil (m + 2)) ^ n)
+          ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+        (sgK m θ ax (oTil (m + 1)) ^ n)
+          ((sgGlue m).σ (sgK_root_pullback m w))
+          ((sgGlue m).σ (sgK_root_pullback m w)) := by
+  classical
+  have hwσ : (sgGlue (m + 1)).g ((sgGlue (m + 1)).σ w) :=
+    (sgGlue (m + 1)).g_σ w hw
+  have hσσ : (sgGlue (m + 1)).σ ((sgGlue (m + 1)).σ w) = w :=
+    (sgGlue (m + 1)).σσ w hw
+  have hrootRaw :=
+    sgK_glued_partner_diag_one_to_nine_transport
+      m hm θ ax haxX haxY (w := (sgGlue (m + 1)).σ w) hwσ
+  dsimp at hrootRaw
+  rcases hrootRaw with
+    ⟨hr1, hr2, hr3, hr4, hr5, hr6, hr7, hr8, hr9⟩
+  rw [hσσ] at hr1 hr2 hr3 hr4 hr5 hr6 hr7 hr8 hr9
+  have hpartnerRaw :=
+    sgK_glued_partner_diag_one_to_nine_transport
+      m hm θ ax haxX haxY (w := w) hw
+  dsimp at hpartnerRaw
+  rcases hpartnerRaw with
+    ⟨hp1, hp2, hp3, hp4, hp5, hp6, hp7, hp8, hp9⟩
+  rw [sgK_root_pullback_sigma m hw] at hp1 hp2 hp3 hp4 hp5 hp6 hp7 hp8 hp9
+  have hroot :
+      ∀ n, n ≤ 9 →
+        (sgK (m + 1) θ ax (oTil (m + 2)) ^ n) w w =
+          (sgK m θ ax (oTil (m + 1)) ^ n)
+            (sgK_root_pullback m w) (sgK_root_pullback m w) := by
+    intro n hn
+    rcases n with _ | n
+    · simp
+    · have hn' : n ≤ 8 := by omega
+      interval_cases n <;> simp [hr1, hr2, hr3, hr4, hr5, hr6, hr7, hr8, hr9]
+  have hpartner :
+      ∀ n, n ≤ 9 →
+        (sgK (m + 1) θ ax (oTil (m + 2)) ^ n)
+            ((sgGlue (m + 1)).σ w) ((sgGlue (m + 1)).σ w) =
+          (sgK m θ ax (oTil (m + 1)) ^ n)
+            ((sgGlue m).σ (sgK_root_pullback m w))
+            ((sgGlue m).σ (sgK_root_pullback m w)) := by
+    intro n hn
+    rcases n with _ | n
+    · simp
+    · have hn' : n ≤ 8 := by omega
+      interval_cases n <;> simp [hp1, hp2, hp3, hp4, hp5, hp6, hp7, hp8, hp9]
+  intro n hn
+  exact ⟨hroot n hn, hpartner n hn⟩
+
 /-- Adjacent-level stability of the complete H8 boundary for the exceptional
 orientation. The root and partner diagonal transports are both supplied by
 the six-case glued-state transport above. -/
@@ -7245,7 +9405,6 @@ theorem glueRHS8_sgK_til_const_eq_level4
 /-- Exact level-four correction in the H8 affine recurrence. It consists
 of the face-axis versus constant-axis boundary residual, minus the level-four
 gap between numbering and exceptional orientations. -/
-
 noncomputable def defectO8_num_residual_constant (θ : ℝ) : ℂ :=
   (glueRHS8 4 (sgK 4 θ faceAxis (oTil 5)) -
     glueRHS8 4 (sgK 4 θ (fun _ => 2) (oTil 5))) -

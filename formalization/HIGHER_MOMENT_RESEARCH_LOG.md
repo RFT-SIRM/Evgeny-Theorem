@@ -3061,10 +3061,23 @@ The all-level proof still requires showing that the high-level and parent-level 
 On every glued state the underlying vertex is one of the three outer corners O, X, Y. The corner degree is two at all levels (proved by recursion using the A/B/C local-degree lemmas), so `sgK_diag` gives `K_{xx}=2` and `sgK_sq_diag` gives `(K^2)_{xx}=2^2+2=6), independently of the axis assignment.
 
 The new Lean theorem `glueRHS6_highPowerResidual_sgK_corner_reduce` therefore gives the exact identity
-[
-R_m=12left(sum_{g(x)}(K^5)_{sigma x,sigma x}-sum_{g(x)}(K'^5)_{sigma x,sigma x}ight)
-+36left(sum_{g(x)}(K^4)_{sigma x,sigma x}-sum_{g(x)}(K'^4)_{sigma x,sigma x}ight).
-]
+
+\[
+\begin{aligned}
+R_m
+={}&12\left(
+\sum_{g(x)} (K^5)_{\sigma x,\sigma x}
+-
+\sum_{g(x)} (K'^5)_{\sigma x,\sigma x}
+\right)\\
+&+36\left(
+\sum_{g(x)} (K^4)_{\sigma x,\sigma x}
+-
+\sum_{g(x)} (K'^4)_{\sigma x,\sigma x}
+\right).
+\end{aligned}
+\]
+
 This isolates the sole remaining dependence on the chosen axis assignment into the fourth- and fifth-power corner diagonal sums. Keeping `σ` explicit makes the already-proved root-map compatibility available for the next reindexing step.
 
 This is a proved reduction, not an all-level stability theorem: `R_{m+1}=R_m` is still open. Next, compare the individual/cumulative fourth- and fifth-power corner diagonal contributions using radius-two path expansions and entry transports, taking special care with nested B/C copy orientation; do not promote the finite `R_3=R_4` certificate to a general proof.
@@ -5624,8 +5637,13 @@ their gap data and offset, and canonical gap data with a legal offset
 rotates back to a word whose inverse cut decodes to the original gaps.
 
 This remains a structural inverse statement, not yet the full finite
-bijection or the trace multiplicity identity (r S_{m words}=p
-S_{m gaps}). Those are the next obligations. Full Lean validation is
+bijection or the trace multiplicity identity
+
+\[
+r\,|S_m^{\mathrm{words}}| = p\,|S_m^{\mathrm{gaps}}|.
+\]
+
+Those are the next obligations. Full Lean validation is
 required for this commit. H6 and H8 remain untouched.
 
 
@@ -6644,3 +6662,37 @@ compared with the successful full build of `efe59c8` and are identical
 pre-existing linter warnings, not the cause of this failure. No change
 was made to those unrelated declarations. Full Lean validation is still
 required for this revision.
+
+## 2026-11-08 — Close the H10 radius-four transport obligation
+
+The remaining `H10TransportAll` obligation is now proved in Lean. In
+`FinalTilde.lean`, the six glued-partner cases transport the eighth and ninth
+diagonal powers using the radius-four O, A-X, C-X, A-Y, and B-Y bridges.
+These are combined with the existing degree-one-through-seven transports to
+obtain `sgK_glued_partner_diag_one_to_nine_transport`. Applying that theorem
+at the partner and at the original glued state, together with sigma
+involutivity and `sgK_root_pullback_sigma`, gives
+`sgK_glued_state_diag_one_to_nine_transport`.
+
+`FinalClosed10.lean` now proves `H10TransportAll_proved` for both `faceAxis`
+and the constant axis `fun _ => 2`, for every level m ≥ 4. This removes the
+transport hypothesis from the tenth-moment conclusions:
+`defectO10_succ_num_level5_constant_boundary_unconditional` proves the
+affine recurrence for m ≥ 4, and
+`defectO10_num_affine_closed_form_from_level5_unconditional` proves the
+affine formula for m ≥ 5 and every real angle.
+
+The correction `defectO10_num_residual_constant` remains an exact level-five
+trace expression. No explicit trigonometric-polynomial simplification of
+that coefficient is claimed.
+
+Validation on the local working tree:
+- `lake build EvgenyTheorem.FinalClosed10`: passed, 3056 jobs.
+- `lake build EvgenyTheorem`: passed, 3064 jobs.
+- `#print axioms` for `H10TransportAll_proved` and both unconditional
+  consequences reports only `propext`, `Classical.choice`, and `Quot.sound`;
+  `sorryAx` is absent.
+- `pytest tests/ -m "not slow" -v`: 219 passed, 9 deselected.
+  The run was under local Python 3.14 and emitted NumPy runtime warnings in
+  matrix-power regression tests; the test process exited successfully.
+- `pytest tests/ -m slow -v`: 9 passed. The run used local Python 3.14.2; the GitHub Actions Python 3.11/3.12 matrix remains to be confirmed remotely.

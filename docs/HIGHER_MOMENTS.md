@@ -9,7 +9,7 @@ This note records the current mathematical and formal status of the higher spect
 | **H⁴** | Unconditional all-angle closed form, Lean-checked for every $m\ge1$. | None for the stated theorem. |
 | **H⁶** | Lean recurrence for $m\ge3$, plus an exact finite symbolic bridge for $m=2\to3$. Combined all-angle formula for $m\ge2$. | The finite bridge is not yet a Lean-kernel theorem. |
 | **H⁸** | Lean recurrence for $m\ge3$, plus an exact sparse-polynomial bridge for $m=2\to3$. Combined all-angle formula for $m\ge2$. | The finite bridge is not yet a Lean-kernel theorem. |
-| **H¹⁰** | Lean-checked p=10 gluing and orientation recurrences; a conditional affine closed form from level five. | The explicit hypothesis `H10TransportAll` remains unproved; the level-five constant remains an exact trace expression. |
+| **H¹⁰** | Unconditional Lean-checked affine recurrence for m ≥ 4 and affine form for m ≥ 5. | Radius-four transport is proved through degree nine for both axes; the level-five constant remains an exact trace expression. |
 
 H⁴ is stated in [THEOREM.md](../THEOREM.md). The detailed tenth-moment Lean layer is in `formalization/EvgenyTheorem/GlueTrace10.lean`, `GlueRows10.lean`, `FinalOrient10.lean`, and `FinalClosed10.lean`.
 
@@ -117,7 +117,8 @@ At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
 
 ---
 
-## H¹⁰ — p=10 gluing and conditional affine closed form
+
+## H¹⁰ — p=10 gluing and unconditional affine closed form
 
 The tenth-moment proof layer goes beyond numerical trace tables. The current Lean source includes:
 
@@ -125,25 +126,25 @@ The tenth-moment proof layer goes beyond numerical trace tables. The current Lea
 - the exact even-word-stratum aggregation and the zero-insertion term;
 - recurrences for the numbering orientation and the flipped-corner orientation;
 - transfer of the corner-flip rows through powers up to nine;
-- adjacent-level transport of the complete boundary correction, conditional on glued-state diagonal transport.
+- the radius-four glued-state diagonal transport through degree nine, proved for both configurations at every level m ≥ 4.
 
 Write $D_m^{(10)}(\theta)$ for the level-$m$ numbering-orientation quantity defined by `defectO10`. The level-five residual is named `defectO10_num_residual_constant` in Lean; denote it by $C_{10}^{(5)}(\theta)$. Its current definition is an exact finite trace expression.
 
-The remaining transport hypothesis is explicitly named `H10TransportAll`. It asks for the glued-state diagonal powers through degree nine to agree between adjacent levels, for both the face-axis and fixed-axis configurations, at every level $m\ge4$. This is the radius-four corner-locality statement required by the final transport step.
+The transport proposition is explicitly named `H10TransportAll`. It requires the glued-state diagonal powers through degree nine to agree between adjacent levels, for both the face-axis and fixed-axis configurations, at every level m ≥ 4. This radius-four corner-locality statement is now proved by `H10TransportAll_proved`, using the concrete degree-eight/nine partner bridges and the state-level transport theorem in `FinalTilde.lean`.
 
-**Under this explicit hypothesis**, Lean proves
+Lean therefore proves unconditionally
 
 $$
 D_{m+1}^{(10)}(\theta)=3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),\quad m\ge4.
 $$
 
-The corresponding closed affine form is
+The corresponding affine form is
 
 $$
 D_m^{(10)}(\theta)=3^{m-5}(D_5^{(10)}(\theta)+C_{10}^{(5)}(\theta)/2)-C_{10}^{(5)}(\theta)/2,\quad m\ge5.
 $$
 
-This theorem is machine-checked **with `H10TransportAll` as an explicit assumption**. The hypothesis itself is not proved in the current Lean source. Also, $C_{10}^{(5)}(\theta)$ has not yet been simplified to an explicit trigonometric polynomial. Therefore the current repository does not claim an unconditional all-angle H¹⁰ closed form.
+The recurrence and affine formula are machine-checked without an additional transport hypothesis. The exact level-five correction $C_{10}^{(5)}(\theta)$ has not yet been simplified to an explicit trigonometric polynomial; it remains a named exact trace expression. This concerns the presentation of the coefficient, not a remaining hypothesis in the Lean theorem.
 
 ### H¹⁰ source map
 
@@ -151,9 +152,10 @@ This theorem is machine-checked **with `H10TransportAll` as an explicit assumpti
 |---|---|---|
 | Tenth-power trace expansion and word strata | `GlueTrace.lean` and `TraceExpand.lean` | Exact ordered-word expansion and stratum reductions. |
 | p=10 gluing assembly | `GlueTrace10.lean` | Connects the ordered expansion to the tenth-moment boundary expression. |
-| Glued-row transport | `GlueRows10.lean` | Establishes corner-flip row identities through degree nine and transports the boundary correction under the diagonal hypothesis. |
-| Orientation recurrences | `FinalOrient10.lean` | Recurrences for the numbering and flipped-corner orientations. |
-| Conditional affine form | `FinalClosed10.lean` | States `H10TransportAll` and proves the affine theorem assuming it. |
+| Glued-row transport | `GlueRows10.lean` | Establishes corner-flip row identities through degree nine and transports the boundary correction. |
+| Radius-four corner transport | `FinalTilde.lean` and `FinalClosed10.lean` | Proves degree-eight/nine partner transport, combines degrees one through nine, and establishes `H10TransportAll_proved`. |
+| Unconditional affine recurrence and form | `FinalClosed10.lean` | Proves `defectO10_succ_num_level5_constant_boundary_unconditional` and `defectO10_num_affine_closed_form_from_level5_unconditional`. |
+
 
 ---
 

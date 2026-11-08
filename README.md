@@ -115,13 +115,16 @@ At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
 
 **Proof boundary:** the structural recurrence is Lean-formalized for $m\geq3$. The finite $m=2\to3$ bridge is an exact Gaussian-integer polynomial certificate, not yet a Lean-kernel theorem.
 
+
 ### H¹⁰ — tenth moment
 
 The tenth-moment development includes the ordered p=10 trace expansion, exact word-stratum reductions, the gluing assembly, the two orientation recurrences, and corner-row transport through degree nine.
 
+The radius-four glued-state diagonal transport required by the tenth-moment boundary correction is now proved in Lean for both the face-axis and fixed-axis configurations, at every level `m ≥ 4`. The theorem `H10TransportAll_proved` establishes `H10TransportAll` without additional assumptions.
+
 Write $D_m^{(10)}(\theta)$ for the numbering-orientation defect, and let $C_{10}^{(5)}(\theta)$ be the exact level-five residual constant defined in Lean.
 
-Under the explicit hypothesis `H10TransportAll`, Lean proves
+Lean therefore proves unconditionally
 
 $$
 D_{m+1}^{(10)}(\theta)=3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),\quad m\geq4.
@@ -133,9 +136,10 @@ $$
 D_m^{(10)}(\theta)=3^{m-5}(D_5^{(10)}(\theta)+C_{10}^{(5)}(\theta)/2)-C_{10}^{(5)}(\theta)/2.
 $$
 
-This is a machine-checked **conditional** affine closed form. The hypothesis `H10TransportAll` is explicit in the Lean theorem but is not yet proved in the current source. The level-five constant is an exact trace expression and has not yet been reduced to a closed trigonometric polynomial. An unconditional all-angle H¹⁰ closed form is therefore not claimed.
+Both the recurrence and the affine formula are machine-checked for every real angle. The level-five constant remains an exact finite trace expression; it has not yet been reduced to an explicit trigonometric polynomial. Thus the H¹⁰ affine theorem is unconditional, while its correction coefficient is retained in exact trace form.
 
-The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and `FinalClosed10`. The detailed dependency and theorem names are listed in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
+The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and `FinalClosed10`. The transport and final theorem names are listed in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
+
 
 ---
 
@@ -149,7 +153,7 @@ The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and 
 | H⁶ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
 | H⁸ recurrence | **Lean theorem for $m\geq3$** | Finite level-two transition supplied by exact sparse-polynomial arithmetic. |
 | H⁸ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
-| H¹⁰ affine form | **Conditional Lean theorem** | Depends on the unproved hypothesis `H10TransportAll`. |
+| H¹⁰ affine form | **Unconditional Lean theorem** | Degree-nine radius-four diagonal transport is proved for both configurations; the exact level-five trace correction is retained. |
 | H⁶ path-class cancellation on $SG(1)$ | **Exact finite-level result** | Single- and two-triangle classes vanish; the all-three-triangle class contributes. |
 
 A finite exact certificate, a numerical regression, and a Lean-kernel theorem are not interchangeable. The documentation preserves these proof boundaries explicitly.
