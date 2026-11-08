@@ -4,18 +4,17 @@
 
 ### Spectral trace identities for non-commutative SU(2) operators on the Sierpiński gasket
 
-[![Tests](https://img.shields.io/github/actions/workflow/status/RFT-SIRM/Evgeny-Theorem/tests.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/workflows/tests.yml)
+[![Tests](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/RFT-SIRM/Evgeny-Theorem/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-yellow?style=for-the-badge)](LICENSE)
-[![H⁴ theorem](https://img.shields.io/badge/H⁴-Exact%20closed%20form-5aa9ff?style=for-the-badge)](THEOREM.md)
+[![H4 theorem](https://img.shields.io/badge/H4-Exact%20closed%20form-5aa9ff?style=for-the-badge)](THEOREM.md)
 [![Lean 4](https://img.shields.io/badge/Lean%204-Machine--checked-3ee290?style=for-the-badge)](formalization/README.md)
 [![Higher moments](https://img.shields.io/badge/Higher%20moments-Research%20programme-orange?style=for-the-badge)](docs/HIGHER_MOMENTS.md)
-[![Research site](https://img.shields.io/badge/Research%20site-GitHub%20Pages-c6ff5c?style=for-the-badge)](https://rft-sirm.github.io/Evgeny-Theorem/)
 
 </div>
 
 ## Research dissertation
 
-The complete research dissertation is available as [**DISSERTATION.md**](DISSERTATION.md). A link to the standalone document appears in the contact block at the bottom of the [research website](https://rft-sirm.github.io/Evgeny-Theorem/).
+The complete research dissertation is available here: [**DISSERTATION.md**](DISSERTATION.md).
 
 ---
 
