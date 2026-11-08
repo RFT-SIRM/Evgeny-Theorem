@@ -38,15 +38,13 @@ The comparison changes the connection structure without changing the underlying 
 
 ### The scale of the construction
 
-The graph grows exponentially with refinement. The matrix dimensions below follow directly from the exact graph-size formula.
+The graph grows exponentially with refinement. These reference levels show how quickly the operator size increases:
 
-| Refinement level $m$ | Vertices $|V_m|$ | Operator dimension $N_m$ |
-|---:|---:|---:|
-| 1 | 6 | 12 |
-| 4 | 123 | 246 |
-| 7 | 3,282 | 6,564 |
-| 10 | 88,575 | 177,150 |
-| 12 | 797,163 | 1,594,326 |
+- **Level 1** — 6 vertices; operator dimension: 12.
+- **Level 4** — 123 vertices; operator dimension: 246.
+- **Level 7** — 3,282 vertices; operator dimension: 6,564.
+- **Level 10** — 88,575 vertices; operator dimension: 177,150.
+- **Level 12** — 797,163 vertices; operator dimension: 1,594,326.
 
 At level 12, the operator already acts on a space of dimension 1,594,326. The purpose of the recurrence and closed-form programme is to understand spectral quantities for this recursively growing family without treating every level as an unrelated finite matrix.
 
