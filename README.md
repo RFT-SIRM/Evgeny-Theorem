@@ -13,6 +13,10 @@
 
 </div>
 
+## Research dissertation
+
+The complete research dissertation is available as [**DISSERTATION.md**](DISSERTATION.md). The opening of the [research website](https://rft-sirm.github.io/Evgeny-Theorem/) also presents the dissertation immediately after the hero banner and before the numbered research sections.
+
 ---
 
 ## 1. The mathematical object
