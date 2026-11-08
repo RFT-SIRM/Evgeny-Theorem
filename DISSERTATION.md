@@ -231,7 +231,6 @@ D_{m+1}^{(6)}(\theta)
 3D_m^{(6)}(\theta)+C_6(\theta),
 \qquad m\geq3.
 ```
-The exact finite certificate gives
 The exact finite certificate gives the level-two value
 ```math
 D_2^{(6)}(\theta)
