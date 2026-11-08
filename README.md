@@ -57,27 +57,27 @@ At level 12, the operator already acts on a space of dimension 1,594,326. The pu
 For the non-commuting configuration and its commuting control, define the fourth-moment trace defect
 
 $$
-\\Delta_m(H^4,\\theta)=\\mathrm{Tr}(H_C(m,\\theta)^4)-\\mathrm{Tr}(H_{C'}(m,\\theta)^4).
+\Delta_m(H^4,\theta)=\mathrm{Tr}(H_C(m,\theta)^4)-\mathrm{Tr}(H_{C'}(m,\theta)^4).
 $$
 
 The exact identity is
 
 $$
-\\Delta_m(H^4,\\theta)=-16(3^{m-1}+1)\\sin^2(\\theta/2),\\quad m\\geq1.
+\Delta_m(H^4,\theta)=-16(3^{m-1}+1)\sin^2(\theta/2),\quad m\geq1.
 $$
 
-This is the principal unconditional closed-form theorem in the repository. It is machine-checked in Lean 4 for every refinement level $m\\geq1$ and every real angle $\\theta$.
+This is the principal unconditional closed-form theorem in the repository. It is machine-checked in Lean 4 for every refinement level $m\geq1$ and every real angle $\theta$.
 
 Normalizing by the matrix dimension gives
 
 $$
-I_m(\\theta)=\\Delta_m(H^4,\\theta)/(3^{m+1}+3).
+I_m(\theta)=\Delta_m(H^4,\theta)/(3^{m+1}+3).
 $$
 
 Its exact limit is
 
 $$
-I_\\infty(\\theta)=-\\frac{16}{9}\\sin^2(\\theta/2),\\quad I_\\infty(\\pi/2)=-8/9.
+I_\infty(\theta)=-\frac{16}{9}\sin^2(\theta/2),\quad I_\infty(\pi/2)=-8/9.
 $$
 
 The proof, theorem declaration, numerical checks, and gauge-invariance record are linked below in [THEOREM.md](THEOREM.md), [VERIFICATION.md](VERIFICATION.md), and [formalization/README.md](formalization/README.md).
@@ -88,35 +88,35 @@ The proof, theorem declaration, numerical checks, and gauge-invariance record ar
 
 The higher moments require separate arguments. The fourth-moment theorem does not by itself imply recurrences for the sixth, eighth, or tenth moments.
 
-Use the notation $\\Delta_m^{(p)}(\\theta)$ for the trace defect at moment order $p$. For the recurrence statements, write $D_m^{(p)}(\\theta)$ for the corresponding orientation-specific quantity in the Lean development.
+Use the notation $\Delta_m^{(p)}(\theta)$ for the trace defect at moment order $p$. For the recurrence statements, write $D_m^{(p)}(\theta)$ for the corresponding orientation-specific quantity in the Lean development.
 
 ### H⁶ — sixth moment
 
 Lean proves the all-angle recurrence
 
 $$
-D_{m+1}^{(6)}(\\theta)=3D_m^{(6)}(\\theta)+C_6(\\theta),\\quad m\\geq3.
+D_{m+1}^{(6)}(\theta)=3D_m^{(6)}(\theta)+C_6(\theta),\quad m\geq3.
 $$
 
-The exact finite polynomial certificate supplies the exceptional transition from level two to level three. Together, the Lean recurrence and that certificate give the all-level formula for $m\\geq2$. The level-two value and coefficient are recorded in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
+The exact finite polynomial certificate supplies the exceptional transition from level two to level three. Together, the Lean recurrence and that certificate give the all-level formula for $m\geq2$. The level-two value and coefficient are recorded in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
 
-At $\\theta=\\pi$, the exact recurrence coefficient is $C_6(\\pi)=5280$.
+At $\theta=\pi$, the exact recurrence coefficient is $C_6(\pi)=5280$.
 
-**Proof boundary:** the recurrence is inside the Lean kernel for $m\\geq3$. The finite $m=2\\to3$ bridge is an exact symbolic certificate, but is not yet a Lean-kernel theorem.
+**Proof boundary:** the recurrence is inside the Lean kernel for $m\geq3$. The finite $m=2\to3$ bridge is an exact symbolic certificate, but is not yet a Lean-kernel theorem.
 
 ### H⁸ — eighth moment
 
 Lean proves the all-angle affine recurrence
 
 $$
-D_{m+1}^{(8)}(\\theta)=3D_m^{(8)}(\\theta)+C_8(\\theta),\\quad m\\geq3.
+D_{m+1}^{(8)}(\theta)=3D_m^{(8)}(\theta)+C_8(\theta),\quad m\geq3.
 $$
 
-An exact sparse-polynomial certificate establishes the exceptional finite transition and supplies the level-two polynomial. Together these give the explicit all-angle formula for $m\\geq2$.
+An exact sparse-polynomial certificate establishes the exceptional finite transition and supplies the level-two polynomial. Together these give the explicit all-angle formula for $m\geq2$.
 
-At $\\theta=\\pi$, the exact coefficient is $C_8(\\pi)=277504$.
+At $\theta=\pi$, the exact coefficient is $C_8(\pi)=277504$.
 
-**Proof boundary:** the structural recurrence is Lean-formalized for $m\\geq3$. The finite $m=2\\to3$ bridge is an exact Gaussian-integer polynomial certificate, not yet a Lean-kernel theorem.
+**Proof boundary:** the structural recurrence is Lean-formalized for $m\geq3$. The finite $m=2\to3$ bridge is an exact Gaussian-integer polynomial certificate, not yet a Lean-kernel theorem.
 
 
 ### H¹⁰ — tenth moment
@@ -125,18 +125,18 @@ The tenth-moment development includes the ordered p=10 trace expansion, exact wo
 
 The radius-four glued-state diagonal transport required by the tenth-moment boundary correction is now proved in Lean for both the face-axis and fixed-axis configurations, at every level `m ≥ 4`. The theorem `H10TransportAll_proved` establishes `H10TransportAll` without additional assumptions.
 
-Write $D_m^{(10)}(\\theta)$ for the numbering-orientation defect, and let $C_{10}^{(5)}(\\theta)$ be the exact level-five residual constant defined in Lean.
+Write $D_m^{(10)}(\theta)$ for the numbering-orientation defect, and let $C_{10}^{(5)}(\theta)$ be the exact level-five residual constant defined in Lean.
 
 Lean therefore proves unconditionally
 
 $$
-D_{m+1}^{(10)}(\\theta)=3D_m^{(10)}(\\theta)+C_{10}^{(5)}(\\theta),\\quad m\\geq4.
+D_{m+1}^{(10)}(\theta)=3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),\quad m\geq4.
 $$
 
-Consequently, for every $m\\geq5$,
+Consequently, for every $m\geq5$,
 
 $$
-D_m^{(10)}(\\theta)=3^{m-5}(D_5^{(10)}(\\theta)+C_{10}^{(5)}(\\theta)/2)-C_{10}^{(5)}(\\theta)/2.
+D_m^{(10)}(\theta)=3^{m-5}(D_5^{(10)}(\theta)+C_{10}^{(5)}(\theta)/2)-C_{10}^{(5)}(\theta)/2.
 $$
 
 Both the recurrence and the affine formula are machine-checked for every real angle. The level-five constant remains an exact finite trace expression; it has not yet been reduced to an explicit trigonometric polynomial. Thus the H¹⁰ affine theorem is unconditional, while its correction coefficient is retained in exact trace form.
@@ -150,12 +150,12 @@ The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and 
 
 | Result | Status | Evidence boundary |
 |---|---|---|
-| H⁴ exact closed form | **Unconditional theorem** | Lean-checked for all $m\\geq1$ and all $\\theta$. |
+| H⁴ exact closed form | **Unconditional theorem** | Lean-checked for all $m\geq1$ and all $\theta$. |
 | Normalized H⁴ limit | **Exact formula** | Follows from the closed form and graph dimension. |
-| H⁶ recurrence | **Lean theorem for $m\\geq3$** | Finite level-two transition supplied by exact symbolic arithmetic. |
-| H⁶ closed form for $m\\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
-| H⁸ recurrence | **Lean theorem for $m\\geq3$** | Finite level-two transition supplied by exact sparse-polynomial arithmetic. |
-| H⁸ closed form for $m\\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
+| H⁶ recurrence | **Lean theorem for $m\geq3$** | Finite level-two transition supplied by exact symbolic arithmetic. |
+| H⁶ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
+| H⁸ recurrence | **Lean theorem for $m\geq3$** | Finite level-two transition supplied by exact sparse-polynomial arithmetic. |
+| H⁸ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
 | H¹⁰ affine form | **Unconditional Lean theorem** | Degree-nine radius-four diagonal transport is proved for both configurations; the exact level-five trace correction is retained. |
 | H⁶ path-class cancellation on $SG(1)$ | **Exact finite-level result** | Single- and two-triangle classes vanish; the all-three-triangle class contributes. |
 
