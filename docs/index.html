@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evgeny Theorem — Gauge-Invariant Fourth Spectral Moment on the Sierpiński Gasket</title>
-<meta name="description" content="A gauge-invariant closed-form identity for the fourth spectral moment of a noncommutative SU(2) connection on the Sierpiński gasket. Δ_m(H⁴,θ) = −16(3^(m−1)+1)·sin²(θ/2). Verified to 1e-13.">
+<title>Evgeny Theorem — Spectral Trace Identities on the Sierpiński Gasket</title>
+<meta name="description" content="Lean-checked all-angle formula for the fourth-moment trace defect of noncommuting SU(2) and commuting-control operators on the Sierpiński gasket. Separate proof-status records for H6, H8, and H10.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -484,6 +484,15 @@ p .chip{ display:inline-block; vertical-align:baseline; transform:translateY(-1p
   box-shadow:0 0 46px rgba(255,45,120,.22), inset 0 0 30px rgba(255,45,120,.08);
   animation:boxGlow 3.4s ease-in-out infinite;
 }
+.math-display{display:block;width:100%;max-width:100%;overflow-x:auto;text-align:center;padding:8px 4px;color:var(--ink);}
+.math-display math{font-size:clamp(18px,2.35vw,27px);white-space:nowrap;}
+.math-display.compact{padding:8px 0;}
+.math-display.compact math{font-size:clamp(15px,1.65vw,20px);}
+.sub-f .math-display{margin-top:10px;}
+@media (prefers-reduced-motion: reduce){
+  .lim-monster,.big-formula .boxed,.calc-live::before{animation:none!important;}
+  html{scroll-behavior:auto;}
+}
 @keyframes boxGlow{ 50%{ box-shadow:0 0 70px rgba(255,45,120,.4), inset 0 0 40px rgba(255,45,120,.14);} }
 .sub-formulas{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px; }
 .sub-f{
@@ -787,7 +796,7 @@ footer{
 <div class="aurora aurora-a"></div>
 <div class="aurora aurora-b"></div>
 <div class="aurora aurora-c"></div>
-<canvas id="heroCanvas"></canvas>
+<canvas id="heroCanvas" aria-hidden="true"></canvas>
 
 <!-- ================= HEADER ================= -->
 <header id="siteHeader">
@@ -819,12 +828,12 @@ footer{
 <!-- ================= HERO ================= -->
 <section class="hero" id="top">
   <div class="wrap hero-inner">
-    <div class="hero-tag"><span class="dot"></span>EVGENY THEOREM — HISTORICAL FACT · CONFIRMED 2026</div>
-    <h1>A Gauge-Invariant <span class="grad-pink">Fourth Spectral</span><br>Moment on the Sierpiński Gasket</h1>
+    <div class="hero-tag"><span class="dot"></span>EVGENY THEOREM · FORMAL RESULTS AND VERIFICATION</div>
+    <h1>Spectral Trace Identities for <span class="grad-pink">Noncommuting SU(2)</span><br>Operators on the Sierpiński Gasket</h1>
     <p class="hero-desc">
-      A closed-form identity for the fourth moment of a <b>noncommutative SU(2) connection</b>
-      on the Sierpiński gasket — proven by computation, verified to
-      <span class="mono">1e−13</span>, reproducible by anyone.
+      The principal result is an all-level closed form for the fourth-moment trace defect.
+      It is <b>proved in Lean 4</b> for every integer refinement level m ≥ 1 and every real angle θ.
+      Higher-moment results and their separate proof boundaries are recorded below.
     </p>
     <div class="hero-formula">
       Δ<sub>m</sub>(H<sup>4</sup>, θ) =
@@ -836,7 +845,7 @@ footer{
     </div>
     <div class="layers-card">
       <div class="num">6</div>
-      <div class="lbl">VERIFICATION LAYERS</div>
+      <div class="lbl">PROJECT-DEFINED H⁴ CHECKS</div>
     </div>
   </div>
   <div class="scroll-hint">SCROLL</div>
@@ -848,17 +857,16 @@ footer{
 <section id="facts">
   <div class="wrap">
     <div class="fact-shell reveal">
-      <span class="eyebrow" style="justify-content:center;">HISTORICAL FACT</span>
-      <h2 class="sec-title">Created. Verified. Confirmed.</h2>
+      <span class="eyebrow" style="justify-content:center;">PROJECT STATUS</span>
+      <h2 class="sec-title">One project. Distinct proof boundaries.</h2>
       <div class="fact-row">
-        <div class="fact"><div class="fact-num">Q3 2026</div><div class="fact-lbl">Created</div></div>
+        <div class="fact"><div class="fact-num">H⁴</div><div class="fact-lbl">Unconditional Lean theorem · m ≥ 1</div></div>
         <div class="fact-sep"></div>
-        <div class="fact"><div class="fact-num">2026</div><div class="fact-lbl">Fully confirmed</div></div>
+        <div class="fact"><div class="fact-num">H⁶ / H⁸</div><div class="fact-lbl">Lean recurrences + exact finite base certificates</div></div>
         <div class="fact-sep"></div>
-        <div class="fact"><div class="fact-num">100%</div><div class="fact-lbl">Checks passed</div></div>
+        <div class="fact"><div class="fact-num">H¹⁰</div><div class="fact-lbl">Unconditional Lean affine form · m ≥ 5</div></div>
       </div>
-      <p class="fact-note">Everything on this page is a completed, independently reproducible fact.
-      No roadmap, no promises — only confirmations.</p>
+      <p class="fact-note">The site distinguishes Lean-kernel theorems, exact finite certificates, and numerical regression evidence. Remaining formalization and simplification tasks are identified explicitly.</p>
     </div>
   </div>
 </section>
@@ -869,8 +877,8 @@ footer{
 <section id="convergence">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">CONVERGENCE</span>
-      <h2 class="sec-title">Seven levels to −8/9</h2>
+      <span class="eyebrow">NORMALIZED H⁴ TRACE DEFECT</span>
+      <h2 class="sec-title">The refinement limit is −8/9 at θ = π/2</h2>
     </div>
     <div class="limit-strip reveal">
       <span class="lim-eq">lim<sub>m→∞</sub> I<sub>m</sub>(π/2) =</span>
@@ -878,17 +886,18 @@ footer{
     </div>
     <div class="conv-grid">
       <div class="chart-box reveal">
-        <div class="chart-cap"><span>I_m(π/2) → −8/9</span><span>GEOMETRIC RATE 1/3</span></div>
-        <canvas id="convChart"></canvas>
+        <div class="chart-cap"><span>I<sub>m</sub>(π/2) → −8/9</span><span>ASYMPTOTIC ERROR RATIO 1/3</span></div>
+        <canvas id="convChart" role="img" aria-label="Normalized fourth-moment trace defect from levels one through seven, converging to minus eight ninths"></canvas>
       </div>
       <div class="aitken reveal d1">
         <h4>◈ AITKEN Δ²-EXTRAPOLATION</h4>
         <div class="big">−8/9 <small>= −0.8888889… exact limit</small></div>
-        <div class="row"><span>residual</span><span>3.3×10⁻⁶</span></div>
-        <div class="row"><span>convergence rate</span><span>1/3 — vertex growth</span></div>
-        <div class="row"><span>NOT the spectral factor</span><span>1/5 ✗</span></div>
-        <p>The limit is governed by the SG <b style="color:var(--ink)">vertex-growth</b> factor 3, not by spectral
-        decimation's 1/5 — a structural fingerprint of the non-Abelian bundle, not of the bare graph.</p>
+        <div class="row"><span>Aitken estimate error</span><span>3.35×10⁻⁶</span></div>
+        <div class="row"><span>successive-error ratio</span><span>→ 1/3</span></div>
+        <p>At θ = π/2 the exact formula gives
+          <span class="mono">I<sub>m</sub> + 8/9 = −16 / (9(3<sup>m</sup> + 1))</span>.
+          The ratio of successive errors therefore tends to 1/3. This follows from the exact normalization and graph growth; it is not a claim about spectral-decimation scaling.
+        </p>
       </div>
     </div>
   </div>
@@ -898,16 +907,16 @@ footer{
 <section id="structure">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">THE STRUCTURE</span>
-      <h2 class="sec-title">The full matrix, exposed</h2>
-      <p class="sec-sub">The Sierpiński gasket matrix, the SU(2)-bundle torus knot, the orbiting spectral paths — and the invariant core, separated into its own sphere at the center.</p>
+      <span class="eyebrow">CONCEPTUAL VISUALIZATION</span>
+      <h2 class="sec-title">A schematic of the graph and invariant</h2>
+      <p class="sec-sub">This animation is illustrative, not a matrix plot, eigenspectrum, or proof diagram. The mathematical object and exact theorem are stated in the sections below.</p>
     </div>
     <div class="structure-stage reveal">
-      <canvas id="structureCanvas"></canvas>
+      <canvas id="structureCanvas" aria-hidden="true"></canvas>
       <div class="structure-hud">
-        <span>SG(m) · SU(2) BUNDLE</span>
-        <span class="hud-core">◈ CORE INVARIANT — I = −8/9</span>
-        <span>Δ_m(H⁴,θ) = −16(3^(m−1)+1)·sin²(θ/2)</span>
+        <span>SG(m) · SU(2) CONNECTION</span>
+        <span class="hud-core">H⁴ LIMIT AT θ = π/2 · I∞ = −8/9</span>
+        <span>Δ<sub>m</sub>(H⁴,θ) = −16(3<sup>m−1</sup>+1)·sin²(θ/2)</span>
       </div>
     </div>
   </div>
@@ -918,43 +927,19 @@ footer{
 <section id="pipeline">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">RESEARCH PIPELINE</span>
-      <h2 class="sec-title">From claim to reproducible evidence</h2>
-      <p class="sec-sub">Every RFT-SIRM result travels the same six-stage pipeline. Click any stage to trace how the Evgeny Theorem moved from a mathematical claim to a machine-checkable identity.</p>
+      <span class="eyebrow">PROOF AND VERIFICATION PATH</span>
+      <h2 class="sec-title">From a trace identity to reproducible evidence</h2>
+      <p class="sec-sub">The six stages below summarize how the H⁴ identity was formulated, computed at finite levels, proved in Lean, and independently checked. They describe this theorem's evidence trail, not a universal pipeline for every result in the repository.</p>
     </div>
     <div class="pipe-track reveal" id="pipeTrack">
-      <button class="stage active" data-stage="0">
-        <span class="st-idx">01</span>
-        <span class="orb">CLM</span>
-        <span class="st-name">Claim</span>
-      </button>
-      <button class="stage" data-stage="1">
-        <span class="st-idx">02</span>
-        <span class="orb">MDL</span>
-        <span class="st-name">Model</span>
-      </button>
-      <button class="stage" data-stage="2">
-        <span class="st-idx">03</span>
-        <span class="orb">EXE</span>
-        <span class="st-name">Execution</span>
-      </button>
-      <button class="stage" data-stage="3">
-        <span class="st-idx">04</span>
-        <span class="orb">VRF</span>
-        <span class="st-name">Verification</span>
-      </button>
-      <button class="stage" data-stage="4">
-        <span class="st-idx">05</span>
-        <span class="orb">EVD</span>
-        <span class="st-name">Evidence</span>
-      </button>
-      <button class="stage" data-stage="5">
-        <span class="st-idx">06</span>
-        <span class="orb">RPR</span>
-        <span class="st-name">Reproduction</span>
-      </button>
+      <button class="stage active" data-stage="0" aria-label="Stage 1: question"><span class="st-idx">01</span><span class="orb">CLM</span><span class="st-name">Question</span></button>
+      <button class="stage" data-stage="1" aria-label="Stage 2: model"><span class="st-idx">02</span><span class="orb">MDL</span><span class="st-name">Model</span></button>
+      <button class="stage" data-stage="2" aria-label="Stage 3: computation"><span class="st-idx">03</span><span class="orb">EXE</span><span class="st-name">Computation</span></button>
+      <button class="stage" data-stage="3" aria-label="Stage 4: formal proof"><span class="st-idx">04</span><span class="orb">PRF</span><span class="st-name">Lean proof</span></button>
+      <button class="stage" data-stage="4" aria-label="Stage 5: evidence"><span class="st-idx">05</span><span class="orb">EVD</span><span class="st-name">Checks</span></button>
+      <button class="stage" data-stage="5" aria-label="Stage 6: reproduction"><span class="st-idx">06</span><span class="orb">RPR</span><span class="st-name">Reproduce</span></button>
     </div>
-    <div class="pipe-detail reveal" id="pipeDetail">
+    <div class="pipe-detail reveal" id="pipeDetail" aria-live="polite">
       <h3 id="pdTitle"></h3>
       <p id="pdText"></p>
       <span class="code-ref" id="pdRef"></span>
@@ -968,44 +953,38 @@ footer{
 <section id="object">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">THE OBJECT</span>
-      <h2 class="sec-title">SG(m) with a non-Abelian heartbeat</h2>
-      <p class="sec-sub">The standard Sierpiński-gasket approximation graph at refinement level m, carrying an SU(2)-valued connection with genuinely non-commuting holonomy.</p>
+      <span class="eyebrow">THE MATHEMATICAL OBJECT</span>
+      <h2 class="sec-title">A Sierpiński-gasket graph with an SU(2) connection</h2>
+      <p class="sec-sub">At refinement level m, the standard Sierpiński-gasket graph carries an SU(2)-valued edge connection. The two configurations below share the graph and flux placement but differ in their rotation-axis pattern.</p>
     </div>
     <div class="def-grid">
       <div class="def-card reveal">
         <div class="glow"></div>
         <h3><span class="chip chip-cyan">GRAPH</span> SG(m)</h3>
-        <p>Built by recursive triangle subdivision. Every count is closed-form and checked in
-        <span class="mono">tests/test_levels.py</span>. Flux is injected through exactly one designated
-        edge per elementary triangle; every edge (a,b) carries a unitary U(a,b) ∈ SU(2) with U(b,a) = U(a,b)†.</p>
+        <p>Build the graph by recursive triangle subdivision. Its vertex, edge, and face counts are given exactly below and checked by <span class="mono">tests/test_levels.py</span>. One designated edge per elementary triangle carries flux. Each oriented edge (a,b) has a unitary U(a,b) ∈ SU(2), with U(b,a) = U(a,b)†.</p>
         <div class="count-row">
-          <div class="count-pill"><b>n(m) = (3<sup>m+1</sup>+3)/2</b><span>vertices</span></div>
-          <div class="count-pill"><b>3<sup>m+1</sup></b><span>edges</span></div>
-          <div class="count-pill"><b>3<sup>m</sup></b><span>faces</span></div>
+          <div class="count-pill"><b>|V<sub>m</sub>| = (3<sup>m+1</sup>+3)/2</b><span>vertices</span></div>
+          <div class="count-pill"><b>|E<sub>m</sub>| = 3<sup>m+1</sup></b><span>edges</span></div>
+          <div class="count-pill"><b>|F<sub>m</sub>| = 3<sup>m</sup></b><span>elementary faces</span></div>
         </div>
-        <span class="mline">Hilbert space: C<sup>n</sup> ⊗ C²&ensp;·&ensp;dim(H) = 3<sup>m+1</sup> + 3</span>
+        <span class="mline">ℋ<sub>m</sub> = ℂ<sup>|V<sub>m</sub>|</sup> ⊗ ℂ² &nbsp;·&nbsp; dim ℋ<sub>m</sub> = 3<sup>m+1</sup> + 3</span>
       </div>
       <div class="def-card reveal d1">
         <div class="glow"></div>
-        <h3><span class="chip chip-pink">C</span> Non-commuting</h3>
-        <p>Rotation axis on the flux edge cycles <b>x/y/z by triangle index mod 3</b>. Verified to produce
-        genuinely non-commuting holonomy between triangles sharing a vertex —
-        ‖[U<sub>i</sub>, U<sub>j</sub>]‖ = <b>1.0</b>, the maximal value for unitary 2×2 matrices.</p>
-        <span class="mline">axis(t) ∈ {x, y, z},&ensp;t mod 3</span>
+        <h3><span class="chip chip-pink">C</span> Non-commuting connection</h3>
+        <p>The rotation axis on each designated flux edge cycles through <b>x, y, z by triangle index modulo 3</b>. The recorded test gives a commutator norm of 1.0 for the selected pair of edge matrices, confirming that this pair does not commute; no global maximality claim is made.</p>
+        <span class="mline">axis(t) ∈ {x, y, z}, &nbsp; t mod 3</span>
       </div>
       <div class="def-card reveal d2">
         <div class="glow"></div>
         <h3><span class="chip chip-violet">C′</span> Commuting control</h3>
-        <p>Identical, but the axis is fixed to <b>z</b> for every triangle. All edge matrices commute —
-        exactly equivalent to two decoupled U(1) magnetic SG Laplacians at flux ±θ/2.</p>
-        <span class="mline">axis(t) = z ∀t&ensp;·&ensp;C′ ≡ U(1) ⊕ U(1)</span>
+        <p>The comparison configuration keeps the graph and flux placement fixed but uses the z axis on every triangle. Its edge matrices commute and split into two decoupled U(1)-magnetic Sierpiński-gasket Laplacians with fluxes ±θ/2.</p>
+        <span class="mline">axis(t) = z for every t &nbsp;·&nbsp; C′ ≅ U(1) ⊕ U(1)</span>
       </div>
       <div class="def-card reveal d3">
         <div class="glow"></div>
         <h3><span class="chip chip-cyan">θ = 0</span> Reduction check</h3>
-        <p>At θ = 0 both configurations reduce <b>exactly</b> to two decoupled copies of the plain SG Laplacian —
-        pinned by a dedicated test in the suite.</p>
+        <p>At θ = 0 both configurations reduce to two decoupled copies of the plain Sierpiński-gasket Laplacian. This reduction is covered by a dedicated test.</p>
         <span class="mline">C(0) = C′(0) = SG ⊕ SG</span>
       </div>
     </div>
@@ -1018,55 +997,81 @@ footer{
 <section id="theorem">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">THE STATEMENT</span>
-      <h2 class="sec-title">Exact. Closed-form. Gauge-invariant.</h2>
+      <span class="eyebrow">THE PRINCIPAL THEOREM</span>
+      <h2 class="sec-title">An exact H⁴ trace-defect identity</h2>
     </div>
     <div class="theorem-shell reveal">
       <span class="corner tl"></span><span class="corner tr"></span>
       <span class="corner bl"></span><span class="corner br"></span>
-      <div class="thm-label">THEOREM — EVGENY THEOREM</div>
+      <div class="thm-label">LEAN-KERNEL THEOREM · H⁴</div>
       <p style="color:var(--ink-dim); max-width:820px;">
         Let <b style="color:var(--ink)">Δ<sub>m</sub>(H⁴, θ) = Tr(H<sub>C</sub>⁴) − Tr(H<sub>C′</sub>⁴)</b>
-        be the raw trace defect of the fourth power between the non-commuting configuration C and the
-        commuting control C′ on SG(m), at local rotation angle θ. Then, for every tested (m, θ) pair:
+        be the raw fourth-moment trace defect between the non-commuting configuration C and the commuting control C′ on SG(m). The identity holds for <b>every integer m ≥ 1 and every real θ</b>; it is not limited to the numerically tested levels.
       </p>
       <div class="big-formula">
-        <span class="boxed">Δ<sub>m</sub>(H<sup>4</sup>, θ) &nbsp;=&nbsp; −16 · (3<sup>m−1</sup> + 1) · sin<sup>2</sup>(θ/2)</span>
+        <div class="boxed math-display">
+          <math display="inline" aria-label="Delta sub m of H to the fourth, theta, equals minus 16 times 3 to the m minus 1 plus 1, times sine squared of theta over 2">
+            <mrow>
+              <msub><mi>Δ</mi><mi>m</mi></msub><mo>(</mo><msup><mi>H</mi><mn>4</mn></msup><mo>,</mo><mi>θ</mi><mo>)</mo>
+              <mo>=</mo><mo>−</mo><mn>16</mn><mo>·</mo><mo>(</mo>
+              <msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>1</mn><mo>)</mo><mo>·</mo>
+              <msup><mrow><mi mathvariant="normal">sin</mi><mo>⁡</mo><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow><mn>2</mn></msup>
+            </mrow>
+          </math>
+        </div>
       </div>
       <div class="sub-formulas">
         <div class="sub-f">
-          <b>INTENSIVE INVARIANT</b> — normalizing by dim(H) = 3<sup>m+1</sup> + 3:
-          <span class="ff">I<sub>m</sub>(θ) = Δ<sub>m</sub>(H⁴,θ) / dim(H) = −8(3<sup>m−1</sup>+1)·sin²(θ/2) / (3<sup>m+1</sup>+3)</span>
+          <b>NORMALIZED TRACE DEFECT</b> — with dim(ℋ<sub>m</sub>) = 3<sup>m+1</sup> + 3:
+          <div class="math-display compact">
+            <math display="block" aria-label="I sub m of theta equals delta sub m divided by three to the m plus one plus three equals minus sixteen times three to the m minus one plus one over three to the m plus one plus three times sine squared of theta over two">
+              <mrow>
+                <msub><mi>I</mi><mi>m</mi></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo>
+                <mfrac><mrow><msub><mi>Δ</mi><mi>m</mi></msub><mo>(</mo><msup><mi>H</mi><mn>4</mn></msup><mo>,</mo><mi>θ</mi><mo>)</mo></mrow><mrow><msup><mn>3</mn><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>3</mn></mrow></mfrac>
+                <mo>=</mo><mo>−</mo>
+                <mfrac><mrow><mn>16</mn><mo>(</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>1</mn><mo>)</mo></mrow><mrow><msup><mn>3</mn><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>3</mn></mrow></mfrac>
+                <msup><mrow><mi mathvariant="normal">sin</mi><mo>⁡</mo><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow><mn>2</mn></msup>
+              </mrow>
+            </math>
+          </div>
         </div>
         <div class="sub-f">
-          <b>EXACT LIMIT</b> — at θ = π/2, geometric convergence with rate 1/3:
-          <span class="ff">lim<sub>m→∞</sub> I<sub>m</sub>(π/2) = −8/9&ensp;·&ensp;rate = 1/3 (vertex growth, not spectral 1/5)</span>
+          <b>EXACT LIMIT</b> — for every real θ, with the special value at θ = π/2:
+          <div class="math-display compact">
+            <math display="block" aria-label="I infinity of theta equals minus sixteen ninths times sine squared of theta over two">
+              <mrow>
+                <msub><mi>I</mi><mi>∞</mi></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mo>−</mo><mfrac><mn>16</mn><mn>9</mn></mfrac>
+                <msup><mrow><mi mathvariant="normal">sin</mi><mo>⁡</mo><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow><mn>2</mn></msup>
+              </mrow>
+            </math>
+            <math display="block" aria-label="I infinity of pi over two equals minus eight ninths">
+              <mrow><msub><mi>I</mi><mi>∞</mi></msub><mo>(</mo><mfrac><mi>π</mi><mn>2</mn></mfrac><mo>)</mo><mo>=</mo><mo>−</mo><mfrac><mn>8</mn><mn>9</mn></mfrac></mrow>
+            </math>
+          </div>
         </div>
       </div>
-
-      <!-- LIVE CLOSED FORM -->
       <div class="calc">
         <div class="calc-head">
-          <h4>◈ LIVE CLOSED FORM — O(1) EVALUATION</h4>
-          <span class="calc-live">EVALUATING</span>
+          <h4>◈ LIVE CLOSED-FORM CALCULATOR</h4>
+          <span class="calc-live">LIVE</span>
         </div>
         <div class="calc-grid">
           <div class="slider-block">
             <label>Rotation angle θ <output id="thetaOut">θ = 1.5708</output></label>
-            <input type="range" id="thetaSlider" min="0" max="3.1416" step="0.0001" value="1.5708">
+            <input type="range" id="thetaSlider" min="0" max="3.1416" step="0.0001" value="1.5708" aria-label="Rotation angle theta">
           </div>
           <div class="slider-block">
             <label>Refinement level m <output id="mOut">m = 4</output></label>
-            <input type="range" id="mSlider" min="1" max="7" step="1" value="4">
+            <input type="range" id="mSlider" min="1" max="7" step="1" value="4" aria-label="Refinement level m">
           </div>
-          <div class="calc-out">
-            Δ<sub>m</sub>(H<sup>4</sup>, θ) = <b id="calcDelta">−</b><br>
-            dim(H) = <b id="calcDim">−</b><br>
+          <div class="calc-out" aria-live="polite">
+            Δ<sub>m</sub>(H⁴, θ) = <b id="calcDelta">−</b><br>
+            dim(ℋ<sub>m</sub>) = <b id="calcDim">−</b><br>
             I<sub>m</sub>(θ) = <b id="calcI">−</b><br>
-            I<sub>m</sub>(π/2) → <b class="target">−8/9 = −0.888888…</b>
+            I<sub>∞</sub>(θ) = <b id="calcLimit">−</b>
           </div>
         </div>
-        <div class="calc-note">// any (m, θ) in O(1) arithmetic — no 2n(m)-dimensional operator is ever constructed</div>
+        <div class="calc-note">The calculator preview is limited to m = 1,…,7. It evaluates the scalar closed form directly and does not construct or diagonalize the matrix. No O(1) bit-complexity claim is made; the integer power and output size grow with m.</div>
       </div>
     </div>
   </div>
@@ -1078,19 +1083,19 @@ footer{
 <section id="verification">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">EVIDENCE</span>
-      <h2 class="sec-title">Verification at a glance</h2>
-      <p class="sec-sub">Three independent lines of evidence: the refinement sequence at θ = π/2, a held-out parameter cross-check, and a random SU(2) gauge transformation.</p>
+      <span class="eyebrow">NUMERICAL EVIDENCE</span>
+      <h2 class="sec-title">Independent checks of the H⁴ identity</h2>
+      <p class="sec-sub">These computations supplement, but do not replace, the Lean-kernel proof: a refinement sequence, held-out matrix calculations, and a numerical gauge-transformation check.</p>
     </div>
     <div class="reveal">
       <div class="vtabs">
-        <button class="vtab active" data-tab="0">Refinement Sequence · θ = π/2</button>
-        <button class="vtab" data-tab="1">Held-Out Cross-Check</button>
-        <button class="vtab" data-tab="2">Gauge Invariance</button>
+        <button class="vtab active" data-tab="0">Refinement sequence · θ = π/2</button>
+        <button class="vtab" data-tab="1">Held-out parameter checks</button>
+        <button class="vtab" data-tab="2">Gauge transformation</button>
       </div>
       <div class="vpanel active">
         <table>
-          <thead><tr><th>m</th><th>dim(H)</th><th>I_m(π/2)</th><th>I_m / I_(m−1)</th></tr></thead>
+          <thead><tr><th>m</th><th>dim(ℋ<sub>m</sub>)</th><th>I<sub>m</sub>(π/2)</th><th>I<sub>m</sub> / I<sub>m−1</sub></th></tr></thead>
           <tbody>
             <tr><td>1</td><td>12</td><td>−1.333333</td><td>—</td></tr>
             <tr><td>2</td><td>30</td><td>−1.066667</td><td>0.8000</td></tr>
@@ -1101,30 +1106,30 @@ footer{
             <tr class="hl"><td>7</td><td>6564</td><td>−0.889701</td><td>0.9982</td></tr>
           </tbody>
         </table>
-        <div class="vnote"><b>→</b> Aitken Δ²-extrapolation of m = 5,6,7: <b>−0.8888855</b> vs. exact <b>−8/9 = −0.8888889</b> — difference 3.3×10⁻⁶.</div>
+        <div class="vnote"><b>→</b> Aitken Δ²-extrapolation from m = 5, 6, 7 gives −0.8888855, within 3.35×10⁻⁶ of the exact limit −8/9.</div>
       </div>
       <div class="vpanel">
         <table>
-          <thead><tr><th>m</th><th>θ</th><th>Direct computation</th><th>Closed form</th><th>|Δ|</th></tr></thead>
+          <thead><tr><th>m</th><th>θ</th><th>Direct trace</th><th>Closed form</th><th>Absolute error</th></tr></thead>
           <tbody>
-            <tr><td>2</td><td>0.7</td><td>−7.5250500069</td><td>−7.5250500069</td><td class="ok">2.2×10⁻¹²</td></tr>
-            <tr><td>3</td><td>1.9</td><td>−105.8631653491</td><td>−105.8631653491</td><td class="ok">8.2×10⁻¹³</td></tr>
-            <tr><td>5</td><td>2.5</td><td>−1181.5502117988</td><td>−1181.5502117988</td><td class="ok">1.9×10⁻¹¹</td></tr>
-            <tr><td>1</td><td>3.0</td><td>−31.8398799456</td><td>−31.8398799456</td><td class="ok">8.2×10⁻¹⁴</td></tr>
-            <tr><td>4</td><td>0.3</td><td>−10.0046264358</td><td>−10.0046264359</td><td class="ok">2.5×10⁻¹¹</td></tr>
+            <tr><td>2</td><td>0.7</td><td>−7.5250500069</td><td>−7.5250500069</td><td class="ok">2.21×10⁻¹²</td></tr>
+            <tr><td>3</td><td>1.9</td><td>−105.8631653491</td><td>−105.8631653491</td><td class="ok">8.24×10⁻¹³</td></tr>
+            <tr><td>5</td><td>2.5</td><td>−1181.5502117988</td><td>−1181.5502117988</td><td class="ok">1.86×10⁻¹¹</td></tr>
+            <tr><td>1</td><td>3.0</td><td>−31.8398799456</td><td>−31.8398799456</td><td class="ok">8.17×10⁻¹⁴</td></tr>
+            <tr><td>4</td><td>0.3</td><td>−10.0046264358</td><td>−10.0046264359</td><td class="ok">2.54×10⁻¹¹</td></tr>
           </tbody>
         </table>
-        <div class="vnote"><b>→</b> Parameters never used to derive the formula. Agreement to 1e−11 … 1e−14 — the identity holds, not the fit.</div>
+        <div class="vnote"><b>→</b> These held-out parameter pairs were selected after the formula was fixed. The largest listed absolute discrepancy is 2.54×10⁻¹¹; the all-level identity is established separately in Lean.</div>
       </div>
       <div class="vpanel">
         <table>
-          <thead><tr><th>Check</th><th>Result</th></tr></thead>
+          <thead><tr><th>Numerical gauge check (level 3, seed 42)</th><th>Result</th></tr></thead>
           <tbody>
-            <tr><td>max | spec(H) − spec(H_gauge) |</td><td class="ok">7.99×10⁻¹⁵</td></tr>
-            <tr><td>M₄ difference under gauge transformation</td><td class="ok">exactly 0</td></tr>
+            <tr><td>max |spec(H) − spec(H<sub>gauge</sub>)|</td><td class="ok">7.99×10⁻¹⁵</td></tr>
+            <tr><td>M<sub>4</sub> difference</td><td class="ok">0 at recorded precision</td></tr>
           </tbody>
         </table>
-        <div class="vnote"><b>→</b> Random SU(2) gauge transformation at level 3. The fourth moment is a spectral, gauge-invariant quantity.</div>
+        <div class="vnote"><b>→</b> A vertex-wise SU(2) gauge transformation was applied numerically. These values are a numerical invariance check, not a substitute for the formal trace identity.</div>
       </div>
     </div>
   </div>
@@ -1137,17 +1142,17 @@ footer{
 <section id="protocol">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">ACCEPTANCE PROTOCOL</span>
-      <h2 class="sec-title">Six criteria. Not fewer.</h2>
-      <p class="sec-sub">I_m was accepted as a genuine structural invariant only after passing all six of the following checks.</p>
+      <span class="eyebrow">PROJECT-DEFINED DIAGNOSTICS</span>
+      <h2 class="sec-title">Six checks for the normalized H⁴ invariant</h2>
+      <p class="sec-sub">This is the project's six-criterion diagnostic protocol for the normalized trace defect I<sub>m</sub>. It is not an external peer-review decision, and the numerical checks are labelled as numerical evidence.</p>
     </div>
     <div class="proto-grid">
-      <div class="proto-card reveal"><div class="proto-num">CRITERION i <span class="proto-check">✓</span></div><h4>Stable limit as m → ∞</h4><p>Geometric convergence to −8/9, confirmed to refinement level m = 7 (dim 6564).</p></div>
-      <div class="proto-card reveal d1"><div class="proto-num">CRITERION ii <span class="proto-check">✓</span></div><h4>Distinct from A and B</h4><p>Differs from plain SG and U(1)-magnetic SG — the quantity does not exist in A or B by construction.</p></div>
-      <div class="proto-card reveal d2"><div class="proto-num">CRITERION iii <span class="proto-check">✓</span></div><h4>Survives normalization</h4><p>Computed as a per-state quantity throughout — the intensive invariant I_m, not the raw trace.</p></div>
-      <div class="proto-card reveal"><div class="proto-num">CRITERION iv <span class="proto-check">✓</span></div><h4>Gauge-invariant</h4><p>Verified to 8×10⁻¹⁵ under a random SU(2) gauge transformation; M₄ difference exactly 0.</p></div>
-      <div class="proto-card reveal d1"><div class="proto-num">CRITERION v <span class="proto-check">✓</span></div><h4>Not a trivial counting function</h4><p>C and C′ are identical in dim / edges / faces / flux-density — only the axis choice differs.</p></div>
-      <div class="proto-card reveal d2"><div class="proto-num">CRITERION vi <span class="proto-check">✓</span></div><h4>Vanishes in the commuting limit</h4><p>I_m = M₄(C) − M₄(C′) is zero exactly at moments p = 1,2,3 — first nonzero at p = 4.</p></div>
+      <div class="proto-card reveal"><div class="proto-num">CRITERION I <span class="proto-check">✓</span></div><h4>Exact stable limit</h4><p>At θ = π/2, I<sub>m</sub> tends to −8/9. The exact error is −16/[9(3<sup>m</sup>+1)], so the successive-error ratio tends to 1/3.</p></div>
+      <div class="proto-card reveal d1"><div class="proto-num">CRITERION II <span class="proto-check">✓</span></div><h4>Distinguishes the two connections</h4><p>C and C′ use the same graph and flux placement but different rotation-axis patterns. The trace defect measures that connection change.</p></div>
+      <div class="proto-card reveal d2"><div class="proto-num">CRITERION III <span class="proto-check">✓</span></div><h4>Survives normalization</h4><p>The per-state quantity has the finite limit I<sub>∞</sub>(θ) = −16/9 · sin²(θ/2), nonzero whenever sin(θ/2) ≠ 0.</p></div>
+      <div class="proto-card reveal"><div class="proto-num">CRITERION IV <span class="proto-check">✓</span></div><h4>Gauge-invariance check</h4><p>A numerical vertex-wise SU(2) gauge test at level 3 gives a maximum spectral discrepancy of 7.99×10⁻¹⁵; the recorded M<sub>4</sub> difference is 0.</p></div>
+      <div class="proto-card reveal d1"><div class="proto-num">CRITERION V <span class="proto-check">✓</span></div><h4>Not a graph-count effect</h4><p>The two configurations have identical graph, dimension, edge and face counts, and flux placement. The changed data are the connection axes.</p></div>
+      <div class="proto-card reveal d2"><div class="proto-num">CRITERION VI <span class="proto-check">✓</span></div><h4>First nonzero trace defect at p = 4</h4><p>The recorded lower-moment calculation gives zero trace defect for p = 1, 2, 3; p = 4 is the first nonzero moment.</p></div>
     </div>
   </div>
 </section>
@@ -1158,23 +1163,25 @@ footer{
 <section id="context">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">HONEST SCOPE</span>
-      <h2 class="sec-title">What the closed form does —<br>and what it does not claim</h2>
+      <span class="eyebrow">SCOPE OF THE H⁴ IDENTITY</span>
+      <h2 class="sec-title">What this theorem establishes — and what it does not</h2>
     </div>
     <div class="scope-grid">
       <div class="scope-card in reveal">
-        <h3><span class="proto-check">✓</span> In scope</h3>
+        <h3><span class="proto-check">✓</span> Established by the H⁴ theorem</h3>
         <ul>
-          <li><b>O(1) evaluation</b> of Δ_m(H⁴, θ) for any (m, θ) — no operator construction required.</li>
-          <li>Applies strictly to the <b>single defined quantity</b>: the fourth spectral moment.</li>
-          <li>Accepted as a structural invariant only after passing all <b>six criteria</b> of the acceptance protocol — stability, distinctness from simpler models, gauge invariance, and more.</li>
-          <li>Full reproducibility: formula, code, tests, data — all independently checkable.</li>
+          <li>An exact formula for the raw fourth-moment trace defect Δ<sub>m</sub>(H⁴,θ), for every integer m ≥ 1 and every real θ; the theorem is checked by the Lean kernel.</li>
+          <li>The normalized limit I<sub>∞</sub>(θ) = −16/9 · sin²(θ/2), including I<sub>∞</sub>(π/2) = −8/9.</li>
+          <li>The scalar formula can be evaluated without constructing the finite operator matrix or diagonalizing it. No bit-complexity bound is claimed.</li>
+          <li>The theorem statement, Lean declaration, numerical checks, and reproducibility commands are available in the repository.</li>
         </ul>
       </div>
       <div class="scope-card out reveal d1">
-        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Explicitly out of scope</h3>
+        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Not implied by the H⁴ theorem</h3>
         <ul>
-          <li><b>Not a complexity-theory result.</b> The full spectrum and spectral gap still require direct construction and diagonalization; the closed form covers only the fourth moment.</li>
+          <li>The identity does not determine the full spectrum, individual eigenvalues, or the spectral gap. Those require separate spectral analysis.</li>
+          <li>This is not a theorem in computational complexity and does not establish an asymptotic algorithm for computing the full spectrum or spectral gap.</li>
+          <li>H⁶, H⁸, and H¹⁰ are separate higher-moment results with their own proof assumptions and formalization status; they are summarized in the next section.</li>
         </ul>
       </div>
     </div>
@@ -1187,65 +1194,50 @@ footer{
 <section id="lean">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">MACHINE-CHECKED LAYER</span>
-      <h2 class="sec-title">Lean 4: proved where provable —<br>declared where not</h2>
-      <p class="sec-sub">The graph-level construction of SG(m) lives in the <b style="color:var(--cyan)">formalization/</b> directory and is checked by <b style="color:var(--cyan)">lake build</b> against Mathlib. The kernel decides graph facts directly — nothing is assumed. Below: the operator layer exactly as stated in Lean, and precisely what is proved versus open.</p>
+      <span class="eyebrow">MACHINE-CHECKED MATHEMATICS</span>
+      <h2 class="sec-title">Lean 4 theorem statements and proof boundaries</h2>
+      <p class="sec-sub">The H⁴ identity below is checked by Lean 4 for every m ≥ 1 and every real θ. The kernel checks the formal proof; selected finite graph sanity checks use <code>native_decide</code>. Python numerical tests and exact finite certificates are reported separately and are not presented as Lean proofs.</p>
     </div>
     <div class="stats-grid lean-stats reveal">
-        <div class="stat"><div class="val" style="color:var(--green)">lake&nbsp;build&nbsp;&#10003;</div><div class="cap">Machine-checked<br>vs Mathlib</div></div>
-        <div class="stat"><div class="val"><em style="color:var(--green)">0</em></div><div class="cap">sorry in the<br>proof chain</div></div>
-        <div class="stat"><div class="val"><em style="color:var(--green)">m&nbsp;&ge;&nbsp;1</em></div><div class="cap">every level,<br>every &theta;</div></div>
-        <div class="stat"><div class="val"><em style="color:var(--green)">std</em></div><div class="cap">axioms only<br>(#print axioms)</div></div>
-      </div>
-      <div class="lean-ide reveal">
-        <div class="term lean-term">
-          <div class="term-bar"><i></i><i></i><i></i><span>formalization/EvgenyTheorem/ &mdash; key statements (proofs omitted)</span></div>
-          <div class="term-body lean-code"><span class="lc-com">/-- THE EVGENY THEOREM, operator level: PROVED for every m &ge; 1, every &theta;. -/</span>
+      <div class="stat"><div class="val" style="color:var(--green)">lake build ✓</div><div class="cap">Lean project<br>builds against Mathlib</div></div>
+      <div class="stat"><div class="val"><em style="color:var(--green)">0</em></div><div class="cap">sorry in the<br>H⁴ proof chain</div></div>
+      <div class="stat"><div class="val"><em style="color:var(--green)">m ≥ 1</em></div><div class="cap">H⁴ theorem<br>every real θ</div></div>
+      <div class="stat"><div class="val" style="font-size:16px">standard</div><div class="cap">Lean axioms<br>see formalization/README.md</div></div>
+    </div>
+    <div class="lean-ide reveal">
+      <div class="term lean-term">
+        <div class="term-bar"><i></i><i></i><i></i><span>formalization/EvgenyTheorem/TildeEntries.lean — theorem statement</span></div>
+        <div class="term-body lean-code"><span class="lc-com">/-- The concrete H⁴ trace-defect identity, for all m ≥ 1 and all real θ. -/</span>
 <span class="lc-thm">theorem</span> <span class="lc-fn">traceDefect_closed</span> (&theta; : ℝ) (m : ℕ) (hm : 1 &le; m) :
     traceDefect m &theta; =
-      -16 * ((3 : ℂ) ^ (m - 1) + 1) * ((Real.sin (&theta; / 2) : ℝ) : ℂ) ^ 2
-
-<span class="lc-com">/-- Coupled recursion over two orientations. -/</span>
-<span class="lc-thm">theorem</span> <span class="lc-fn">defect_succ_num</span> (m : ℕ) (hm : 1 &le; m) (&theta; : ℝ) :
-    defectO (m + 1) &theta; faceAxis (fun _ =&gt; 2) (oNum (m + 1)) =
-      2 * defectO m &theta; faceAxis (fun _ =&gt; 2) (oNum m) +
-        defectO m &theta; faceAxis (fun _ =&gt; 2) (oTil m)
-<span class="lc-thm">theorem</span> <span class="lc-fn">defect_succ_til</span> (m : ℕ) (hm : 1 &le; m) (&theta; : ℝ) :
-    defectO (m + 1) &theta; faceAxis (fun _ =&gt; 2) (oTil (m + 1)) =
-      defectO m &theta; faceAxis (fun _ =&gt; 2) (oNum m) +
-        2 * defectO m &theta; faceAxis (fun _ =&gt; 2) (oTil m)
-
-<span class="lc-com">/-- Base case with the corner flux edge reversed. -/</span>
-<span class="lc-thm">theorem</span> <span class="lc-fn">tilde_base</span> (&theta; : ℝ) :
-    defectO 1 &theta; faceAxis (fun _ =&gt; 2) (oTil 1) = 0</div>
+      -16 * ((3 : ℂ) ^ (m - 1) + 1) * ((Real.sin (&theta; / 2) : ℝ) : ℂ) ^ 2</div>
+      </div>
+      <div class="lean-verdicts">
+        <div class="verdict proved">
+          <div class="v-head"><span class="v-name">traceDefect_closed</span><span class="v-badge proved">PROVED</span></div>
+          <p>For the concrete configurations C and C′ on SG(m), the raw trace defect is Δ<sub>m</sub>(H⁴,θ) = −16(3<sup>m−1</sup>+1)sin²(θ/2), for every m ≥ 1 and every real θ. Machine-checked in Lean; no <code>sorry</code>.</p>
         </div>
-        <div class="lean-verdicts">
-          <div class="verdict proved">
-            <div class="v-head"><span class="v-name">traceDefect_closed</span><span class="v-badge proved">PROVED</span></div>
-            <p>For the concrete operators <b>H<sub>C</sub></b> and <b>H<sub>C&prime;</sub></b> on SG(m): <b>&Delta;<sub>m</sub>(H&#8308;, &theta;) = &minus;16(3<sup>m&minus;1</sup>+1) sin&sup2;(&theta;/2)</b>, for every m &ge; 1 and every &theta;. Kernel-checked, no <code>sorry</code>.</p>
-          </div>
-          <div class="verdict proved">
-            <div class="v-head"><span class="v-name">gluing + recursion</span><span class="v-badge proved">PROVED</span></div>
-            <p>Three copies glued into the next level, corner data proved for every m, and the recursions D<sub>m+1</sub> = 2D<sub>m</sub> + D&#771;<sub>m</sub>, D&#771;<sub>m+1</sub> = D<sub>m</sub> + 2D&#771;<sub>m</sub> close the induction.</p>
-          </div>
-          <div class="verdict proved">
-            <div class="v-head"><span class="v-name">proof scope</span><span class="v-badge proved">CURRENT STATUS</span></div>
-            <p>The H⁴ theorem is for m ≥ 1 (not m = 0). H6 and H8 have Lean-checked recurrences for m ≥ 3 and exact symbolic certificates for the finite m = 2 → 3 transitions; those finite bridges are not yet Lean-kernel theorems. For H10 (tenth moment), <code>H10TransportAll_proved</code> proves radius-four diagonal transport through degree nine for both configurations at every m ≥ 4. Therefore the H10 affine recurrence (m ≥ 4) and affine form from level five (m ≥ 5) are unconditional Lean theorems for every real θ. The exact level-five correction remains a finite trace expression, not yet simplified to an explicit trigonometric polynomial.</p>
-          </div>
+        <div class="verdict proved">
+          <div class="v-head"><span class="v-name">H⁴ gluing + orientation recursion</span><span class="v-badge proved">PROVED</span></div>
+          <p>Writing D<sub>m</sub> and D̃<sub>m</sub> for the two orientations, the coupled recurrences are D<sub>m+1</sub> = 2D<sub>m</sub> + D̃<sub>m</sub> and D̃<sub>m+1</sub> = D<sub>m</sub> + 2D̃<sub>m</sub>. These are the induction step used in the H⁴ proof.</p>
+        </div>
+        <div class="verdict proved">
+          <div class="v-head"><span class="v-name">higher-moment proof scope</span><span class="v-badge proved">CURRENT STATUS</span></div>
+          <p>H⁶ and H⁸ have Lean recurrences for m ≥ 3; their finite m = 2 → 3 bridges are exact certificates outside the Lean kernel. For H¹⁰, <code>H10TransportAll_proved</code> establishes radius-four diagonal transport through degree nine for both configurations at every m ≥ 4. Consequently, the H¹⁰ affine recurrence for m ≥ 4 and affine formula from level five for m ≥ 5 are unconditional Lean theorems. The level-five correction remains an exact trace expression, not an unproved hypothesis.</p>
         </div>
       </div>
-
-      <div class="reveal" style="margin-top:26px;">
+    </div>
+    <div class="reveal" style="margin-top:26px;">
       <table>
-        <thead><tr><th>Result</th><th>Status</th><th>Basis</th></tr></thead>
+        <thead><tr><th>Result</th><th>Status</th><th>Proof or evidence boundary</th></tr></thead>
         <tbody>
-          <tr><td>Lean 4 graph infrastructure — SG(m), Vertex, Adj, degree</td><td class="ok">CONFIRMED</td><td>computable + decidable instances, lake build</td></tr>
-          <tr><td>H4 exact closed form · I∞(π/2) = −8/9</td><td class="ok">PROVED</td><td>Lean-kernel theorem <code>traceDefect_closed</code>; all m ≥ 1 and all θ</td></tr>
-          <tr><td>Gauge invariance · vanishes at p = 1, 2, 3</td><td class="ok">CONFIRMED</td><td>&lt; 8e−15 under random SU(2) gauge · first nonzero at p = 4</td></tr>
-          <tr><td>H6 all-angle recurrence and closed form (m ≥ 2)</td><td style="color:var(--amber)">DERIVED</td><td>Lean recurrence for m ≥ 3; exact symbolic certificate for the m = 2 → 3 base transition</td></tr>
-          <tr><td>H8 all-angle affine law and closed form (m ≥ 2)</td><td style="color:var(--amber)">DERIVED</td><td>Lean recurrence for m ≥ 3; exact sparse-polynomial certificate for the m = 2 → 3 base transition</td></tr>
-          <tr><td>H10 (tenth moment) affine form from level five (m ≥ 5)</td><td class="ok">UNCONDITIONAL</td><td>Lean theorems <code>H10TransportAll_proved</code> and <code>defectO10_num_affine_closed_form_from_level5_unconditional</code>; exact level-five correction retained in trace form</td></tr>
-          <tr><td>Lean 4 operator-level closed form (all m &ge; 1, all &theta;)</td><td class="ok">CONFIRMED</td><td>machine-checked, no sorry &middot; <code>traceDefect_closed</code></td></tr>
+          <tr><td>SG(m) graph infrastructure</td><td class="ok">LEAN BUILD</td><td>Graph, vertex, adjacency, and degree infrastructure; selected finite checks use <code>native_decide</code>.</td></tr>
+          <tr><td>H⁴ exact trace-defect formula</td><td class="ok">PROVED</td><td><code>traceDefect_closed</code>; every m ≥ 1 and every real θ.</td></tr>
+          <tr><td>Normalized H⁴ limit</td><td class="ok">EXACT CONSEQUENCE</td><td>I<sub>∞</sub>(θ) = −16/9 · sin²(θ/2); at θ = π/2, the value is −8/9.</td></tr>
+          <tr><td>Gauge invariance</td><td class="ok">NUMERICAL CHECK</td><td>Random vertex-wise SU(2) gauge transformation; max spectral discrepancy 7.99×10⁻¹⁵ at level 3.</td></tr>
+          <tr><td>H⁶ recurrence / closed form</td><td style="color:var(--amber)">MIXED EVIDENCE</td><td>Lean recurrence for m ≥ 3; exact symbolic m = 2 → 3 certificate; combined formula for m ≥ 2. The finite bridge is not yet a Lean-kernel theorem.</td></tr>
+          <tr><td>H⁸ recurrence / closed form</td><td style="color:var(--amber)">MIXED EVIDENCE</td><td>Lean recurrence for m ≥ 3; exact sparse-polynomial m = 2 → 3 certificate; combined formula for m ≥ 2. The finite bridge is not yet a Lean-kernel theorem.</td></tr>
+          <tr><td>H¹⁰ affine recurrence and form</td><td class="ok">UNCONDITIONAL LEAN</td><td>Recurrence for m ≥ 4 and affine form for m ≥ 5, all real θ; <code>H10TransportAll_proved</code> and <code>defectO10_num_affine_closed_form_from_level5_unconditional</code>.</td></tr>
         </tbody>
       </table>
     </div>
@@ -1258,45 +1250,58 @@ footer{
 <section id="frontier">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">BEYOND H⁴ — OPEN PROGRAM</span>
-      <h2 class="sec-title">Higher moments: the frontier</h2>
-      <p class="sec-sub">H⁶ and H⁸ still have finite base transitions outside the Lean kernel. H10 (tenth moment) now has proved radius-four transport and an unconditional affine formula; only its exact coefficient remains unsimplified.</p>
+      <span class="eyebrow">HIGHER MOMENTS · CURRENT PROOF STATUS</span>
+      <h2 class="sec-title">H⁶, H⁸, and H¹⁰: what is established</h2>
+      <p class="sec-sub">These are separate higher-moment results; they do not follow automatically from the H⁴ theorem. Each item below states exactly what is checked in Lean and what remains outside the kernel.</p>
     </div>
-    <div class="stats-grid reveal" style="padding:0 0 30px;">
-      <div class="stat"><div class="val">m = 4, 5 → 3</div><div class="cap">H6 linear-growth fit on the tested angle grid</div></div>
-      <div class="stat"><div class="val">&lt;10⁻¹⁰</div><div class="cap">fitted 3<sup>2m</sup>/3<sup>m</sup> coefficient ratio on tested angles</div></div>
-      <div class="stat"><div class="val">5280</div><div class="cap">C(π) = 2^5·3·5·11 — exact</div></div>
-      <div class="stat"><div class="val">486</div><div class="cap">SG(1) walks visiting all three triangles</div></div>
-      <div class="stat"><div class="val">p = 4</div><div class="cap">first nonzero moment</div></div>
-      <div class="stat"><div class="val">H6 · H8 · H10</div><div class="cap">higher-moment references; proof status below</div></div>
+    <div class="stats-grid reveal" style="grid-template-columns:repeat(4,1fr);padding:0 0 30px;">
+      <div class="stat"><div class="val">H⁶</div><div class="cap">Lean recurrence<br>m ≥ 3</div></div>
+      <div class="stat"><div class="val">H⁸</div><div class="cap">Lean recurrence<br>m ≥ 3</div></div>
+      <div class="stat"><div class="val">H¹⁰</div><div class="cap">Unconditional affine form<br>m ≥ 5</div></div>
+      <div class="stat"><div class="val">486</div><div class="cap">SG(1) walk classes<br>visiting all 3 triangles</div></div>
     </div>
     <div class="scope-grid">
       <div class="scope-card in reveal">
-        <h3><span class="proto-check">✓</span> Established — Lean theorems and exact certificates</h3>
+        <h3><span class="proto-check">✓</span> Established results</h3>
         <ul>
-          <li><b>H6 (sixth moment).</b> Lean proves the all-angle recurrence for m ≥ 3; an exact symbolic certificate supplies the finite m = 2 → 3 transition. At θ = π, C6(π) = 5280.</li>
-          <li><b>H8 (eighth moment).</b> Lean proves the all-angle affine recurrence for m ≥ 3; an exact sparse-polynomial certificate supplies the finite m = 2 → 3 transition.</li>
-          <li><b>H10 (tenth moment) — unconditional.</b> <code>H10TransportAll_proved</code> proves degree-one-through-nine radius-four diagonal transport for both configurations at every m ≥ 4. Lean consequently proves the affine recurrence for m ≥ 4 and the affine formula from level five for m ≥ 5, for every real θ.
-            <div style="font-family:var(--mono);font-size:13px;line-height:1.9;overflow-wrap:anywhere;color:var(--ink);background:rgba(5,6,14,.55);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0;">
-              D<sub>m+1</sub><sup>(10)</sup>(&theta;) = 3D<sub>m</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;), &nbsp; m ≥ 4<br>
-              D<sub>m</sub><sup>(10)</sup>(&theta;) = 3<sup>m−5</sup>(D<sub>5</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;)/2) − C<sub>10</sub><sup>(5)</sup>(&theta;)/2, &nbsp; m ≥ 5
+          <li><b>H⁶ (sixth moment).</b> Lean proves the all-angle recurrence for m ≥ 3. An exact symbolic certificate supplies the finite m = 2 → 3 transition, giving the combined all-angle formula for m ≥ 2. That finite bridge is not yet a Lean-kernel theorem.</li>
+          <li><b>H⁸ (eighth moment).</b> Lean proves the all-angle affine recurrence for m ≥ 3. An exact sparse-polynomial certificate supplies the finite m = 2 → 3 transition, giving the combined formula for m ≥ 2. That finite bridge is not yet a Lean-kernel theorem.</li>
+          <li><b>H¹⁰ (tenth moment).</b> <code>H10TransportAll_proved</code> proves radius-four diagonal transport through degree nine for both configurations at every m ≥ 4. Lean consequently proves the affine recurrence for m ≥ 4 and the affine formula from level five for m ≥ 5, for every real θ.
+            <div class="math-display compact">
+              <math display="block" aria-label="D sub m plus one of order ten equals three D sub m of order ten plus C ten level five of theta, for m at least four">
+                <mrow>
+                  <msup><msub><mi>D</mi><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msub><mrow><mo>(</mo><mn>10</mn><mo>)</mo></mrow></msup>
+                  <mo>=</mo><mn>3</mn><msup><msub><mi>D</mi><mi>m</mi></msub><mrow><mo>(</mo><mn>10</mn><mo>)</mo></mrow></msup>
+                  <mo>+</mo><msup><msub><mi>C</mi><mn>10</mn></msub><mrow><mo>(</mo><mn>5</mn><mo>)</mo></mrow></msup><mo>(</mo><mi>θ</mi><mo>)</mo><mo>,</mo><mspace width="0.5em"/><mi>m</mi><mo>≥</mo><mn>4</mn>
+                </mrow>
+              </math>
+              <math display="block" aria-label="D sub m order ten equals three to the m minus five times D five order ten plus C ten level five of theta over two, minus C ten level five of theta over two, for m at least five">
+                <mrow>
+                  <msup><msub><mi>D</mi><mi>m</mi></msub><mrow><mo>(</mo><mn>10</mn><mo>)</mo></mrow></msup><mo>=</mo>
+                  <msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>5</mn></mrow></msup>
+                  <mo>(</mo><msup><msub><mi>D</mi><mn>5</mn></msub><mrow><mo>(</mo><mn>10</mn><mo>)</mo></mrow></msup>
+                  <mo>+</mo><mfrac><mrow><msup><msub><mi>C</mi><mn>10</mn></msub><mrow><mo>(</mo><mn>5</mn><mo>)</mo></mrow></msup><mo>(</mo><mi>θ</mi><mo>)</mo></mrow><mn>2</mn></mfrac><mo>)</mo>
+                  <mo>−</mo><mfrac><mrow><msup><msub><mi>C</mi><mn>10</mn></msub><mrow><mo>(</mo><mn>5</mn><mo>)</mo></mrow></msup><mo>(</mo><mi>θ</mi><mo>)</mo></mrow><mn>2</mn></mfrac>
+                  <mo>,</mo><mspace width="0.5em"/><mi>m</mi><mo>≥</mo><mn>5</mn>
+                </mrow>
+              </math>
             </div>
           </li>
-          <li><b>H6 path classes on SG(1).</b> Single- and two-triangle walk classes contribute zero; the 486 walks visiting all three triangles contribute nonzero.</li>
+          <li><b>H⁶ path classes on SG(1).</b> The single- and two-triangle walk classes contribute zero; the 486 walks visiting all three triangles give the nonzero contribution. This is a finite-level combinatorial result.</li>
         </ul>
       </div>
       <div class="scope-card out reveal d1">
-        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Remaining work — no H10 transport gap</h3>
+        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Remaining formalization and simplification</h3>
         <ul>
-          <li><b>H6 and H8 formal base bridges.</b> Their exceptional m = 2 → 3 transitions have exact symbolic certificates, but those finite bridges are not yet Lean-kernel theorems.</li>
-          <li><b>H10 coefficient simplification.</b> The exact correction C<sub>10</sub><sup>(5)</sup>(&theta;) remains a finite trace expression rather than an expanded trigonometric polynomial. This is a presentation/simplification task, not an unproved hypothesis in the theorem.</li>
-          <li>The table below contains finite numerical regression anchors, locked by <span class="chip chip-pink">tests/test_higher_moments.py</span> and <span class="chip chip-pink">tests/test_path_class_h6.py</span>; these values are not substitutes for the all-level proofs.</li>
+          <li><b>H⁶ and H⁸ base bridges.</b> Formalize the exact m = 2 → 3 certificates inside Lean if the goal is a fully kernel-checked all-level formula beginning at m = 2. Until then, the certificate is exact but external to the Lean kernel.</li>
+          <li><b>H¹⁰ coefficient presentation.</b> The exact correction C<sub>10</sub><sup>(5)</sup>(θ) remains a finite trace expression rather than an expanded trigonometric polynomial. This is an optional simplification of the displayed coefficient, not a missing hypothesis in the unconditional Lean theorem.</li>
+          <li>The numerical table below contains finite regression values from <code>tests/test_higher_moments.py</code> and <code>tests/test_path_class_h6.py</code>. These checks do not replace the recurrence proofs or finite exact certificates.</li>
         </ul>
       </div>
     </div>
     <div class="reveal" style="margin-top:26px;">
       <table>
-        <thead><tr><th>m</th><th>Δ(H6)</th><th>Δ(H8)</th><th>Δ(H10)</th></tr></thead>
+        <thead><tr><th>m</th><th>Δ<sub>m</sub><sup>(6)</sup>(π/2)</th><th>Δ<sub>m</sub><sup>(8)</sup>(π/2)</th><th>Δ<sub>m</sub><sup>(10)</sup>(π/2)</th></tr></thead>
         <tbody>
           <tr><td>1</td><td>−3180.000000</td><td>−246909.026268</td><td>−14013358.982483</td></tr>
           <tr><td>2</td><td>−6956.588745</td><td>−595053.284942</td><td>−37686518.369790</td></tr>
@@ -1304,7 +1309,7 @@ footer{
           <tr class="hl"><td>4</td><td>−52227.653685</td><td>−4743049.471847</td><td>−318029798.840894</td></tr>
         </tbody>
       </table>
-      <div class="vnote"><b>→</b> θ = π/2, numerical reference values. Full analysis: <b>docs/HIGHER_MOMENTS.md</b>.</div>
+      <div class="vnote"><b>→</b> Finite numerical reference values at θ = π/2. The full formulas and proof boundaries are documented in <b>docs/HIGHER_MOMENTS.md</b>.</div>
     </div>
   </div>
 </section>
@@ -1315,53 +1320,40 @@ footer{
 <section id="reproduce">
   <div class="wrap">
     <div class="section-head reveal">
-      <span class="eyebrow">REPRODUCTION</span>
-      <h2 class="sec-title">Run it yourself</h2>
-      <p class="sec-sub">Python tests reproduce the numerical and regression checks; Lean's <code>lake build</code> checks the formal proofs. Clone, install, and run both suites; numerical reference data are documented in <b>VERIFICATION.md</b>.</p>
+      <span class="eyebrow">REPRODUCIBILITY</span>
+      <h2 class="sec-title">Run the numerical checks and Lean proofs</h2>
+      <p class="sec-sub">Python tests reproduce numerical regressions and finite certificate checks. Lean's <code>lake build</code> checks the formal proofs. These are distinct verification layers; a passing numerical test is not a substitute for a Lean theorem.</p>
     </div>
     <div class="duo">
       <div class="term reveal">
-        <div class="term-bar"><i></i><i></i><i></i><span>zsh — Evgeny-Theorem</span></div>
+        <div class="term-bar"><i></i><i></i><i></i><span>terminal — Evgeny-Theorem</span></div>
         <div class="term-body"><span class="p">$</span> git clone https://github.com/RFT-SIRM/Evgeny-Theorem.git
 <span class="p">$</span> cd Evgeny-Theorem
 <span class="p">$</span> python3 -m venv .venv <span class="c">&&</span> source .venv/bin/activate
 <span class="p">$</span> pip install -r reproducibility/requirements.txt
 
 <span class="p">$</span> pytest tests/ -m <span class="cy">"not slow"</span> -v
-<span class="a">fast regression suite</span>
+<span class="a">fast Python regression and certificate checks</span>
 
 <span class="p">$</span> pytest tests/ -m slow -v
-<span class="a">level-7 convergence — ~1–4 minutes</span>
+<span class="a">includes the level-7 H⁴ trace check</span>
 
 <span class="p">$</span> lake build
-<span class="a">Lean 4 — kernel decides graph facts vs Mathlib</span>
-
-<span class="g">================== ALL GREEN ==================</span>
-<span class="c">residual ~1e-13 … 1e-12 at level 7</span></div>
+<span class="a">Lean 4 formal proof build against Mathlib</span></div>
       </div>
       <div>
         <div class="tree reveal d1"><span class="dir">Evgeny-Theorem/</span>
-├── <span class="fil">THEOREM.md</span>      exact statement + 6-criterion protocol
-├── <span class="fil">VERIFICATION.md</span>  full numerical tables, held-out set, gauge check
+├── <span class="fil">THEOREM.md</span>      exact H⁴ statement + six-criterion protocol
+├── <span class="fil">VERIFICATION.md</span>  numerical tables, held-out set, gauge check
 ├── <span class="fil">docs/</span>
-│   ├── <span class="fil">index.html</span>            this site
-│   └── <span class="fil">HIGHER_MOMENTS.md</span>    H6/H8/H10 — growth law, recurrence, path classes
-├── <span class="dir">formalization/</span>  Lean 4 — graph infra machine-checked (lake build)
-│   ├── <span class="fil">EvgenyTheorem.lean</span>   delta, I, traceDefect_eq_delta, TraceDefectIdentity (abstract form)
-│   └── <span class="dir">EvgenyTheorem/</span>       Graph (SG(m), Faces) · SU2 · Operator · SanityChecks
-├── <span class="dir">src/</span>
-│   ├── <span class="dir">graph/</span>      SG graph construction (3-connected, tree-of-triangles)
-│   ├── <span class="dir">su2/</span>        SU(2) rotation utilities
-│   ├── <span class="dir">operators/</span>  A (plain SG), B (U(1)-magnetic), C (SU(2)-bundle)
-│   └── <span class="dir">moments/</span>    moments, heat trace, counting function, I_m(θ)
-├── <span class="dir">tests/</span>          Python tests cover numerical and regression checks; Lean proofs are checked with lake build
-│   ├── <span class="fil">test_levels.py</span> · <span class="fil">test_theta.py</span> · <span class="fil">test_heldout.py</span>
-│   ├── <span class="fil">test_gauge_invariance.py</span> · <span class="fil">test_higher_moments.py</span>
-│   └── <span class="fil">test_path_class_h6.py</span>
-├── <span class="dir">data/</span>           raw + computed spectra (SG 4–6, plain SG 1–6)
-├── <span class="dir">figures/</span>        convergence plot
-└── <span class="dir">reproducibility/</span> environment, requirements, regeneration scripts</div>
-        <div class="expect reveal d2"><b>EXPECTED →</b> all green · residual ~1e−13–1e−12 at level 7 · closed-form match to |Δ| ≤ 1e−11 on the held-out set · Lean graph layer kernel-checked</div>
+│   ├── <span class="fil">index.html</span>            this research site
+│   └── <span class="fil">HIGHER_MOMENTS.md</span>    H⁶/H⁸/H¹⁰ proof status and formulas
+├── <span class="dir">formalization/</span>  Lean 4 formal development
+├── <span class="dir">src/</span>            Python graph, SU(2), operator, and moment code
+├── <span class="dir">tests/</span>          numerical, regression, and exact finite checks
+├── <span class="dir">computational/</span> exact symbolic certificates and trace inventories
+└── <span class="dir">reproducibility/</span> pinned environment and regeneration scripts</div>
+        <div class="expect reveal d2"><b>CHECKS →</b> Run the commands above and inspect each exit status. The level-7 matrix calculation is marked slow; no fixed runtime is promised.</div>
       </div>
     </div>
   </div>
@@ -1389,7 +1381,7 @@ footer{
     </p>
     <div class="foot-bottom">
       <span>© 2026 RFT-SIRM — Deterministic Invariant Systems Research Platform</span>
-      <span>Δ_m(H⁴,θ) = −16(3^(m−1)+1)·sin²(θ/2)</span>
+      <span>Δ<sub>m</sub>(H⁴,θ) = −16(3<sup>m−1</sup>+1)·sin²(θ/2)</span>
     </div>
   </div>
 </footer>
@@ -1695,24 +1687,24 @@ createKnotScene(document.getElementById('structureCanvas'), {matrix:true, center
    ============================================================ */
 (function(){
   const data = [
-    { t:'Claim — a spectral defect worth measuring',
-      p:'Define Δ_m(H⁴, θ) = Tr(H_C⁴) − Tr(H_C′⁴) on SG(m): the fourth-moment difference between a non-commuting SU(2) connection C (axes cycling x/y/z) and its commuting control C′ (fixed z-axis). Hypothesis: the defect obeys a closed form in (m, θ).',
-      r:'THEOREM.md — statement' },
-    { t:'Model — the SU(2)-bundle Laplacian',
-      p:'Construct SG(m) by recursive triangle subdivision; attach U(a,b) ∈ SU(2) to every edge with U(b,a) = U(a,b)†; inject flux through one designated edge per elementary triangle. The Hilbert space is Cⁿ ⊗ C², dim = 3^(m+1) + 3.',
+    { t:'Question — a fourth-moment trace defect',
+      p:'Define Δ_m(H⁴, θ) = Tr(H_C⁴) − Tr(H_C′⁴) for the non-commuting SU(2) configuration C and its commuting control C′. The target is an exact formula valid for every m ≥ 1 and every real θ.',
+      r:'THEOREM.md — exact statement' },
+    { t:'Model — the SU(2)-valued graph connection',
+      p:'Construct SG(m) by recursive triangle subdivision; assign U(a,b) ∈ SU(2) to every oriented edge with U(b,a) = U(a,b)†; place flux on one designated edge per elementary triangle. The Hilbert-space dimension is 3^(m+1) + 3.',
       r:'src/graph/ · src/su2/ · src/operators/' },
-    { t:'Execution — exact arithmetic, honest scale',
-      p:'Build operators A (plain SG), B (U(1)-magnetic), C (SU(2)-bundle) and compute moments, heat traces, and counting functions up to refinement level m = 7 — a 6564-dimensional Hilbert space — plus a held-out parameter set never used to derive the formula.',
-      r:'src/moments/ · data/' },
-    { t:'Verification — three independent checks',
-      p:'(1) Refinement sequence at θ = π/2 converges geometrically with rate 1/3. (2) Held-out (m, θ) pairs match the closed form to |Δ| ≤ 1e−11. (3) Under a random SU(2) gauge transformation the spectrum moves by at most 7.99e−15 and M₄ difference is exactly 0.',
-      r:'VERIFICATION.md — full tables' },
-    { t:'Evidence — every claim is a test',
-      p:'Python tests cover numerical and regression checks: level counts, θ = 0 reduction, gauge checks, held-out formula comparisons, and convergence. Lean theorem statements are checked separately with lake build. Recorded residual at level 7: ~1e−13 … 1e−12.',
-      r:'tests/ — fast regression suite + slow suite' },
-    { t:'Reproduction — anyone, anywhere',
-      p:'Pinned environment, requirements, and regeneration scripts. Clone, install, run — the full verification completes in minutes. Apache 2.0, with NOTICE.',
-      r:'reproducibility/ · LICENSE' },
+    { t:'Finite computation — direct matrix checks',
+      p:'The Python implementation constructs finite graph operators and evaluates trace moments at feasible levels. A separate held-out set compares direct matrix calculations with the closed formula after the formula was fixed.',
+      r:'src/moments/ · tests/test_heldout.py · VERIFICATION.md' },
+    { t:'Formal proof — all levels and all angles',
+      p:'Lean proves traceDefect_closed for every integer m ≥ 1 and every real θ. The proof uses graph gluing, corner identities, orientation transport, and coupled recurrences.',
+      r:'formalization/EvgenyTheorem/TildeEntries.lean · formalization/README.md' },
+    { t:'Numerical evidence — independent checks',
+      p:'The level sequence converges to −8/9 at θ = π/2. The listed held-out parameter pairs have direct-computation discrepancies no larger than 2.54×10⁻¹¹. Gauge invariance is checked numerically at level 3.',
+      r:'VERIFICATION.md — tables and commands' },
+    { t:'Reproduction — run the checks',
+      p:'Run the Python regression suite, the slow level-seven trace check, and the Lean build separately. Their outputs are distinct: finite numerical evidence, exact finite certificates, and kernel-checked theorem proofs.',
+      r:'tests/ · computational/ · lake build' },
   ];
   const stages = document.querySelectorAll('.stage');
   const title = document.getElementById('pdTitle');
@@ -1770,9 +1762,11 @@ createKnotScene(document.getElementById('structureCanvas'), {matrix:true, center
     const dim = Math.pow(3, m+1) + 3;
     const delta = -16 * (Math.pow(3, m-1) + 1) * Math.pow(Math.sin(th/2), 2);
     const I = delta / dim;
+    const limit = -(16 / 9) * Math.pow(Math.sin(th / 2), 2);
     dEl.textContent = fmt(delta, 6);
     dimEl.textContent = dim.toLocaleString('en-US');
     iEl.textContent = fmt(I, 9);
+    document.getElementById('calcLimit').textContent = fmt(limit, 9);
     fill(ts); fill(ms);
   }
   ts.addEventListener('input', calc);
