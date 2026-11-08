@@ -12,50 +12,50 @@
 
 ## Abstract
 
-This dissertation studies trace defects of recursively defined graph operators on finite Sierpiński-gasket approximations. Each vertex carries a two-component complex state, and the edges carry an `SU(2)`-valued connection. Two configurations are compared on the same graph: a non-commuting connection whose flux-edge axes cycle through `x,y,z`, and a commuting control that uses the fixed `z`-axis.
+This dissertation studies trace defects of recursively defined graph operators on finite Sierpiński-gasket approximations. Each vertex carries a two-component complex state, and the edges carry an $SU(2)$-valued connection. Two configurations are compared on the same graph: a non-commuting connection whose flux-edge axes cycle through $x,y,z$, and a commuting control that uses the fixed $z$-axis.
 
 The principal theorem is the exact identity
-```math
+$$
 \boxed{
 \Delta_m^{(4)}(\theta)
 =
-\operatorname{Tr}\!\left(H_C(m,\theta)^4\right)
+\mathrm{Tr}\left(H_C(m,\theta)^4\right)
 -
-\operatorname{Tr}\!\left(H_{C'}(m,\theta)^4\right)
+\mathrm{Tr}\left(H_{C'}(m,\theta)^4\right)
 =
--16\bigl(3^{m-1}+1\bigr)\sin^2\!\left(\frac{\theta}{2}\right)
+-16\bigl(3^{m-1}+1\bigr)\sin^2\left(\frac{\theta}{2}\right)
 }
-```
-for every integer `m≥1` and every real `θ`. The identity is proved for the concrete operators in Lean 4 by the declaration **traceDefect_closed**. Its proof uses recursive gluing and two coupled orientation recurrences. The final theorem contains no unproved placeholder and depends only on the standard Lean axioms **propext**, **Classical.choice**, and **Quot.sound**.
+$$
+for every integer $m\geq1$ and every real $\theta$. The identity is proved for the concrete operators in Lean 4 by the declaration **traceDefect_closed**. Its proof uses recursive gluing and two coupled orientation recurrences. The final theorem contains no unproved placeholder and depends only on the standard Lean axioms **propext**, **Classical.choice**, and **Quot.sound**.
 
 After normalization by the matrix dimension, the fourth-moment defect has the exact limit
-```math
-I_\infty(\theta)=-\frac{16}{9}\sin^2\!\left(\frac{\theta}{2}\right).
-```
+$$
+I_\infty(\theta)=-\frac{16}{9}\sin^2\left(\frac{\theta}{2}\right).
+$$
 This is a statement about one normalized trace observable; it is not a theorem about the full spectrum, individual eigenvalues, the spectral gap, or computational complexity.
 
-The dissertation also records the present higher-moment results. For `H^6` and `H^8`, Lean proves the all-angle recurrences for `m≥3`, while exact symbolic certificates close the exceptional transition `m=2→3`. These combined formulae are exact, but the finite bridges are not yet Lean-kernel theorems. For `H^{10}`, radius-four diagonal transport through degree nine is proved in Lean for both configurations at all `m≥4`. Consequently, the `H^{10}` affine recurrence for `m≥4` and affine closed form for `m≥5` are unconditional Lean theorems. Their level-five correction is an exact finite trace expression that has not yet been expanded into a trigonometric polynomial.
+The dissertation also records the present higher-moment results. For $H^6$ and $H^8$, Lean proves the all-angle recurrences for $m\geq3$, while exact symbolic certificates close the exceptional transition $m=2\to3$. These combined formulae are exact, but the finite bridges are not yet Lean-kernel theorems. For $H^{10}$, radius-four diagonal transport through degree nine is proved in Lean for both configurations at all $m\geq4$. Consequently, the $H^{10}$ affine recurrence for $m\geq4$ and affine closed form for $m\geq5$ are unconditional Lean theorems. Their level-five correction is an exact finite trace expression that has not yet been expanded into a trigonometric polynomial.
 
 The purpose of this document is to preserve these distinctions. A Lean theorem, an exact finite symbolic certificate, and a numerical regression are different forms of evidence. Every claim below is restricted to the graph, edge orientation, and operator definitions actually maintained in this repository.
 
-**Keywords:** Sierpiński-gasket graphs; trace defect; spectral moments; `SU(2)` connection; non-commuting holonomy; recursive gluing; exact symbolic computation; Lean 4.
+**Keywords:** Sierpiński-gasket graphs; trace defect; spectral moments; $SU(2)$ connection; non-commuting holonomy; recursive gluing; exact symbolic computation; Lean 4.
 
 ---
 
 ## 1. Scope and status of the results
 
-The central result is a universal fourth-moment identity: it holds for every refinement level `m≥1` and every real angle `θ`. It is machine-checked for the concrete matrices defined by the repository, not inferred from the finite numerical tables.
+The central result is a universal fourth-moment identity: it holds for every refinement level $m\geq1$ and every real angle $\theta$. It is machine-checked for the concrete matrices defined by the repository, not inferred from the finite numerical tables.
 
 The repository also contains separate results for higher even moments. Their status is summarized below.
 
 | Moment | Established statement | Proof boundary |
 |---|---|---|
-| `H^4` | Exact closed form for all `m≥1`, all `θ∈ R`. | Unconditional Lean-kernel theorem. |
-| `H^6` | All-angle recurrence for `m≥3`; combined formula for `m≥2`. | Lean recurrence plus an exact Gaussian-integer polynomial certificate for the `2→3` transition. |
-| `H^8` | All-angle recurrence for `m≥3`; combined formula for `m≥2`. | Lean recurrence plus an exact sparse-polynomial certificate for the `2→3` transition. |
-| `H^{10}` | Unconditional affine recurrence for `m≥4`; unconditional affine form for `m≥5`. | Both are Lean-kernel theorems; the correction coefficient remains an exact finite trace expression. |
+| $H^4$ | Exact closed form for all $m\geq1$, all $\theta\in\mathbb{R}$. | Unconditional Lean-kernel theorem. |
+| $H^6$ | All-angle recurrence for $m\geq3$; combined formula for $m\geq2$. | Lean recurrence plus an exact Gaussian-integer polynomial certificate for the $2\to3$ transition. |
+| $H^8$ | All-angle recurrence for $m\geq3$; combined formula for $m\geq2$. | Lean recurrence plus an exact sparse-polynomial certificate for the $2\to3$ transition. |
+| $H^{10}$ | Unconditional affine recurrence for $m\geq4$; unconditional affine form for $m\geq5$. | Both are Lean-kernel theorems; the correction coefficient remains an exact finite trace expression. |
 
-The `H^6` and `H^8` finite bridges are exact and reproducible but are not yet formalized inside the Lean kernel. By contrast, the `H^{10}` recurrence does not retain an unproved transport hypothesis: the required transport statement is itself proved in Lean. Simplifying its correction coefficient would improve its presentation, but is not required for the unconditional theorem.
+The $H^6$ and $H^8$ finite bridges are exact and reproducible but are not yet formalized inside the Lean kernel. By contrast, the $H^{10}$ recurrence does not retain an unproved transport hypothesis: the required transport statement is itself proved in Lean. Simplifying its correction coefficient would improve its presentation, but is not required for the unconditional theorem.
 
 This work does not claim a formula for all eigenvalues, the spectral gap, a computational-complexity classification, or a physical law.
 
@@ -63,188 +63,188 @@ This work does not claim a formula for all eigenvalues, the spectral gap, a comp
 
 ### 2.1 The recursive graph
 
-Let `SG(m)` be the finite Sierpiński-gasket approximation graph at refinement level `m`, built by recursively assembling three copies of the preceding level and identifying their corner vertices. Its exact combinatorial counts are
-```math
+Let $SG(m)$ be the finite Sierpiński-gasket approximation graph at refinement level $m$, built by recursively assembling three copies of the preceding level and identifying their corner vertices. Its exact combinatorial counts are
+$$
 |V_m|=\frac{3^{m+1}+3}{2},
 \qquad
 |E_m|=3^{m+1},
 \qquad
 |F_m|=3^m.
-```
+$$
 Each vertex carries two complex state components. Therefore
-```math
+$$
 \mathcal H_m=\mathbb C^{|V_m|}\otimes\mathbb C^2,
 \qquad
 N_m=\dim\mathcal H_m=3^{m+1}+3.
-```
+$$
 
-### 2.2 The `SU(2)` edge data
+### 2.2 The $SU(2)$ edge data
 
-Let `σ_x,σ_y,σ_z` be the Pauli matrices. A flux edge with rotation axis `a∈{x,y,z}` carries
-```math
+Let $\sigma_x,\sigma_y,\sigma_z$ be the Pauli matrices. A flux edge with rotation axis $a\in\{x,y,z\}$ carries
+$$
 U_a(\theta)
 =
-\cos\!\left(\frac{\theta}{2}\right)I_2
--i\sin\!\left(\frac{\theta}{2}\right)\sigma_a.
-```
+\cos\left(\frac{\theta}{2}\right)I_2
+-i\sin\left(\frac{\theta}{2}\right)\sigma_a.
+$$
 The reverse orientation carries the adjoint:
-```math
+$$
 U(b,a)=U(a,b)^\ast.
-```
+$$
 Exactly one designated edge of each elementary triangle carries this rotation; the other edges carry the identity.
 
-Configuration `C` assigns the axes `x,y,z` cyclically by triangle index modulo three. Configuration `C'` keeps the graph and flux-edge locations fixed but assigns the `z`-axis to every triangle. Its edge rotations commute and split into two decoupled `U(1)`-magnetic Sierpiński-gasket operators with fluxes `+θ/2` and `-θ/2`.
+Configuration $C$ assigns the axes $x,y,z$ cyclically by triangle index modulo three. Configuration $C'$ keeps the graph and flux-edge locations fixed but assigns the $z$-axis to every triangle. Its edge rotations commute and split into two decoupled $U(1)$-magnetic Sierpiński-gasket operators with fluxes $+\theta/2$ and $-\theta/2$.
 
 The operator has graph-Laplacian form
-```math
+$$
 H=D-A,
-```
-where `D` is the degree matrix tensored with `I_2`, and `A` is the connection adjacency matrix. At `θ=0`, both configurations reduce to two copies of the ordinary Sierpiński-gasket Laplacian.
+$$
+where $D$ is the degree matrix tensored with $I_2$, and $A$ is the connection adjacency matrix. At $\theta=0$, both configurations reduce to two copies of the ordinary Sierpiński-gasket Laplacian.
 
 ### 2.3 Orientation convention
 
-The theorem uses the vertex-index orientation of the repository: Lean uses `vIdx`, and Python orders edge endpoints by their vertex indices. This is part of the operator definition.
+The theorem uses the vertex-index orientation of the repository: Lean uses **vIdx**, and Python orders edge endpoints by their vertex indices. This is part of the operator definition.
 
-The orientation audit records that a different, geometrically uniform direction convention gives, for the tested levels `m=1,…,4`,
-```math
--32\cdot3^{m-1}\sin^2\!\left(\frac{\theta}{2}\right).
-```
+The orientation audit records that a different, geometrically uniform direction convention gives, for the tested levels $m=1,\ldots,4$,
+$$
+-32\cdot3^{m-1}\sin^2\left(\frac{\theta}{2}\right).
+$$
 That alternative is a finite-level comparison in **docs/ORIENTATION_NOTE.md**, not the all-level theorem proved here. Graph indexing, face order, flux-edge choice, and edge orientation must be preserved when reproducing the result.
 
 ## 3. Trace-defect notation
 
-For an even moment `p`, define
-```math
+For an even moment $p$, define
+$$
 \Delta_m^{(p)}(\theta)
 =
-\operatorname{Tr}\!\left(H_C(m,\theta)^p\right)
+\mathrm{Tr}\left(H_C(m,\theta)^p\right)
 -
-\operatorname{Tr}\!\left(H_{C'}(m,\theta)^p\right).
-```
-For the higher-moment Lean statements, `D_m^{(p)}(θ)` denotes the corresponding numbering-orientation quantity defined by **defectO6**, **defectO8**, and **defectO10**.
+\mathrm{Tr}\left(H_{C'}(m,\theta)^p\right).
+$$
+For the higher-moment Lean statements, $D_m^{(p)}(\theta)$ denotes the corresponding numbering-orientation quantity defined by **defectO6**, **defectO8**, and **defectO10**.
 
 For the polynomial formulae below, write
-```math
+$$
 \phi=\frac{\theta}{2},\qquad
 c=\cos\phi,\qquad s=\sin\phi,\qquad c^2+s^2=1.
-```
+$$
 
 ## 4. Main theorem: the fourth spectral moment
 
 ### Theorem 4.1 — exact fourth-moment trace defect
 
-For every integer `m≥1` and every real `θ`,
-```math
+For every integer $m\geq1$ and every real $\theta$,
+$$
 \boxed{
 \Delta_m^{(4)}(\theta)
 =
 -16\left(3^{m-1}+1\right)
-\sin^2\!\left(\frac{\theta}{2}\right).
+\sin^2\left(\frac{\theta}{2}\right).
 }
-```
+$$
 The concrete Lean declaration is **traceDefect_closed** in **formalization/EvgenyTheorem/TildeEntries.lean**.
 
-The identity implies `\Delta_m^{(4)}(θ)≤0`, and the defect vanishes exactly when `θ∈2π Z`.
+The identity implies $\Delta_m^{(4)}(\theta)\leq0$, and the defect vanishes exactly when $\theta\in2\pi\mathbb{Z}$.
 
 ### 4.1 Normalization and limit
 
 Normalize by the matrix dimension:
-```math
+$$
 I_m(\theta)
 =
 \frac{\Delta_m^{(4)}(\theta)}{3^{m+1}+3}
 =
 -16\frac{3^{m-1}+1}{3^{m+1}+3}
-\sin^2\!\left(\frac{\theta}{2}\right).
-```
+\sin^2\left(\frac{\theta}{2}\right).
+$$
 Since
-```math
+$$
 \frac{3^{m-1}+1}{3^{m+1}+3}
 =
 \frac{1}{9}\frac{3^m+3}{3^m+1},
-```
+$$
 we obtain
-```math
+$$
 I_m(\theta)
 =
--\frac{16}{9}\sin^2\!\left(\frac{\theta}{2}\right)
--\frac{32}{9(3^m+1)}\sin^2\!\left(\frac{\theta}{2}\right).
-```
+-\frac{16}{9}\sin^2\left(\frac{\theta}{2}\right)
+-\frac{32}{9(3^m+1)}\sin^2\left(\frac{\theta}{2}\right).
+$$
 Consequently,
-```math
+$$
 \boxed{
 I_\infty(\theta)
 =
 \lim_{m\to\infty}I_m(\theta)
 =
--\frac{16}{9}\sin^2\!\left(\frac{\theta}{2}\right)
+-\frac{16}{9}\sin^2\left(\frac{\theta}{2}\right)
 }
-```
+$$
 and the exact finite-level remainder is
-```math
+$$
 \boxed{
 I_m(\theta)-I_\infty(\theta)
 =
 -\frac{32}{9(3^m+1)}
-\sin^2\!\left(\frac{\theta}{2}\right).
+\sin^2\left(\frac{\theta}{2}\right).
 }
-```
-In particular, `I_∈fty(π/2)=-8/9`, and the ratio of successive absolute remainders tends to `1/3`. This is a limit of the normalized fourth-moment trace defect, not a statement about eigenvalue convergence or the spectral gap.
+$$
+In particular, $I_\infty(\pi/2)=-8/9$, and the ratio of successive absolute remainders tends to $1/3$. This is a limit of the normalized fourth-moment trace defect, not a statement about eigenvalue convergence or the spectral gap.
 
 ## 5. Lean proof architecture
 
-The general-level proof uses the recursive gluing structure and two orientation states. Let `D_m` be the numbering-orientation defect and `\widetilde D_m` the defect with the designated corner orientation flipped. Put `s=sin(θ/2)`. Lean proves
-```math
+The general-level proof uses the recursive gluing structure and two orientation states. Let $D_m$ be the numbering-orientation defect and $\widetilde D_m$ the defect with the designated corner orientation flipped. Put $s=\sin(\theta/2)$. Lean proves
+$$
 D_1=-32s^2,\qquad \widetilde D_1=0,
-```
+$$
 and
-```math
+$$
 \begin{aligned}
 D_{m+1}&=2D_m+\widetilde D_m,\\
 \widetilde D_{m+1}&=D_m+2\widetilde D_m,
 \end{aligned}
 \qquad m\geq1.
-```
+$$
 
-Set `S_m=D_m+\widetilde D_m` and `E_m=D_m-\widetilde D_m`. Then
-```math
+Set $S_m=D_m+\widetilde D_m$ and $E_m=D_m-\widetilde D_m$. Then
+$$
 S_{m+1}=3S_m,\qquad E_{m+1}=E_m,
-```
-with `S_1=E_1=-32s^2`. Hence
-```math
+$$
+with $S_1=E_1=-32s^2$. Hence
+$$
 S_m=-32\cdot3^{m-1}s^2,\qquad E_m=-32s^2.
-```
-Recovering `D_m=(S_m+E_m)/2` yields the main theorem. The proof uses recursive gluing, block-matrix trace identities, corner data, and orientation transport. Its principal modules include **GlueAlg**, **GlueBridge**, **GlueSG**, **GlueK**, **GlueCorner**, **FinalOrient**, **FinalTilde**, **FinalArith**, and **TildeEntries**.
+$$
+Recovering $D_m=(S_m+E_m)/2$ yields the main theorem. The proof uses recursive gluing, block-matrix trace identities, corner data, and orientation transport. Its principal modules include **GlueAlg**, **GlueBridge**, **GlueSG**, **GlueK**, **GlueCorner**, **FinalOrient**, **FinalTilde**, **FinalArith**, and **TildeEntries**.
 
 The formalization README records that **traceDefect_closed** has no unproved placeholder and depends only on the standard Lean axioms
-```math
+$$
 \texttt{propext},\qquad
 \texttt{Classical.choice},\qquad
 \texttt{Quot.sound}.
-```
+$$
 The earlier hand-oriented manuscript **docs/PROOF.md** is not the machine-checked proof. The universal theorem should be cited through its Lean declaration and coupled-recursion route.
 
 ## 6. Higher-moment results
 
 ### 6.1 Sixth moment
 
-For the numbering-orientation quantity `D_m^{(6)}(θ)`, Lean proves
-```math
+For the numbering-orientation quantity $D_m^{(6)}(\theta)$, Lean proves
+$$
 D_{m+1}^{(6)}(\theta)
 =
 3D_m^{(6)}(\theta)+C_6(\theta),
 \qquad m\geq3.
-```
+$$
 The exact finite certificate gives
-```math
+$$
 D_2^{(6)}(\theta)
 =
 -14592s^2+1344cs^2-384s^3,
 \qquad
 C_6(\theta)=4512s^2+192cs^2+768s^3.
-```
-For every `m≥2`,
-```math
+$$
+For every $m\geq2$,
+$$
 \boxed{
 D_m^{(6)}(\theta)
 =
@@ -252,9 +252,9 @@ D_m^{(6)}(\theta)
 +
 \frac{3^{m-2}-1}{2}C_6(\theta).
 }
-```
+$$
 Equivalently,
-```math
+$$
 \boxed{
 \begin{aligned}
 D_m^{(6)}(\theta)
@@ -263,38 +263,38 @@ D_m^{(6)}(\theta)
 -384s^3.
 \end{aligned}
 }
-```
-At `θ=π`, `C_6(π)=5280`.
+$$
+At $\theta=\pi$, $C_6(\pi)=5280$.
 
-**Proof boundary.** The recurrence for `m≥3` is proved in Lean. The exceptional `m=2→3` transition is certified by exact Gaussian-integer polynomial arithmetic in **computational/p6_level3_orientation_certificate.py** and tested in **tests/test_higher_moments.py**. This is exact symbolic evidence, but not yet a Lean-kernel theorem.
+**Proof boundary.** The recurrence for $m\geq3$ is proved in Lean. The exceptional $m=2\to3$ transition is certified by exact Gaussian-integer polynomial arithmetic in **computational/p6_level3_orientation_certificate.py** and tested in **tests/test_higher_moments.py**. This is exact symbolic evidence, but not yet a Lean-kernel theorem.
 
 ### 6.2 Eighth moment
 
-For `D_m^{(8)}(θ)`, Lean proves
-```math
+For $D_m^{(8)}(\theta)$, Lean proves
+$$
 D_{m+1}^{(8)}(\theta)
 =
 3D_m^{(8)}(\theta)+C_8(\theta),
 \qquad m\geq3.
-```
+$$
 The exact certificate gives
-```math
+$$
 \begin{aligned}
 D_2^{(8)}(\theta)
 ={}&-1335552s^2+244352cs^2-40064s^3\\
 &+64cs^3+1920s^4,
 \end{aligned}
-```
+$$
 and
-```math
+$$
 \begin{aligned}
 C_8(\theta)
 ={}&193600s^2+75776cs^2+83712s^3\\
 &-512cs^3+192s^4.
 \end{aligned}
-```
-Thus, for every `m≥2`,
-```math
+$$
+Thus, for every $m\geq2$,
+$$
 \boxed{
 D_m^{(8)}(\theta)
 =
@@ -302,26 +302,26 @@ D_m^{(8)}(\theta)
 +
 \frac{3^{m-2}-1}{2}C_8(\theta).
 }
-```
-At `θ=π`, `C_8(π)=277504`.
+$$
+At $\theta=\pi$, $C_8(\pi)=277504$.
 
-**Proof boundary.** The structural recurrence is Lean-formalized for `m≥3`. The exceptional `m=2→3` identity is computed coefficient-by-coefficient over Gaussian integers in **computational/p8_base_certificate.py**. It is exact and reproducible, but not yet a Lean-kernel theorem.
+**Proof boundary.** The structural recurrence is Lean-formalized for $m\geq3$. The exceptional $m=2\to3$ identity is computed coefficient-by-coefficient over Gaussian integers in **computational/p8_base_certificate.py**. It is exact and reproducible, but not yet a Lean-kernel theorem.
 
 ### 6.3 Tenth moment
 
-The tenth-moment development contains an ordered `p=10` trace expansion, exact word-stratum reductions, gluing assembly, orientation recurrences, and transport of the required corner rows through degree nine.
+The tenth-moment development contains an ordered $p=10$ trace expansion, exact word-stratum reductions, gluing assembly, orientation recurrences, and transport of the required corner rows through degree nine.
 
-The proposition **H10TransportAll** is proved by **H10TransportAll_proved** for both the face-axis and fixed-`z` configurations at every `m≥4`. Lean proves unconditionally
-```math
+The proposition **H10TransportAll** is proved by **H10TransportAll_proved** for both the face-axis and fixed-$z$ configurations at every $m\geq4$. Lean proves unconditionally
+$$
 \boxed{
 D_{m+1}^{(10)}(\theta)
 =
 3D_m^{(10)}(\theta)+C_{10}^{(5)}(\theta),
 \qquad m\geq4,
 }
-```
+$$
 and
-```math
+$$
 \boxed{
 D_m^{(10)}(\theta)
 =
@@ -332,37 +332,37 @@ D_5^{(10)}(\theta)+\frac{C_{10}^{(5)}(\theta)}{2}
 -\frac{C_{10}^{(5)}(\theta)}{2},
 \qquad m\geq5.
 }
-```
-The exact correction `C_{10}^{(5)}(θ)` is the finite trace expression **defectO10_num_residual_constant**. It has not yet been expanded as a trigonometric polynomial. This is a presentation task, not a missing hypothesis in the theorem.
+$$
+The exact correction $C_{10}^{(5)}(\theta)$ is the finite trace expression **defectO10_num_residual_constant**. It has not yet been expanded as a trigonometric polynomial. This is a presentation task, not a missing hypothesis in the theorem.
 
-### 6.4 Finite `H^6` path classes
+### 6.4 Finite $H^6$ path classes
 
-On `SG(1)`, the exact length-six walk classification finds 66 walks in each one-triangle class, 168 in each two-triangle class, and 486 walks visiting all three elementary triangles. The first two groups contribute zero; the all-three-triangle group contributes nonzero. This is a finite-level result, not an all-level path-class theorem.
+On $SG(1)$, the exact length-six walk classification finds 66 walks in each one-triangle class, 168 in each two-triangle class, and 486 walks visiting all three elementary triangles. The first two groups contribute zero; the all-three-triangle group contributes nonzero. This is a finite-level result, not an all-level path-class theorem.
 
 ## 7. Numerical and exact-computation records
 
-At `θ=π/2`, direct fourth-moment matrix calculations give:
+At $\theta=\pi/2$, direct fourth-moment matrix calculations give:
 
-| `m` | `dim H_m` | `I_m(π/2)` |
+| $m$ | $\dim H_m$ | $I_m(\pi/2)$ |
 |---:|---:|---:|
-| 1 | 12 | `-1.333333` |
-| 2 | 30 | `-1.066667` |
-| 3 | 84 | `-0.952381` |
-| 4 | 246 | `-0.910569` |
-| 5 | 732 | `-0.896175` |
-| 6 | 2190 | `-0.891324` |
-| 7 | 6564 | `-0.889701` |
+| 1 | 12 | $-1.333333$ |
+| 2 | 30 | $-1.066667$ |
+| 3 | 84 | $-0.952381$ |
+| 4 | 246 | $-0.910569$ |
+| 5 | 732 | $-0.896175$ |
+| 6 | 2190 | $-0.891324$ |
+| 7 | 6564 | $-0.889701$ |
 
-The held-out H⁴ matrix-power comparisons recorded in **VERIFICATION.md** have maximum listed absolute discrepancy `2.54×10^{-11}`. The higher-moment regression table at `θ=π/2` covers `m=1,…,4` and is recorded in **docs/HIGHER_MOMENTS.md**. These finite tables are numerical checks, not the universal proof.
+The held-out H⁴ matrix-power comparisons recorded in **VERIFICATION.md** have maximum listed absolute discrepancy $2.54\times10^{-11}$. The higher-moment regression table at $\theta=\pi/2$ covers $m=1,\ldots,4$ and is recorded in **docs/HIGHER_MOMENTS.md**. These finite tables are numerical checks, not the universal proof.
 
-The Python tests also check selected vertex-wise gauge transformations. At level three, the recorded maximum spectral discrepancy is `7.99×10^{-15}`; the fourth-moment difference is zero at displayed precision. These checks are not assumptions in the Lean theorem.
+The Python tests also check selected vertex-wise gauge transformations. At level three, the recorded maximum spectral discrepancy is $7.99\times10^{-15}$; the fourth-moment difference is zero at displayed precision. These checks are not assumptions in the Lean theorem.
 
 ## 8. Reproducibility and proof artifacts
 
 | Artifact | Role |
 |---|---|
 | **src/graph/sg_graph.py** | Recursive graph construction and counts. |
-| **src/operators/operators.py** | Python graph operators and `SU(2)` connection. |
+| **src/operators/operators.py** | Python graph operators and $SU(2)$ connection. |
 | **formalization/EvgenyTheorem/Operator.lean** | Concrete Lean operators and trace-defect definition. |
 | **formalization/EvgenyTheorem/TildeEntries.lean** | Theorem **traceDefect_closed**. |
 | **formalization/EvgenyTheorem/FinalTilde.lean** | Coupled H⁴ recurrences and H⁶ results. |
@@ -392,19 +392,19 @@ The Python suite checks numerical regressions and exact finite certificates. The
 4. **No silent change of orientation.** A different edge orientation defines a different operator family.
 5. **No automatic extension to higher moments.** Each higher moment requires its own recurrence and boundary argument.
 6. **No conflation of evidence.** Lean theorems, exact external certificates, and floating-point regressions are distinct.
-7. **No cross-project identification.** This work does not identify the `SU(2)` operators with signed `Z_2`-flux or spectral-decimation models.
+7. **No cross-project identification.** This work does not identify the $SU(2)$ operators with signed $Z_2$-flux or spectral-decimation models.
 8. **No physical-law claim.** All statements concern the graph operators defined in this repository.
 
-The site's six-criterion protocol is a project-defined diagnostic for the normalized `H^4` invariant. It is not an external peer-review verdict and does not replace the theorem or its proof.
+The site's six-criterion protocol is a project-defined diagnostic for the normalized $H^4$ invariant. It is not an external peer-review verdict and does not replace the theorem or its proof.
 
 ## 10. Conclusion
 
-For the specified Sierpiński-gasket graph and vertex-index-oriented `SU(2)` connection, the fourth-moment trace defect has the exact all-level, all-angle formula
-```math
+For the specified Sierpiński-gasket graph and vertex-index-oriented $SU(2)$ connection, the fourth-moment trace defect has the exact all-level, all-angle formula
+$$
 \Delta_m^{(4)}(\theta)
 =
--16(3^{m-1}+1)\sin^2\!\left(\frac{\theta}{2}\right).
-```
+-16(3^{m-1}+1)\sin^2\left(\frac{\theta}{2}\right).
+$$
 The result is machine-checked in Lean 4. Its normalized form has an exact limit and a fully explicit finite-level remainder. The H⁶ and H⁸ developments combine Lean recurrences with exact finite transition certificates; the H¹⁰ recurrence and affine form are unconditional Lean theorems.
 
 This dissertation consolidates a proved fourth-moment theorem and specific higher-moment advances. It does not claim that every related spectral question is closed. The full spectrum, spectral gap, Lean formalization of the H⁶/H⁸ finite bridges, and explicit trigonometric simplification of the H¹⁰ correction remain outside the principal H⁴ theorem.
