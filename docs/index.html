@@ -788,43 +788,6 @@ footer{
   .wrap{ padding:0 20px; }
 }
 
-/* Research dissertation — typeset mathematical front matter */
-.diss-section{padding:54px 0 72px!important}
-.diss-paper{max-width:1080px;margin:0 auto;padding:clamp(24px,5vw,64px);border:1px solid rgba(151,132,255,.24);border-radius:24px;background:linear-gradient(145deg,rgba(18,20,43,.97),rgba(8,11,25,.98));box-shadow:0 30px 100px rgba(0,0,0,.32)}
-.diss-kicker,.diss-label,.diss-no{font:600 11px/1.5 'JetBrains Mono',monospace;letter-spacing:.16em;color:#9c91ff;text-transform:uppercase}
-.diss-title{max-width:900px;margin:16px 0 20px;font-size:clamp(28px,4vw,46px);line-height:1.13;letter-spacing:-.035em;color:#f3f1ff}
-.diss-meta{display:flex;flex-wrap:wrap;gap:12px 28px;padding:16px 0 24px;border-bottom:1px solid rgba(255,255,255,.1);color:#b9bed3;font-size:13px}
-.diss-meta b{color:#fff;margin-right:7px}
-.diss-abstract{margin:28px 0;padding:24px 26px;border-left:3px solid #8f7cff;background:rgba(129,111,255,.075);border-radius:0 14px 14px 0;color:#d5d8e8}
-.diss-abstract p{margin:12px 0 0}
-.diss-boundary{color:#aeb6ce;font-size:14px}
-.diss-actions{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 30px}
-.diss-actions a{padding:10px 15px;border:1px solid rgba(151,132,255,.45);border-radius:9px;color:#dcd5ff;text-decoration:none;font-size:13px}
-.diss-actions a:first-child{background:rgba(133,111,255,.16);color:#fff}
-.diss-toc{display:flex;flex-wrap:wrap;gap:9px 18px;padding:20px 0;border-top:1px solid rgba(255,255,255,.1);border-bottom:1px solid rgba(255,255,255,.1)}
-.diss-toc .diss-label{width:100%}
-.diss-toc a{font-size:12px;color:#aeb9d6;text-decoration:none}
-.diss-body{color:#d0d5e5;font-size:15px;line-height:1.78}
-.diss-body section{padding:38px 0 30px!important;border-bottom:1px solid rgba(255,255,255,.09)}
-.diss-body section:last-child{border-bottom:0}
-.diss-no{margin-bottom:10px;color:#7fd8e8}
-.diss-body h3{font-size:clamp(22px,3vw,30px);line-height:1.25;color:#f4f2ff;margin:0 0 18px}
-.diss-body h4{font-size:17px;color:#e7ddff;margin:26px 0 10px}
-.diss-body p{margin:12px 0}
-.diss-eq{overflow-x:auto;margin:20px 0;padding:20px 12px;border:1px solid rgba(143,124,255,.19);border-radius:12px;background:rgba(5,8,20,.58);text-align:center;color:#fff}
-.diss-eq math{font-size:clamp(17px,2.3vw,23px);color:#f8f6ff}
-.diss-major{border-color:rgba(127,216,232,.38);background:linear-gradient(120deg,rgba(45,96,125,.15),rgba(102,75,164,.13));padding:25px 14px}
-.diss-table-wrap{overflow-x:auto;margin:18px 0}
-.diss-table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55}
-.diss-table th,.diss-table td{padding:12px 13px;text-align:left;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.09)}
-.diss-table th{color:#a9a0ff;font:600 11px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.07em}
-.diss-table td{color:#d0d5e5}
-.diss-proved{display:inline-block;padding:3px 8px;border-radius:5px;background:rgba(74,190,145,.12);color:#8ee0ba;font-size:11px}
-.diss-code{display:grid;gap:8px;margin:18px 0;padding:18px 20px;border-radius:12px;background:#070a16;color:#9fe1e9;font:12px/1.6 'JetBrains Mono',monospace;overflow-x:auto}
-.diss-limit-list{padding-left:22px}.diss-limit-list li{padding:5px 0}
-.diss-footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-top:28px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);color:#8f96ad;font-size:12px}
-@media(max-width:700px){.diss-paper{padding:22px 16px;border-radius:15px}.diss-abstract{padding:18px}.diss-table{min-width:600px}.diss-body section{padding:28px 0 22px!important}}
-
 </style>
 </head>
 <body>
@@ -891,92 +854,6 @@ footer{
 
 <hr class="hr-fade">
 
-
-<!-- ================= RESEARCH DISSERTATION ================= -->
-<section id="dissertation" class="diss-section">
-  <div class="wrap">
-    <div class="diss-paper">
-      <div class="diss-kicker">RFT-SIRM · RESEARCH DISSERTATION · VERSION 1.0</div>
-      <h2 class="diss-title">Spectral Trace Defects of Noncommutative SU(2) Connections on Sierpiński-Gasket Graphs</h2>
-      <div class="diss-meta"><span><b>Author</b> Evgeny Zaprudnov</span><span><b>Research group</b> RFT-SIRM</span><span><b>Date</b> 8 November 2026</span></div>
-      <div class="diss-abstract"><div class="diss-label">ABSTRACT</div>
-        <p>This dissertation studies trace defects of recursively defined graph operators on finite Sierpiński-gasket approximations. Each vertex carries a two-component complex state, and the edges carry an SU(2)-valued connection. It compares a non-commuting connection whose flux-edge axes cycle through x, y, z with a commuting control using the fixed z-axis.</p>
-        <p>The principal theorem is an exact identity for every integer refinement level m ≥ 1 and every real angle θ. It is proved for the concrete operators in Lean 4. The normalized trace defect has an exact limit. Separate higher-moment results are also established, with proof boundaries stated explicitly: H⁶ and H⁸ combine Lean recurrences with exact finite certificates, while the H¹⁰ affine recurrence and closed form are unconditional Lean theorems.</p>
-        <p class="diss-boundary">A Lean theorem, an exact finite symbolic certificate, and a numerical regression are different forms of evidence. Every claim is restricted to the graph, edge orientation, and operator definitions maintained in this repository.</p>
-      </div>
-      <div class="diss-actions"><a href="https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/DISSERTATION.md">Read the complete dissertation</a><a href="../formalization/README.md">Lean proof record</a><a href="HIGHER_MOMENTS.md">Higher-moment details</a></div>
-      <div class="diss-toc"><div class="diss-label">CONTENTS</div>
-        <a href="#diss-scope">01 Scope</a><a href="#diss-model">02 Graph and operators</a><a href="#diss-main">03 Main theorem</a><a href="#diss-proof">04 Lean proof</a><a href="#diss-orientation">05 Orientation</a><a href="#diss-higher">06 Higher moments</a><a href="#diss-evidence">07 Numerical evidence</a><a href="#diss-repro">08 Reproducibility</a><a href="#diss-limits">09 Limitations</a><a href="#diss-conclusion">10 Conclusion</a>
-      </div>
-      <article class="diss-body">
-        <section id="diss-scope"><div class="diss-no">01 / SCOPE</div><h3>Scope and status of the results</h3>
-          <p>The object is a sequence of finite Hermitian operators indexed by the refinement level of the Sierpiński-gasket graph. The central observable is the difference between two power traces on the same graph.</p>
-          <div class="diss-table-wrap"><table class="diss-table"><thead><tr><th>Moment</th><th>Established statement</th><th>Proof boundary</th></tr></thead><tbody>
-            <tr><td><b>H⁴</b></td><td>Exact closed form for all m ≥ 1 and all real θ</td><td><span class="diss-proved">Lean-kernel theorem</span></td></tr>
-            <tr><td><b>H⁶</b></td><td>All-angle recurrence for m ≥ 3; combined formula for m ≥ 2</td><td>Lean recurrence + exact Gaussian-integer certificate for 2 → 3</td></tr>
-            <tr><td><b>H⁸</b></td><td>All-angle recurrence for m ≥ 3; combined formula for m ≥ 2</td><td>Lean recurrence + exact sparse-polynomial certificate for 2 → 3</td></tr>
-            <tr><td><b>H¹⁰</b></td><td>Unconditional affine recurrence for m ≥ 4; affine form for m ≥ 5</td><td><span class="diss-proved">Both Lean-kernel theorems</span>; exact level-five correction retained</td></tr>
-          </tbody></table></div>
-          <p>The H⁶ and H⁸ finite bridges are exact and reproducible but are not yet formalized inside the Lean kernel. For H¹⁰, the required transport statement is itself proved in Lean. Simplifying its correction coefficient would improve presentation, but is not required for the unconditional theorem.</p>
-        </section>
-        <section id="diss-model"><div class="diss-no">02 / MATHEMATICAL MODEL</div><h3>Graph and connection operators</h3>
-          <h4>2.1 Recursive graph</h4><p>Let SG(m) be the finite Sierpiński-gasket approximation at level m. The graph is assembled recursively from three copies of the preceding level with their corner vertices identified.</p>
-          <div class="diss-eq"><math display="block"><mrow><mo>|</mo><msub><mi>V</mi><mi>m</mi></msub><mo>|</mo><mo>=</mo><mfrac><mrow><msup><mn>3</mn><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>3</mn></mrow><mn>2</mn></mfrac><mo>,</mo><mspace width=".7em"/><mo>|</mo><msub><mi>E</mi><mi>m</mi></msub><mo>|</mo><mo>=</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msup><mo>,</mo><mspace width=".7em"/><mo>|</mo><msub><mi>F</mi><mi>m</mi></msub><mo>|</mo><mo>=</mo><msup><mn>3</mn><mi>m</mi></msup></mrow></math></div>
-          <p>Each vertex carries two complex components, so the state space and matrix dimension are</p>
-          <div class="diss-eq"><math display="block"><mrow><msub><mi>ℋ</mi><mi>m</mi></msub><mo>=</mo><msup><mi>ℂ</mi><mrow><mo>|</mo><msub><mi>V</mi><mi>m</mi></msub><mo>|</mo></mrow></msup><mo>⊗</mo><msup><mi>ℂ</mi><mn>2</mn></msup><mo>,</mo><mspace width=".8em"/><msub><mi>N</mi><mi>m</mi></msub><mo>=</mo><mi>dim</mi><msub><mi>ℋ</mi><mi>m</mi></msub><mo>=</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>3</mn></mrow></math></div>
-          <h4>2.2 SU(2) connection</h4><p>For Pauli matrix σₐ, a flux edge with axis a ∈ {x,y,z} carries</p>
-          <div class="diss-eq"><math display="block"><mrow><msub><mi>U</mi><mi>a</mi></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mi>cos</mi><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo><msub><mi>I</mi><mn>2</mn></msub><mo>−</mo><mi>i</mi><mi>sin</mi><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo><msub><mi>σ</mi><mi>a</mi></msub></mrow></math></div>
-          <p>Configuration C cycles the axes x, y, z by triangle index modulo three. Configuration C′ uses the fixed z-axis on the same flux edges. Its rotations commute and split into two decoupled U(1)-magnetic operators with fluxes ±θ/2. The graph operator has form H = D − A; at θ = 0 both configurations reduce to two copies of the ordinary gasket Laplacian.</p>
-        </section>
-        <section id="diss-main"><div class="diss-no">03 / PRINCIPAL THEOREM</div><h3>Exact fourth-moment trace defect</h3><p>For every integer m ≥ 1 and every real θ,</p>
-          <div class="diss-eq diss-major"><math display="block"><mrow><msubsup><mi>Δ</mi><mi>m</mi><mn>(4)</mn></msubsup><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mi>Tr</mi><mo>(</mo><msup><msub><mi>H</mi><mi>C</mi></msub><mn>4</mn></msup><mo>)</mo><mo>−</mo><mi>Tr</mi><mo>(</mo><msup><msub><mi>H</mi><msup><mi>C</mi><mo>′</mo></msup></msub><mn>4</mn></msup><mo>)</mo><mo>=</mo><mo>−</mo><mn>16</mn><mo>(</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>1</mn><mo>)</mo><msup><mi>sin</mi><mn>2</mn></msup><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math></div>
-          <p>This is the concrete Lean theorem <b>traceDefect_closed</b> in formalization/EvgenyTheorem/TildeEntries.lean. It is universal in both the refinement level and the angle.</p>
-          <h4>3.1 Normalized invariant and exact limit</h4>
-          <div class="diss-eq"><math display="block"><mrow><msub><mi>I</mi><mi>m</mi></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mo>−</mo><mfrac><mn>16</mn><mn>9</mn></mfrac><mfrac><mrow><msup><mn>3</mn><mi>m</mi></msup><mo>+</mo><mn>3</mn></mrow><mrow><msup><mn>3</mn><mi>m</mi></msup><mo>+</mo><mn>1</mn></mrow></mfrac><msup><mi>sin</mi><mn>2</mn></msup><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math></div>
-          <div class="diss-eq diss-major"><math display="block"><mrow><msub><mi>I</mi><mi>∞</mi></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><munder><mi>lim</mi><mrow><mi>m</mi><mo>→</mo><mi>∞</mi></mrow></munder><msub><mi>I</mi><mi>m</mi></msub><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mo>−</mo><mfrac><mn>16</mn><mn>9</mn></mfrac><msup><mi>sin</mi><mn>2</mn></msup><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math></div>
-          <p>The exact finite-level remainder is</p><div class="diss-eq"><math display="block"><mrow><msub><mi>I</mi><mi>m</mi></msub><mo>−</mo><msub><mi>I</mi><mi>∞</mi></msub><mo>=</mo><mo>−</mo><mfrac><mn>32</mn><mrow><mn>9</mn><mo>(</mo><msup><mn>3</mn><mi>m</mi></msup><mo>+</mo><mn>1</mn><mo>)</mo></mrow></mfrac><msup><mi>sin</mi><mn>2</mn></msup><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math></div>
-          <p>At θ = π/2 the limit is −8/9. The ratio of successive absolute remainders tends to 1/3. This concerns only the normalized fourth-moment trace defect; it does not determine individual eigenvalues or the spectral gap.</p>
-        </section>
-        <section id="diss-proof"><div class="diss-no">04 / FORMAL PROOF</div><h3>Lean proof architecture</h3><p>Let Dₘ be the numbering-orientation defect and D̃ₘ the defect with the designated corner orientation flipped. Put s = sin(θ/2). Lean proves the base values and coupled recurrences</p>
-          <div class="diss-eq"><math display="block"><mtable columnalign="right center left" rowspacing=".4em"><mtr><mtd><msub><mi>D</mi><mn>1</mn></msub><mo>=</mo><mo>−</mo><mn>32</mn><msup><mi>s</mi><mn>2</mn></msup><mo>,</mo><mspace width=".5em"/><msub><mover><mi>D</mi><mo>˜</mo></mover><mn>1</mn></msub><mo>=</mo><mn>0</mn></mtd></mtr><mtr><mtd><msub><mi>D</mi><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mn>2</mn><msub><mi>D</mi><mi>m</mi></msub><mo>+</mo><msub><mover><mi>D</mi><mo>˜</mo></mover><mi>m</mi></msub></mtd></mtr><mtr><mtd><msub><mover><mi>D</mi><mo>˜</mo></mover><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><msub><mi>D</mi><mi>m</mi></msub><mo>+</mo><mn>2</mn><msub><mover><mi>D</mi><mo>˜</mo></mover><mi>m</mi></msub></mtd></mtr></mtable></math></div>
-          <p>Taking Sₘ = Dₘ + D̃ₘ and Eₘ = Dₘ − D̃ₘ yields Sₘ₊₁ = 3Sₘ and Eₘ₊₁ = Eₘ. Hence</p>
-          <div class="diss-eq"><math display="block"><mrow><msub><mi>S</mi><mi>m</mi></msub><mo>=</mo><mo>−</mo><mn>32</mn><msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msup><msup><mi>s</mi><mn>2</mn></msup><mo>,</mo><mspace width=".8em"/><msub><mi>E</mi><mi>m</mi></msub><mo>=</mo><mo>−</mo><mn>32</mn><msup><mi>s</mi><mn>2</mn></msup></mrow></math></div>
-          <p>Recovering Dₘ = (Sₘ + Eₘ)/2 gives the theorem. The formal proof uses recursive gluing, block-matrix trace identities, corner data, and orientation transport. Its principal modules include GlueAlg, GlueBridge, GlueSG, GlueK, GlueCorner, FinalOrient, FinalTilde, FinalArith, and TildeEntries. The formalization README records no unproved placeholder and only the standard axioms propext, Classical.choice, and Quot.sound. The earlier hand-oriented docs/PROOF.md is not the machine-checked proof.</p>
-        </section>
-        <section id="diss-orientation"><div class="diss-no">05 / ORIENTATION</div><h3>Orientation is part of the theorem</h3><p>The theorem uses the vertex-index orientation: Lean uses vIdx and Python orders edge endpoints by vertex index. A different, geometrically uniform convention gives, for the tested levels m = 1,…,4, the expression</p>
-          <div class="diss-eq"><math display="block"><mrow><mo>−</mo><mn>32</mn><mo>·</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msup><msup><mi>sin</mi><mn>2</mn></msup><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math></div>
-          <p>This is a finite-level comparison in docs/ORIENTATION_NOTE.md, not an all-level theorem here. Graph indexing, face order, flux-edge choice, and orientation are part of the mathematical specification.</p>
-        </section>
-        <section id="diss-higher"><div class="diss-no">06 / HIGHER MOMENTS</div><h3>Sixth, eighth, and tenth moments</h3>
-          <h4>6.1 Sixth moment</h4><p>For Dₘ⁽⁶⁾(θ), Lean proves Dₘ₊₁⁽⁶⁾ = 3Dₘ⁽⁶⁾ + C₆(θ), m ≥ 3. The exact finite certificate gives</p>
-          <div class="diss-eq"><math display="block"><mrow><msubsup><mi>D</mi><mn>2</mn><mn>(6)</mn></msubsup><mo>=</mo><mo>−</mo><mn>14592</mn><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>1344</mn><mi>c</mi><msup><mi>s</mi><mn>2</mn></msup><mo>−</mo><mn>384</mn><msup><mi>s</mi><mn>3</mn></msup><mo>,</mo><mspace width=".6em"/><msub><mi>C</mi><mn>6</mn></msub><mo>=</mo><mn>4512</mn><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>192</mn><mi>c</mi><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>768</mn><msup><mi>s</mi><mn>3</mn></msup></mrow></math></div>
-          <p>For m ≥ 2, Dₘ⁽⁶⁾ = 3<sup>m−2</sup>D₂⁽⁶⁾ + (3<sup>m−2</sup> − 1)C₆(θ)/2. At θ = π, C₆(π) = 5280. The recurrence is Lean-proved; the 2 → 3 bridge is an exact Gaussian-integer polynomial certificate, not yet a Lean-kernel theorem.</p>
-          <h4>6.2 Eighth moment</h4><p>For Dₘ⁽⁸⁾(θ), Lean proves Dₘ₊₁⁽⁸⁾ = 3Dₘ⁽⁸⁾ + C₈(θ), m ≥ 3. The exact certificate gives</p>
-          <div class="diss-eq"><math display="block"><mrow><msubsup><mi>D</mi><mn>2</mn><mn>(8)</mn></msubsup><mo>=</mo><mo>−</mo><mn>1335552</mn><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>244352</mn><mi>c</mi><msup><mi>s</mi><mn>2</mn></msup><mo>−</mo><mn>40064</mn><msup><mi>s</mi><mn>3</mn></msup><mo>+</mo><mn>64</mn><mi>c</mi><msup><mi>s</mi><mn>3</mn></msup><mo>+</mo><mn>1920</mn><msup><mi>s</mi><mn>4</mn></msup></mrow></math></div>
-          <div class="diss-eq"><math display="block"><mrow><msub><mi>C</mi><mn>8</mn></msub><mo>=</mo><mn>193600</mn><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>75776</mn><mi>c</mi><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>83712</mn><msup><mi>s</mi><mn>3</mn></msup><mo>−</mo><mn>512</mn><mi>c</mi><msup><mi>s</mi><mn>3</mn></msup><mo>+</mo><mn>192</mn><msup><mi>s</mi><mn>4</mn></msup></mrow></math></div>
-          <p>For m ≥ 2, Dₘ⁽⁸⁾ = 3<sup>m−2</sup>D₂⁽⁸⁾ + (3<sup>m−2</sup> − 1)C₈(θ)/2. At θ = π, C₈(π) = 277504. The 2 → 3 bridge is exact and reproducible, but not yet a Lean-kernel theorem.</p>
-          <h4>6.3 Tenth moment</h4><p>The H¹⁰ development proves radius-four diagonal transport through degree nine for both configurations at all m ≥ 4. Let C₁₀⁽⁵⁾(θ) be the exact finite trace expression defined by defectO10_num_residual_constant. Lean proves unconditionally</p>
-          <div class="diss-eq"><math display="block"><mrow><msubsup><mi>D</mi><mrow><mi>m</mi><mo>+</mo><mn>1</mn></mrow><mn>(10)</mn></msubsup><mo>=</mo><mn>3</mn><msubsup><mi>D</mi><mi>m</mi><mn>(10)</mn></msubsup><mo>+</mo><msubsup><mi>C</mi><mn>10</mn><mn>(5)</mn></msubsup><mo>(</mo><mi>θ</mi><mo>)</mo><mo>,</mo><mspace width=".4em"/><mi>m</mi><mo>≥</mo><mn>4</mn></mrow></math></div>
-          <div class="diss-eq"><math display="block"><mrow><msubsup><mi>D</mi><mi>m</mi><mn>(10)</mn></msubsup><mo>=</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>5</mn></mrow></msup><mo>(</mo><msubsup><mi>D</mi><mn>5</mn><mn>(10)</mn></msubsup><mo>+</mo><mfrac><mrow><msubsup><mi>C</mi><mn>10</mn><mn>(5)</mn></msubsup><mo>(</mo><mi>θ</mi><mo>)</mo></mrow><mn>2</mn></mfrac><mo>)</mo><mo>−</mo><mfrac><mrow><msubsup><mi>C</mi><mn>10</mn><mn>(5)</mn></msubsup><mo>(</mo><mi>θ</mi><mo>)</mo></mrow><mn>2</mn></mfrac><mo>,</mo><mspace width=".4em"/><mi>m</mi><mo>≥</mo><mn>5</mn></mrow></math></div>
-          <p>The coefficient has not been expanded into a trigonometric polynomial. This is a presentation task, not a missing hypothesis: the recurrence and affine form are unconditional Lean theorems.</p>
-        </section>
-        <section id="diss-evidence"><div class="diss-no">07 / EVIDENCE</div><h3>Numerical checks</h3><p>At θ = π/2, direct H⁴ calculations give the following normalized values:</p>
-          <div class="diss-table-wrap"><table class="diss-table compact"><thead><tr><th>m</th><th>dim Hₘ</th><th>Iₘ(π/2)</th></tr></thead><tbody><tr><td>1</td><td>12</td><td>−1.333333</td></tr><tr><td>2</td><td>30</td><td>−1.066667</td></tr><tr><td>3</td><td>84</td><td>−0.952381</td></tr><tr><td>4</td><td>246</td><td>−0.910569</td></tr><tr><td>5</td><td>732</td><td>−0.896175</td></tr><tr><td>6</td><td>2190</td><td>−0.891324</td></tr><tr><td>7</td><td>6564</td><td>−0.889701</td></tr></tbody></table></div>
-          <p>The held-out H⁴ comparisons in VERIFICATION.md have maximum listed absolute discrepancy 2.54 × 10⁻¹¹. At level three, the gauge-invariance test records a maximum spectral discrepancy of 7.99 × 10⁻¹⁵. These finite numerical checks support regression testing; they are not the universal proof.</p>
-        </section>
-        <section id="diss-repro"><div class="diss-no">08 / REPRODUCIBILITY</div><h3>Source map and reproduction</h3>
-          <div class="diss-table-wrap"><table class="diss-table"><thead><tr><th>Artifact</th><th>Role</th></tr></thead><tbody><tr><td>src/graph/sg_graph.py</td><td>Recursive graph construction and counts</td></tr><tr><td>src/operators/operators.py</td><td>Python graph operators and SU(2) connection</td></tr><tr><td>formalization/EvgenyTheorem/Operator.lean</td><td>Concrete Lean operators</td></tr><tr><td>formalization/EvgenyTheorem/TildeEntries.lean</td><td>Final H⁴ theorem</td></tr><tr><td>formalization/EvgenyTheorem/FinalTilde.lean</td><td>Coupled H⁴ recurrences and H⁶ results</td></tr><tr><td>formalization/EvgenyTheorem/FinalClosed10.lean</td><td>Unconditional H¹⁰ transport and affine theorem</td></tr><tr><td>computational/p6_level3_orientation_certificate.py</td><td>Exact H⁶ finite transition</td></tr><tr><td>computational/p8_base_certificate.py</td><td>Exact H⁸ finite transition</td></tr></tbody></table></div>
-          <div class="diss-code"><span>git clone https://github.com/RFT-SIRM/Evgeny-Theorem.git</span><span>cd Evgeny-Theorem</span><span>python3 -m venv .venv && source .venv/bin/activate</span><span>pip install -r reproducibility/requirements.txt</span><span>pytest tests/ -m "not slow" -v</span><span>pytest tests/ -m slow -v</span><span>lake build</span></div>
-          <p>Python checks numerical regressions and exact finite certificates; Lean checks formal proofs. A successful run certifies only the assertions it actually executes. Record the commit SHA and command outputs when reproducing.</p>
-        </section>
-        <section id="diss-limits"><div class="diss-no">09 / LIMITATIONS</div><h3>Limitations and non-claims</h3><ol class="diss-limit-list"><li><b>No full-spectrum formula.</b> The trace identity does not determine all eigenvalues.</li><li><b>No spectral-gap theorem.</b> No conclusion about the smallest positive eigenvalue follows from this identity alone.</li><li><b>No complexity-theory result.</b> The scalar closed form is not a complexity separation, lower bound, or bit-complexity theorem.</li><li><b>No silent orientation change.</b> A different edge orientation defines a different operator family.</li><li><b>No automatic extension to higher moments.</b> Each moment requires its own recurrence and boundary argument.</li><li><b>No conflation of evidence.</b> Lean theorems, exact external certificates, and numerical regressions are distinct.</li><li><b>No cross-project identification.</b> No identification with signed Z₂-flux or spectral-decimation models is claimed.</li><li><b>No physical-law claim.</b> These are mathematical statements about the specified graph operators.</li></ol><p>The site's six-criterion protocol is a project-defined diagnostic, not an external peer-review verdict and not a substitute for the theorem.</p></section>
-        <section id="diss-conclusion"><div class="diss-no">10 / CONCLUSION</div><h3>Conclusion</h3><p>For the specified graph and vertex-index-oriented SU(2) connection, the fourth-moment defect has the exact all-level, all-angle formula</p><div class="diss-eq diss-major"><math display="block"><mrow><msubsup><mi>Δ</mi><mi>m</mi><mn>(4)</mn></msubsup><mo>(</mo><mi>θ</mi><mo>)</mo><mo>=</mo><mo>−</mo><mn>16</mn><mo>(</mo><msup><mn>3</mn><mrow><mi>m</mi><mo>−</mo><mn>1</mn></mrow></msup><mo>+</mo><mn>1</mn><mo>)</mo><msup><mi>sin</mi><mn>2</mn></msup><mo>(</mo><mfrac><mi>θ</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math></div><p>The theorem is machine-checked in Lean 4. H⁶ and H⁸ combine Lean recurrences with exact finite transition certificates; H¹⁰ has unconditional Lean recurrence and affine-form theorems. The full spectrum, spectral gap, Lean formalization of the H⁶/H⁸ finite bridges, and explicit trigonometric simplification of the H¹⁰ correction remain outside the principal H⁴ theorem.</p></section>
-      </article>
-      <div class="diss-footer">Evgeny Zaprudnov · RFT-SIRM · 2026 · Research dissertation/monograph, not a claim of an academic degree.</div>
-    </div>
-  </div>
-</section>
-<hr class="hr-fade">
 
 <!-- ================= FACTS ================= -->
 <section id="facts">
@@ -1501,6 +1378,11 @@ footer{
       <a class="link-chip" href="https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/THEOREM.md" target="_blank" rel="noopener">THEOREM.md</a>
       <a class="link-chip" href="https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/VERIFICATION.md" target="_blank" rel="noopener">VERIFICATION.md</a>
     </div>
+      <div class="link-row" aria-label="Author and dissertation">
+        <span class="link-chip">Author: Evgeny Zaprudnov</span>
+        <a class="link-chip" href="mailto:evgeniyzaprudnov@gmail.com">evgeniyzaprudnov@gmail.com</a>
+        <a class="link-chip" href="https://github.com/RFT-SIRM/Evgeny-Theorem/blob/main/DISSERTATION.md" target="_blank" rel="noopener">Research dissertation</a>
+      </div>
     <p class="disclaimer">
       Apache License, Version 2.0 — see LICENSE and NOTICE in the repository.
     </p>
