@@ -72,7 +72,7 @@ The higher-moment proof status is:
 
 - **H⁶:** Lean proves the all-angle recurrence for $m\ge3$. An exact symbolic certificate supplies the exceptional $m=2\to3$ transition, giving the combined all-angle formula for $m\ge2$. The finite bridge is not yet a Lean-kernel theorem.
 - **H⁸:** Lean proves the all-angle affine recurrence for $m\ge3$. The exact sparse-polynomial certificate supplies the finite $m=2\to3$ transition, giving the combined formula for $m\ge2$. The finite bridge is not yet a Lean-kernel theorem.
-- **H¹⁰:** the p=10 gluing assembly, orientation recurrences, and row transport through degree nine are machine-checked. The affine closed form from level five is machine-checked under the explicit hypothesis `H10TransportAll`. That hypothesis remains unproved in the current Lean source, and its level-five residual is still an exact trace expression.
+- **H¹⁰ (tenth moment):** radius-four glued-state diagonal transport through degree nine is proved for both the face-axis and fixed-axis configurations at every level m ≥ 4 by `H10TransportAll_proved`. Lean therefore proves the affine recurrence unconditionally for m ≥ 4 and the affine formula from level five unconditionally for m ≥ 5, for every real θ. The exact level-five correction remains a finite trace expression; it has not yet been expanded into an explicit trigonometric polynomial.
 
 The full formulas, theorem names, certificate locations, and proof boundaries are collected in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md). The numerical values remain locked by [tests/test_higher_moments.py](tests/test_higher_moments.py).
 
@@ -89,4 +89,4 @@ The full formulas, theorem names, certificate locations, and proof boundaries ar
 
 ## Scope
 
-The unconditional closed-form theorem in this file is the fourth-moment statement. H⁶ and H⁸ have combined Lean-recurrence plus exact-certificate formulas with a finite bridge outside the Lean kernel. H¹⁰ has a machine-checked conditional affine form whose transport hypothesis remains to be proved. These distinctions are maintained explicitly in the research documentation.
+The principal theorem presented in this document is the fourth-moment identity. The repository also contains higher-moment results with distinct proof boundaries: H⁶ and H⁸ have Lean recurrences plus exact finite certificates; their exceptional m = 2 → 3 bridges are not yet Lean-kernel theorems. H¹⁰ has an unconditional Lean result: its radius-four transport is proved, its affine recurrence holds for m ≥ 4, and its affine formula holds for m ≥ 5 for every real θ. The exact level-five correction remains in trace form rather than an expanded trigonometric polynomial. The proof boundaries are collected in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).

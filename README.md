@@ -168,7 +168,7 @@ The repository brings together several complementary forms of work.
 
 **Exact trace calculations.** The computational directory contains exact finite certificates, trace-word counts, reduction ledgers, and supporting calculations for the higher moments.
 
-**Lean 4 proof.** The formalization proves the fourth-moment theorem and contains the higher-moment recurrence, gluing, orientation, and conditional transport developments. Its current assumptions are stated next to the corresponding results.
+**Lean 4 proof.** The formalization contains the kernel-checked fourth-moment theorem and the higher-moment recurrence, gluing, orientation, and transport results. For H10, radius-four diagonal transport is proved for both configurations at every level m ≥ 4; consequently, the affine recurrence is an unconditional Lean theorem for m ≥ 4, and the affine closed form is an unconditional Lean theorem for m ≥ 5, for every real θ. The H6 and H8 finite base transitions remain exact certificates outside the Lean kernel. The proof boundaries and theorem names are stated next to the corresponding results.
 
 **Reproducibility.** Tests, data, environment notes, and verification documents record how to repeat the computational checks. The chronological research journals preserve the sequence of proof work and mathematical decisions.
 

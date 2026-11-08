@@ -161,7 +161,7 @@ The recurrence and affine formula are machine-checked without an additional tran
 
 ## Numerical reference values
 
-The following table records direct numerical regression values at $\theta=\pi/2$. The table is a finite computational record; it is not the proof of the all-angle H⁶/H⁸ identities and does not discharge the H¹⁰ transport hypothesis.
+The following table records direct numerical regression values at $\theta=\pi/2$. These finite values are regression anchors, not proofs of the all-angle H⁶/H⁸ identities or the H¹⁰ recurrence. The H¹⁰ transport and its unconditional affine recurrence/form are proved separately in Lean, as described above.
 
 | $m$ | $\Delta_m(H^6,\pi/2)$ | $\Delta_m(H^8,\pi/2)$ | $\Delta_m(H^{10},\pi/2)$ |
 |---:|---:|---:|---:|

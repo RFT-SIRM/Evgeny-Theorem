@@ -1228,9 +1228,9 @@ footer{
             <div class="v-head"><span class="v-name">gluing + recursion</span><span class="v-badge proved">PROVED</span></div>
             <p>Three copies glued into the next level, corner data proved for every m, and the recursions D<sub>m+1</sub> = 2D<sub>m</sub> + D&#771;<sub>m</sub>, D&#771;<sub>m+1</sub> = D<sub>m</sub> + 2D&#771;<sub>m</sub> close the induction.</p>
           </div>
-          <div class="verdict open">
-            <div class="v-head"><span class="v-name">scope</span><span class="v-badge open">NOT CLAIMED</span></div>
-            <p>The H⁴ theorem is for m ≥ 1 (not m = 0). Higher moments have distinct proof status: H6 and H8 have Lean-checked recurrences with exact finite base certificates; H10 has a Lean-checked affine form from level five under the explicit radius-four transport hypothesis <code>H10TransportAll</code>. That hypothesis is not yet proved, so no unconditional H10 closed form is claimed.</p>
+          <div class="verdict proved">
+            <div class="v-head"><span class="v-name">proof scope</span><span class="v-badge proved">CURRENT STATUS</span></div>
+            <p>The H⁴ theorem is for m ≥ 1 (not m = 0). H6 and H8 have Lean-checked recurrences for m ≥ 3 and exact symbolic certificates for the finite m = 2 → 3 transitions; those finite bridges are not yet Lean-kernel theorems. For H10 (tenth moment), <code>H10TransportAll_proved</code> proves radius-four diagonal transport through degree nine for both configurations at every m ≥ 4. Therefore the H10 affine recurrence (m ≥ 4) and affine form from level five (m ≥ 5) are unconditional Lean theorems for every real θ. The exact level-five correction remains a finite trace expression, not yet simplified to an explicit trigonometric polynomial.</p>
           </div>
         </div>
       </div>
@@ -1240,11 +1240,11 @@ footer{
         <thead><tr><th>Result</th><th>Status</th><th>Basis</th></tr></thead>
         <tbody>
           <tr><td>Lean 4 graph infrastructure — SG(m), Vertex, Adj, degree</td><td class="ok">CONFIRMED</td><td>computable + decidable instances, lake build</td></tr>
-          <tr><td>H4 exact closed form · I∞(π/2) = −8/9</td><td style="color:var(--amber)">DERIVED</td><td>exact formula, verified numerically to 1e−13</td></tr>
+          <tr><td>H4 exact closed form · I∞(π/2) = −8/9</td><td class="ok">PROVED</td><td>Lean-kernel theorem <code>traceDefect_closed</code>; all m ≥ 1 and all θ</td></tr>
           <tr><td>Gauge invariance · vanishes at p = 1, 2, 3</td><td class="ok">CONFIRMED</td><td>&lt; 8e−15 under random SU(2) gauge · first nonzero at p = 4</td></tr>
           <tr><td>H6 all-angle recurrence and closed form (m ≥ 2)</td><td style="color:var(--amber)">DERIVED</td><td>Lean recurrence for m ≥ 3; exact symbolic certificate for the m = 2 → 3 base transition</td></tr>
           <tr><td>H8 all-angle affine law and closed form (m ≥ 2)</td><td style="color:var(--amber)">DERIVED</td><td>Lean recurrence for m ≥ 3; exact sparse-polynomial certificate for the m = 2 → 3 base transition</td></tr>
-          <tr><td>H10 affine form from level five (m ≥ 5)</td><td style="color:var(--amber)">CONDITIONAL</td><td>Lean-checked under explicit <code>H10TransportAll</code>; radius-four diagonal transport through degree nine remains unproved, and the level-five constant is an exact trace expression</td></tr>
+          <tr><td>H10 (tenth moment) affine form from level five (m ≥ 5)</td><td class="ok">UNCONDITIONAL</td><td>Lean theorems <code>H10TransportAll_proved</code> and <code>defectO10_num_affine_closed_form_from_level5_unconditional</code>; exact level-five correction retained in trace form</td></tr>
           <tr><td>Lean 4 operator-level closed form (all m &ge; 1, all &theta;)</td><td class="ok">CONFIRMED</td><td>machine-checked, no sorry &middot; <code>traceDefect_closed</code></td></tr>
         </tbody>
       </table>
@@ -1260,44 +1260,43 @@ footer{
     <div class="section-head reveal">
       <span class="eyebrow">BEYOND H⁴ — OPEN PROGRAM</span>
       <h2 class="sec-title">Higher moments: the frontier</h2>
-      <p class="sec-sub">H⁴ collapses to one triangular traversal per walk. H⁶ does not. What is established — and what stays open.</p>
+      <p class="sec-sub">H⁶ and H⁸ still have finite base transitions outside the Lean kernel. H10 (tenth moment) now has proved radius-four transport and an unconditional affine formula; only its exact coefficient remains unsimplified.</p>
     </div>
     <div class="stats-grid reveal" style="padding:0 0 30px;">
-      <div class="stat"><div class="val">&lt;10⁻⁸</div><div class="cap">fit from m=4,5 predicts m=3</div></div>
-      <div class="stat"><div class="val">&lt;10⁻¹⁵</div><div class="cap">no 3^2m term in H6 growth</div></div>
+      <div class="stat"><div class="val">m = 4, 5 → 3</div><div class="cap">H6 linear-growth fit on the tested angle grid</div></div>
+      <div class="stat"><div class="val">&lt;10⁻¹⁰</div><div class="cap">fitted 3<sup>2m</sup>/3<sup>m</sup> coefficient ratio on tested angles</div></div>
       <div class="stat"><div class="val">5280</div><div class="cap">C(π) = 2^5·3·5·11 — exact</div></div>
-      <div class="stat"><div class="val">486</div><div class="cap">walks in H6 class {0,1,2}</div></div>
+      <div class="stat"><div class="val">486</div><div class="cap">SG(1) walks visiting all three triangles</div></div>
       <div class="stat"><div class="val">p = 4</div><div class="cap">first nonzero moment</div></div>
-      <div class="stat"><div class="val">H6·H8·H10</div><div class="cap">reference values locked by tests</div></div>
+      <div class="stat"><div class="val">H6 · H8 · H10</div><div class="cap">higher-moment references; proof status below</div></div>
     </div>
     <div class="scope-grid">
       <div class="scope-card in reveal">
-        <h3><span class="proto-check">✓</span> Established — numerically, to machine precision</h3>
+        <h3><span class="proto-check">✓</span> Established — Lean theorems and exact certificates</h3>
         <ul>
-          <li><b>Growth law</b> Δ_m(H⁶,θ) = α(θ)·3^m + β(θ) — no 3^2m term (coefficient ratio &lt; 10⁻¹⁵).</li>
-          <li><b>Recurrence</b> Δ_m = 3·Δ_{m−1} + C(θ) for m ≥ 2 · C(π) = 5280 · α(π) = −4112/3, β(π) = −2640.</li>
-          <li><b>Path-class zero theorem</b> — on SG(1), single- and two-triangle walk classes contribute exactly zero; only walks visiting all three triangles count.</li>
-        </ul>
-      </div>
-      <div class="scope-card out reveal d1">
-        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Remaining proof obligations</h3>
-        <ul>
-          <li><b>H6 and H8 finite base bridges.</b> Their exceptional m = 2 → 3 transitions have exact symbolic certificates, but those finite bridges are not yet Lean-kernel theorems.</li>
-          <li><b>H10 radius-four transport.</b> The affine form from level five assumes <code>H10TransportAll</code>: glued-state diagonal transport through degree nine for every m ≥ 4. This hypothesis is explicit and remains unproved.</li>
-          <li><b>H10 coefficient evaluation.</b> The level-five residual is an exact trace expression, not yet a closed trigonometric polynomial.</li>
-          <li><b>Conditional recurrence and closed form.</b> Under <code>H10TransportAll</code>:
+          <li><b>H6 (sixth moment).</b> Lean proves the all-angle recurrence for m ≥ 3; an exact symbolic certificate supplies the finite m = 2 → 3 transition. At θ = π, C6(π) = 5280.</li>
+          <li><b>H8 (eighth moment).</b> Lean proves the all-angle affine recurrence for m ≥ 3; an exact sparse-polynomial certificate supplies the finite m = 2 → 3 transition.</li>
+          <li><b>H10 (tenth moment) — unconditional.</b> <code>H10TransportAll_proved</code> proves degree-one-through-nine radius-four diagonal transport for both configurations at every m ≥ 4. Lean consequently proves the affine recurrence for m ≥ 4 and the affine formula from level five for m ≥ 5, for every real θ.
             <div style="font-family:var(--mono);font-size:13px;line-height:1.9;overflow-wrap:anywhere;color:var(--ink);background:rgba(5,6,14,.55);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0;">
-              D<sub>m+1</sub><sup>(10)</sup>(&theta;) = 3D<sub>m</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;)<br>
+              D<sub>m+1</sub><sup>(10)</sup>(&theta;) = 3D<sub>m</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;), &nbsp; m ≥ 4<br>
               D<sub>m</sub><sup>(10)</sup>(&theta;) = 3<sup>m−5</sup>(D<sub>5</sub><sup>(10)</sup>(&theta;) + C<sub>10</sub><sup>(5)</sup>(&theta;)/2) − C<sub>10</sub><sup>(5)</sup>(&theta;)/2, &nbsp; m ≥ 5
             </div>
           </li>
-          <li>Values below remain numerical regression anchors, locked by <span class="chip chip-pink">tests/test_higher_moments.py</span> and <span class="chip chip-pink">tests/test_path_class_h6.py</span>.</li>
+          <li><b>H6 path classes on SG(1).</b> Single- and two-triangle walk classes contribute zero; the 486 walks visiting all three triangles contribute nonzero.</li>
+        </ul>
+      </div>
+      <div class="scope-card out reveal d1">
+        <h3><span class="proto-check" style="background:rgba(255,45,120,.12);border-color:rgba(255,45,120,.5);color:var(--pink)">◇</span> Remaining work — no H10 transport gap</h3>
+        <ul>
+          <li><b>H6 and H8 formal base bridges.</b> Their exceptional m = 2 → 3 transitions have exact symbolic certificates, but those finite bridges are not yet Lean-kernel theorems.</li>
+          <li><b>H10 coefficient simplification.</b> The exact correction C<sub>10</sub><sup>(5)</sup>(&theta;) remains a finite trace expression rather than an expanded trigonometric polynomial. This is a presentation/simplification task, not an unproved hypothesis in the theorem.</li>
+          <li>The table below contains finite numerical regression anchors, locked by <span class="chip chip-pink">tests/test_higher_moments.py</span> and <span class="chip chip-pink">tests/test_path_class_h6.py</span>; these values are not substitutes for the all-level proofs.</li>
         </ul>
       </div>
     </div>
     <div class="reveal" style="margin-top:26px;">
       <table>
-        <thead><tr><th>m</th><th>Δ(H⁶)</th><th>Δ(H⁸)</th><th>Δ(H¹⁰)</th></tr></thead>
+        <thead><tr><th>m</th><th>Δ(H6)</th><th>Δ(H8)</th><th>Δ(H10)</th></tr></thead>
         <tbody>
           <tr><td>1</td><td>−3180.000000</td><td>−246909.026268</td><td>−14013358.982483</td></tr>
           <tr><td>2</td><td>−6956.588745</td><td>−595053.284942</td><td>−37686518.369790</td></tr>
@@ -1318,7 +1317,7 @@ footer{
     <div class="section-head reveal">
       <span class="eyebrow">REPRODUCTION</span>
       <h2 class="sec-title">Run it yourself</h2>
-      <p class="sec-sub">Every claim above is a pytest check. Clone, install, run — expected: all green, residual ~1e−13 … 1e−12 at level 7.</p>
+      <p class="sec-sub">Python tests reproduce the numerical and regression checks; Lean's <code>lake build</code> checks the formal proofs. Clone, install, and run both suites; numerical reference data are documented in <b>VERIFICATION.md</b>.</p>
     </div>
     <div class="duo">
       <div class="term reveal">
@@ -1329,7 +1328,7 @@ footer{
 <span class="p">$</span> pip install -r reproducibility/requirements.txt
 
 <span class="p">$</span> pytest tests/ -m <span class="cy">"not slow"</span> -v
-<span class="a">31 checks — seconds</span>
+<span class="a">fast regression suite</span>
 
 <span class="p">$</span> pytest tests/ -m slow -v
 <span class="a">level-7 convergence — ~1–4 minutes</span>
@@ -1355,7 +1354,7 @@ footer{
 │   ├── <span class="dir">su2/</span>        SU(2) rotation utilities
 │   ├── <span class="dir">operators/</span>  A (plain SG), B (U(1)-magnetic), C (SU(2)-bundle)
 │   └── <span class="dir">moments/</span>    moments, heat trace, counting function, I_m(θ)
-├── <span class="dir">tests/</span>          every claim above is a pytest check
+├── <span class="dir">tests/</span>          Python tests cover numerical and regression checks; Lean proofs are checked with lake build
 │   ├── <span class="fil">test_levels.py</span> · <span class="fil">test_theta.py</span> · <span class="fil">test_heldout.py</span>
 │   ├── <span class="fil">test_gauge_invariance.py</span> · <span class="fil">test_higher_moments.py</span>
 │   └── <span class="fil">test_path_class_h6.py</span>
@@ -1709,8 +1708,8 @@ createKnotScene(document.getElementById('structureCanvas'), {matrix:true, center
       p:'(1) Refinement sequence at θ = π/2 converges geometrically with rate 1/3. (2) Held-out (m, θ) pairs match the closed form to |Δ| ≤ 1e−11. (3) Under a random SU(2) gauge transformation the spectrum moves by at most 7.99e−15 and M₄ difference is exactly 0.',
       r:'VERIFICATION.md — full tables' },
     { t:'Evidence — every claim is a test',
-      p:'The pytest suite encodes each claim as an executable check: level counts, θ = 0 reduction to two plain SG copies, gauge invariance, closed-form agreement, convergence. Residual at level 7: ~1e−13 … 1e−12.',
-      r:'tests/ — 31 checks + slow suite' },
+      p:'Python tests cover numerical and regression checks: level counts, θ = 0 reduction, gauge checks, held-out formula comparisons, and convergence. Lean theorem statements are checked separately with lake build. Recorded residual at level 7: ~1e−13 … 1e−12.',
+      r:'tests/ — fast regression suite + slow suite' },
     { t:'Reproduction — anyone, anywhere',
       p:'Pinned environment, requirements, and regeneration scripts. Clone, install, run — the full verification completes in minutes. Apache 2.0, with NOTICE.',
       r:'reproducibility/ · LICENSE' },
