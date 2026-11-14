@@ -2,7 +2,7 @@
 
 ## Research dissertation
 
-**Author:** Evgeny Zaprudnov  
+**Author:** Evgeniy Zaprudnov  
 **Research group:** RFT-SIRM  
 **Version:** 1.0  
 **Date:** 8 November 2026  
