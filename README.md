@@ -361,7 +361,7 @@ The Python workflow runs the fast and slow suites on Python 3.11 and 3.12. The L
 
 ## Authorship and research record
 
-**Evgeny Zaprudnov**  
+**Evgeniy Zaprudnov**  
 *Author of Evgeny's Theorem and originator of the mathematical research programme recorded in this repository.*
 
 Sierpiński Gasket · Non-commutative SU(2) Connection · Spectral Moments · Lean 4
