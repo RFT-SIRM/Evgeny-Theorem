@@ -1,0 +1,4036 @@
+{
+  "summary": {
+    "degree": 12,
+    "ordered_positive_compositions": 2048,
+    "even_r_compositions": 1024,
+    "odd_r_compositions": 1024,
+    "even_r_cyclic_orbits": 179,
+    "odd_r_cyclic_orbits": 172,
+    "even_r_weighted_total": "2047",
+    "odd_r_weighted_total": "2048"
+  },
+  "strata": [
+    {
+      "r": 1,
+      "ordered_compositions": 1,
+      "cyclic_orbits": 1,
+      "orbit_size_histogram": {
+        "1": 1
+      },
+      "orbit_size_sum": 1,
+      "weighted_word_count": "12",
+      "representatives": [
+        {
+          "gaps": [
+            12
+          ],
+          "orbit_size": 1
+        }
+      ]
+    },
+    {
+      "r": 2,
+      "ordered_compositions": 11,
+      "cyclic_orbits": 6,
+      "orbit_size_histogram": {
+        "1": 1,
+        "2": 5
+      },
+      "orbit_size_sum": 11,
+      "weighted_word_count": "66",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            11
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            2,
+            10
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            3,
+            9
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            4,
+            8
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            5,
+            7
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            6,
+            6
+          ],
+          "orbit_size": 1
+        }
+      ]
+    },
+    {
+      "r": 3,
+      "ordered_compositions": 55,
+      "cyclic_orbits": 19,
+      "orbit_size_histogram": {
+        "1": 1,
+        "3": 18
+      },
+      "orbit_size_sum": 55,
+      "weighted_word_count": "220",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            10
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            9
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            8
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            7
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            5,
+            6
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            6,
+            5
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            7,
+            4
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            8,
+            3
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            9,
+            2
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            8
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            2,
+            3,
+            7
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            2,
+            4,
+            6
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            2,
+            5,
+            5
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            2,
+            6,
+            4
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            2,
+            7,
+            3
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            3,
+            3,
+            6
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            3,
+            4,
+            5
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            3,
+            5,
+            4
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            4,
+            4,
+            4
+          ],
+          "orbit_size": 1
+        }
+      ]
+    },
+    {
+      "r": 4,
+      "ordered_compositions": 165,
+      "cyclic_orbits": 43,
+      "orbit_size_histogram": {
+        "1": 1,
+        "2": 2,
+        "4": 40
+      },
+      "orbit_size_sum": 165,
+      "weighted_word_count": "495",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            9
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            8
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            7
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            6
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            5,
+            5
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            6,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            7,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            8,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            8
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            7
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            6
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            5,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            6,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            7,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            1,
+            7
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            6
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            3,
+            5
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            4,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            5,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            6,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            1,
+            6
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            2,
+            5
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            3,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            4,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            5,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            5,
+            1,
+            5
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            1,
+            5,
+            2,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            5,
+            3,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            5,
+            4,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            6,
+            2,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            6,
+            3,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            7,
+            2,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            2,
+            6
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            3,
+            5
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            4,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            5,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            3,
+            2,
+            5
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            3,
+            3,
+            4
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            3,
+            4,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            2,
+            4,
+            2,
+            4
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            2,
+            4,
+            3,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            3,
+            3,
+            3,
+            3
+          ],
+          "orbit_size": 1
+        }
+      ]
+    },
+    {
+      "r": 5,
+      "ordered_compositions": 330,
+      "cyclic_orbits": 66,
+      "orbit_size_histogram": {
+        "5": 66
+      },
+      "orbit_size_sum": 330,
+      "weighted_word_count": "792",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            8
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            7
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            6
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            5,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            6,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            7,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            7
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            6
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            4,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            5,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            6,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            6
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            2,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            3,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            4,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            5,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            1,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            2,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            3,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            4,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            5,
+            1,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            5,
+            2,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            5,
+            3,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            6,
+            1,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            6,
+            2,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            7,
+            1,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            6
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            3,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            4,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            5,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            6,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            1,
+            6
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            2,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            3,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            4,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            5,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            1,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            2,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            3,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            4,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            4,
+            1,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            4,
+            2,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            4,
+            3,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            5,
+            1,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            5,
+            2,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            1,
+            3,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            1,
+            4,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            1,
+            5,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            1,
+            5
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            2,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            3,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            4,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            3,
+            1,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            3,
+            2,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            3,
+            3,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            4,
+            2,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            1,
+            4,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            2,
+            2,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            2,
+            3,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            4,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            1,
+            5,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            2,
+            2,
+            4
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            2,
+            3,
+            3
+          ],
+          "orbit_size": 5
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            3,
+            2,
+            3
+          ],
+          "orbit_size": 5
+        }
+      ]
+    },
+    {
+      "r": 6,
+      "ordered_compositions": 462,
+      "cyclic_orbits": 80,
+      "orbit_size_histogram": {
+        "1": 1,
+        "2": 1,
+        "3": 3,
+        "6": 75
+      },
+      "orbit_size_sum": 462,
+      "weighted_word_count": "924",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            7
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            6
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            4,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            5,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            6,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            6
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            3,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            4,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            5,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            2,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            3,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            4,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            1,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            2,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            5,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            5,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            6,
+            1,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            6
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            3,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            4,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            5,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            2,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            3,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            4,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            1,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            2,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            4,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            4,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            5,
+            1,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            1,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            2,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            3,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            4,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            2,
+            1,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            2,
+            2,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            2,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            3,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            4,
+            1,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            1,
+            1,
+            4
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            5,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            5,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            1,
+            5
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            2,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            3,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            4,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            3,
+            1,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            3,
+            2,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            3,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            4,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            4,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            1,
+            2,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            1,
+            3,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            1,
+            4,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            2,
+            1,
+            4
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            2,
+            2,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            2,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            3,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            3,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            1,
+            3,
+            1,
+            3
+          ],
+          "orbit_size": 2
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            1,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 3
+        },
+        {
+          "gaps": [
+            1,
+            3,
+            2,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 6
+        },
+        {
+          "gaps": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 1
+        }
+      ]
+    },
+    {
+      "r": 7,
+      "ordered_compositions": 462,
+      "cyclic_orbits": 66,
+      "orbit_size_histogram": {
+        "7": 66
+      },
+      "orbit_size_sum": 462,
+      "weighted_word_count": "792",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            6
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            5
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            4,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            5,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            5
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            3,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            4,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            2,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            4,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            4,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            5,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            5
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            3,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            4,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            3,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            4,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            1,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            4,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            5,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            3,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            4,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            1,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            2,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            3,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            4,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            1,
+            4
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            3,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            1,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            2,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            3,
+            2,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            4,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            3,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            2,
+            1,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 7
+        }
+      ]
+    },
+    {
+      "r": 8,
+      "ordered_compositions": 330,
+      "cyclic_orbits": 43,
+      "orbit_size_histogram": {
+        "2": 1,
+        "4": 2,
+        "8": 40
+      },
+      "orbit_size_sum": 330,
+      "weighted_word_count": "495",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            4
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            4,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            4
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            3,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            4,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            4
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            4,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            1,
+            4
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            3,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            3,
+            2,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            2,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 4
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 8
+        },
+        {
+          "gaps": [
+            1,
+            2,
+            1,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 2
+        }
+      ]
+    },
+    {
+      "r": 9,
+      "ordered_compositions": 165,
+      "cyclic_orbits": 19,
+      "orbit_size_histogram": {
+        "3": 1,
+        "9": 18
+      },
+      "orbit_size_sum": 165,
+      "weighted_word_count": "220",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            4
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            3
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            3
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            2,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            3,
+            1,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            2,
+            1,
+            2,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 9
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            2,
+            1,
+            1,
+            2,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 3
+        }
+      ]
+    },
+    {
+      "r": 10,
+      "ordered_compositions": 55,
+      "cyclic_orbits": 6,
+      "orbit_size_histogram": {
+        "5": 1,
+        "10": 5
+      },
+      "orbit_size_sum": 55,
+      "weighted_word_count": "66",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            3
+          ],
+          "orbit_size": 10
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            2
+          ],
+          "orbit_size": 10
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            2
+          ],
+          "orbit_size": 10
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 10
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 10
+        },
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 5
+        }
+      ]
+    },
+    {
+      "r": 11,
+      "ordered_compositions": 11,
+      "cyclic_orbits": 1,
+      "orbit_size_histogram": {
+        "11": 1
+      },
+      "orbit_size_sum": 11,
+      "weighted_word_count": "12",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            2
+          ],
+          "orbit_size": 11
+        }
+      ]
+    },
+    {
+      "r": 12,
+      "ordered_compositions": 1,
+      "cyclic_orbits": 1,
+      "orbit_size_histogram": {
+        "1": 1
+      },
+      "orbit_size_sum": 1,
+      "weighted_word_count": "1",
+      "representatives": [
+        {
+          "gaps": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "orbit_size": 1
+        }
+      ]
+    }
+  ]
+}

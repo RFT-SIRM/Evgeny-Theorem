@@ -6696,3 +6696,47 @@ Validation on the local working tree:
   The run was under local Python 3.14 and emitted NumPy runtime warnings in
   matrix-power regression tests; the test process exited successfully.
 - `pytest tests/ -m slow -v`: 9 passed. The run used local Python 3.14.2; the GitHub Actions Python 3.11/3.12 matrix remains to be confirmed remotely.
+
+
+## 2026-11-24 — H12 orbit inventory and degree-11 boundary checkpoint (in progress)
+
+The p=12 positive-gap inventory has been independently regenerated and
+checked against all ordered positive compositions. There are 2,048 ordered
+compositions in total; the even-r strata contain 1,024 compositions in
+179 cyclic orbits (r = 2, 4, 6, 8, 10, 12), and the odd-r strata contain
+1,024 compositions in 172 cyclic orbits. The working-tree inventory source
+consists of `computational/h12_positive_gap_orbit_audit.py` and its JSON
+output.
+
+`formalization/EvgenyTheorem/H12OrbitInventory.lean` supplies the six even-r
+cyclic orbit partitions, pairwise-disjointness results, exact orbit trace-sum
+identities, and normalized word/orbit averages. Its finite partition and
+pairwise checks use 12 `native_decide` calls. Lean builds this module, but the
+Mathlib linter correctly notes that `native_decide` trusts the native Lean
+compiler in addition to the kernel; this trust boundary is explicit and must
+not be described as a kernel-only certificate.
+
+The current Lean source also contains `GlueData.N_cube`, the generic
+eleven-insertion vanishing reducer, the generic twelve-insertion boundary
+reducer, and the concrete degree-eleven HKG support bridge. On 2026-11-24,
+the local command `lake build EvgenyTheorem.GlueTrace` completed successfully
+(3,041 jobs) after the H12 concrete boundary helper was widened from powers
+through degree 7 to powers through degree 11 and its level hypothesis was
+strengthened to m >= 4. The output contained style/linter warnings only
+(`unusedSimpArgs`, long lines, and `haveILetI`); no Lean error was reported.
+The checkpoint procedure runs a fresh `lake build EvgenyTheorem` after this
+last source change and commits only if that full-root build exits successfully.
+
+**Not yet proved:** the complete odd-r word-stratum vanishing interfaces;
+the six even-r operator boundary reductions for every orbit representative;
+level-independence of the resulting six-pair boundary sum; the assembled
+H12 trace identity and its level recurrence; and any finite m=3 to m=4
+bridge. This checkpoint does not claim that the H12 theorem is closed.
+
+**Next proof steps:** (1) connect odd-r strata to the eleven-insertion
+vanishing formula by inserting zero-gap pairs using `GlueData.N_cube`;
+(2) connect every even-r orbit average to the degree-eleven twelve-N
+boundary reducer; (3) prove transport of the resulting six-pair sum using
+the degree-one-through-eleven diagonal transports; (4) assemble the full
+word expansion and prove the recurrence, separately discharging the finite
+base-level transition.

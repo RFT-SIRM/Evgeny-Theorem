@@ -1,4 +1,5 @@
 import EvgenyTheorem.TraceExpand
+import EvgenyTheorem.GlueAlg
 import EvgenyTheorem.GlueCorner
 
 /-!
@@ -3492,8 +3493,145 @@ private theorem trace_three_kernels_supported_diagonal
             ring
           · simp [hg]
 
-/-- Every power through degree five is off-diagonal-zero between distinct
+/- Every power through degree five is off-diagonal-zero between distinct
 glued states, including states in different copy blocks. -/
+set_option maxHeartbeats 1000000 in
+private theorem trace_six_kernels_supported_diagonal
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (A B C D E F : Matrix X X ℂ)
+    (d1 d2 d3 d4 d5 d6 : X → ℂ)
+    (hd1 : ∀ x, ¬ g x → d1 x = 0)
+    (hd2 : ∀ x, ¬ g x → d2 x = 0)
+    (hd3 : ∀ x, ¬ g x → d3 x = 0)
+    (hd4 : ∀ x, ¬ g x → d4 x = 0)
+    (hd5 : ∀ x, ¬ g x → d5 x = 0)
+    (hd6 : ∀ x, ¬ g x → d6 x = 0)
+    (hA : ∀ x y, g x → g y → x ≠ y → A x y = 0)
+    (hB : ∀ x y, g x → g y → x ≠ y → B x y = 0)
+    (hC : ∀ x y, g x → g y → x ≠ y → C x y = 0)
+    (hD : ∀ x y, g x → g y → x ≠ y → D x y = 0)
+    (hE : ∀ x y, g x → g y → x ≠ y → E x y = 0) :
+    Matrix.trace
+      (A * Matrix.diagonal d1 * B * Matrix.diagonal d2 *
+        C * Matrix.diagonal d3 * D * Matrix.diagonal d4 *
+        E * Matrix.diagonal d5 * F * Matrix.diagonal d6) =
+      ∑ x, if g x then
+        (A x x * d1 x) * (B x x * d2 x) *
+          (C x x * d3 x) * (D x x * d4 x) *
+          (E x x * d5 x) * (F x x * d6 x)
+        else 0 := by
+  classical
+  let q1 : X → ℂ := fun x => d1 x * B x x * d2 x
+  let q2 : X → ℂ := fun x => q1 x * C x x * d3 x
+  let q3 : X → ℂ := fun x => q2 x * D x x * d4 x
+  let q4 : X → ℂ := fun x => q3 x * E x x * d5 x
+  have hq1 : ∀ x, ¬ g x → q1 x = 0 := by
+    intro x hx
+    simp [q1, hd1 x hx]
+  have hq2 : ∀ x, ¬ g x → q2 x = 0 := by
+    intro x hx
+    simp [q2, hq1 x hx]
+  have hq3 : ∀ x, ¬ g x → q3 x = 0 := by
+    intro x hx
+    simp [q3, hq2 x hx]
+  have hq4 : ∀ x, ¬ g x → q4 x = 0 := by
+    intro x hx
+    simp [q4, hq3 x hx]
+  have hSand1 :
+      Matrix.diagonal d1 * B * Matrix.diagonal d2 = Matrix.diagonal q1 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q1] using diagonal_sandwich_apply_two d1 d2 B x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g d1 d2 B hd1 hd2 hB x y hxy
+  have hSand2 :
+      Matrix.diagonal q1 * C * Matrix.diagonal d3 = Matrix.diagonal q2 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q2] using diagonal_sandwich_apply_two q1 d3 C x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g q1 d3 C hq1 hd3 hC x y hxy
+  have hSand3 :
+      Matrix.diagonal q2 * D * Matrix.diagonal d4 = Matrix.diagonal q3 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q3] using diagonal_sandwich_apply_two q2 d4 D x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g q2 d4 D hq2 hd4 hD x y hxy
+  have hSand4 :
+      Matrix.diagonal q3 * E * Matrix.diagonal d5 = Matrix.diagonal q4 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q4] using diagonal_sandwich_apply_two q3 d5 E x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g q3 d5 E hq3 hd5 hE
+        x y hxy
+  calc
+    Matrix.trace
+      (A * Matrix.diagonal d1 * B * Matrix.diagonal d2 *
+        C * Matrix.diagonal d3 * D * Matrix.diagonal d4 *
+        E * Matrix.diagonal d5 * F * Matrix.diagonal d6) =
+      Matrix.trace
+        (A * (Matrix.diagonal d1 * B * Matrix.diagonal d2) *
+          C * Matrix.diagonal d3 * D * Matrix.diagonal d4 *
+          E * Matrix.diagonal d5 * F * Matrix.diagonal d6) := by
+            simp only [Matrix.mul_assoc]
+    _ = Matrix.trace
+        (A * Matrix.diagonal q1 * C * Matrix.diagonal d3 *
+          D * Matrix.diagonal d4 * E * Matrix.diagonal d5 *
+          F * Matrix.diagonal d6) := by rw [hSand1]
+    _ = Matrix.trace
+        (A * (Matrix.diagonal q1 * C * Matrix.diagonal d3) *
+          D * Matrix.diagonal d4 * E * Matrix.diagonal d5 *
+          F * Matrix.diagonal d6) := by
+            simp only [Matrix.mul_assoc]
+    _ = Matrix.trace
+        (A * Matrix.diagonal q2 * D * Matrix.diagonal d4 *
+          E * Matrix.diagonal d5 * F * Matrix.diagonal d6) := by
+            rw [hSand2]
+    _ = Matrix.trace
+        (A * (Matrix.diagonal q2 * D * Matrix.diagonal d4) *
+          E * Matrix.diagonal d5 * F * Matrix.diagonal d6) := by
+            simp only [Matrix.mul_assoc]
+    _ = Matrix.trace
+        (A * Matrix.diagonal q3 * E * Matrix.diagonal d5 *
+          F * Matrix.diagonal d6) := by rw [hSand3]
+    _ = Matrix.trace
+        (A * (Matrix.diagonal q3 * E * Matrix.diagonal d5) *
+          F * Matrix.diagonal d6) := by
+            simp only [Matrix.mul_assoc]
+    _ = Matrix.trace
+        (A * Matrix.diagonal q4 * F * Matrix.diagonal d6) := by
+            rw [hSand4]
+    _ = ∑ x, if g x then A x x * q4 x * F x x * d6 x else 0 :=
+          trace_two_kernels_supported_diagonal
+            g A F q4 d6 hq4 hd6 hA
+    _ = ∑ x, if g x then
+          (A x x * d1 x) * (B x x * d2 x) *
+            (C x x * d3 x) * (D x x * d4 x) *
+            (E x x * d5 x) * (F x x * d6 x)
+          else 0 := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        by_cases hgx : g x
+        · simp only [if_pos hgx]
+          simp [q1, q2, q3, q4]
+          ring
+        · simp [hgx]
+
 private theorem sgK_pow_glued_offdiag_of_OAnti
     (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
@@ -3509,9 +3647,49 @@ private theorem sgK_pow_glued_offdiag_of_OAnti
     rw [blockK_pow_local]
     simp [blockK, hcopy]
 
-/-- The p=8 diagonal boundary form is written as a product of adjacent
+/- The p=8 diagonal boundary form is written as a product of adjacent
 corner/partner diagonal powers. A pair (a,b) contributes K^a at the glued
 state and K^b at its partner; lists of pairs encode the r=2,4,6,8 strata. -/
+set_option maxHeartbeats 1000000 in
+private theorem sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (n : ℕ) (hn : n ≤ 11) :
+    ∀ x y, (sgGlue m).g x → (sgGlue m).g y → x ≠ y →
+      (sgK m θ ax o ^ n) x y = 0 := by
+  intro x y hx hy hxy
+  by_cases hcopy : x.1 = y.1
+  · exact sgK_pow_hkg_up_to_eleven_of_OAnti
+      m hm θ ax o hanti n hn x y hx hy hcopy hxy
+  · change (blockK (Hc m θ ax o) ^ n) x y = 0
+    rw [blockK_pow_local]
+    simp [blockK, hcopy]
+
+
+/-- At level three, distinct glued states in the same corner cannot be
+joined by powers through degree seven. Different copies remain separated
+by block diagonality. -/
+private theorem sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (n : ℕ) (hn : n ≤ 7) :
+    ∀ x y, (sgGlue m).g x → (sgGlue m).g y → x ≠ y →
+      (sgK m θ ax o ^ n) x y = 0 := by
+  intro x y hx hy hxy
+  by_cases hcopy : x.1 = y.1
+  · have hnside : n < 2 ^ m := by
+      calc
+        n ≤ 7 := hn
+        _ < 2 ^ 3 := by norm_num
+        _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+    exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
+      hnside x y hx hy hcopy hxy
+  · change (blockK (Hc m θ ax o) ^ n) x y = 0
+    rw [blockK_pow_local]
+    simp [blockK, hcopy]
+
 noncomputable def glueRHS8_pair_value
     (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
     (x : WSG m) (p : ℕ × ℕ) : ℂ :=
@@ -3531,6 +3709,417 @@ noncomputable def glueRHS8_pair_sum
     (ps : List (ℕ × ℕ)) : ℂ :=
   ∑ x, if (sgGlue m).g x then
     glueRHS8_pair_product m K x ps else 0
+
+/-- The p=12 boundary contribution in ordered six-pair form. -/
+noncomputable def glueRHS12_six_pair_sum
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ)
+    (a b c d e f g h i j k l : ℕ) : ℂ :=
+  glueRHS8_pair_sum m K
+    [(a, b), (c, d), (e, f), (g, h), (i, j), (k, l)]
+
+/-- The unique twelve-N word contributes six identical corner/partner pairs. -/
+noncomputable def glueRHS12_twelve_N_diagonal_form
+    (m : ℕ) (K : Matrix (WSG m) (WSG m) ℂ) : ℂ :=
+  glueRHS12_six_pair_sum m K 1 1 1 1 1 1 1 1 1 1 1 1
+
+/- A concrete twelve-N boundary word collapses to six ordered diagonal
+corner/partner pairs. The five internal sandwiches use the distinct-state
+vanishing through degree eleven; the final pair remains in its original
+position. -/
+set_option maxHeartbeats 1000000 in
+private theorem sg_trace_p12_twelve_N_boundary_term_pair_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j k l : ℕ)
+    (ha : a ≤ 7) (hb : b ≤ 7) (hc : c ≤ 7)
+    (hd : d ≤ 7) (he : e ≤ 7) (hf : f ≤ 7)
+    (hg : g ≤ 7) (hh : h ≤ 7) (hi : i ≤ 7)
+    (hj : j ≤ 7) (hl : l ≤ 7) :
+    Matrix.trace
+      (sgK m θ ax o ^ a * (sgGlue m).N * sgK m θ ax o ^ b * (sgGlue m).N *
+        sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d * (sgGlue m).N *
+        sgK m θ ax o ^ e * (sgGlue m).N * sgK m θ ax o ^ f * (sgGlue m).N *
+        sgK m θ ax o ^ g * (sgGlue m).N * sgK m θ ax o ^ h * (sgGlue m).N *
+        sgK m θ ax o ^ i * (sgGlue m).N * sgK m θ ax o ^ j * (sgGlue m).N *
+        sgK m θ ax o ^ k * (sgGlue m).N * sgK m θ ax o ^ l * (sgGlue m).N *
+        sgK m θ ax o ^ 0) =
+      glueRHS12_six_pair_sum m (sgK m θ ax o)
+        a b c d e f g h i j k l := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g0 : WSG m → Prop := (sgGlue m).g
+  let db : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dd : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let df : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dh : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ h) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dj : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ j) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dl : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  have hdb : ∀ x, ¬ g0 x → db x = 0 := by
+    intro x hx
+    simp [db, hx]
+  have hdd : ∀ x, ¬ g0 x → dd x = 0 := by
+    intro x hx
+    simp [dd, hx]
+  have hdf : ∀ x, ¬ g0 x → df x = 0 := by
+    intro x hx
+    simp [df, hx]
+  have hdh : ∀ x, ¬ g0 x → dh x = 0 := by
+    intro x hx
+    simp [dh, hx]
+  have hdj : ∀ x, ¬ g0 x → dj x = 0 := by
+    intro x hx
+    simp [dj, hx]
+  have hdl : ∀ x, ¬ g0 x → dl x = 0 := by
+    intro x hx
+    simp [dl, hx]
+  have hAoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ a) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti a ha x y hx hy hxy)
+  have hCoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ c) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti c hc x y hx hy hxy)
+  have hEoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ e) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti e he x y hx hy hxy)
+  have hGoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ g) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti g hg x y hx hy hxy)
+  have hIoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ i) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti i hi x y hx hy hxy)
+  have hkgB :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ b) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti b hb w w' hw hw' hne)
+  have hkgD :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ d) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti d hd w w' hw hw' hne)
+  have hkgF :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ f) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti f hf w w' hw hw' hne)
+  have hkgH :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ h) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti h hh w w' hw hw' hne)
+  have hkgJ :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ j) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti j hj w w' hw hw' hne)
+  have hkgL :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ l) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti l hl w w' hw hw' hne)
+  let q1 : WSG m → ℂ := fun x => db x * (K ^ c) x x * dd x
+  let q2 : WSG m → ℂ := fun x => q1 x * (K ^ e) x x * df x
+  let q3 : WSG m → ℂ := fun x => q2 x * (K ^ g) x x * dh x
+  let q4 : WSG m → ℂ := fun x => q3 x * (K ^ i) x x * dj x
+  have hq1 : ∀ x, ¬ g0 x → q1 x = 0 := by
+    intro x hx
+    simp [q1, db, hx]
+  have hq2 : ∀ x, ¬ g0 x → q2 x = 0 := by
+    intro x hx
+    simp [q2, hq1 x hx]
+  have hq3 : ∀ x, ¬ g0 x → q3 x = 0 := by
+    intro x hx
+    simp [q3, hq2 x hx]
+  have hq4 : ∀ x, ¬ g0 x → q4 x = 0 := by
+    intro x hx
+    simp [q4, hq3 x hx]
+  have hSand1 :
+      Matrix.diagonal db * K ^ c * Matrix.diagonal dd =
+        Matrix.diagonal q1 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q1] using diagonal_sandwich_apply_two db dd (K ^ c) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 db dd (K ^ c) hdb hdd hCoff x y hxy
+  have hSand2 :
+      Matrix.diagonal q1 * K ^ e * Matrix.diagonal df =
+        Matrix.diagonal q2 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q2] using diagonal_sandwich_apply_two q1 df (K ^ e) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q1 df (K ^ e) hq1 hdf hEoff x y hxy
+  have hSand3 :
+      Matrix.diagonal q2 * K ^ g * Matrix.diagonal dh =
+        Matrix.diagonal q3 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q3] using diagonal_sandwich_apply_two q2 dh (K ^ g) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q2 dh (K ^ g) hq2 hdh hGoff x y hxy
+  have hSand4 :
+      Matrix.diagonal q3 * K ^ i * Matrix.diagonal dj =
+        Matrix.diagonal q4 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q4] using diagonal_sandwich_apply_two q3 dj (K ^ i) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q3 dj (K ^ i) hq3 hdj hIoff x y hxy
+  let M : Matrix (WSG m) (WSG m) ℂ :=
+    K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+      K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh *
+      K ^ i * Matrix.diagonal dj * K ^ k
+  have hprod :
+      ([K ^ 0, K ^ a, Matrix.diagonal db, K ^ c, Matrix.diagonal dd,
+        K ^ e, Matrix.diagonal df, K ^ g, Matrix.diagonal dh,
+        K ^ i, Matrix.diagonal dj, K ^ k] :
+          List (Matrix (WSG m) (WSG m) ℂ)).prod = M := by
+    simp [M, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+  have hgeneric :=
+    trace_twelve_N_powers_boundary (sgGlue m) K
+      (blockK_BD (Hc m θ ax o))
+      a b c d e f g h i j k l 0
+      hkgB hkgD hkgF hkgH hkgJ hkgL
+  have hgeneric' :
+      Matrix.trace
+        (K ^ a * (sgGlue m).N * K ^ b * (sgGlue m).N *
+          K ^ c * (sgGlue m).N * K ^ d * (sgGlue m).N *
+          K ^ e * (sgGlue m).N * K ^ f * (sgGlue m).N *
+          K ^ g * (sgGlue m).N * K ^ h * (sgGlue m).N *
+          K ^ i * (sgGlue m).N * K ^ j * (sgGlue m).N *
+          K ^ k * (sgGlue m).N * K ^ l * (sgGlue m).N * K ^ 0) =
+        ∑ x, if g0 x then
+          M x x * (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [M, db, dd, df, dh, dj, pow_zero, Matrix.one_mul,
+      List.prod_cons, Matrix.mul_assoc] using hgeneric
+  have hboundary :
+      Matrix.trace (M * Matrix.diagonal dl) =
+        ∑ x, if g0 x then
+          M x x * (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    calc
+      _ = ∑ x, M x x * dl x := trace_mul_diagonal_eq_sum M dl
+      _ = _ := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        by_cases hgx : g0 x
+        · simp [dl, hgx]
+        · simp [g0, dl, hgx]
+  have hreduce :
+      Matrix.trace (M * Matrix.diagonal dl) =
+        Matrix.trace
+          (K ^ a * Matrix.diagonal q4 * K ^ k * Matrix.diagonal dl) := by
+    change Matrix.trace
+      (K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+        K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh *
+        K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) = _
+    calc
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal db * K ^ c * Matrix.diagonal dd) *
+            K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh *
+            K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q1 * K ^ e * Matrix.diagonal df *
+            K ^ g * Matrix.diagonal dh * K ^ i * Matrix.diagonal dj *
+            K ^ k * Matrix.diagonal dl) := by rw [hSand1]
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal q1 * K ^ e * Matrix.diagonal df) *
+            K ^ g * Matrix.diagonal dh * K ^ i * Matrix.diagonal dj *
+            K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q2 * K ^ g * Matrix.diagonal dh *
+            K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) := by
+              rw [hSand2]
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal q2 * K ^ g * Matrix.diagonal dh) *
+            K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q3 * K ^ i * Matrix.diagonal dj *
+            K ^ k * Matrix.diagonal dl) := by rw [hSand3]
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal q3 * K ^ i * Matrix.diagonal dj) *
+            K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q4 * K ^ k * Matrix.diagonal dl) := by
+              rw [hSand4]
+  have htrace := trace_two_kernels_supported_diagonal
+    g0 (K ^ a) (K ^ k) q4 dl hq4 hdl hAoff
+  have hpair :
+      (∑ x, if g0 x then
+        (K ^ a) x x * q4 x * (K ^ k) x x * dl x else 0) =
+        glueRHS12_six_pair_sum m K a b c d e f g h i j k l := by
+    unfold glueRHS12_six_pair_sum glueRHS8_pair_sum
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g0 x
+    · simp [glueRHS8_pair_product, glueRHS8_pair_value,
+        g0, q1, q2, q3, q4, db, dd, df, dh, dj, dl, hgx] <;> ring
+    · simp [g0, hgx]
+  calc
+    Matrix.trace
+      (K ^ a * (sgGlue m).N * K ^ b * (sgGlue m).N *
+        K ^ c * (sgGlue m).N * K ^ d * (sgGlue m).N *
+        K ^ e * (sgGlue m).N * K ^ f * (sgGlue m).N *
+        K ^ g * (sgGlue m).N * K ^ h * (sgGlue m).N *
+        K ^ i * (sgGlue m).N * K ^ j * (sgGlue m).N *
+        K ^ k * (sgGlue m).N * K ^ l * (sgGlue m).N * K ^ 0) =
+        ∑ x, if g0 x then
+          M x x * (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 :=
+      hgeneric'
+    _ = Matrix.trace (M * Matrix.diagonal dl) := hboundary.symm
+    _ = Matrix.trace
+        (K ^ a * Matrix.diagonal q4 * K ^ k * Matrix.diagonal dl) := hreduce
+    _ = ∑ x, if g0 x then
+          (K ^ a) x x * q4 x * (K ^ k) x x * dl x else 0 := htrace
+    _ = glueRHS12_six_pair_sum m K a b c d e f g h i j k l := hpair
+
+/- The p=12, twelve-insertion binary-word stratum has one gap vector,
+namely twelve zero gaps, and its trace is the six-pair diagonal term. -/
+set_option maxHeartbeats 1000000 in
+theorem sg_trace_p12_twelve_N_word_stratum_diagonal
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ w : binaryWordFinStratum 12 12,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) =
+      glueRHS12_twelve_N_diagonal_form m (sgK m θ ax o) := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let N : Matrix (WSG m) (WSG m) ℂ := (sgGlue m).N
+  change
+    (∑ w : binaryWordFinStratum 12 12,
+      Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+      glueRHS12_twelve_N_diagonal_form m K
+  let zeroGap : binaryWordGapVectorStratum 12 12 :=
+    ⟨fun _ => 0, by
+      constructor
+      · omega
+      · simp
+    ⟩
+  let gapEquiv : binaryWordGapVectorStratum 12 12 ≃ Unit := {
+    toFun := fun _ => Unit.unit
+    invFun := fun _ => zeroGap
+    left_inv := by
+      intro gaps
+      apply Subtype.ext
+      funext i
+      apply Fin.ext
+      have hi := (gaps.val i).isLt
+      simp [zeroGap]
+    right_inv := by
+      intro u
+      cases u
+      rfl
+  }
+  have hgapList (gaps : binaryWordGapVectorStratum 12 12) :
+      (List.ofFn (fun i : Fin 12 => (gaps.val i).val)).map Nat.succ =
+        List.replicate 12 1 := by
+    have hval : gaps.val = zeroGap.val := by
+      funext i
+      apply Fin.ext
+      have hi := (gaps.val i).isLt
+      simp [zeroGap]
+    rw [hval]
+    simp [zeroGap]
+  have hgapSum :
+      (∑ gaps : binaryWordGapVectorStratum 12 12,
+        cyclicGapTrace K N
+          ((List.ofFn (fun i : Fin 12 => (gaps.val i).val)).map Nat.succ)) =
+      cyclicGapTrace K N (List.replicate 12 1) := by
+    calc
+      _ = ∑ u : Unit, cyclicGapTrace K N (List.replicate 12 1) := by
+        exact Fintype.sum_equiv gapEquiv
+          (fun gaps => cyclicGapTrace K N
+            ((List.ofFn (fun i : Fin 12 => (gaps.val i).val)).map Nat.succ))
+          (fun _ => cyclicGapTrace K N (List.replicate 12 1))
+          (by
+            intro gaps
+            exact congrArg (cyclicGapTrace K N) (hgapList gaps))
+      _ = cyclicGapTrace K N (List.replicate 12 1) := by simp
+  have hcard : Fintype.card (binaryWordGapVectorStratum 12 12) = 1 := by
+    simpa using Fintype.card_congr gapEquiv
+  have hweighted :=
+    binaryWordFinStratum_weighted_trace_eq_positive_gap_sum K N 12 12
+  have hword :
+      (∑ w : binaryWordFinStratum 12 12,
+        Matrix.trace (binaryWordMatrix K (K * N) (List.ofFn w.val))) =
+      cyclicGapTrace K N (List.replicate 12 1) := by
+    simpa [hcard, hgapSum] using hweighted
+  have hcyclic :
+      cyclicGapTrace K N (List.replicate 12 1) =
+        Matrix.trace
+          (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+            K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+            K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 0) := by
+    simp [cyclicGapTrace, List.map_replicate, List.prod_replicate,
+      pow_one, pow_zero, Matrix.one_mul, pow_succ, Matrix.mul_assoc]
+  have hboundary :=
+    sg_trace_p12_twelve_N_boundary_term_pair_diagonal
+      m hm θ ax o hanti
+      1 1 1 1 1 1 1 1 1 1 1 1
+      (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by norm_num)
+  calc
+    _ = cyclicGapTrace K N (List.replicate 12 1) := hword
+    _ = Matrix.trace
+        (K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N *
+          K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 1 * N * K ^ 0) := hcyclic
+    _ = glueRHS12_six_pair_sum m K 1 1 1 1 1 1 1 1 1 1 1 1 := hboundary
+    _ = glueRHS12_twelve_N_diagonal_form m K := rfl
 
 /-- The ten four-N terms of the p=8 boundary expansion are products of two
 corner/partner diagonal pairs. Off-diagonal terms in the two-index sum vanish
@@ -6830,5 +7419,53 @@ theorem sg_trace_p10_zero_N_word_stratum
     _ = Matrix.trace (K ^ 10) := by
       rw [hmatrix]
 
+
+
+/-- Inserting two zero gaps after the first cyclic gap inserts three
+successive copies of N in the matrix word. If N^3=N, the trace is unchanged. -/
+theorem cyclicGapTrace_insert_zero_pair_after_head
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (hN : N * N * N = N)
+    (a : ℕ) (rest : List ℕ) :
+    cyclicGapTrace K N (a :: 0 :: 0 :: rest) =
+      cyclicGapTrace K N (a :: rest) := by
+  unfold cyclicGapTrace
+  simp only [List.map_cons, List.prod_cons, pow_zero, Matrix.one_mul]
+  apply congrArg Matrix.trace
+  let R : Matrix n n ℂ :=
+    (rest.map (fun b => K ^ b * N)).prod
+  change (K ^ a * N) * (N * (N * R)) =
+    (K ^ a * N) * R
+  calc
+    (K ^ a * N) * (N * (N * R)) =
+        K ^ a * (((N * N * N) * R)) := by
+          simp [Matrix.mul_assoc]
+    _ = K ^ a * (N * R) := by rw [hN]
+    _ = (K ^ a * N) * R := by rw [Matrix.mul_assoc]
+
+
+/-- A canonical prefix of an even number of zero gaps. -/
+def h12ZeroPairPrefix : Nat → List ℕ
+  | 0 => []
+  | Nat.succ k => 0 :: 0 :: h12ZeroPairPrefix k
+
+/-- Any number of zero-gap pairs may be inserted after the first
+cyclic gap without changing the trace, using N^3 = N. -/
+theorem cyclicGapTrace_prepend_zero_pairs_after_head
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (hN : N * N * N = N)
+    (k a : ℕ) (rest : List ℕ) :
+    cyclicGapTrace K N (a :: (h12ZeroPairPrefix k ++ rest)) =
+      cyclicGapTrace K N (a :: rest) := by
+  induction k with
+  | zero =>
+      simp [h12ZeroPairPrefix]
+  | succ k ih =>
+      change cyclicGapTrace K N
+        (a :: 0 :: 0 :: (h12ZeroPairPrefix k ++ rest)) =
+          cyclicGapTrace K N (a :: rest)
+      rw [cyclicGapTrace_insert_zero_pair_after_head
+        K N hN a (h12ZeroPairPrefix k ++ rest)]
+      exact ih
 
 end EvgenyTheorem
