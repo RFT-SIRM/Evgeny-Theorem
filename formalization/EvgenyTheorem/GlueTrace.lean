@@ -3728,14 +3728,14 @@ vanishing through degree eleven; the final pair remains in its original
 position. -/
 set_option maxHeartbeats 1000000 in
 private theorem sg_trace_p12_twelve_N_boundary_term_pair_diagonal
-    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o)
     (a b c d e f g h i j k l : ℕ)
-    (ha : a ≤ 7) (hb : b ≤ 7) (hc : c ≤ 7)
-    (hd : d ≤ 7) (he : e ≤ 7) (hf : f ≤ 7)
-    (hg : g ≤ 7) (hh : h ≤ 7) (hi : i ≤ 7)
-    (hj : j ≤ 7) (hl : l ≤ 7) :
+    (ha : a ≤ 11) (hb : b ≤ 11) (hc : c ≤ 11)
+    (hd : d ≤ 11) (he : e ≤ 11) (hf : f ≤ 11)
+    (hg : g ≤ 11) (hh : h ≤ 11) (hi : i ≤ 11)
+    (hj : j ≤ 11) (hl : l ≤ 11) :
     Matrix.trace
       (sgK m θ ax o ^ a * (sgGlue m).N * sgK m θ ax o ^ b * (sgGlue m).N *
         sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d * (sgGlue m).N *
@@ -3783,73 +3783,73 @@ private theorem sg_trace_p12_twelve_N_boundary_term_pair_diagonal
       ∀ x y, g0 x → g0 y → x ≠ y → (K ^ a) x y = 0 := by
     intro x y hx hy hxy
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti a ha x y hx hy hxy)
   have hCoff :
       ∀ x y, g0 x → g0 y → x ≠ y → (K ^ c) x y = 0 := by
     intro x y hx hy hxy
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti c hc x y hx hy hxy)
   have hEoff :
       ∀ x y, g0 x → g0 y → x ≠ y → (K ^ e) x y = 0 := by
     intro x y hx hy hxy
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti e he x y hx hy hxy)
   have hGoff :
       ∀ x y, g0 x → g0 y → x ≠ y → (K ^ g) x y = 0 := by
     intro x y hx hy hxy
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti g hg x y hx hy hxy)
   have hIoff :
       ∀ x y, g0 x → g0 y → x ≠ y → (K ^ i) x y = 0 := by
     intro x y hx hy hxy
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti i hi x y hx hy hxy)
   have hkgB :
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (K ^ b) w w' = 0 := by
     intro w w' hw hw' hcopy hne
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti b hb w w' hw hw' hne)
   have hkgD :
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (K ^ d) w w' = 0 := by
     intro w w' hw hw' hcopy hne
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti d hd w w' hw hw' hne)
   have hkgF :
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (K ^ f) w w' = 0 := by
     intro w w' hw hw' hcopy hne
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti f hf w w' hw hw' hne)
   have hkgH :
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (K ^ h) w w' = 0 := by
     intro w w' hw hw' hcopy hne
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti h hh w w' hw hw' hne)
   have hkgJ :
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (K ^ j) w w' = 0 := by
     intro w w' hw hw' hcopy hne
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti j hj w w' hw hw' hne)
   have hkgL :
       ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
         w.1 = w'.1 → w ≠ w' → (K ^ l) w w' = 0 := by
     intro w w' hw hw' hcopy hne
     simpa [K] using
-      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+      (sgK_pow_glued_offdiag_up_to_eleven_of_OAnti
         m hm θ ax o hanti l hl w w' hw hw' hne)
   let q1 : WSG m → ℂ := fun x => db x * (K ^ c) x x * dd x
   let q2 : WSG m → ℂ := fun x => q1 x * (K ^ e) x x * df x
@@ -4026,7 +4026,7 @@ private theorem sg_trace_p12_twelve_N_boundary_term_pair_diagonal
 namely twelve zero gaps, and its trace is the six-pair diagonal term. -/
 set_option maxHeartbeats 1000000 in
 theorem sg_trace_p12_twelve_N_word_stratum_diagonal
-    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o) :
     (∑ w : binaryWordFinStratum 12 12,
