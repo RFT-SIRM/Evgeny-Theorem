@@ -6765,3 +6765,36 @@ Validation: `lake build EvgenyTheorem.GlueTrace` and the full
 `lake build EvgenyTheorem` both exited successfully on this source revision.
 This does not prove any odd-r word-stratum vanishing, six-pair level
 invariance, full H12 recurrence, or finite m=3 to m=4 bridge.
+
+## 2026-11-25 — Odd-stratum vanishing and even-gap boundary reduction
+
+The local extension of `GlueTrace.lean` proves two additional H12
+reductions for every level m >= 4.
+
+First, every odd positive-insertion p=12 word stratum vanishes.
+The proof pads an odd positive gap list with zero-gap pairs, uses
+`GlueData.N_cube` to preserve the cyclic trace, applies the
+eleven-insertion vanishing reducer, and then uses the existing
+weighted word-to-positive-gap identity. The theorem
+`sg_trace_p12_all_odd_N_word_strata_zero` sums these results over
+all odd r in {1, 3, 5, 7, 9, 11}.
+
+Second, every positive even-length gap list of total sum 12 is
+reduced to an existential six-pair boundary expression by
+`cyclicGapTrace_p12_even_positive_gap_boundary`. The proof pads
+the list to twelve gaps with zero-gap pairs and applies the
+concrete twelve-N boundary-term reduction.
+
+The six-pair witnesses are still existential. No canonical
+list-valued pairing map has yet been proved, so this result does
+not yet evaluate the six even-r orbit sums or establish their
+level-independence.
+
+Validation on this source revision:
+- `lake build EvgenyTheorem`: passed, 3065 jobs.
+- `git diff --check`: passed.
+
+Still open: canonical six-pair construction; evaluation of all
+six even-r orbit sums; adjacent-level transport of their complete
+sum; full H12 trace expansion and recurrence; and the finite
+transition from m = 3 to m = 4.
