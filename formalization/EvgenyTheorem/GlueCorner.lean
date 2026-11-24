@@ -595,6 +595,23 @@ theorem sgK_pow_hkg_up_to_nine_of_OAnti
   exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
     (by omega) w w' hw hw' hcopy hne
 
+/-- Concrete H12 support bridge: for levels m ≥ 4, every power through
+ degree eleven satisfies the same-copy glued-corner vanishing premise.
+ The geometric path-length bound is strict because 11 < 2^4 ≤ 2^m. -/
+theorem sgK_pow_hkg_up_to_eleven_of_OAnti
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    ∀ n, n ≤ 11 → ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+      w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+  intro n hn w w' hw hw' hcopy hne
+  have hside : 11 < 2 ^ m := by
+    calc
+      11 < 2 ^ 4 := by norm_num
+      _ ≤ 2 ^ m := Nat.pow_le_pow_right (by norm_num) hm
+  exact sgK_pow_hkg_of_OAnti m n θ ax o hanti
+    (by omega) w w' hw hw' hcopy hne
+
 /-- Under orientation antisymmetry, the glued corner lemma supplies the
 middle-power hypothesis required to annihilate every ordered three-pairing
 trace word whose middle exponent is below the geometric bound. -/
@@ -657,6 +674,72 @@ theorem trace_four_N_powers_explicit_of_OAnti
   exact trace_four_N_powers_explicit (sgGlue m) (sgK m θ ax o)
     (blockK_BD _) a b c d e (hkg b hb) (hkg d hd)
 
+
+/-- Concrete H12 twelve-N boundary formula for the glued Sierpinski operator.
+At levels m ≥ 4, each of the six selected middle powers is at most eleven,
+so the existing same-copy glued-corner estimate supplies every hypothesis
+of the generic twelve-pairing boundary reduction. -/
+theorem trace_twelve_N_powers_boundary_of_OAnti
+    (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j k l p : ℕ)
+    (hb : b ≤ 11) (hd : d ≤ 11) (hf : f ≤ 11)
+    (hh : h ≤ 11) (hj : j ≤ 11) (hl : l ≤ 11) :
+    Matrix.trace
+      (sgK m θ ax o ^ a * (sgGlue m).N * sgK m θ ax o ^ b * (sgGlue m).N *
+        sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d * (sgGlue m).N *
+        sgK m θ ax o ^ e * (sgGlue m).N * sgK m θ ax o ^ f * (sgGlue m).N *
+        sgK m θ ax o ^ g * (sgGlue m).N * sgK m θ ax o ^ h * (sgGlue m).N *
+        sgK m θ ax o ^ i * (sgGlue m).N * sgK m θ ax o ^ j * (sgGlue m).N *
+        sgK m θ ax o ^ k * (sgGlue m).N * sgK m θ ax o ^ l * (sgGlue m).N *
+        sgK m θ ax o ^ p) =
+      ∑ x, if (sgGlue m).g x then
+        (([sgK m θ ax o ^ p, sgK m θ ax o ^ a,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ b) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ c,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ d) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ e,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ f) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ g,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ h) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ i,
+          Matrix.diagonal (fun y => if (sgGlue m).g y then
+            (sgK m θ ax o ^ j) ((sgGlue m).σ y) ((sgGlue m).σ y) else 0),
+          sgK m θ ax o ^ k] :
+            List (Matrix (WSG m) (WSG m) ℂ)).prod) x x *
+          (sgK m θ ax o ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x)
+        else 0 := by
+  have hkg : ∀ n, n ≤ 11 →
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (sgK m θ ax o ^ n) w w' = 0 := by
+    intro n hn
+    exact sgK_pow_hkg_up_to_eleven_of_OAnti
+      m hm θ ax o hanti n hn
+  exact trace_twelve_N_powers_boundary
+    (sgGlue m) (sgK m θ ax o) (blockK_BD _) a b c d e f g h i j k l p
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg b hb w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg d hd w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg f hf w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg h hh w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg j hj w w' hw hw' hcopy hne)
+    (by
+      intro w w' hw hw' hcopy hne
+      exact hkg l hl w w' hw hw' hcopy hne)
 
 /-- Three-pairing specialization: if the middle power is below the side
 length, the three-N trace stratum vanishes. The corner condition is obtained

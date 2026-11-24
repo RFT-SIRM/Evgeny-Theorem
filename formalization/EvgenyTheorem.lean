@@ -10,6 +10,7 @@ import EvgenyTheorem.Algebra
 import EvgenyTheorem.Setup
 import EvgenyTheorem.BaseCaseTheorem
 import EvgenyTheorem.TraceExpand
+import EvgenyTheorem.H12OrbitInventory
 import EvgenyTheorem.ListOrder
 import EvgenyTheorem.VertexOrder
 import EvgenyTheorem.VertexIndex

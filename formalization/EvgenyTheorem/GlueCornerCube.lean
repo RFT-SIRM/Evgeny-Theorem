@@ -662,6 +662,75 @@ theorem sgK_pow_entry_zero_outside_radius_four_col
     m θ ax o n hn z w hrev
 
 
+
+/-- The copy-preserving radius-five coordinate box about a glued state. -/
+def sgK_radius_five_support (m : ℕ) (w : WSG m) : Finset (WSG m) :=
+  Finset.univ.filter fun w' =>
+    w'.1 = w.1 ∧
+    w.2.1.1.1 ≤ w'.2.1.1.1 + 5 ∧
+    w'.2.1.1.1 ≤ w.2.1.1.1 + 5 ∧
+    w.2.1.1.2 ≤ w'.2.1.1.2 + 5 ∧
+    w'.2.1.1.2 ≤ w.2.1.1.2 + 5
+
+/-- Nonzero entries of powers through degree five lie in the radius-five
+support. Coordinate bounds follow from path locality; copy preservation
+follows from the block-diagonal structure of `sgK`. -/
+theorem sgK_pow_entry_mem_radius_five
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (n : ℕ) (hn : n ≤ 5) (w w' : WSG m)
+    (h : (sgK m θ ax o ^ n) w w' ≠ 0) :
+    w' ∈ sgK_radius_five_support m w := by
+  apply Finset.mem_filter.mpr
+  refine ⟨Finset.mem_univ _, ?_⟩
+  have hdist := sgK_pow_entry_coord_dist m θ ax o n w w' h
+  have hcopy : w'.1 = w.1 := by
+    by_contra hne
+    have hne' : w.1 ≠ w'.1 := fun heq => hne heq.symm
+    have hzero : (sgK m θ ax o ^ n) w w' = 0 := by
+      change (blockK (Hc m θ ax o) ^ n) w w' = 0
+      rw [blockK_pow_local]
+      simp [blockK, hne']
+    exact h hzero
+  exact ⟨hcopy, by omega, by omega, by omega, by omega⟩
+
+/-- Row entries of powers through degree five vanish outside the
+radius-five support. -/
+theorem sgK_pow_entry_zero_outside_radius_five
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (n : ℕ) (hn : n ≤ 5) (w w' : WSG m)
+    (h' : w' ∉ sgK_radius_five_support m w) :
+    (sgK m θ ax o ^ n) w w' = 0 := by
+  by_contra hzero
+  exact h' (sgK_pow_entry_mem_radius_five m θ ax o n hn w w' hzero)
+
+/-- Symmetry of the finite radius-five support around its center. -/
+theorem sgK_radius_five_support_symm
+    (m : ℕ) (w z : WSG m) :
+    z ∈ sgK_radius_five_support m w ↔
+      w ∈ sgK_radius_five_support m z := by
+  constructor <;> intro h
+  all_goals
+    simp only [sgK_radius_five_support, Finset.mem_filter,
+      Finset.mem_univ, true_and] at h ⊢
+    rcases h with ⟨hcopy, h1, h2, h3, h4⟩
+    exact ⟨hcopy.symm, h2, h1, h4, h3⟩
+
+/-- Column entries of powers through degree five also vanish outside the
+radius-five support, by symmetry of the support relation. -/
+theorem sgK_pow_entry_zero_outside_radius_five_col
+    (m : ℕ) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (n : ℕ) (hn : n ≤ 5) (w z : WSG m)
+    (hz : z ∉ sgK_radius_five_support m w) :
+    (sgK m θ ax o ^ n) z w = 0 := by
+  have hrev : w ∉ sgK_radius_five_support m z := by
+    intro hzw
+    exact hz ((sgK_radius_five_support_symm m z w).mp hzw)
+  exact sgK_pow_entry_zero_outside_radius_five
+    m θ ax o n hn z w hrev
+
 /-- The p=6 high-power residual for concrete glued-copy operators, written
 using the copy-preserving radius-two support proved above. This is a finite
 path-sum formula only; it does not claim that the sums agree between levels. -/
