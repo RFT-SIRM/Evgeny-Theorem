@@ -6740,3 +6740,28 @@ boundary reducer; (3) prove transport of the resulting six-pair sum using
 the degree-one-through-eleven diagonal transports; (4) assemble the full
 word expansion and prove the recurrence, separately discharging the finite
 base-level transition.
+
+## 2026-11-24 — Wire the concrete H12 boundary bridge through degree eleven
+
+A source-level audit of the merged PR #15 tree found that the prior
+checkpoint note overstated one implementation detail: although the generic
+twelve-insertion reducer and the degree-eleven glued-corner support lemma
+were present, the concrete p=12 six-pair boundary-term theorem still had
+m >= 3, eleven exponent bounds <= 7, and eleven calls to the older
+seven-degree off-diagonal helper. The r=12 top-stratum theorem also retained
+m >= 3. This entry records the correction rather than treating that earlier
+statement as already implemented.
+
+The concrete boundary-term theorem is now widened to m >= 4 and all eleven
+constrained exponents <= 11, with each of its eleven support obligations
+routed through `sgK_pow_glued_offdiag_up_to_eleven_of_OAnti`. The r=12
+word-stratum theorem is strengthened to m >= 4 so its call matches the
+boundary theorem. No matrix-factor order, six-pair expression, or boundary
+identity is changed; this is a proof-interface generalization needed before
+all even positive-gap strata can use the degree-eleven twelve-insertion
+reducer.
+
+Validation: `lake build EvgenyTheorem.GlueTrace` and the full
+`lake build EvgenyTheorem` both exited successfully on this source revision.
+This does not prove any odd-r word-stratum vanishing, six-pair level
+invariance, full H12 recurrence, or finite m=3 to m=4 bridge.
