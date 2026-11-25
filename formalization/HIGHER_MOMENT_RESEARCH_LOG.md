@@ -6889,3 +6889,35 @@ Still open: the r=0 main trace, full H12 trace expansion
 and recurrence, and the finite transition m=3 to m=4.
 The theta=pi certificate is finite computational evidence,
 not an all-angle proof.
+
+## 2026-11-25 — H12 orientation invariance and finite base correction
+
+The new GlueRows12Orientation module extends the glued-row
+orientation comparison through degree eleven for m >= 4.
+It uses the radius-ten coordinate-gap vanishing result for
+the exceptional corner-flip endpoints and the existing
+row equality away from those endpoints.
+
+The module proves orientation invariance of the positive
+even p=12 gap traces, each positive even word stratum,
+and their complete positive-even contribution.
+
+The declarations were checked with Lean #print axioms.
+No sorryAx is permitted in these proofs.
+
+The exact finite p=12 symbolic certificate computes
+Delta_4 - 4*Delta_3 + 3*Delta_2, which is the correction
+R_4 - R_3 for R_m = Delta_m - 3*Delta_(m-1).
+
+Modulo c^2+s^2=1, the correction is
+
+96*s^2*(24*c^3*s - 59*c^2 + 48*c*s
+        + 492*c - 480*s - 43).
+
+The exact regression checks rational points on the unit
+circle. This is a finite algebraic certificate, not a
+Lean proof of the full H12 recurrence.
+
+Still open: the complete trace expansion, the all-level
+recurrence for m >= 4, and the formal finite bridge
+from m = 3 to m = 4.

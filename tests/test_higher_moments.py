@@ -766,3 +766,25 @@ def test_exact_h8_base_transition_and_coefficient_polynomial():
     assert evaluate_polynomial(certificate["D2"], c=0, s=1) == -1373696
     assert evaluate_polynomial(certificate["D3"], c=0, s=1) == -3843584
     assert evaluate_polynomial(certificate["C8"], c=0, s=1) == 277504
+
+
+def test_exact_p12_all_angle_finite_transition_polynomial():
+    """Check the exact m=3 -> 4 residual correction on c^2+s^2=1."""
+    from fractions import Fraction
+
+    from computational.higher_moment_p12_symbolic import (
+        evaluate_transition_at_rational_circle_point,
+        p12_finite_transition_matches_expected,
+    )
+
+    assert p12_finite_transition_matches_expected()
+    checks = [
+        (0, 1, 1, Fraction(-50208, 1)),
+        (3, 4, 5, Fraction(-120818688, 15625)),
+        (5, 12, 13, Fraction(-113422851072, 4826809)),
+    ]
+    for c, s, denominator, expected in checks:
+        numerator = evaluate_transition_at_rational_circle_point(
+            c, s, denominator
+        )
+        assert Fraction(numerator, denominator**12) == expected
