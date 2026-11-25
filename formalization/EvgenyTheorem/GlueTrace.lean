@@ -7751,6 +7751,8 @@ private theorem cyclicGapTrace_p12_boundary_of_tail_sum_bound
     (hlen : tail.length = 11) (hsum : tail.sum ≤ 11) :
     ∃ b c d e f g h i j k l : ℕ,
       tail = [b, c, d, e, f, g, h, i, j, k, l] ∧
+        (b ≤ 11 ∧ c ≤ 11 ∧ d ≤ 11 ∧ e ≤ 11 ∧ f ≤ 11 ∧
+          g ≤ 11 ∧ h ≤ 11 ∧ i ≤ 11 ∧ j ≤ 11 ∧ k ≤ 11 ∧ l ≤ 11) ∧
         cyclicGapTrace (sgK m θ ax o) (sgGlue m).N (a :: tail) =
           glueRHS12_six_pair_sum m (sgK m θ ax o)
             a b c d e f g h i j k l := by
@@ -7809,6 +7811,9 @@ private theorem cyclicGapTrace_p12_boundary_of_tail_sum_bound
   have hj : j ≤ 11 := by
     dsimp [j]
     exact le_trans (hbound 8) hsum
+  have hk : k ≤ 11 := by
+    dsimp [k]
+    exact le_trans (hbound 9) hsum
   have hl : l ≤ 11 := by
     dsimp [l]
     exact le_trans (hbound 10) hsum
@@ -7816,15 +7821,16 @@ private theorem cyclicGapTrace_p12_boundary_of_tail_sum_bound
     sg_trace_p12_twelve_N_boundary_term_pair_diagonal
       m hm θ ax o hanti a b c d e f g h i j k l
       ha hb hc hd he hf hg hh hi hj hl
-  refine ⟨b, c, d, e, f, g, h, i, j, k, l, htail_list, ?_⟩
-  rw [htail_list]
-  simpa [cyclicGapTrace, pow_zero, Matrix.one_mul,
-    Matrix.mul_one, Matrix.mul_assoc] using hboundary
+  refine ⟨b, c, d, e, f, g, h, i, j, k, l, htail_list, ?_, ?_⟩
+  · exact ⟨hb, hc, hd, he, hf, hg, hh, hi, hj, hk, hl⟩
+  · rw [htail_list]
+    simpa [cyclicGapTrace, pow_zero, Matrix.one_mul,
+      Matrix.mul_one, Matrix.mul_assoc] using hboundary
 
 
 /-- Pad a positive even-length p=12 gap list to twelve entries
 without changing its cyclic trace, then apply the six-pair boundary formula. -/
-private theorem cyclicGapTrace_p12_even_positive_gap_boundary
+theorem cyclicGapTrace_p12_even_positive_gap_boundary
     (m : ℕ) (hm : 4 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
     (o : Point → Point → Prop) [DecidableRel o]
     (hanti : OAnti (m + 1) o)
@@ -7833,9 +7839,11 @@ private theorem cyclicGapTrace_p12_even_positive_gap_boundary
     (gaps : List ℕ) (hlen : gaps.length = r)
     (hsum : gaps.sum = 12)
     (hpos : ∀ x ∈ gaps, 0 < x) :
-    cyclicGapTrace (sgK m θ ax o) (sgGlue m).N gaps =
+    (cyclicGapTrace (sgK m θ ax o) (sgGlue m).N gaps =
       glueRHS8_pair_sum m (sgK m θ ax o)
-        (h12GapPairList (h12EvenGapPad r gaps)) := by
+        (h12GapPairList (h12EvenGapPad r gaps))) ∧
+    (∀ p ∈ h12GapPairList (h12EvenGapPad r gaps),
+      p.1 ≤ 11 ∧ p.2 ≤ 11) := by
   classical
   cases gaps with
   | nil =>
@@ -7889,7 +7897,7 @@ private theorem cyclicGapTrace_p12_even_positive_gap_boundary
               (sgK m θ ax o) (sgGlue m).N hNcube
               k0 a (second :: rest)
           obtain ⟨b, c, d, e, f, g, h, i, j, k, l,
-              htail_list, hboundary⟩ :=
+              htail_list, hbounds, hboundary⟩ :=
             cyclicGapTrace_p12_boundary_of_tail_sum_bound
               m hm θ ax o hanti a ha_bound paddedTail
               hpad_len hpad_sum
@@ -7897,22 +7905,47 @@ private theorem cyclicGapTrace_p12_even_positive_gap_boundary
               h12EvenGapPad r (a :: second :: rest) =
                 a :: paddedTail := by
             simp [h12EvenGapPad, paddedTail, k0]
+          rcases hbounds with
+            ⟨hb, hc, hd, he, hf, hg, hh, hi, hj, hk, hl⟩
           have hpairlist :
               h12GapPairList (a :: paddedTail) =
                 [(a, b), (c, d), (e, f), (g, h), (i, j), (k, l)] := by
             rw [htail_list]
             rfl
-          rw [hpad]
-          calc
-            cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
-                (a :: second :: rest) =
-                cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
-                  (a :: paddedTail) := hremove.symm
-            _ = glueRHS12_six_pair_sum m (sgK m θ ax o)
-                  a b c d e f g h i j k l := hboundary
-            _ = glueRHS8_pair_sum m (sgK m θ ax o)
-                  (h12GapPairList (a :: paddedTail)) := by
-              simp [glueRHS12_six_pair_sum, hpairlist]
+          have hpairbound :
+              ∀ p ∈ [(a, b), (c, d), (e, f), (g, h), (i, j), (k, l)],
+                p.1 ≤ 11 ∧ p.2 ≤ 11 := by
+            intro p hp
+            simp only [List.mem_cons] at hp
+            rcases hp with hp | hp | hp | hp | hp | hp
+            · cases hp
+              exact ⟨ha_bound, hb⟩
+            · cases hp
+              exact ⟨hc, hd⟩
+            · cases hp
+              exact ⟨he, hf⟩
+            · cases hp
+              exact ⟨hg, hh⟩
+            · cases hp
+              exact ⟨hi, hj⟩
+            · rcases hp with hp | hp
+              · cases hp
+                exact ⟨hk, hl⟩
+              · cases hp
+          constructor
+          · rw [hpad]
+            calc
+              cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                  (a :: second :: rest) =
+                  cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                    (a :: paddedTail) := hremove.symm
+              _ = glueRHS12_six_pair_sum m (sgK m θ ax o)
+                    a b c d e f g h i j k l := hboundary
+              _ = glueRHS8_pair_sum m (sgK m θ ax o)
+                    (h12GapPairList (a :: paddedTail)) := by
+                simp [glueRHS12_six_pair_sum, hpairlist]
+          · rw [hpad, hpairlist]
+            exact hpairbound
 
 
 end EvgenyTheorem

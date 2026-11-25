@@ -6804,3 +6804,88 @@ Still open: evaluation of all six even-r orbit sums; adjacent-level
 transport of their complete sum using diagonal powers through
 degree 11; full H12 trace expansion and recurrence; and the finite
 transition from m = 3 to m = 4.
+
+## 2026-11-25 — Exact p=12 finite-level regression at theta = pi
+
+The exact Gaussian-integer sparse trace calculation has been extended to the
+p=12 moment for levels 1 through 6. The p=12 computation is exposed separately
+as `p12_certificate()` so that the existing p=6,8,10 certificate retains its
+previous cost and interface. The command-line report includes the p=12 block.
+
+The trace defects
+`Delta_m = Tr(H_noncommuting^12) - Tr(H_commuting^12)` are:
+
+| level m | Delta_m(pi) |
+|---:|---:|
+| 1 | -1,736,882,624 |
+| 2 | -5,797,560,832 |
+| 3 | -18,026,705,824 |
+| 4 | -54,714,191,008 |
+| 5 | -164,776,646,560 |
+| 6 | -494,964,013,216 |
+
+For `R_m = Delta_m - 3 * Delta_(m-1)`, the exact values for m = 2..6 are
+`[-586,912,960, -634,023,328, -634,073,536, -634,073,536, -634,073,536]`.
+Thus the finite transition `R_3 -> R_4` is not an equality at theta = pi:
+`R_4 - R_3 = -50,208`. The residual is constant in the checked transitions
+`R_4 = R_5 = R_6 = -634,073,536`.
+
+Equivalently, the observed levels 4..6 fit the exact finite-level expression
+`Delta_m(pi) = -55,031,227,776 * 3^(m-4) + 317,036,768`. This is a finite
+regression only. It is not an all-angle identity, an all-level recurrence
+proof, or a Lean proof of the missing m = 3 to m = 4 bridge.
+
+The new regression test compares the certificate implementation against the
+independent sparse implementation in `tests/test_higher_moments.py`; both give
+the same exact p=12 values at all six checked levels.
+
+## 2026-11-25 — H12 pair-transport axiom audit
+
+The declarations
+`glueRHS12_pair_product_transport`,
+`glueRHS12_pair_sum_transport`, and
+`glueRHS12_tilde_pair_sum_adjacent`
+were checked with Lean `#print axioms`.
+
+Each declaration depends only on:
+`propext`, `Classical.choice`, and `Quot.sound`.
+
+No `sorryAx` or project-specific axiom appears in these
+three dependency lists. This audit certifies the transport
+lemmas only; it does not establish the complete H12 recurrence.
+
+Next: expose the even-gap boundary reduction together with
+explicit bounds for all six ordered pairs. In particular,
+preserve the missing `k <= 11` bound from `hbound 9`.
+Then transport the complete positive even-gap sums for
+r = 2, 4, 6, 8, 10, 12 using the weighted
+word-to-gap-vector identity. The m = 3 to m = 4 transition
+remains separate.
+
+## 2026-11-25 — H12 positive even-stratum transport
+
+The new GlueRows12 module proves adjacent-level transport for
+each positive even p=12 word stratum and their complete sum,
+for m >= 4 under the stated axis-periodicity assumptions.
+
+The proof transports six diagonal pairs through degree 11,
+uses the deterministic padded-gap boundary formula, and
+applies the weighted word-to-gap identity.
+
+The declarations
+sg_trace_p12_even_positive_gap_trace_adjacent,
+sg_trace_p12_even_N_word_stratum_adjacent, and
+sg_trace_p12_all_positive_even_N_word_strata_adjacent
+were checked with Lean #print axioms. Their dependencies
+are propext, Classical.choice, and Quot.sound.
+No sorryAx appears.
+
+Local validation:
+- lake build EvgenyTheorem: successful, 3066 jobs.
+- All three axiom audits: successful.
+- Targeted p12 regression tests: successful.
+
+Still open: the r=0 main trace, full H12 trace expansion
+and recurrence, and the finite transition m=3 to m=4.
+The theta=pi certificate is finite computational evidence,
+not an all-angle proof.
