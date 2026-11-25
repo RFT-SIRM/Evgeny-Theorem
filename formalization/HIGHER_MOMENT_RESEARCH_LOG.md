@@ -6921,3 +6921,18 @@ Lean proof of the full H12 recurrence.
 Still open: the complete trace expansion, the all-level
 recurrence for m >= 4, and the formal finite bridge
 from m = 3 to m = 4.
+
+## 2026-11-25 — Stage 6: unconditional affine recurrence from level three
+
+The local Stage 6 Lean development now proves the level-three finite bridge
+and the unconditional all-angle H12 affine recurrence for every `m >= 3`.
+The declarations are `defectO12_succ_num_level3_constant_boundary`,
+`defectO12_num_finite_base_bridge_level3`, and
+`defectO12_num_affine_closed_form_from_level3_unconditional` in
+`FinalClosed12.lean`. The full local Lean build completed successfully
+(3070 jobs); the two focused exact H12 Python regressions are rerun by the
+preservation script. The level-five constant remains an exact finite trace
+expression in Lean; its all-angle sparse-polynomial reduction is exact Python
+work and is not yet a Lean theorem. See
+`formalization/H12_STAGE6_HANDOFF_2026-11-25.md` for formulas, verification
+boundary, current branch/parent, and the next formalization task.

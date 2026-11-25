@@ -50,6 +50,8 @@ import EvgenyTheorem.FinalOrient10
 import EvgenyTheorem.GlueRows10
 import EvgenyTheorem.GlueRows12
 import EvgenyTheorem.GlueRows12Orientation
+import EvgenyTheorem.GlueTrace12
+import EvgenyTheorem.FinalClosed12
 import EvgenyTheorem.FinalClosed10
 
 namespace EvgenyTheorem

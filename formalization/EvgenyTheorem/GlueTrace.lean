@@ -7948,4 +7948,950 @@ theorem cyclicGapTrace_p12_even_positive_gap_boundary
             exact hpairbound
 
 
+private theorem trace_two_kernels_supported_diagonal_right
+    {X : Type*} [Fintype X] [DecidableEq X]
+    (g : X → Prop) [DecidablePred g]
+    (A E : Matrix X X ℂ) (a d : X → ℂ)
+    (ha : ∀ x, ¬ g x → a x = 0)
+    (hd : ∀ x, ¬ g x → d x = 0)
+    (hE : ∀ x y, g x → g y → x ≠ y → E x y = 0) :
+    Matrix.trace (A * Matrix.diagonal a * E * Matrix.diagonal d) =
+      ∑ x, if g x then A x x * a x * E x x * d x else 0 := by
+  classical
+  rw [trace_two_kernel_diagonal_kernel_diagonal]
+  apply Finset.sum_congr rfl
+  intro x hx
+  by_cases hgx : g x
+  · simp only [if_pos hgx]
+    have hinner :
+        (∑ y, A x y * a y * E y x * d x) =
+          A x x * a x * E x x * d x := by
+      calc
+        _ = ∑ y, if y = x then
+              A x y * a y * E y x * d x else 0 := by
+          apply Finset.sum_congr rfl
+          intro y hy
+          by_cases hyx : y = x
+          · subst y
+            simp
+          · by_cases hgy : g y
+            · have hzero := hE y x hgy hgx hyx
+              simp [hzero, hyx]
+            · have hazero := ha y hgy
+              simp [hazero, hyx]
+        _ = _ := by simp
+    rw [hinner]
+  · simp [hd x hgx]
+
+private theorem cyclicGapTrace_p12_eleven_zero_of_tail_bound_seven
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j k : ℕ)
+    (hb : b ≤ 7) (hd : d ≤ 7) (hf : f ≤ 7)
+    (hh : h ≤ 7) (hj : j ≤ 7) :
+    cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+      [a, b, c, d, e, f, g, h, i, j, k] = 0 := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  have hkgB :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ b) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti b hb w w' hw hw' hne)
+  have hkgD :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ d) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti d hd w w' hw hw' hne)
+  have hkgF :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ f) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti f hf w w' hw hw' hne)
+  have hkgH :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ h) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti h hh w w' hw hw' hne)
+  have hkgJ :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ j) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti j hj w w' hw hw' hne)
+  have hzero :=
+    trace_eleven_N_powers_zero (sgGlue m) K
+      (blockK_BD (Hc m θ ax o))
+      a b c d e f g h i j k 0 hkgB hkgD hkgF hkgH hkgJ
+  simpa [cyclicGapTrace, K, pow_zero, Matrix.one_mul,
+    Matrix.mul_one, Matrix.mul_assoc] using hzero
+
+/-- If the eleven entries following the cyclic head are all at most seven,
+the H12 twelve-N word reduces to its six-pair boundary expression at level
+three. The head exponent is unrestricted: it is the single gap that may
+cross between distinct glued states. -/
+private theorem sg_trace_p12_twelve_N_boundary_term_pair_diagonal_head_gap_of_seven
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a b c d e f g h i j k l : ℕ)
+    (hb : b ≤ 7) (hc : c ≤ 7) (hd : d ≤ 7)
+    (he : e ≤ 7) (hf : f ≤ 7) (hg : g ≤ 7)
+    (hh : h ≤ 7) (hi : i ≤ 7) (hj : j ≤ 7)
+    (hk : k ≤ 7) (hl : l ≤ 7) :
+    Matrix.trace
+      (sgK m θ ax o ^ a * (sgGlue m).N * sgK m θ ax o ^ b * (sgGlue m).N *
+        sgK m θ ax o ^ c * (sgGlue m).N * sgK m θ ax o ^ d * (sgGlue m).N *
+        sgK m θ ax o ^ e * (sgGlue m).N * sgK m θ ax o ^ f * (sgGlue m).N *
+        sgK m θ ax o ^ g * (sgGlue m).N * sgK m θ ax o ^ h * (sgGlue m).N *
+        sgK m θ ax o ^ i * (sgGlue m).N * sgK m θ ax o ^ j * (sgGlue m).N *
+        sgK m θ ax o ^ k * (sgGlue m).N * sgK m θ ax o ^ l * (sgGlue m).N *
+        sgK m θ ax o ^ 0) =
+      glueRHS12_six_pair_sum m (sgK m θ ax o)
+        a b c d e f g h i j k l := by
+  classical
+  let K : Matrix (WSG m) (WSG m) ℂ := sgK m θ ax o
+  let g0 : WSG m → Prop := (sgGlue m).g
+  let db : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ b) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dd : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ d) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let df : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ f) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dh : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ h) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dj : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ j) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  let dl : WSG m → ℂ := fun x =>
+    if g0 x then (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0
+  have hdb : ∀ x, ¬ g0 x → db x = 0 := by
+    intro x hx
+    simp [db, hx]
+  have hdd : ∀ x, ¬ g0 x → dd x = 0 := by
+    intro x hx
+    simp [dd, hx]
+  have hdf : ∀ x, ¬ g0 x → df x = 0 := by
+    intro x hx
+    simp [df, hx]
+  have hdh : ∀ x, ¬ g0 x → dh x = 0 := by
+    intro x hx
+    simp [dh, hx]
+  have hdj : ∀ x, ¬ g0 x → dj x = 0 := by
+    intro x hx
+    simp [dj, hx]
+  have hdl : ∀ x, ¬ g0 x → dl x = 0 := by
+    intro x hx
+    simp [dl, hx]
+  have hCoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ c) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti c hc x y hx hy hxy)
+  have hEoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ e) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti e he x y hx hy hxy)
+  have hGoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ g) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti g hg x y hx hy hxy)
+  have hIoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ i) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti i hi x y hx hy hxy)
+  have hkgB :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ b) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti b hb w w' hw hw' hne)
+  have hkgD :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ d) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti d hd w w' hw hw' hne)
+  have hkgF :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ f) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti f hf w w' hw hw' hne)
+  have hkgH :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ h) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti h hh w w' hw hw' hne)
+  have hkgJ :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ j) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti j hj w w' hw hw' hne)
+  have hkgL :
+      ∀ w w', (sgGlue m).g w → (sgGlue m).g w' →
+        w.1 = w'.1 → w ≠ w' → (K ^ l) w w' = 0 := by
+    intro w w' hw hw' hcopy hne
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti l hl w w' hw hw' hne)
+  have hKoff :
+      ∀ x y, g0 x → g0 y → x ≠ y → (K ^ k) x y = 0 := by
+    intro x y hx hy hxy
+    simpa [K] using
+      (sgK_pow_glued_offdiag_up_to_seven_of_OAnti
+        m hm θ ax o hanti k hk x y hx hy hxy)
+  let q1 : WSG m → ℂ := fun x => db x * (K ^ c) x x * dd x
+  let q2 : WSG m → ℂ := fun x => q1 x * (K ^ e) x x * df x
+  let q3 : WSG m → ℂ := fun x => q2 x * (K ^ g) x x * dh x
+  let q4 : WSG m → ℂ := fun x => q3 x * (K ^ i) x x * dj x
+  have hq1 : ∀ x, ¬ g0 x → q1 x = 0 := by
+    intro x hx
+    simp [q1, db, hx]
+  have hq2 : ∀ x, ¬ g0 x → q2 x = 0 := by
+    intro x hx
+    simp [q2, hq1 x hx]
+  have hq3 : ∀ x, ¬ g0 x → q3 x = 0 := by
+    intro x hx
+    simp [q3, hq2 x hx]
+  have hq4 : ∀ x, ¬ g0 x → q4 x = 0 := by
+    intro x hx
+    simp [q4, hq3 x hx]
+  have hSand1 :
+      Matrix.diagonal db * K ^ c * Matrix.diagonal dd =
+        Matrix.diagonal q1 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q1] using diagonal_sandwich_apply_two db dd (K ^ c) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 db dd (K ^ c) hdb hdd hCoff x y hxy
+  have hSand2 :
+      Matrix.diagonal q1 * K ^ e * Matrix.diagonal df =
+        Matrix.diagonal q2 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q2] using diagonal_sandwich_apply_two q1 df (K ^ e) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q1 df (K ^ e) hq1 hdf hEoff x y hxy
+  have hSand3 :
+      Matrix.diagonal q2 * K ^ g * Matrix.diagonal dh =
+        Matrix.diagonal q3 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q3] using diagonal_sandwich_apply_two q2 dh (K ^ g) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q2 dh (K ^ g) hq2 hdh hGoff x y hxy
+  have hSand4 :
+      Matrix.diagonal q3 * K ^ i * Matrix.diagonal dj =
+        Matrix.diagonal q4 := by
+    ext x y
+    by_cases hxy : x = y
+    · subst y
+      simpa [q4] using diagonal_sandwich_apply_two q3 dj (K ^ i) x x
+    · rw [Matrix.diagonal_apply]
+      simp only [if_neg hxy]
+      exact diagonal_sandwich_offdiag_zero_two
+        g0 q3 dj (K ^ i) hq3 hdj hIoff x y hxy
+  let M : Matrix (WSG m) (WSG m) ℂ :=
+    K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+      K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh *
+      K ^ i * Matrix.diagonal dj * K ^ k
+  have hprod :
+      ([K ^ 0, K ^ a, Matrix.diagonal db, K ^ c, Matrix.diagonal dd,
+        K ^ e, Matrix.diagonal df, K ^ g, Matrix.diagonal dh,
+        K ^ i, Matrix.diagonal dj, K ^ k] :
+          List (Matrix (WSG m) (WSG m) ℂ)).prod = M := by
+    simp [M, pow_zero, Matrix.one_mul, Matrix.mul_assoc]
+  have hgeneric :=
+    trace_twelve_N_powers_boundary (sgGlue m) K
+      (blockK_BD (Hc m θ ax o))
+      a b c d e f g h i j k l 0
+      hkgB hkgD hkgF hkgH hkgJ hkgL
+  have hgeneric' :
+      Matrix.trace
+        (K ^ a * (sgGlue m).N * K ^ b * (sgGlue m).N *
+          K ^ c * (sgGlue m).N * K ^ d * (sgGlue m).N *
+          K ^ e * (sgGlue m).N * K ^ f * (sgGlue m).N *
+          K ^ g * (sgGlue m).N * K ^ h * (sgGlue m).N *
+          K ^ i * (sgGlue m).N * K ^ j * (sgGlue m).N *
+          K ^ k * (sgGlue m).N * K ^ l * (sgGlue m).N * K ^ 0) =
+        ∑ x, if g0 x then
+          M x x * (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    simpa [M, db, dd, df, dh, dj, pow_zero, Matrix.one_mul,
+      List.prod_cons, Matrix.mul_assoc] using hgeneric
+  have hboundary :
+      Matrix.trace (M * Matrix.diagonal dl) =
+        ∑ x, if g0 x then
+          M x x * (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 := by
+    calc
+      _ = ∑ x, M x x * dl x := trace_mul_diagonal_eq_sum M dl
+      _ = _ := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        by_cases hgx : g0 x
+        · simp [dl, hgx]
+        · simp [g0, dl, hgx]
+  have hreduce :
+      Matrix.trace (M * Matrix.diagonal dl) =
+        Matrix.trace
+          (K ^ a * Matrix.diagonal q4 * K ^ k * Matrix.diagonal dl) := by
+    change Matrix.trace
+      (K ^ a * Matrix.diagonal db * K ^ c * Matrix.diagonal dd *
+        K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh *
+        K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) = _
+    calc
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal db * K ^ c * Matrix.diagonal dd) *
+            K ^ e * Matrix.diagonal df * K ^ g * Matrix.diagonal dh *
+            K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q1 * K ^ e * Matrix.diagonal df *
+            K ^ g * Matrix.diagonal dh * K ^ i * Matrix.diagonal dj *
+            K ^ k * Matrix.diagonal dl) := by rw [hSand1]
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal q1 * K ^ e * Matrix.diagonal df) *
+            K ^ g * Matrix.diagonal dh * K ^ i * Matrix.diagonal dj *
+            K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q2 * K ^ g * Matrix.diagonal dh *
+            K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) := by
+              rw [hSand2]
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal q2 * K ^ g * Matrix.diagonal dh) *
+            K ^ i * Matrix.diagonal dj * K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q3 * K ^ i * Matrix.diagonal dj *
+            K ^ k * Matrix.diagonal dl) := by rw [hSand3]
+      _ = Matrix.trace
+          (K ^ a * (Matrix.diagonal q3 * K ^ i * Matrix.diagonal dj) *
+            K ^ k * Matrix.diagonal dl) := by
+              simp only [Matrix.mul_assoc]
+      _ = Matrix.trace
+          (K ^ a * Matrix.diagonal q4 * K ^ k * Matrix.diagonal dl) := by
+              rw [hSand4]
+  have htrace := trace_two_kernels_supported_diagonal_right
+    g0 (K ^ a) (K ^ k) q4 dl hq4 hdl hKoff
+  have hpair :
+      (∑ x, if g0 x then
+        (K ^ a) x x * q4 x * (K ^ k) x x * dl x else 0) =
+        glueRHS12_six_pair_sum m K a b c d e f g h i j k l := by
+    unfold glueRHS12_six_pair_sum glueRHS8_pair_sum
+    apply Finset.sum_congr rfl
+    intro x hx
+    by_cases hgx : g0 x
+    · simp [glueRHS8_pair_product, glueRHS8_pair_value,
+        g0, q1, q2, q3, q4, db, dd, df, dh, dj, dl, hgx] <;> ring
+    · simp [g0, hgx]
+  calc
+    Matrix.trace
+      (K ^ a * (sgGlue m).N * K ^ b * (sgGlue m).N *
+        K ^ c * (sgGlue m).N * K ^ d * (sgGlue m).N *
+        K ^ e * (sgGlue m).N * K ^ f * (sgGlue m).N *
+        K ^ g * (sgGlue m).N * K ^ h * (sgGlue m).N *
+        K ^ i * (sgGlue m).N * K ^ j * (sgGlue m).N *
+        K ^ k * (sgGlue m).N * K ^ l * (sgGlue m).N * K ^ 0) =
+        ∑ x, if g0 x then
+          M x x * (K ^ l) ((sgGlue m).σ x) ((sgGlue m).σ x) else 0 :=
+      hgeneric'
+    _ = Matrix.trace (M * Matrix.diagonal dl) := hboundary.symm
+    _ = Matrix.trace
+        (K ^ a * Matrix.diagonal q4 * K ^ k * Matrix.diagonal dl) := hreduce
+    _ = ∑ x, if g0 x then
+          (K ^ a) x x * q4 x * (K ^ k) x x * dl x else 0 := htrace
+    _ = glueRHS12_six_pair_sum m K a b c d e f g h i j k l := hpair
+
+
+
+
+
+
+
+private theorem cyclicGapTrace_p12_boundary_of_tail_entries_le_seven
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a : ℕ) (tail : List ℕ)
+    (hlen : tail.length = 11)
+    (hbound : ∀ x ∈ tail, x ≤ 7) :
+    ∃ b c d e f g h i j k l : ℕ,
+      tail = [b, c, d, e, f, g, h, i, j, k, l] ∧
+        (b ≤ 7 ∧ c ≤ 7 ∧ d ≤ 7 ∧ e ≤ 7 ∧ f ≤ 7 ∧
+          g ≤ 7 ∧ h ≤ 7 ∧ i ≤ 7 ∧ j ≤ 7 ∧ k ≤ 7 ∧ l ≤ 7) ∧
+        cyclicGapTrace (sgK m θ ax o) (sgGlue m).N (a :: tail) =
+          glueRHS12_six_pair_sum m (sgK m θ ax o)
+            a b c d e f g h i j k l := by
+  classical
+  let gapEntry (q : Fin 11) : ℕ :=
+    tail.get (Fin.cast hlen.symm q)
+  let b := gapEntry 0
+  let c := gapEntry 1
+  let d := gapEntry 2
+  let e := gapEntry 3
+  let f := gapEntry 4
+  let g := gapEntry 5
+  let h := gapEntry 6
+  let i := gapEntry 7
+  let j := gapEntry 8
+  let k := gapEntry 9
+  let l := gapEntry 10
+  have htail_ofFn :
+      List.ofFn (fun q : Fin 11 => gapEntry q) = tail := by
+    calc
+      _ = List.ofFn (fun q : Fin tail.length => tail.get q) :=
+        (List.ofFn_congr hlen
+          (fun q : Fin tail.length => tail.get q)).symm
+      _ = tail := List.ofFn_get tail
+  have htail_list :
+      tail = [b, c, d, e, f, g, h, i, j, k, l] := by
+    rw [← htail_ofFn]
+    simp [gapEntry, b, c, d, e, f, g, h, i, j, k, l]
+  have hbound' (q : Fin 11) : gapEntry q ≤ 7 := by
+    dsimp [gapEntry]
+    exact hbound _ (List.get_mem _ _)
+  have hb : b ≤ 7 := hbound' 0
+  have hc : c ≤ 7 := hbound' 1
+  have hd : d ≤ 7 := hbound' 2
+  have he : e ≤ 7 := hbound' 3
+  have hf : f ≤ 7 := hbound' 4
+  have hg : g ≤ 7 := hbound' 5
+  have hh : h ≤ 7 := hbound' 6
+  have hi : i ≤ 7 := hbound' 7
+  have hj : j ≤ 7 := hbound' 8
+  have hk : k ≤ 7 := hbound' 9
+  have hl : l ≤ 7 := hbound' 10
+  have hboundary :=
+    sg_trace_p12_twelve_N_boundary_term_pair_diagonal_head_gap_of_seven
+      m hm θ ax o hanti a b c d e f g h i j k l
+      hb hc hd he hf hg hh hi hj hk hl
+  refine ⟨b, c, d, e, f, g, h, i, j, k, l,
+    htail_list, ⟨hb, hc, hd, he, hf, hg, hh, hi, hj, hk, hl⟩, ?_⟩
+  rw [htail_list]
+  change Matrix.trace
+    ((sgK m θ ax o ^ a * (sgGlue m).N) *
+        ((sgK m θ ax o ^ b * (sgGlue m).N) *
+          ((sgK m θ ax o ^ c * (sgGlue m).N) *
+            ((sgK m θ ax o ^ d * (sgGlue m).N) *
+              ((sgK m θ ax o ^ e * (sgGlue m).N) *
+                ((sgK m θ ax o ^ f * (sgGlue m).N) *
+                  ((sgK m θ ax o ^ g * (sgGlue m).N) *
+                    ((sgK m θ ax o ^ h * (sgGlue m).N) *
+                      ((sgK m θ ax o ^ i * (sgGlue m).N) *
+                        ((sgK m θ ax o ^ j * (sgGlue m).N) *
+                          ((sgK m θ ax o ^ k * (sgGlue m).N) *
+                            ((sgK m θ ax o ^ l * (sgGlue m).N) * 1))))))))))))
+    =
+      glueRHS12_six_pair_sum m (sgK m θ ax o)
+        a b c d e f g h i j k l
+  simpa only [pow_zero, Matrix.mul_one, Matrix.mul_assoc] using hboundary
+
+private theorem h12ZeroPairPrefix_eq_zero_of_mem
+    (k x : ℕ) (hx : x ∈ h12ZeroPairPrefix k) : x = 0 := by
+  induction k with
+  | zero =>
+      have hfalse : False := by
+        simpa [h12ZeroPairPrefix] using hx
+      exact False.elim hfalse
+  | succ k ih =>
+      simp only [h12ZeroPairPrefix, List.mem_cons] at hx
+      rcases hx with hx | hx | hx
+      · exact hx
+      · exact hx
+      · exact ih hx
+
+/-- Level-three version of the positive-even boundary reduction. The cyclic
+head gap may be the unique exponent larger than seven; every other gap is
+bounded by seven, so all six-pair diagonal factors remain within degree eleven. -/
+theorem cyclicGapTrace_p12_even_positive_gap_boundary_head_gap_of_seven
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (r : ℕ) (hrlo : 2 ≤ r) (hrhi : r ≤ 12)
+    (hre : r % 2 = 0)
+    (gaps : List ℕ) (hlen : gaps.length = r)
+    (hsum : gaps.sum = 12)
+    (hpos : ∀ x ∈ gaps, 0 < x)
+    (htailbound : ∀ x ∈ gaps.tail, x ≤ 7) :
+    (cyclicGapTrace (sgK m θ ax o) (sgGlue m).N gaps =
+      glueRHS8_pair_sum m (sgK m θ ax o)
+        (h12GapPairList (h12EvenGapPad r gaps))) ∧
+    (∀ p ∈ h12GapPairList (h12EvenGapPad r gaps),
+      p.1 ≤ 11 ∧ p.2 ≤ 11) := by
+  classical
+  cases gaps with
+  | nil =>
+      simp at hlen
+      omega
+  | cons a tail =>
+      have htail_len : tail.length = r - 1 := by
+        simp at hlen
+        omega
+      have hsplit : a + tail.sum = 12 := by
+        simpa using hsum
+      have ha_pos : 0 < a := hpos a (by simp)
+      cases tail with
+      | nil =>
+          simp at htail_len
+          omega
+      | cons second rest =>
+          have hsecond_pos : 0 < second :=
+            hpos second (by simp)
+          have hsplit' : a + (second + rest.sum) = 12 := by
+            simpa only [List.sum_cons] using hsplit
+          have hr_eq : r = rest.length + 2 := by
+            simp only [List.length_cons] at htail_len
+            omega
+          have ha_bound : a ≤ 11 := by
+            omega
+          let k0 : ℕ := (12 - r) / 2
+          have hk0 : 2 * k0 = 12 - r := by
+            dsimp [k0]
+            omega
+          let paddedTail :=
+            h12ZeroPairPrefix k0 ++ (second :: rest)
+          have hpad_len : paddedTail.length = 11 := by
+            dsimp [paddedTail]
+            simp only [List.length_append, h12ZeroPairPrefix_length,
+              List.length_cons]
+            omega
+          have hpad_bound : ∀ x ∈ paddedTail, x ≤ 7 := by
+            intro x hx
+            dsimp [paddedTail] at hx
+            rcases List.mem_append.mp hx with hz | hz
+            · have hxzero := h12ZeroPairPrefix_eq_zero_of_mem k0 x hz
+              simp [hxzero]
+            · exact htailbound x (by simpa using hz)
+          have hNcube :
+              (sgGlue m).N * (sgGlue m).N * (sgGlue m).N =
+                (sgGlue m).N :=
+            GlueData.N_cube (sgGlue m)
+          have hremove :=
+            cyclicGapTrace_prepend_zero_pairs_after_head
+              (sgK m θ ax o) (sgGlue m).N hNcube
+              k0 a (second :: rest)
+          obtain ⟨b, c, d, e, f, g, h, i, j, k, l,
+              htail_list, hbounds, hboundary⟩ :=
+            cyclicGapTrace_p12_boundary_of_tail_entries_le_seven
+              m hm θ ax o hanti a paddedTail hpad_len hpad_bound
+          have hpad :
+              h12EvenGapPad r (a :: second :: rest) =
+                a :: paddedTail := by
+            simp [h12EvenGapPad, paddedTail, k0]
+          rcases hbounds with
+            ⟨hb, hc, hd, he, hf, hg, hh, hi, hj, hk, hl⟩
+          have hpairlist :
+              h12GapPairList (a :: paddedTail) =
+                [(a, b), (c, d), (e, f), (g, h), (i, j), (k, l)] := by
+            rw [htail_list]
+            rfl
+          have hpairbound :
+              ∀ p ∈ [(a, b), (c, d), (e, f), (g, h), (i, j), (k, l)],
+                p.1 ≤ 11 ∧ p.2 ≤ 11 := by
+            intro p hp
+            simp only [List.mem_cons] at hp
+            rcases hp with hp | hp | hp | hp | hp | hp
+            · cases hp
+              exact ⟨by omega, by omega⟩
+            · cases hp
+              exact ⟨by omega, by omega⟩
+            · cases hp
+              exact ⟨by omega, by omega⟩
+            · cases hp
+              exact ⟨by omega, by omega⟩
+            · cases hp
+              exact ⟨by omega, by omega⟩
+            · rcases hp with hp | hp
+              · cases hp
+                exact ⟨by omega, by omega⟩
+              · cases hp
+          constructor
+          · rw [hpad]
+            calc
+              cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                  (a :: second :: rest) =
+                  cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                    (a :: paddedTail) := hremove.symm
+              _ = glueRHS12_six_pair_sum m (sgK m θ ax o)
+                    a b c d e f g h i j k l := hboundary
+              _ = glueRHS8_pair_sum m (sgK m θ ax o)
+                    (h12GapPairList (a :: paddedTail)) := by
+                simp [glueRHS12_six_pair_sum, hpairlist]
+          · rw [hpad, hpairlist]
+            exact hpairbound
+
+
+
+/-- Cyclically interchanging two consecutive sublists preserves the cyclic
+trace. This is the list-level form of cyclicity of matrix trace. -/
+theorem cyclicGapTrace_append_comm
+    {n : Type*} [Fintype n] [DecidableEq n]
+    (K N : Matrix n n ℂ) (xs ys : List ℕ) :
+    cyclicGapTrace K N (xs ++ ys) = cyclicGapTrace K N (ys ++ xs) := by
+  unfold cyclicGapTrace
+  simp only [List.map_append, List.prod_append]
+  exact Matrix.trace_mul_comm _ _
+
+/-- Split a list immediately before its first entry greater than seven.
+The pair stores the prefix without that entry and the suffix beginning there. -/
+def h12SplitAtFirstLarge : List ℕ → List ℕ × List ℕ
+  | [] => ([], [])
+  | a :: xs =>
+      if 7 < a then ([], a :: xs) else
+        let rest := h12SplitAtFirstLarge xs
+        (a :: rest.1, rest.2)
+
+theorem h12SplitAtFirstLarge_append (xs : List ℕ) :
+    xs = (h12SplitAtFirstLarge xs).1 ++
+      (h12SplitAtFirstLarge xs).2 := by
+  induction xs with
+  | nil => rfl
+  | cons a xs ih =>
+      by_cases ha : 7 < a
+      · simp [h12SplitAtFirstLarge, ha]
+      · simp only [h12SplitAtFirstLarge, if_neg ha]
+        exact congrArg (List.cons a) ih
+
+theorem h12SplitAtFirstLarge_suffix_has_large
+    (xs : List ℕ) (hlarge : ∃ x ∈ xs, 7 < x) :
+    ∃ a tail,
+      (h12SplitAtFirstLarge xs).2 = a :: tail ∧ 7 < a := by
+  induction xs with
+  | nil => simp at hlarge
+  | cons x xs ih =>
+      by_cases hx : 7 < x
+      · exact ⟨x, xs, by simp [h12SplitAtFirstLarge, hx], hx⟩
+      · have htail : ∃ y ∈ xs, 7 < y := by
+          rcases hlarge with ⟨y, hy, hylarge⟩
+          simp only [List.mem_cons] at hy
+          rcases hy with hy | hy
+          · subst y
+            omega
+          · exact ⟨y, hy, hylarge⟩
+        obtain ⟨a, tail, hpost, ha⟩ := ih htail
+        refine ⟨a, tail, ?_, ha⟩
+        simpa [h12SplitAtFirstLarge, hx] using hpost
+
+/-- Every natural-number entry of a list is bounded by the sum of the list. -/
+theorem h12_nat_le_sum_of_mem {xs : List ℕ} {x : ℕ}
+    (hx : x ∈ xs) : x ≤ xs.sum := by
+  induction xs with
+  | nil => simp at hx
+  | cons a xs ih =>
+      simp only [List.mem_cons] at hx
+      rcases hx with hx | hx
+      · subst x
+        simp
+      · have h := ih hx
+        simp only [List.sum_cons]
+        omega
+
+
+/-- An eleven-gap word vanishes at level three when every one of its ten
+non-head gaps is at most seven. -/
+private theorem cyclicGapTrace_p12_eleven_zero_of_tail_entries_le_seven
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (a : ℕ) (tail : List ℕ)
+    (hlen : tail.length = 10)
+    (hbound : ∀ x ∈ tail, x ≤ 7) :
+    cyclicGapTrace (sgK m θ ax o) (sgGlue m).N (a :: tail) = 0 := by
+  classical
+  let gapEntry (q : Fin 10) : ℕ :=
+    tail.get (Fin.cast hlen.symm q)
+  let b := gapEntry 0
+  let c := gapEntry 1
+  let d := gapEntry 2
+  let e := gapEntry 3
+  let f := gapEntry 4
+  let g := gapEntry 5
+  let h := gapEntry 6
+  let i := gapEntry 7
+  let j := gapEntry 8
+  let k := gapEntry 9
+  have htail_ofFn :
+      List.ofFn (fun q : Fin 10 => gapEntry q) = tail := by
+    calc
+      _ = List.ofFn (fun q : Fin tail.length => tail.get q) :=
+        (List.ofFn_congr hlen
+          (fun q : Fin tail.length => tail.get q)).symm
+      _ = tail := List.ofFn_get tail
+  have htail_list : tail = [b, c, d, e, f, g, h, i, j, k] := by
+    rw [← htail_ofFn]
+    simp [gapEntry, b, c, d, e, f, g, h, i, j, k]
+  have hbound' (q : Fin 10) : gapEntry q ≤ 7 := by
+    dsimp [gapEntry]
+    exact hbound _ (List.get_mem _ _)
+  have hb : b ≤ 7 := by simpa [b] using hbound' 0
+  have hd : d ≤ 7 := by simpa [d] using hbound' 2
+  have hf : f ≤ 7 := by simpa [f] using hbound' 4
+  have hh : h ≤ 7 := by simpa [h] using hbound' 6
+  have hj : j ≤ 7 := by simpa [j] using hbound' 8
+  rw [htail_list]
+  exact cyclicGapTrace_p12_eleven_zero_of_tail_bound_seven
+    m hm θ ax o hanti a b c d e f g h i j k hb hd hf hh hj
+
+/-- At level three, every odd positive p=12 gap trace vanishes. Rotate the
+unique possible gap above seven to the cyclic head; the other gaps then have
+total weight at most four and can be padded with zero pairs. -/
+private theorem cyclicGapTrace_p12_odd_gap_term_zero_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (r : ℕ) (hrpos : 0 < r) (hrle : r ≤ 11)
+    (hrodd : r % 2 = 1)
+    (gaps : binaryWordGapVectorStratum 12 r) :
+    cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+      ((List.ofFn (fun q : Fin r => (gaps.val q).val)).map Nat.succ) = 0 := by
+  classical
+  let raw : List ℕ :=
+    List.ofFn (fun q : Fin r => (gaps.val q).val)
+  let positiveGaps : List ℕ := raw.map Nat.succ
+  have hrawlen : raw.length = r := by simp [raw]
+  have hrawsum : raw.sum = 12 - r := by
+    simpa [raw] using gaps.property.2
+  have hlen : positiveGaps.length = r := by
+    simp [positiveGaps, hrawlen]
+  have hsum : positiveGaps.sum = 12 := by
+    calc
+      positiveGaps.sum = raw.sum + raw.length := by
+        dsimp [positiveGaps]
+        exact list_sum_map_succ raw
+      _ = (12 - r) + r := by rw [hrawsum, hrawlen]
+      _ = 12 := by omega
+  have hpos : ∀ x ∈ positiveGaps, 0 < x := by
+    intro x hx
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+    exact Nat.succ_pos y
+  let partition : List ℕ × List ℕ := h12SplitAtFirstLarge positiveGaps
+  let preGap : List ℕ := partition.1
+  let postGap : List ℕ := partition.2
+  have hdecomp : positiveGaps = preGap ++ postGap := by
+    simpa [partition, preGap, postGap] using
+      h12SplitAtFirstLarge_append positiveGaps
+  have hNcube :
+      (sgGlue m).N * (sgGlue m).N * (sgGlue m).N = (sgGlue m).N :=
+    GlueData.N_cube (sgGlue m)
+  by_cases hlarge : ∃ x ∈ positiveGaps, 7 < x
+  · obtain ⟨head, middle, hsuffix, hhead⟩ :=
+      h12SplitAtFirstLarge_suffix_has_large positiveGaps hlarge
+    let tail := middle ++ preGap
+    let rotated := head :: tail
+    have hpostGap : postGap = head :: middle := by
+      simpa [postGap, partition] using hsuffix
+    have hrotEq : rotated = postGap ++ preGap := by
+      dsimp [rotated, tail]
+      calc
+        head :: (middle ++ preGap) = (head :: middle) ++ preGap := by simp
+        _ = postGap ++ preGap := by rw [← hpostGap]
+    have hprepost : preGap.sum + postGap.sum = 12 := by
+      simpa [hdecomp, List.sum_append] using hsum
+    have hparts : preGap.sum + (head + middle.sum) = 12 := by
+      rw [hpostGap, List.sum_cons] at hprepost
+      exact hprepost
+    have htailSum : tail.sum ≤ 4 := by
+      dsimp [tail]
+      simp only [List.sum_append]
+      omega
+    have htailBound : ∀ x ∈ tail, x ≤ 7 := by
+      intro x hx
+      have hxle := h12_nat_le_sum_of_mem hx
+      have hxle' : x ≤ middle.sum + preGap.sum := by
+        simpa [tail, List.sum_append] using hxle
+      omega
+    have hrotLen : rotated.length = r := by
+      calc
+        rotated.length = (postGap ++ preGap).length := by rw [hrotEq]
+        _ = postGap.length + preGap.length := by simp
+        _ = preGap.length + postGap.length := by omega
+        _ = (preGap ++ postGap).length := by simp
+        _ = positiveGaps.length := by rw [hdecomp]
+        _ = r := hlen
+    have htailLen : tail.length = r - 1 := by
+      have h := hrotLen
+      simp [rotated] at h
+      omega
+    let k0 : ℕ := (11 - r) / 2
+    have hk0 : 2 * k0 = 11 - r := by
+      dsimp [k0]
+      omega
+    let paddedTail := h12ZeroPairPrefix k0 ++ tail
+    have hpadlen : paddedTail.length = 10 := by
+      dsimp [paddedTail]
+      simp only [List.length_append, h12ZeroPairPrefix_length]
+      rw [htailLen]
+      omega
+    have hpadBound : ∀ x ∈ paddedTail, x ≤ 7 := by
+      intro x hx
+      dsimp [paddedTail] at hx
+      rcases List.mem_append.mp hx with hx | hx
+      · have hxzero := h12ZeroPairPrefix_eq_zero_of_mem k0 x hx
+        simp [hxzero]
+      · exact htailBound x hx
+    have hremove :=
+      cyclicGapTrace_prepend_zero_pairs_after_head
+        (sgK m θ ax o) (sgGlue m).N hNcube k0 head tail
+    have hpadded :
+        cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+          (head :: paddedTail) = 0 :=
+      cyclicGapTrace_p12_eleven_zero_of_tail_entries_le_seven
+        m hm θ ax o hanti head paddedTail hpadlen hpadBound
+    have hrotZero :
+        cyclicGapTrace (sgK m θ ax o) (sgGlue m).N rotated = 0 := by
+      calc
+        _ = cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+              (head :: paddedTail) := hremove.symm
+        _ = 0 := hpadded
+    calc
+      cyclicGapTrace (sgK m θ ax o) (sgGlue m).N positiveGaps =
+          cyclicGapTrace (sgK m θ ax o) (sgGlue m).N rotated := by
+            calc
+              _ = cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                    (preGap ++ postGap) := by rw [hdecomp]
+              _ = cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                    (postGap ++ preGap) := cyclicGapTrace_append_comm _ _ _ _
+              _ = _ := by rw [hrotEq]
+      _ = 0 := hrotZero
+  · have hsmall : ∀ x ∈ positiveGaps, x ≤ 7 := by
+      intro x hx
+      by_contra hxlarge
+      exact hlarge ⟨x, hx, by omega⟩
+    cases hlist : positiveGaps with
+    | nil => simp [hlist] at hlen; omega
+    | cons head tail =>
+        have htailLen : tail.length = r - 1 := by
+          simp [hlist] at hlen ⊢
+          omega
+        have htailBound : ∀ x ∈ tail, x ≤ 7 := by
+          intro x hx
+          exact hsmall x (by simp [hlist, hx])
+        let k0 : ℕ := (11 - r) / 2
+        have hk0 : 2 * k0 = 11 - r := by
+          dsimp [k0]
+          omega
+        let paddedTail := h12ZeroPairPrefix k0 ++ tail
+        have hpadlen : paddedTail.length = 10 := by
+          dsimp [paddedTail]
+          simp only [List.length_append, h12ZeroPairPrefix_length]
+          rw [htailLen]
+          omega
+        have hpadBound : ∀ x ∈ paddedTail, x ≤ 7 := by
+          intro x hx
+          dsimp [paddedTail] at hx
+          rcases List.mem_append.mp hx with hx | hx
+          · have hxzero := h12ZeroPairPrefix_eq_zero_of_mem k0 x hx
+            simp [hxzero]
+          · exact htailBound x hx
+        have hremove :=
+          cyclicGapTrace_prepend_zero_pairs_after_head
+            (sgK m θ ax o) (sgGlue m).N hNcube k0 head tail
+        have hpadded :
+            cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+              (head :: paddedTail) = 0 :=
+          cyclicGapTrace_p12_eleven_zero_of_tail_entries_le_seven
+            m hm θ ax o hanti head paddedTail hpadlen hpadBound
+        calc
+          cyclicGapTrace (sgK m θ ax o) (sgGlue m).N positiveGaps =
+              cyclicGapTrace (sgK m θ ax o) (sgGlue m).N (head :: tail) := by
+                rw [hlist]
+          _ = cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+                (head :: paddedTail) := hremove.symm
+          _ = 0 := hpadded
+
+/-- Every odd insertion stratum in the p=12 expansion vanishes at level
+three. The weighted word-to-gap identity then removes the nonzero stratum
+multiplicity. -/
+private theorem sg_trace_p12_odd_N_word_stratum_zero_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o)
+    (r : ℕ) (hrpos : 0 < r) (hrle : r ≤ 11)
+    (hrodd : r % 2 = 1) :
+    (∑ w : binaryWordFinStratum 12 r,
+      Matrix.trace
+        (binaryWordMatrix (sgK m θ ax o)
+          (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+  classical
+  have hgap :
+      (∑ gaps : binaryWordGapVectorStratum 12 r,
+        cyclicGapTrace (sgK m θ ax o) (sgGlue m).N
+          ((List.ofFn (fun q : Fin r => (gaps.val q).val)).map Nat.succ)) = 0 := by
+    apply Finset.sum_eq_zero
+    intro gaps hgaps
+    exact cyclicGapTrace_p12_odd_gap_term_zero_level3
+      m hm θ ax o hanti r hrpos hrle hrodd gaps
+  have hweighted :=
+    binaryWordFinStratum_weighted_trace_eq_positive_gap_sum
+      (sgK m θ ax o) (sgGlue m).N 12 r
+  rw [hgap] at hweighted
+  have hmul :
+      (r : ℂ) *
+        (∑ w : binaryWordFinStratum 12 r,
+          Matrix.trace
+            (binaryWordMatrix (sgK m θ ax o)
+              (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))) = 0 := by
+    simpa using hweighted
+  have hrC : (r : ℂ) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt hrpos)
+  exact (mul_eq_zero.mp hmul).resolve_left hrC
+
+/-- The sum of all odd positive-insertion p=12 word strata vanishes at
+level three. -/
+theorem sg_trace_p12_all_odd_N_word_strata_zero_level3
+    (m : ℕ) (hm : 3 ≤ m) (θ : ℝ) (ax : ℕ → Axis)
+    (o : Point → Point → Prop) [DecidableRel o]
+    (hanti : OAnti (m + 1) o) :
+    (∑ r ∈ Finset.range 13,
+      if r % 2 = 1 then
+        ∑ w : binaryWordFinStratum 12 r,
+          Matrix.trace
+            (binaryWordMatrix (sgK m θ ax o)
+              (sgK m θ ax o * (sgGlue m).N) (List.ofFn w.val))
+      else 0) = 0 := by
+  classical
+  apply Finset.sum_eq_zero
+  intro r hr
+  by_cases hodd : r % 2 = 1
+  · have hrlt : r < 13 := Finset.mem_range.mp hr
+    have hrpos : 0 < r := by omega
+    have hrle : r ≤ 11 := by omega
+    rw [if_pos hodd]
+    exact sg_trace_p12_odd_N_word_stratum_zero_level3
+      m hm θ ax o hanti r hrpos hrle hodd
+  · simp [hodd]
+
 end EvgenyTheorem
