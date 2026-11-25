@@ -148,6 +148,18 @@ def certificate() -> dict[int, dict[str, list[int]]]:
     return result
 
 
+def p12_certificate() -> dict[str, list[int]]:
+    """Exact finite-level p=12 regression at theta=pi, levels 1..6."""
+    deltas = [delta_at_pi(m, 12) for m in range(1, 7)]
+    residuals = [deltas[m - 1] - 3 * deltas[m - 2] for m in range(2, 7)]
+    return {
+        "delta_levels_1_to_6": deltas,
+        "residual_levels_2_to_6": residuals,
+    }
+
+
 if __name__ == "__main__":
     import json
-    print(json.dumps(certificate(), indent=2))
+    result = certificate()
+    result[12] = p12_certificate()
+    print(json.dumps(result, indent=2))

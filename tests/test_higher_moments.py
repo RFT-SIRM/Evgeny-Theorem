@@ -293,6 +293,44 @@ def test_exact_level_three_traces_disprove_unrestricted_axis_pattern_equality(
     }[power]
 
 
+def test_exact_p12_residual_transition_at_theta_pi():
+    """Pin the p=12 finite transition and its later exact stabilization."""
+    from computational.higher_moment_pi_certificate import p12_certificate
+
+    expected_deltas = [
+        -1736882624,
+        -5797560832,
+        -18026705824,
+        -54714191008,
+        -164776646560,
+        -494964013216,
+    ]
+    expected_residuals = [
+        -586912960,
+        -634023328,
+        -634073536,
+        -634073536,
+        -634073536,
+    ]
+    certificate_data = p12_certificate()
+    certificate_deltas = certificate_data["delta_levels_1_to_6"]
+    assert certificate_data["residual_levels_2_to_6"] == expected_residuals
+    independent_deltas = [
+        _exact_sparse_trace_power_pi(level, 12, False)
+        - _exact_sparse_trace_power_pi(level, 12, True)
+        for level in range(1, 7)
+    ]
+    assert certificate_deltas == expected_deltas
+    assert independent_deltas == expected_deltas
+    residuals = [
+        certificate_deltas[level - 1] - 3 * certificate_deltas[level - 2]
+        for level in range(2, 7)
+    ]
+    assert residuals == expected_residuals
+    assert residuals[2:] == [-634073536] * 3
+    assert residuals[2] - residuals[1] == -50208
+
+
 @pytest.mark.parametrize("power,expected_residual", [
     (6, 5280),
     (8, 277504),

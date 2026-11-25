@@ -48,6 +48,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import EvgenyTheorem.GlueTrace10
 import EvgenyTheorem.FinalOrient10
 import EvgenyTheorem.GlueRows10
+import EvgenyTheorem.GlueRows12
 import EvgenyTheorem.FinalClosed10
 
 namespace EvgenyTheorem
