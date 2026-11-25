@@ -6780,21 +6780,27 @@ weighted word-to-positive-gap identity. The theorem
 all odd r in {1, 3, 5, 7, 9, 11}.
 
 Second, every positive even-length gap list of total sum 12 is
-reduced to an existential six-pair boundary expression by
+reduced to a deterministic six-pair boundary expression by
 `cyclicGapTrace_p12_even_positive_gap_boundary`. The proof pads
 the list to twelve gaps with zero-gap pairs and applies the
 concrete twelve-N boundary-term reduction.
 
-The six-pair witnesses are still existential. No canonical
-list-valued pairing map has yet been proved, so this result does
-not yet evaluate the six even-r orbit sums or establish their
-level-independence.
+The definitions `h12EvenGapPad` and `h12GapPairList` make the
+pairing deterministic. The bounded-tail helper reconstructs its
+eleven entries as an exact ordered list; consequently, pairing
+successive entries of the padded list gives exactly
+`[(a,b), (c,d), (e,f), (g,h), (i,j), (k,l)]`. The even-gap
+theorem now returns the `glueRHS8_pair_sum` over this constructed
+list, rather than an existential six-pair expression.
 
-Validation on this source revision:
+This canonical representation does not yet evaluate the six
+even-r orbit sums or establish their level-independence.
+
+Code validation on commit `376a9ce`:
 - `lake build EvgenyTheorem`: passed, 3065 jobs.
 - `git diff --check`: passed.
 
-Still open: canonical six-pair construction; evaluation of all
-six even-r orbit sums; adjacent-level transport of their complete
-sum; full H12 trace expansion and recurrence; and the finite
+Still open: evaluation of all six even-r orbit sums; adjacent-level
+transport of their complete sum using diagonal powers through
+degree 11; full H12 trace expansion and recurrence; and the finite
 transition from m = 3 to m = 4.
