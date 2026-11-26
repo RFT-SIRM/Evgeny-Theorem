@@ -277,21 +277,147 @@ def _trace_polynomial_on_ball(
     return {monomial: value for monomial, value in trace.items() if value[0] != 0}
 
 
+def _block_scale(a: Block, scalar: Gaussian) -> Block:
+    return [[_pscale(a[i][j], scalar) for j in range(2)] for i in range(2)]
+
+
+def _endpoint_matrix_mul(a: list[list[Block]], b: list[list[Block]]) -> list[list[Block]]:
+    """Multiply 4x4 endpoint-spin matrices represented as 2x2 blocks."""
+    out: list[list[Block]] = []
+    for i in range(2):
+        row: list[Block] = []
+        for j in range(2):
+            value = _block_zero()
+            for k in range(2):
+                value = _block_add(value, _block_mul(a[i][k], b[k][j]))
+            row.append(value)
+        out.append(row)
+    return out
+
+
+def _endpoint_matrix_trace(a: list[list[Block]]) -> Polynomial:
+    trace: Polynomial = {}
+    for i in range(2):
+        trace = _padd(trace, _padd(a[i][i][0][0], a[i][i][1][1]))
+    return trace
+
+
+def _weak_compositions(total: int, parts: int):
+    """Yield ordered nonnegative compositions of `total` into `parts` terms."""
+    if parts == 1:
+        yield (total,)
+        return
+    for first in range(total + 1):
+        for tail in _weak_compositions(total - first, parts - 1):
+            yield (first,) + tail
+
+
+def _single_edge_trace_difference(
+    axes_mode: str,
+    data,
+) -> Polynomial:
+    """Compute Tr((A+E)^12)-Tr(A^12) for the one flipped edge.
+
+    `E` is supported on the two spin blocks at the exceptional edge. Cyclic
+    expansion gives
+
+        sum_{k=1}^{12} (12/k) * sum_{a_1+...+a_k=12-k, a_i>=0}
+          Tr(E A^a_1 E A^a_2 ... E A^a_k).
+
+    Only the 4x4 endpoint-spin restrictions of A^0,...,A^11 are needed.
+    Their entries are computed on the radius-five ball: every length-at-most
+    eleven walk between the two endpoints stays within distance five of one
+    of the endpoints. This avoids forming either full twelfth matrix power.
+    """
+    _vertices, _edges, _degrees, adjacency, flux_axes, flipped_edge = data
+    left_vertex, right_vertex = flipped_edge
+    ball = _radius_ball(adjacency, set(flipped_edge), 5)
+    rows, local_index = _local_operator_rows(axes_mode, False, ball, data)
+    roots = [local_index[left_vertex], local_index[right_vertex]]
+
+    endpoint_powers = [
+        [[_block_zero(), _block_zero()], [_block_zero(), _block_zero()]]
+        for _ in range(12)
+    ]
+    identity_block: Block = [[_pconst(ONE), {}], [{}, _pconst(ONE)]]
+
+    # Store (A^n)[root_i, root_j] for i,j in {left_endpoint,right_endpoint}.
+    for root_index, root in enumerate(roots):
+        vector: dict[int, Block] = {root: identity_block}
+        for exponent in range(12):
+            for target_index, target in enumerate(roots):
+                endpoint_powers[exponent][root_index][target_index] = vector.get(
+                    target, _block_zero()
+                )
+            if exponent == 11:
+                break
+            following: dict[int, Block] = {}
+            for middle, left_block in vector.items():
+                for target, right_block in rows[middle].items():
+                    product = _block_mul(left_block, right_block)
+                    following[target] = _block_add(
+                        following.get(target, _block_zero()), product
+                    )
+            vector = following
+
+    axis = 2 if axes_mode == "const" else flux_axes[tuple(sorted(flipped_edge))]
+    forward = _edge_hamiltonian_block(axis)
+    reverse = _block_dagger(forward)
+    edge_delta_forward = _block_add(reverse, _block_scale(forward, (-1, 0)))
+    edge_delta_reverse = _block_add(forward, _block_scale(reverse, (-1, 0)))
+    edge_delta = [
+        [_block_zero(), edge_delta_forward],
+        [edge_delta_reverse, _block_zero()],
+    ]
+
+    total: dict[Exponent, tuple[Fraction, Fraction]] = {}
+    for insertion_count in range(1, 13):
+        subtotal: Polynomial = {}
+        for gaps in _weak_compositions(12 - insertion_count, insertion_count):
+            product = edge_delta
+            for index, exponent in enumerate(gaps):
+                product = _endpoint_matrix_mul(product, endpoint_powers[exponent])
+                if index + 1 < insertion_count:
+                    product = _endpoint_matrix_mul(product, edge_delta)
+            subtotal = _padd(subtotal, _endpoint_matrix_trace(product))
+
+        weight = Fraction(12, insertion_count)
+        for monomial, coefficient in subtotal.items():
+            old_real, old_imag = total.get(monomial, (Fraction(0), Fraction(0)))
+            total[monomial] = (
+                old_real + weight * coefficient[0],
+                old_imag + weight * coefficient[1],
+            )
+
+    result: Polynomial = {}
+    for monomial, coefficient in total.items():
+        if coefficient == (0, 0):
+            continue
+        if coefficient[0].denominator != 1 or coefficient[1].denominator != 1:
+            raise ArithmeticError(
+                f"nonintegral cyclic edge expansion coefficient at {monomial}: {coefficient}"
+            )
+        if coefficient[1] != 0:
+            raise ArithmeticError(
+                f"non-real cyclic edge expansion coefficient at {monomial}: {coefficient}"
+            )
+        result[monomial] = (coefficient[0].numerator, 0)
+    return result
+
+
 def _orientation_gap_polynomial(level: int) -> Polynomial:
     """Compute D_num(level)-D_til(level) for p=12 exactly."""
     data = _graph_data(level)
-    _vertices, _edges, _degrees, adjacency, _flux_axes, flipped_edge = data
-    ball = _radius_ball(adjacency, set(flipped_edge), 5)
     result: Polynomial = {}
     for axes_mode, sign in (("face", 1), ("const", -1)):
-        for flipped, orientation_sign in ((False, 1), (True, -1)):
-            rows, local_index = _local_operator_rows(axes_mode, flipped, ball, data)
-            trace = _trace_polynomial_on_ball(rows, local_index, 12)
-            signed = {
-                monomial: (sign * orientation_sign * value[0], 0)
-                for monomial, value in trace.items()
-            }
-            result = _padd(result, signed)
+        # The orientation change is E = H_til - H_num. The requested
+        # difference is Tr(H_num^12)-Tr(H_til^12), hence the minus sign.
+        trace_difference = _single_edge_trace_difference(axes_mode, data)
+        signed = {
+            monomial: (-sign * value[0], -sign * value[1])
+            for monomial, value in trace_difference.items()
+        }
+        result = _padd(result, signed)
     return {monomial: value for monomial, value in result.items() if value != ZERO}
 
 
