@@ -1,4 +1,5 @@
 import EvgenyTheorem.H12PolynomialGaussianBase
+import EvgenyTheorem.H12PolynomialGaussianBridge
 import EvgenyTheorem.TildeEntries
 import EvgenyTheorem.Graph.Sierpinski
 import EvgenyTheorem.SanityChecks
