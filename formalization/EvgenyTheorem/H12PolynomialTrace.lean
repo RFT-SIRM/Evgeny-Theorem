@@ -33,8 +33,23 @@ theorem h12_eval_pMatrix_pow
   | succ n ih =>
       rw [pow_succ, pow_succ]
       ext x y
-      simp [Matrix.map_apply, Matrix.mul_apply,
-        map_sum, map_mul, ih, h12_eval_pMatrix]
+      simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, map_mul]
+      apply Finset.sum_congr rfl
+      intro z hz
+      have hpow :
+          h12ComplexEval θ ((h12PMatrix m ax o ^ n) x z) =
+            (pOpO m θ ax o ^ n) x z := by
+        have h := congrArg
+          (fun M : Matrix (Pt m × C2) (Pt m × C2) ℂ => M x z) ih
+        simpa only [Matrix.map_apply] using h
+      have hop :
+          h12ComplexEval θ (h12PMatrix m ax o z y) =
+            pOpO m θ ax o z y := by
+        have h := congrArg
+          (fun M : Matrix (Pt m × C2) (Pt m × C2) ℂ => M z y)
+          (h12_eval_pMatrix m θ ax o)
+        simpa only [Matrix.map_apply] using h
+      rw [hpow, hop]
 
 /-- Evaluation commutes with the trace of every operator power. -/
 theorem h12_eval_trace_pMatrix_pow
