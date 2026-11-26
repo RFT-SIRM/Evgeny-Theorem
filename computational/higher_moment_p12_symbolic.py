@@ -144,15 +144,39 @@ def _sparse_right_multiply(a: SparseMatrix, b: SparseMatrix) -> SparseMatrix:
     return out
 
 
-def _trace_polynomial_power(level: int, power: int, commuting: bool) -> Polynomial:
-    matrix = _operator_polynomial(level, commuting)
-    current = matrix
-    for _ in range(1, power):
-        current = _sparse_right_multiply(current, matrix)
+def _sparse_row_right_multiply(
+    vector: dict[int, Polynomial], matrix: SparseMatrix
+) -> dict[int, Polynomial]:
+    """Multiply one sparse row vector by a sparse polynomial matrix."""
+    out: dict[int, Polynomial] = {}
+    for middle, left_poly in vector.items():
+        for column, right_poly in matrix[middle].items():
+            target = out.setdefault(column, {})
+            for (di, dj), coefficient in right_poly.items():
+                _poly_add_scaled(target, left_poly, coefficient, (di, dj))
+            if not target:
+                out.pop(column, None)
+    return out
 
+
+def _trace_polynomial_power(level: int, power: int, commuting: bool) -> Polynomial:
+    """Compute Tr(H^power) by sparse row propagation, without matrix fill-in.
+
+    The previous matrix-by-matrix implementation materialized every entry of
+    H^n before taking the trace. For the level-four p=12 check this causes a
+    large, unnecessary fill-in. The trace only needs the diagonal of each
+    row of H^power, so propagate one initial basis row at a time and retain
+    only that row's current sparse support.
+    """
+    matrix = _operator_polynomial(level, commuting)
     trace: Polynomial = {}
-    for row_index, row in enumerate(current):
-        diagonal = row.get(row_index)
+    for row_index in range(len(matrix)):
+        current: dict[int, Polynomial] = {row_index: {(0, 0): ONE}}
+        for _ in range(power):
+            current = _sparse_row_right_multiply(current, matrix)
+            if not current:
+                break
+        diagonal = current.get(row_index)
         if diagonal:
             _poly_add_scaled(trace, diagonal)
     return trace

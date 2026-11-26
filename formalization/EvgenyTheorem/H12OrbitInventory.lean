@@ -301,6 +301,9 @@ def binaryWordP12GapOrbitReps12 : Finset (List ℕ) :=
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite verification of the p=12, r=2 orbit partition. -/
 private theorem binaryWordP12GapOrbitPartitionComputable2 :
     binaryWordP12PositiveGapListFinsetComputable 2 =
@@ -318,6 +321,9 @@ theorem binaryWordP12GapOrbitPartition2 :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite check of all pairwise orbit intersections for r=2. -/
 private theorem binaryWordP12GapOrbitPairwiseCheck2 :
     binaryWordP12GapOrbitPairwiseCheck binaryWordP12GapOrbitRepList2 = true := by
@@ -334,6 +340,9 @@ theorem binaryWordP12GapOrbitReps2_pairwise_disjoint :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite verification of the p=12, r=4 orbit partition. -/
 private theorem binaryWordP12GapOrbitPartitionComputable4 :
     binaryWordP12PositiveGapListFinsetComputable 4 =
@@ -351,6 +360,9 @@ theorem binaryWordP12GapOrbitPartition4 :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite check of all pairwise orbit intersections for r=4. -/
 private theorem binaryWordP12GapOrbitPairwiseCheck4 :
     binaryWordP12GapOrbitPairwiseCheck binaryWordP12GapOrbitRepList4 = true := by
@@ -367,6 +379,9 @@ theorem binaryWordP12GapOrbitReps4_pairwise_disjoint :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite verification of the p=12, r=6 orbit partition. -/
 private theorem binaryWordP12GapOrbitPartitionComputable6 :
     binaryWordP12PositiveGapListFinsetComputable 6 =
@@ -384,6 +399,9 @@ theorem binaryWordP12GapOrbitPartition6 :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite check of all pairwise orbit intersections for r=6. -/
 private theorem binaryWordP12GapOrbitPairwiseCheck6 :
     binaryWordP12GapOrbitPairwiseCheck binaryWordP12GapOrbitRepList6 = true := by
@@ -400,6 +418,9 @@ theorem binaryWordP12GapOrbitReps6_pairwise_disjoint :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite verification of the p=12, r=8 orbit partition. -/
 private theorem binaryWordP12GapOrbitPartitionComputable8 :
     binaryWordP12PositiveGapListFinsetComputable 8 =
@@ -417,6 +438,9 @@ theorem binaryWordP12GapOrbitPartition8 :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite check of all pairwise orbit intersections for r=8. -/
 private theorem binaryWordP12GapOrbitPairwiseCheck8 :
     binaryWordP12GapOrbitPairwiseCheck binaryWordP12GapOrbitRepList8 = true := by
@@ -433,6 +457,9 @@ theorem binaryWordP12GapOrbitReps8_pairwise_disjoint :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite verification of the p=12, r=10 orbit partition. -/
 private theorem binaryWordP12GapOrbitPartitionComputable10 :
     binaryWordP12PositiveGapListFinsetComputable 10 =
@@ -450,6 +477,9 @@ theorem binaryWordP12GapOrbitPartition10 :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite check of all pairwise orbit intersections for r=10. -/
 private theorem binaryWordP12GapOrbitPairwiseCheck10 :
     binaryWordP12GapOrbitPairwiseCheck binaryWordP12GapOrbitRepList10 = true := by
@@ -466,6 +496,9 @@ theorem binaryWordP12GapOrbitReps10_pairwise_disjoint :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite verification of the p=12, r=12 orbit partition. -/
 private theorem binaryWordP12GapOrbitPartitionComputable12 :
     binaryWordP12PositiveGapListFinsetComputable 12 =
@@ -483,6 +516,9 @@ theorem binaryWordP12GapOrbitPartition12 :
 
 set_option maxRecDepth 32768 in
 set_option maxHeartbeats 160000000 in
+-- Required for the exhaustive p=12 positive-composition/cyclic-orbit
+-- checks below: their nested finite enumeration exceeds Lean's default
+-- heartbeat budget. The larger limit is confined to these certificates.
 /-- Computed finite check of all pairwise orbit intersections for r=12. -/
 private theorem binaryWordP12GapOrbitPairwiseCheck12 :
     binaryWordP12GapOrbitPairwiseCheck binaryWordP12GapOrbitRepList12 = true := by

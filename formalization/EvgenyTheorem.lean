@@ -52,6 +52,9 @@ import EvgenyTheorem.GlueRows12
 import EvgenyTheorem.GlueRows12Orientation
 import EvgenyTheorem.GlueTrace12
 import EvgenyTheorem.FinalClosed12
+import EvgenyTheorem.H12PolynomialClosedForm
+import EvgenyTheorem.H12PolynomialCoefficientRecurrence
+import EvgenyTheorem.H12PolynomialD3Factor
 import EvgenyTheorem.FinalClosed10
 
 namespace EvgenyTheorem
