@@ -3,6 +3,7 @@ import EvgenyTheorem.H12PolynomialGaussianBridge
 import EvgenyTheorem.H12PolynomialGaussianCoefficientMap
 import EvgenyTheorem.H12PolynomialGaussianCoefficientRecurrence
 import EvgenyTheorem.H12PolynomialGaussianAffineRecurrence
+import EvgenyTheorem.H12PolynomialGaussianExecutableRecurrence
 import EvgenyTheorem.TildeEntries
 import EvgenyTheorem.Graph.Sierpinski
 import EvgenyTheorem.SanityChecks
