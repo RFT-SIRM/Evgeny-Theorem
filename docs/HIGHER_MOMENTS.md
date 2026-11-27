@@ -1,4 +1,4 @@
-# Higher spectral moments: H⁶, H⁸, and H¹⁰
+# Higher spectral moments: H⁶, H⁸, H¹⁰, and H¹²
 
 This note records the current mathematical and formal status of the higher spectral moments for the SU(2)-valued operators defined in this repository. It separates all-level recurrence proofs from finite exact certificates and numerical reference data.
 
@@ -10,6 +10,7 @@ This note records the current mathematical and formal status of the higher spect
 | **H⁶** | Lean recurrence for $m\ge3$, plus an exact finite symbolic bridge for $m=2\to3$. Combined all-angle formula for $m\ge2$. | The finite bridge is not yet a Lean-kernel theorem. |
 | **H⁸** | Lean recurrence for $m\ge3$, plus an exact sparse-polynomial bridge for $m=2\to3$. Combined all-angle formula for $m\ge2$. | The finite bridge is not yet a Lean-kernel theorem. |
 | **H¹⁰** | Unconditional Lean-checked affine recurrence for m ≥ 4 and affine form for m ≥ 5. | Radius-four transport is proved through degree nine for both axes; the level-five constant remains an exact trace expression. |
+| **H¹²** | Lean-checked affine recurrence for $m\ge3$ and affine closed form for $m\ge3$, with the explicit all-angle polynomial $D_m=32s^2\big(3^{m-3}(Q_3-Q_{12})+Q_{12}\big)$. | The two finite identities $D_3=32s^2Q_3$ and $C_{12}=-64s^2Q_{12}$ are exact symbolic certificates, not yet Lean-kernel theorems. |
 
 H⁴ is stated in [THEOREM.md](../THEOREM.md). The detailed tenth-moment Lean layer is in `formalization/EvgenyTheorem/GlueTrace10.lean`, `GlueRows10.lean`, `FinalOrient10.lean`, and `FinalClosed10.lean`.
 
@@ -17,7 +18,7 @@ H⁴ is stated in [THEOREM.md](../THEOREM.md). The detailed tenth-moment Lean la
 
 ## Notation
 
-For $p\in\{6,8,10\}$, let $\Delta_m^{(p)}(\theta)$ be the difference between the p-th traces of the non-commuting SU(2) configuration and the commuting control. For the level-dependent recurrences below, $D_m^{(p)}(\theta)$ denotes the orientation-specific defect used in the corresponding Lean declarations.
+For $p\in\{6,8,10,12\}$, let $\Delta_m^{(p)}(\theta)$ be the difference between the p-th traces of the non-commuting SU(2) configuration and the commuting control. For the level-dependent recurrences below, $D_m^{(p)}(\theta)$ denotes the orientation-specific defect used in the corresponding Lean declarations.
 
 Throughout this note,
 
@@ -25,7 +26,7 @@ $$
 c=\cos(\theta/2),\quad s=\sin(\theta/2).
 $$
 
-The names `defectO6`, `defectO8`, and `defectO10` refer to the concrete Lean definitions. The superscripts in $D_m^{(p)}$ label the moment order; they are not powers of $D_m$.
+The names `defectO6`, `defectO8`, `defectO10`, and `defectO12` refer to the concrete Lean definitions. The superscripts in $D_m^{(p)}$ label the moment order; they are not powers of $D_m$.
 
 ---
 
@@ -156,6 +157,75 @@ The recurrence and affine formula are machine-checked without an additional tran
 | Radius-four corner transport | `FinalTilde.lean` and `FinalClosed10.lean` | Proves degree-eight/nine partner transport, combines degrees one through nine, and establishes `H10TransportAll_proved`. |
 | Unconditional affine recurrence and form | `FinalClosed10.lean` | Proves `defectO10_succ_num_level5_constant_boundary_unconditional` and `defectO10_num_affine_closed_form_from_level5_unconditional`. |
 
+
+---
+
+## H¹² — p=12 affine recurrence and explicit all-angle polynomial
+
+Write $D_m^{(12)}(\theta)$ for the level-$m$ numbering-orientation defect `defectO12`, and $C_{12}(\theta)$ for the exact finite residual `defectO12_num_residual_constant`. For every real $\theta$, Lean proves:
+
+- `defectO12_succ_num_level3_constant_boundary`: $D_{m+1}^{(12)}(\theta)=3D_m^{(12)}(\theta)+C_{12}(\theta)$ for every $m\ge3$;
+- `defectO12_num_finite_base_bridge_level3`: the finite bridge $D_4^{(12)}=3D_3^{(12)}+C_{12}$, derived from the level-three boundary and orientation-invariance theorems;
+- `defectO12_num_affine_closed_form_from_level3_unconditional`: for every $n\ge0$,
+
+$$
+D_{n+3}^{(12)}(\theta)=3^n\left(D_3^{(12)}(\theta)+\frac{C_{12}(\theta)}2\right)-\frac{C_{12}(\theta)}2 .
+$$
+
+In these Lean statements $D_3^{(12)}$ and $C_{12}$ are exact finite trace expressions.
+
+### Explicit polynomial form
+
+With $c=\cos(\theta/2)$, $s=\sin(\theta/2)$ and $c^2+s^2=1$, the finite quantities are
+
+$$
+D_3^{(12)}(\theta)=32s^2Q_3(c,s),\qquad C_{12}(\theta)=-64s^2Q_{12}(c,s),
+$$
+
+where
+
+$$
+\begin{aligned}
+Q_3={}&-12c^6+24c^5s+1032c^5-2040c^4s-80120c^4\\
+&+42894c^3s+2400282c^3-67494c^2s-30361019c^2\\
+&-2479593cs+275590614c+3481440s-566815997,
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+Q_{12}={}&6c^6+6c^5s+240c^5-456c^4s-8858c^4\\
+&+2466c^3s-33138c^3+618c^2s+1612501c^2\\
+&+571254cs-18512844c-3259668s+13167067.
+\end{aligned}
+$$
+
+Consequently, for every $m\ge3$,
+
+$$
+D_m^{(12)}(\theta)=32s^2\Big(3^{m-3}\big(Q_3(c,s)-Q_{12}(c,s)\big)+Q_{12}(c,s)\Big).
+$$
+
+At $\theta=\pi$ ($c=0$, $s=1$) this reads $D_m^{(12)}(\pi)=-18{,}343{,}742{,}592\cdot3^{m-3}+317{,}036{,}768$.
+
+The algebraic part of this presentation is machine-checked: `h12Q3_sub_Q12`, `h12_affine_polynomial_form` and `h12_scaled_affine_polynomial_form` in `H12PolynomialTargets.lean` prove $Q_3-Q_{12}=A$ and the equivalent forms of the affine polynomial identity for every natural exponent.
+
+### H¹² proof boundary
+
+- **Lean-kernel theorem:** the recurrence for $m\ge3$, the finite bridge $D_4=3D_3+C_{12}$, and the affine closed form with $D_3$ and $C_{12}$ kept as exact finite trace expressions.
+- **Exact symbolic certificate:** the identities $D_3^{(12)}=32s^2Q_3$ and $C_{12}=-64s^2Q_{12}$. They are verified in exact integer arithmetic, with no floating point, from the full finite operators at levels three and four, by `tests/test_p12_explicit_closed_form.py` (which also checks the closed formula at exact rational circle points and, by an independent Gaussian-integer calculation at $\theta=\pi$, for levels three to six), `tests/test_p12_level4_base_bridge.py` and `tests/test_p12_level5_affine_constant.py`. These two finite identities are **not yet Lean-kernel theorems**.
+- The Lean modules `H12PolynomialTrace`, `H12PolynomialBridge`, `H12PolynomialGaussianCoefficientRecurrence` and `H12PolynomialGaussianExecutableRecurrence` contain infrastructure towards the Lean evaluation of the two finite identities. That evaluation is not complete.
+
+### H¹² source map
+
+| Component | Lean module | Role |
+|---|---|---|
+| Twelfth-power trace expansion and word strata | `GlueTrace12.lean` | Exact ordered-word expansion for $p=12$. |
+| Glued-row and orientation transport | `GlueRows12.lean`, `GlueRows12Orientation.lean`, `FinalOrient12.lean` | Corner-flip rows, positive even-stratum transport, orientation invariance. |
+| Affine recurrence and closed form | `FinalClosed12.lean` | Proves the recurrence for $m\ge3$, the finite bridge, and the affine closed form. |
+| Polynomial presentation | `H12PolynomialTargets.lean`, `H12PolynomialClosedForm.lean` | Defines $Q_3$, $Q_{12}$, $A$ and proves their algebraic relations. |
+
+Stage notes: [Stage 6](../formalization/H12_STAGE6_HANDOFF_2026-11-25.md) and [Stage 7](../formalization/H12_STAGE7_POLYNOMIAL_REDUCTION_2026-11-26.md).
 
 ---
 

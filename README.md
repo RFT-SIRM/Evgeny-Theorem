@@ -141,6 +141,28 @@ Both the recurrence and the affine formula are machine-checked for every real an
 
 The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and `FinalClosed10`. The transport and final theorem names are listed in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
 
+### H¹² — twelfth moment
+
+Write $D_m^{(12)}(\theta)$ for the numbering-orientation defect and $C_{12}(\theta)$ for the exact finite residual defined in Lean. For every real $\theta$, Lean proves
+
+$$
+D_{m+1}^{(12)}(\theta)=3D_m^{(12)}(\theta)+C_{12}(\theta),\quad m\geq3,
+$$
+
+the finite bridge $D_4^{(12)}=3D_3^{(12)}+C_{12}$, and consequently, for every $m\geq3$,
+
+$$
+D_m^{(12)}(\theta)=3^{m-3}(D_3^{(12)}(\theta)+C_{12}(\theta)/2)-C_{12}(\theta)/2.
+$$
+
+With $c=\cos(\theta/2)$ and $s=\sin(\theta/2)$, exact integer-arithmetic certificates identify $D_3^{(12)}=32s^2Q_3(c,s)$ and $C_{12}=-64s^2Q_{12}(c,s)$, so that
+
+$$
+D_m^{(12)}(\theta)=32s^2\Big(3^{m-3}\big(Q_3-Q_{12}\big)+Q_{12}\Big),\quad m\geq3.
+$$
+
+These two finite identities are exact symbolic certificates, checked by `tests/test_p12_explicit_closed_form.py`, `tests/test_p12_level4_base_bridge.py` and `tests/test_p12_level5_affine_constant.py`; they are not yet Lean-kernel theorems. The polynomials $Q_3$ and $Q_{12}$, the theorem names and the proof boundary are in [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md).
+
 
 ---
 
@@ -155,6 +177,8 @@ The relevant Lean modules are `GlueTrace10`, `GlueRows10`, `FinalOrient10`, and 
 | H⁸ recurrence | **Lean theorem for $m\geq3$** | Finite level-two transition supplied by exact sparse-polynomial arithmetic. |
 | H⁸ closed form for $m\geq2$ | **Lean recurrence + exact certificate** | The exceptional bridge is not yet in the Lean kernel. |
 | H¹⁰ affine form | **Unconditional Lean theorem** | Degree-nine radius-four diagonal transport is proved for both configurations; the exact level-five trace correction is retained. |
+| H¹² recurrence and affine form for $m\geq3$ | **Lean theorem** | $D_3$ and $C_{12}$ are kept as exact finite trace expressions. |
+| H¹² explicit polynomial form | **Lean recurrence + exact certificate** | $D_3=32s^2Q_3$ and $C_{12}=-64s^2Q_{12}$ are exact symbolic certificates; not yet in the Lean kernel. |
 | H⁶ path-class cancellation on $SG(1)$ | **Exact finite-level result** | Single- and two-triangle classes vanish; the all-three-triangle class contributes. |
 
 A finite exact certificate, a numerical regression, and a Lean-kernel theorem are not interchangeable. The documentation preserves these proof boundaries explicitly.
@@ -333,7 +357,7 @@ Evgeny-Theorem/
 | [docs/PROOF.md](docs/PROOF.md) | Human-readable proof of the fourth-moment identity. |
 | [docs/EXACT_VERIFICATION.md](docs/EXACT_VERIFICATION.md) | Exact symbolic verification and the local mechanism. |
 | [docs/SPLIT_AUTOMATON.md](docs/SPLIT_AUTOMATON.md) | Recursive split rule and its structural explanation. |
-| [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md) | Full H⁶, H⁸, and H¹⁰ formulas and proof boundaries. |
+| [docs/HIGHER_MOMENTS.md](docs/HIGHER_MOMENTS.md) | Full H⁶, H⁸, H¹⁰, and H¹² formulas and proof boundaries. |
 | [formalization/README.md](formalization/README.md) | Lean theorem, proof architecture, build command, and module map. |
 | [formalization/HIGHER_MOMENT_RESEARCH_LOG.md](formalization/HIGHER_MOMENT_RESEARCH_LOG.md) | Chronological higher-moment research journal. |
 | [formalization/PROOF_WORK_LOG.md](formalization/PROOF_WORK_LOG.md) | Chronological Lean proof-development journal. |
